@@ -1,0 +1,128 @@
+# Configuration Netlify pour Claudyne
+# Plateforme éducative camerounaise - En hommage à Meffo Mehtah Tchandjio Claudine
+
+[build]
+  publish = "."
+  command = "echo 'Building Claudyne platform for production...'"
+  
+[build.environment]
+  NODE_ENV = "production"
+  CLAUDYNE_VERSION = "1.2.0"
+  CLAUDYNE_TRIBUTE = "En hommage à Meffo Mehtah Tchandjio Claudine"
+
+# Redirection des API vers des fonctions serverless
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Redirection pour SPA (Single Page Application)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"], Country = ["CM"]}
+
+# Service Worker avec cache approprié
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+    Content-Type = "application/javascript"
+
+# Headers de sécurité
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"
+    
+# Optimisations pour connexions 2G/3G
+[[headers]]
+  for = "/styles/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Vary = "Accept-Encoding"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Vary = "Accept-Encoding"
+
+# Manifest PWA avec cache approprié
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=86400"
+
+# Page offline avec cache longue
+[[headers]]
+  for = "/offline.html"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Configuration des fonctions serverless
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "nft"
+
+# Optimisation des performances
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true
+
+# Plugin pour optimiser les connexions lentes
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  [plugins.inputs.settings]
+    performance = 0.8
+    accessibility = 0.95
+    "best-practices" = 0.9
+    seo = 0.85
+
+# Context pour différents environnements
+[context.production.environment]
+  NODE_ENV = "production"
+  OPTIMIZATION_LEVEL = "max"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "preview"
+  OPTIMIZATION_LEVEL = "medium"
+
+[context.branch-deploy.environment]
+  NODE_ENV = "development"
+  OPTIMIZATION_LEVEL = "min"
+
+# Support pour l'Afrique avec CDN optimisé
+[edge_functions]
+  path = "/api/*"
+  function = "api-handler"
+
+# Configuration spécifique pour le Cameroun
+[[edge_functions]]
+  function = "cameroon-optimizer"
+  path = "/*"
+  cache_tag = "cameroon"
+
+# Formulaires pour support (si nécessaire)
+[forms]
+  contact = "/contact"
+  support = "/support"

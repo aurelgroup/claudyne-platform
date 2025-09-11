@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Étudiant - Claudyne</title>
+    <link rel="stylesheet" href="styles/glassmorphism.css">
+    <style>
+        .student-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--glass-primary);
+            backdrop-filter: var(--blur-medium);
+            border-right: var(--border-glass);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            background: transparent;
+        }
+
+        .student-header {
+            background: var(--glass-primary);
+            backdrop-filter: var(--blur-medium);
+            border: var(--border-glass);
+            border-radius: var(--border-radius-card);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .student-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .student-class {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .student-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: var(--glass-primary);
+            backdrop-filter: var(--blur-medium);
+            border: var(--border-glass);
+            border-radius: var(--border-radius-card);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glass-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .course-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .course-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .course-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .course-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .course-name {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .course-progress {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        .quiz-score {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .quiz-meta {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+        }
+
+        .achievement-info h4 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .achievement-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+
+        /* Classe utilitaire pour cacher les sections */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="student-container">
+        <nav class="sidebar">
+            <div class="logo-section" style="text-align: center; margin-bottom: 2rem;">
+                <h2 class="glass-text-primary">🎓 Claudyne</h2>
+                <p class="glass-text-secondary" style="font-size: 0.9rem;">Espace Étudiant</p>
+            </div>
+
+            <ul style="list-style: none;">
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active" onclick="showSection('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        Tableau de bord
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('courses'); return false;">
+                        <span class="nav-icon">📚</span>
+                        Mes Cours
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('quizzes'); return false;">
+                        <span class="nav-icon">🧠</span>
+                        Quiz & Tests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('progress'); return false;">
+                        <span class="nav-icon">📊</span>
+                        Ma Progression
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('achievements'); return false;">
+                        <span class="nav-icon">🏆</span>
+                        Récompenses
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('claudine'); return false;">
+                        <span class="nav-icon">⭐</span>
+                        Prix Claudine
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('settings'); return false;">
+                        <span class="nav-icon">⚙️</span>
+                        Paramètres
+                    </a>
+                </li>
+            </ul>
+
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                <a href="index.html" class="glass-btn" style="width: 100%; text-decoration: none; text-align: center;">
+                    🏠 Retour Accueil
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section">
+                <div class="student-header">
+                    <div class="student-name">👨‍🎓 Jean Kamga</div>
+                    <div class="student-class">Classe de Terminale C • Lycée de Yaoundé</div>
+                    
+                    <div class="student-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">85%</div>
+                            <div class="stat-label">Moyenne générale</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Cours terminés</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">Quiz réussis</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">3ème</div>
+                            <div class="stat-label">Classement</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="card-icon">📚</span>
+                                Cours en cours
+                            </h3>
+                        </div>
+                        <div class="course-list">
+                            <div class="course-item" onclick="openCourse('math')">
+                                <div class="course-info">
+                                    <div>
+                                        <div class="course-name">Mathématiques</div>
+                                        <div class="course-progress">Leçon 8/12 - Dérivées</div>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 67%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-item" onclick="openCourse('physics')">
+                                <div class="course-info">
+                                    <div>
+                                        <div class="course-name">Physique</div>
+                                        <div class="course-progress">Leçon 5/10 - Électricité</div>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-item" onclick="openCourse('french')">
+                                <div class="course-info">
+                                    <div>
+                                        <div class="course-name">Français</div>
+                                        <div class="course-progress">Leçon 10/15 - Littérature</div>
+                                    </div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 67%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="card-icon">🧠</span>
+                                Quiz récents
+                            </h3>
+                        </div>
+                        <div>
+                            <div class="quiz-item">
+                                <div class="quiz-header">
+                                    <div class="quiz-title">Quiz Mathématiques</div>
+                                    <div class="quiz-score">18/20</div>
+                                </div>
+                                <div class="quiz-meta">Dérivées • Il y a 2 jours</div>
+                            </div>
+                            
+                            <div class="quiz-item">
+                                <div class="quiz-header">
+                                    <div class="quiz-title">Test Physique</div>
+                                    <div class="quiz-score">15/20</div>
+                                </div>
+                                <div class="quiz-meta">Électricité • Il y a 1 semaine</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="card-icon">🏆</span>
+                                Récompenses récentes
+                            </h3>
+                        </div>
+                        <div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">🥉</div>
+                                <div class="achievement-info">
+                                    <h4>Bronze Mathématiques</h4>
+                                    <p>10 quiz réussis en mathématiques</p>
+                                </div>
+                            </div>
+                            
+                            <div class="achievement-item">
+                                <div class="achievement-icon">📈</div>
+                                <div class="achievement-info">
+                                    <h4>Progression constante</h4>
+                                    <p>7 jours d'étude consécutifs</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Prix Claudine -->
+            <section id="claudine-section" class="section hidden">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <span class="card-icon">⭐</span>
+                            Prix Claudine - Classement
+                        </h3>
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div class="glass-text-primary" style="font-size: 1.1rem; margin-bottom: 1rem;">
+                            En hommage à <strong>Meffo Mehtah Tchandjio Claudine</strong>
+                        </div>
+                        <div class="glass-text-secondary">
+                            "La force du savoir en héritage"
+                        </div>
+                    </div>
+
+                    <div class="student-stats" style="margin-bottom: 2rem;">
+                        <div class="stat-item">
+                            <div class="stat-number">3ème</div>
+                            <div class="stat-label">Position actuelle</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1,250</div>
+                            <div class="stat-label">Points Claudine</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">+50</div>
+                            <div class="stat-label">Cette semaine</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem;">
+                        <h4 class="glass-text-primary" style="margin-bottom: 1rem;">🏆 Classement de la classe</h4>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: linear-gradient(135deg, #D4AF37, #FFD700); border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.2rem;">🥇</span>
+                                    <span style="font-weight: 600; color: #000;">Marie Ngono</span>
+                                </div>
+                                <span style="font-weight: 600; color: #000;">1,580 pts</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(192, 192, 192, 0.3); border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.2rem;">🥈</span>
+                                    <span style="font-weight: 600; color: white;">Paul Fotso</span>
+                                </div>
+                                <span style="font-weight: 600; color: white;">1,380 pts</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(205, 127, 50, 0.3); border-radius: 8px; border: 2px solid #D4AF37;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.2rem;">🥉</span>
+                                    <span style="font-weight: 600; color: white;">Jean Kamga (Vous)</span>
+                                </div>
+                                <span style="font-weight: 600; color: white;">1,250 pts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Mes Cours -->
+            <section id="courses-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="glass-text-primary">📚 Mes Cours</h2>
+                    <p>Explorez vos modules d'apprentissage</p>
+                </div>
+
+                <div class="glass-grid">
+                    <div class="glass-card">
+                        <div class="card-icon">📖</div>
+                        <h3>Mathématiques</h3>
+                        <p>Algèbre, Géométrie, Statistiques</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                        <span class="progress-text">75% complété</span>
+                        <button class="glass-button glass-button-primary">Continuer</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-icon">🔬</div>
+                        <h3>Sciences Physiques</h3>
+                        <p>Physique, Chimie, Biologie</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%"></div>
+                        </div>
+                        <span class="progress-text">60% complété</span>
+                        <button class="glass-button glass-button-primary">Continuer</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-icon">🌍</div>
+                        <h3>Histoire-Géographie</h3>
+                        <p>Histoire du Cameroun, Géographie</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                        <span class="progress-text">45% complété</span>
+                        <button class="glass-button glass-button-primary">Commencer</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Quiz & Tests -->
+            <section id="quizzes-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="glass-text-primary">🧠 Quiz & Tests</h2>
+                    <p>Testez vos connaissances</p>
+                </div>
+
+                <div class="glass-grid">
+                    <div class="glass-card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Quiz Rapide</h3>
+                        <p>5 questions - 2 minutes</p>
+                        <button class="glass-button glass-button-accent">Démarrer</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Test de Niveau</h3>
+                        <p>20 questions - 15 minutes</p>
+                        <button class="glass-button glass-button-primary">Commencer</button>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-icon">🏆</div>
+                        <h3>Examen Blanc</h3>
+                        <p>50 questions - 1 heure</p>
+                        <button class="glass-button glass-button-warning">S'inscrire</button>
+                    </div>
+                </div>
+
+                <div class="quiz-history glass-card" style="margin-top: 2rem;">
+                    <h3>📊 Historique des Quiz</h3>
+                    <div class="quiz-result">
+                        <span>Mathématiques - Quiz Rapide</span>
+                        <span class="score success">18/20</span>
+                        <span class="date">Hier</span>
+                    </div>
+                    <div class="quiz-result">
+                        <span>Sciences - Test de Niveau</span>
+                        <span class="score good">14/20</span>
+                        <span class="date">Il y a 3 jours</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Ma Progression -->
+            <section id="progress-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="glass-text-primary">📊 Ma Progression</h2>
+                    <p>Suivez votre évolution académique</p>
+                </div>
+
+                <div class="glass-grid">
+                    <div class="glass-card">
+                        <h3>📈 Performance Générale</h3>
+                        <div class="progress-circle">
+                            <div class="circle">
+                                <div class="percentage">73%</div>
+                            </div>
+                        </div>
+                        <p>Excellente progression !</p>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>🎯 Objectifs du Mois</h3>
+                        <div class="objective">
+                            <span>Terminer 5 chapitres</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                            <span>4/5</span>
+                        </div>
+                        <div class="objective">
+                            <span>Réussir 3 quiz</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                            <span>3/3 ✅</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>⏱️ Temps d'Étude</h3>
+                        <div class="study-time">
+                            <div class="time-stat">
+                                <span class="time-value">2h 30min</span>
+                                <span class="time-label">Aujourd'hui</span>
+                            </div>
+                            <div class="time-stat">
+                                <span class="time-value">18h 45min</span>
+                                <span class="time-label">Cette semaine</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Récompenses -->
+            <section id="achievements-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="glass-text-primary">🏆 Mes Récompenses</h2>
+                    <p>Vos badges et accomplissements</p>
+                </div>
+
+                <div class="achievements-grid glass-grid">
+                    <div class="achievement glass-card earned">
+                        <div class="achievement-icon">🥇</div>
+                        <h3>Premier Quiz</h3>
+                        <p>Premier quiz réussi</p>
+                        <span class="earned-date">Obtenu le 5 Nov</span>
+                    </div>
+
+                    <div class="achievement glass-card earned">
+                        <div class="achievement-icon">📚</div>
+                        <h3>Lecteur Assidu</h3>
+                        <p>10 chapitres complétés</p>
+                        <span class="earned-date">Obtenu le 8 Nov</span>
+                    </div>
+
+                    <div class="achievement glass-card locked">
+                        <div class="achievement-icon">🎯</div>
+                        <h3>Tireur d'Elite</h3>
+                        <p>20 quiz parfaits</p>
+                        <span class="progress-text">15/20</span>
+                    </div>
+
+                    <div class="achievement glass-card locked">
+                        <div class="achievement-icon">⭐</div>
+                        <h3>Étoile Montante</h3>
+                        <p>Top 10 national</p>
+                        <span class="progress-text">Rang 15</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Paramètres -->
+            <section id="settings-section" class="section hidden">
+                <div class="section-header">
+                    <h2 class="glass-text-primary">⚙️ Paramètres</h2>
+                    <p>Personnalisez votre expérience</p>
+                </div>
+
+                <div class="settings-container">
+                    <div class="glass-card">
+                        <h3>👤 Profil</h3>
+                        <div class="setting-item">
+                            <label>Nom d'utilisateur</label>
+                            <input type="text" value="Étudiant Claudyne" class="glass-input">
+                        </div>
+                        <div class="setting-item">
+                            <label>Email</label>
+                            <input type="email" value="etudiant@claudyne.com" class="glass-input">
+                        </div>
+                        <div class="setting-item">
+                            <label>Classe</label>
+                            <select class="glass-input">
+                                <option>3ème</option>
+                                <option>2nde A</option>
+                                <option>2nde C</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>🔔 Notifications</h3>
+                        <div class="setting-toggle">
+                            <label>Rappels d'étude</label>
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="setting-toggle">
+                            <label>Nouveaux cours</label>
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="setting-toggle">
+                            <label>Prix Claudine</label>
+                            <input type="checkbox" checked>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <h3>🎨 Apparence</h3>
+                        <div class="setting-item">
+                            <label>Thème</label>
+                            <select class="glass-input">
+                                <option>Glassmorphism (défaut)</option>
+                                <option>Sombre</option>
+                                <option>Clair</option>
+                            </select>
+                        </div>
+                        <div class="setting-toggle">
+                            <label>Mode haute performance</label>
+                            <input type="checkbox">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <style>
+        /* Styles pour les nouvelles sections */
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 1rem 0 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .quiz-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-result:last-child {
+            border-bottom: none;
+        }
+
+        .score {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .score.success {
+            background: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .score.good {
+            background: rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+
+        .date {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .progress-circle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#D4AF37 73%, rgba(255, 255, 255, 0.2) 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .circle::before {
+            content: '';
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(30, 30, 30, 0.9);
+            position: absolute;
+        }
+
+        .percentage {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #D4AF37;
+            z-index: 1;
+        }
+
+        .objective {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .study-time {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0;
+        }
+
+        .time-stat {
+            text-align: center;
+        }
+
+        .time-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #D4AF37;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .achievement {
+            text-align: center;
+            position: relative;
+        }
+
+        .achievement.earned {
+            border-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .achievement.locked {
+            opacity: 0.6;
+            filter: grayscale(50%);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin: 1rem 0;
+        }
+
+        .earned-date {
+            font-size: 0.8rem;
+            color: #D4AF37;
+            font-weight: bold;
+        }
+
+        .settings-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .setting-item {
+            margin: 1rem 0;
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-input {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+        }
+
+        .setting-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-toggle:last-child {
+            border-bottom: none;
+        }
+
+        .setting-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #D4AF37;
+        }
+    </style>
+
+    <script>
+        // Navigation entre sections
+        function showSection(sectionName) {
+            console.log('🔄 Navigation vers section:', sectionName);
+            
+            // Masquer toutes les sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Afficher la section demandée
+            const sectionId = sectionName + '-section';
+            const targetSection = document.getElementById(sectionId);
+            
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                console.log('✅ Section affichée:', sectionId);
+            } else {
+                console.warn('❌ Section non trouvée:', sectionId, 'Sections disponibles:', 
+                    Array.from(document.querySelectorAll('.section')).map(s => s.id));
+                // Fallback vers dashboard
+                const dashboard = document.getElementById('dashboard-section');
+                if (dashboard) {
+                    dashboard.classList.remove('hidden');
+                }
+            }
+
+            // Mettre à jour la navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[onclick*="showSection('${sectionName}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // Empêcher la navigation par défaut
+            return false;
+        }
+
+        // Ouvrir un cours
+        function openCourse(courseId) {
+            console.log('Ouverture du cours:', courseId);
+            // Ici on pourrait rediriger vers une page de cours détaillée
+            alert(`Ouverture du cours: ${courseId}`);
+        }
+
+        // Initialisation
+        console.log('🎓 Interface Étudiant Claudyne chargée');
+        console.log('👨‍👩‍👧‍👦 En hommage à Meffo Mehtah Tchandjio Claudine');
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Boutons Admin</title>
+    <link rel="stylesheet" href="styles/glassmorphism.css">
+</head>
+<body>
+    <div style="padding: 2rem;">
+        <h1 class="glass-text-primary">Test des Boutons Admin Claudyne</h1>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+            <button class="glass-btn glass-btn-primary" onclick="testShowCreateAccountModal()">
+                ➕ Nouveau Compte
+            </button>
+            <button class="glass-btn glass-btn-primary" onclick="testShowAddCourseModal()">
+                ➕ Ajouter Contenu
+            </button>
+            <button class="glass-btn glass-btn-primary" onclick="testShowAddQuizModal()">
+                ➕ Ajouter Module
+            </button>
+            <button class="glass-btn glass-btn-primary" onclick="testShowCreatePlanModal()">
+                ➕ Nouveau Plan
+            </button>
+            <button class="glass-btn glass-btn-primary" onclick="testExportReport()">
+                📊 Exporter Rapport
+            </button>
+        </div>
+        
+        <div id="log" style="margin-top: 2rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px; min-height: 200px;">
+            <h3 class="glass-text-primary">Log des Tests:</h3>
+            <div id="log-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        
+        function log(message) {
+            const logContent = document.getElementById('log-content');
+            const timestamp = new Date().toLocaleTimeString();
+            logContent.innerHTML += `<div style="color: white; margin: 0.5rem 0;">[${timestamp}] ${message}</div>`;
+            console.log(message);
+        }
+        
+        function testShowCreateAccountModal() {
+            log('✅ Test Nouveau Compte - Fonction appelée');
+            try {
+                if (typeof showCreateAccountModal === 'function') {
+                    showCreateAccountModal();
+                    log('✅ showCreateAccountModal() exécutée');
+                } else {
+                    log('❌ showCreateAccountModal() non trouvée');
+                }
+            } catch (error) {
+                log('❌ Erreur: ' + error.message);
+            }
+        }
+        
+        function testShowAddCourseModal() {
+            log('✅ Test Ajouter Contenu - Fonction appelée');
+            try {
+                if (typeof showAddCourseModal === 'function') {
+                    showAddCourseModal();
+                    log('✅ showAddCourseModal() exécutée');
+                } else {
+                    log('❌ showAddCourseModal() non trouvée');
+                }
+            } catch (error) {
+                log('❌ Erreur: ' + error.message);
+            }
+        }
+        
+        function testShowAddQuizModal() {
+            log('✅ Test Ajouter Module - Fonction appelée');
+            try {
+                if (typeof showAddQuizModal === 'function') {
+                    showAddQuizModal();
+                    log('✅ showAddQuizModal() exécutée');
+                } else {
+                    log('❌ showAddQuizModal() non trouvée');
+                }
+            } catch (error) {
+                log('❌ Erreur: ' + error.message);
+            }
+        }
+        
+        function testShowCreatePlanModal() {
+            log('✅ Test Nouveau Plan - Fonction appelée');
+            try {
+                if (typeof showCreatePlanModal === 'function') {
+                    showCreatePlanModal();
+                    log('✅ showCreatePlanModal() exécutée');
+                } else {
+                    log('❌ showCreatePlanModal() non trouvée');
+                }
+            } catch (error) {
+                log('❌ Erreur: ' + error.message);
+            }
+        }
+        
+        function testExportReport() {
+            log('✅ Test Exporter Rapport - Fonction appelée');
+            try {
+                if (typeof generateReport === 'function') {
+                    generateReport();
+                    log('✅ generateReport() exécutée');
+                } else {
+                    log('❌ generateReport() non trouvée');
+                }
+            } catch (error) {
+                log('❌ Erreur: ' + error.message);
+            }
+        }
+        
+        log('🚀 Page de test chargée. Testez les boutons ci-dessus.');
+    </script>
+</body>
+</html>

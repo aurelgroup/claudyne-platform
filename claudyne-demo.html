@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudyne - La force du savoir en héritage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-green: #009639;
+            --primary-red: #CE1126;
+            --primary-yellow: #FCDD09;
+            --claudine-gold: #D4AF37;
+            --claudine-bronze: #CD7F32;
+            --accent-purple: #8E44AD;
+            --neutral-light: #F8F9FA;
+            --text-dark: #2C3E50;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary-green), var(--accent-purple), var(--claudine-gold));
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            font-style: italic;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .tribute {
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--neutral-light);
+            border-radius: 15px;
+        }
+        
+        .status-item {
+            text-align: center;
+        }
+        
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .status-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .status-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .login-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--claudine-gold);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--claudine-gold), var(--accent-purple));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--claudine-gold);
+            border: 2px solid var(--claudine-gold);
+        }
+        
+        .prix-claudine {
+            background: linear-gradient(45deg, var(--claudine-gold), var(--claudine-bronze));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .leaderboard {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: var(--neutral-light);
+            transition: transform 0.2s;
+        }
+        
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .rank {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--claudine-gold);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .rank.first { background: var(--claudine-gold); }
+        .rank.second { background: #C0C0C0; }
+        .rank.third { background: var(--claudine-bronze); }
+        
+        .participant-info {
+            flex: 1;
+        }
+        
+        .participant-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .participant-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .points {
+            font-weight: bold;
+            color: var(--claudine-gold);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .feature {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--claudine-gold);
+        }
+        
+        .api-status {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .api-endpoint {
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .api-endpoint:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+        
+        .success { color: #27AE60; }
+        .error { color: #E74C3C; }
+        
+        .hidden { display: none; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .main-card { padding: 20px; }
+            .status { flex-direction: column; gap: 15px; }
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">👩🏾‍🏫</div>
+            <h1 class="title">Claudyne</h1>
+            <p class="subtitle">La force du savoir en héritage</p>
+            <p class="tribute">En mémoire de Meffo Mehtah Tchandjio Claudine</p>
+        </div>
+
+        <!-- Status du système -->
+        <div class="main-card">
+            <div class="status">
+                <div class="status-item">
+                    <div class="status-icon" id="backendStatus">⏳</div>
+                    <div class="status-label">API Backend</div>
+                    <div class="status-value" id="backendText">Connexion...</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">🏗️</div>
+                    <div class="status-label">Frontend</div>
+                    <div class="status-value">Demo HTML</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">💾</div>
+                    <div class="status-label">Base de données</div>
+                    <div class="status-value">Mock</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-icon">⚡</div>
+                    <div class="status-label">Cache</div>
+                    <div class="status-value">Mock</div>
+                </div>
+            </div>
+
+            <!-- Section de connexion -->
+            <div class="login-section">
+                <h2 style="text-align: center; margin-bottom: 25px; color: var(--claudine-gold);">
+                    🎯 Test de Connexion
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Email ou Téléphone</label>
+                    <input type="text" class="form-input" id="credential" placeholder="test@claudyne.com ou +237612345678">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" class="form-input" id="password" placeholder="123456">
+                </div>
+                
+                <button class="btn btn-primary" onclick="testLogin()">
+                    🚀 Tester la Connexion
+                </button>
+                
+                <button class="btn btn-secondary" onclick="testRegister()">
+                    ✨ Tester l'Inscription
+                </button>
+                
+                <div id="loginResult" class="hidden" style="margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+            </div>
+        </div>
+
+        <!-- Prix Claudine -->
+        <div class="prix-claudine">
+            <h2>🏆 Prix Claudine - Septembre 2025</h2>
+            <p style="margin-bottom: 15px;">Honorer l'excellence et la persévérance</p>
+            <button class="btn" style="background: rgba(255,255,255,0.2); color: white;" onclick="loadLeaderboard()">
+                📊 Voir le Classement National
+            </button>
+        </div>
+
+        <!-- Classement (chargé dynamiquement) -->
+        <div class="leaderboard" id="leaderboard" style="display: none;">
+            <h3 style="text-align: center; margin-bottom: 25px; color: var(--claudine-gold);">
+                🏆 Classement National Prix Claudine
+            </h3>
+            <div id="leaderboardContent">Chargement...</div>
+        </div>
+
+        <!-- Fonctionnalités -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                <div class="feature-title">Gestion Familiale</div>
+                <p>Jusqu'à 6 profils par famille avec gestionnaire dédié</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">⚔️</div>
+                <div class="feature-title">Battle Royale</div>
+                <p>Quiz éducatifs en temps réel par région</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🧪</div>
+                <div class="feature-title">Science Lab</div>
+                <p>Expériences virtuelles contexte camerounais</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <div class="feature-title">Paiement Local</div>
+                <p>MTN Money, Orange Money, cartes bancaires</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">Optimisé 2G/3G</div>
+                <p>Fonctionne même avec connexion lente</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">👩🏾‍🏫</div>
+                <div class="feature-title">Mentor Claudyne</div>
+                <p>IA inspirée par les valeurs de Claudine</p>
+            </div>
+        </div>
+
+        <!-- Liens API -->
+        <div class="api-status">
+            <a href="http://localhost:3001" class="api-endpoint" target="_blank">
+                🌐 API Root
+            </a>
+            <a href="http://localhost:3001/health" class="api-endpoint" target="_blank">
+                🩺 Health Check
+            </a>
+            <a href="http://localhost:3001/api" class="api-endpoint" target="_blank">
+                📡 API Info
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Test de l'API Backend
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch('http://localhost:3001/health');
+                const data = await response.json();
+                
+                document.getElementById('backendStatus').textContent = '✅';
+                document.getElementById('backendText').textContent = 'Opérationnel';
+                document.getElementById('backendText').className = 'status-value success';
+                
+                console.log('Backend Status:', data);
+            } catch (error) {
+                document.getElementById('backendStatus').textContent = '❌';
+                document.getElementById('backendText').textContent = 'Hors ligne';
+                document.getElementById('backendText').className = 'status-value error';
+                
+                console.error('Backend Error:', error);
+            }
+        }
+
+        // Test de connexion
+        async function testLogin() {
+            const credential = document.getElementById('credential').value || 'test@claudyne.com';
+            const password = document.getElementById('password').value || '123456';
+            const resultDiv = document.getElementById('loginResult');
+
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ credential, password })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div style="background: #D4EDDA; color: #155724; border-radius: 10px; padding: 15px;">
+                            <h4>✅ ${data.message}</h4>
+                            <p><strong>Utilisateur:</strong> ${data.data.user.firstName} ${data.data.user.lastName}</p>
+                            <p><strong>Famille:</strong> ${data.data.family.displayName}</p>
+                            <p><strong>Statut:</strong> ${data.data.family.status} (${data.data.family.subscriptionType})</p>
+                            <p><strong>Solde:</strong> ${data.data.family.walletBalance} FCFA</p>
+                            <p><strong>Points Claudine:</strong> ${data.data.family.totalClaudinePoints}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="background: #F8D7DA; color: #721C24; border-radius: 10px; padding: 15px;">
+                            <h4>❌ ${data.message}</h4>
+                        </div>
+                    `;
+                }
+                
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="background: #F8D7DA; color: #721C24; border-radius: 10px; padding: 15px;">
+                        <h4>❌ Erreur de connexion</h4>
+                        <p>Vérifiez que le backend est démarré sur http://localhost:3001</p>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+                console.error('Login Error:', error);
+            }
+        }
+
+        // Test d'inscription
+        async function testRegister() {
+            const registerData = {
+                firstName: 'Test',
+                lastName: 'Famille',
+                familyName: 'Famille Test',
+                email: 'famille.test@claudyne.com',
+                password: '123456',
+                acceptTerms: true
+            };
+
+            const resultDiv = document.getElementById('loginResult');
+
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registerData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div style="background: #D4EDDA; color: #155724; border-radius: 10px; padding: 15px;">
+                            <h4>✅ ${data.message}</h4>
+                            <p><strong>Famille créée:</strong> ${data.data.family.displayName}</p>
+                            <p><strong>Statut:</strong> ${data.data.family.status}</p>
+                            <p><strong>Essai gratuit:</strong> ${data.data.trial?.daysLeft} jours</p>
+                            <p><strong>Fonctionnalités:</strong> ${data.data.trial?.features.join(', ')}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="background: #F8D7DA; color: #721C24; border-radius: 10px; padding: 15px;">
+                            <h4>❌ ${data.message}</h4>
+                        </div>
+                    `;
+                }
+                
+                resultDiv.classList.remove('hidden');
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="background: #F8D7DA; color: #721C24; border-radius: 10px; padding: 15px;">
+                        <h4>❌ Erreur lors de l'inscription</h4>
+                        <p>Vérifiez que le backend est démarré sur http://localhost:3001</p>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+                console.error('Register Error:', error);
+            }
+        }
+
+        // Charger le classement Prix Claudine
+        async function loadLeaderboard() {
+            const leaderboardDiv = document.getElementById('leaderboard');
+            const contentDiv = document.getElementById('leaderboardContent');
+
+            try {
+                const response = await fetch('http://localhost:3001/api/prix-claudine/leaderboard');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const leaderboard = data.data.leaderboard;
+                    
+                    contentDiv.innerHTML = leaderboard.map((item, index) => `
+                        <div class="leaderboard-item">
+                            <div class="rank ${index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : ''}">${item.rank}</div>
+                            <div class="participant-info">
+                                <div class="participant-name">${item.recipient.name}</div>
+                                <div class="participant-details">${item.title} • ${item.region}, ${item.city}</div>
+                            </div>
+                            <div class="points">${item.points} pts</div>
+                        </div>
+                    `).join('');
+                    
+                    leaderboardDiv.style.display = 'block';
+                } else {
+                    contentDiv.innerHTML = '<p style="text-align: center; color: #E74C3C;">Erreur lors du chargement</p>';
+                    leaderboardDiv.style.display = 'block';
+                }
+            } catch (error) {
+                contentDiv.innerHTML = '<p style="text-align: center; color: #E74C3C;">Backend non disponible</p>';
+                leaderboardDiv.style.display = 'block';
+                console.error('Leaderboard Error:', error);
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBackendStatus();
+            
+            // Test automatique de l'API toutes les 30 secondes
+            setInterval(checkBackendStatus, 30000);
+        });
+    </script>
+</body>
+</html>

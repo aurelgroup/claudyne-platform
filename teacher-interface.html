@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Enseignant - Claudyne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F8FAFC;
+            color: #1F2937;
+        }
+
+        .teacher-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #3B82F6, #1E40AF);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem 1rem;
+            border-bottom: 1px solid #3B82F6;
+            text-align: center;
+        }
+
+        .teacher-logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .teacher-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .teacher-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(59, 130, 246, 0.3);
+            border-right: 3px solid #10B981;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .page-description {
+            color: #6B7280;
+            margin-top: 0.5rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid;
+        }
+
+        .stat-card.primary { border-left-color: #3B82F6; }
+        .stat-card.secondary { border-left-color: #10B981; }
+        .stat-card.warning { border-left-color: #F59E0B; }
+        .stat-card.danger { border-left-color: #EF4444; }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-title {
+            color: #6B7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive { color: #10B981; }
+        .stat-change.negative { color: #EF4444; }
+
+        /* Content Sections */
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563EB;
+        }
+
+        .btn-secondary {
+            background: #6B7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+        }
+
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .data-table th {
+            background: #F9FAFB;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .data-table tr:hover {
+            background: #F9FAFB;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.published {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.draft {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.pending {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .status-badge.excellent {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.good {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .status-badge.needs-improvement {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3B82F6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.5rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #10B981);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #D1D5DB;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            background: #F9FAFB;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #3B82F6;
+            background: #EFF6FF;
+        }
+
+        .file-upload.dragover {
+            border-color: #10B981;
+            background: #ECFDF5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="teacher-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="teacher-logo">👨‍🏫</div>
+                <div class="teacher-title">Espace Enseignant</div>
+                <div class="teacher-subtitle" id="teacher-name">Prof. Marie Ndongo</div>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                            <span class="nav-icon">📊</span>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('content-creation')">
+                            <span class="nav-icon">📝</span>
+                            Création de contenu
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('student-tracking')">
+                            <span class="nav-icon">👥</span>
+                            Suivi des étudiants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('feedback-corrections')">
+                            <span class="nav-icon">✍️</span>
+                            Corrections & Feedback
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('virtual-classroom')">
+                            <span class="nav-icon">🎥</span>
+                            Classe virtuelle
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('gamification')">
+                            <span class="nav-icon">🏆</span>
+                            Gamification
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('reports')">
+                            <span class="nav-icon">📈</span>
+                            Rapports
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Tableau de bord Enseignant</h1>
+                        <p class="page-description">Vue d'ensemble de vos activités pédagogiques</p>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-header">
+                            <span class="stat-title">Étudiants Actifs</span>
+                            <span class="stat-icon">👨‍🎓</span>
+                        </div>
+                        <div class="stat-value" id="active-students">-</div>
+                        <div class="stat-change positive">+8 cette semaine</div>
+                    </div>
+
+                    <div class="stat-card secondary">
+                        <div class="stat-header">
+                            <span class="stat-title">Cours Publiés</span>
+                            <span class="stat-icon">📚</span>
+                        </div>
+                        <div class="stat-value" id="published-courses">-</div>
+                        <div class="stat-change positive">+3 ce mois</div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-header">
+                            <span class="stat-title">Quiz Complétés</span>
+                            <span class="stat-icon">✅</span>
+                        </div>
+                        <div class="stat-value" id="completed-quizzes">-</div>
+                        <div class="stat-change positive">+15% cette semaine</div>
+                    </div>
+
+                    <div class="stat-card danger">
+                        <div class="stat-header">
+                            <span class="stat-title">Score Moyen</span>
+                            <span class="stat-icon">📊</span>
+                        </div>
+                        <div class="stat-value" id="average-score">-</div>
+                        <div class="stat-change positive">+2.3% ce mois</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Activité récente</h2>
+                        <button class="btn btn-primary btn-sm" onclick="refreshActivity()">🔄 Actualiser</button>
+                    </div>
+                    <div class="section-content">
+                        <div id="recent-activity">
+                            <div class="loading"></div> Chargement des activités...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Actions rapides</h2>
+                    </div>
+                    <div class="section-content">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <button class="btn btn-primary" onclick="showSection('content-creation')" style="padding: 1rem; height: auto;">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                                <div>Nouveau Cours</div>
+                            </button>
+                            <button class="btn btn-success" onclick="createQuiz()" style="padding: 1rem; height: auto;">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">❓</div>
+                                <div>Nouveau Quiz</div>
+                            </button>
+                            <button class="btn btn-secondary" onclick="showSection('student-tracking')" style="padding: 1rem; height: auto;">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+                                <div>Voir Étudiants</div>
+                            </button>
+                            <button class="btn btn-primary" onclick="startLiveClass()" style="padding: 1rem; height: auto;">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎥</div>
+                                <div>Classe Live</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Creation Section -->
+            <div id="content-creation-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Création de contenu</h1>
+                        <p class="page-description">Créez et gérez vos cours, vidéos et quiz</p>
+                    </div>
+                </div>
+
+                <!-- Content Creation Form -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Nouveau contenu pédagogique</h2>
+                        <button class="btn btn-primary" onclick="publishContent()">📤 Publier</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="content-title">Titre du cours</label>
+                                <input type="text" id="content-title" placeholder="Ex: Les fractions - Niveau CE2">
+                            </div>
+                            <div class="form-group">
+                                <label for="content-subject">Matière</label>
+                                <select id="content-subject">
+                                    <option value="mathematics">Mathématiques</option>
+                                    <option value="french">Français</option>
+                                    <option value="english">Anglais</option>
+                                    <option value="sciences">Sciences</option>
+                                    <option value="history">Histoire-Géographie</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="content-level">Niveau</label>
+                                <select id="content-level">
+                                    <option value="6eme">6ème</option>
+                                    <option value="5eme">5ème</option>
+                                    <option value="4eme">4ème</option>
+                                    <option value="3eme">3ème</option>
+                                    <option value="seconde">Seconde</option>
+                                    <option value="premiere">Première</option>
+                                    <option value="terminale">Terminale</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="content-duration">Durée estimée (min)</label>
+                                <input type="number" id="content-duration" placeholder="45" min="5" max="120">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label for="content-description">Description du cours</label>
+                            <textarea id="content-description" placeholder="Décrivez les objectifs et le contenu de ce cours..."></textarea>
+                        </div>
+
+                        <!-- File Upload Area -->
+                        <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                            <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.mp3,.jpg,.png" style="display: none;" onchange="handleFileUpload(event)">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+                            <h3>Glissez vos fichiers ici ou cliquez pour sélectionner</h3>
+                            <p style="color: #6B7280; margin-top: 0.5rem;">Documents, vidéos, images (PDF, DOC, MP4, JPG...)</p>
+                        </div>
+
+                        <div id="uploaded-files" style="margin-top: 1rem;"></div>
+
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #E5E7EB;">
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <button class="btn btn-primary" onclick="saveAsDraft()">💾 Sauvegarder brouillon</button>
+                                <button class="btn btn-success" onclick="publishContent()">🚀 Publier maintenant</button>
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="checkbox" id="notify-students" style="margin-right: 0.5rem;">
+                                    Notifier les étudiants
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Content -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Mes contenus</h2>
+                        <select id="content-filter" style="padding: 0.375rem 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            <option value="all">Tous les statuts</option>
+                            <option value="published">Publiés</option>
+                            <option value="draft">Brouillons</option>
+                            <option value="pending">En attente</option>
+                        </select>
+                    </div>
+                    <div class="section-content">
+                        <div id="content-list">
+                            <div class="loading"></div> Chargement de vos contenus...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other sections will be added here -->
+            <div id="student-tracking-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Suivi des étudiants</h1>
+                        <p class="page-description">Progression, scores et engagement de vos étudiants</p>
+                    </div>
+                </div>
+
+                <!-- Student List -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Liste des étudiants</h2>
+                        <button class="btn btn-primary btn-sm" onclick="exportStudentData()">📊 Exporter données</button>
+                    </div>
+                    <div class="section-content">
+                        <div id="student-list-table">
+                            <div class="loading"></div> Chargement de la liste des étudiants...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add other sections here... -->
+            <div id="feedback-corrections-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Corrections & Feedback</h1>
+                        <p class="page-description">Donnez des commentaires personnalisés à vos étudiants</p>
+                    </div>
+                </div>
+                <!-- Content for feedback section -->
+            </div>
+
+            <div id="virtual-classroom-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Classe virtuelle</h1>
+                        <p class="page-description">Sessions en direct et visioconférence</p>
+                    </div>
+                </div>
+                <!-- Content for virtual classroom -->
+            </div>
+
+            <div id="gamification-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Gamification</h1>
+                        <p class="page-description">Attribution de badges, points et récompenses</p>
+                    </div>
+                </div>
+                <!-- Content for gamification -->
+            </div>
+
+            <div id="reports-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Rapports pédagogiques</h1>
+                        <p class="page-description">Statistiques par classe et matière</p>
+                    </div>
+                </div>
+                <!-- Content for reports -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        let currentSection = 'dashboard';
+        let uploadedFiles = [];
+
+        // Navigation entre sections
+        function showSection(sectionName) {
+            // Masquer toutes les sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Afficher la section demandée
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+
+            // Mettre à jour la navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Charger les données de la section
+            loadSectionData(sectionName);
+            currentSection = sectionName;
+        }
+
+        // Chargement des données par section
+        async function loadSectionData(section) {
+            switch (section) {
+                case 'dashboard':
+                    await loadTeacherDashboard();
+                    break;
+                case 'content-creation':
+                    await loadTeacherContent();
+                    break;
+                case 'student-tracking':
+                    await loadStudentTracking();
+                    break;
+            }
+        }
+
+        // Load Teacher Dashboard
+        async function loadTeacherDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/dashboard`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('active-students').textContent = data.data.stats.activeStudents;
+                    document.getElementById('published-courses').textContent = data.data.stats.publishedCourses;
+                    document.getElementById('completed-quizzes').textContent = data.data.stats.completedQuizzes;
+                    document.getElementById('average-score').textContent = data.data.stats.averageScore + '%';
+
+                    // Recent activity
+                    const activityHtml = data.data.recentActivity.map(activity => `
+                        <div style="padding: 0.75rem 0; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 1rem;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                                ${activity.icon}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500;">${activity.message}</div>
+                                <div style="font-size: 0.75rem; color: #6B7280; margin-top: 0.25rem;">
+                                    ${formatDate(activity.timestamp)}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('recent-activity').innerHTML = activityHtml || '<p>Aucune activité récente</p>';
+                }
+            } catch (error) {
+                console.error('Erreur chargement dashboard enseignant:', error);
+                document.getElementById('recent-activity').innerHTML = '<p style="color: #EF4444;">❌ Erreur de chargement</p>';
+            }
+        }
+
+        // Load Teacher Content
+        async function loadTeacherContent() {
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/content`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const contentHtml = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Matière</th>
+                                    <th>Niveau</th>
+                                    <th>Vues</th>
+                                    <th>Statut</th>
+                                    <th>Dernière modification</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.data.content.map(item => `
+                                    <tr>
+                                        <td style="font-weight: 500;">${item.title}</td>
+                                        <td>${item.subject}</td>
+                                        <td>
+                                            <span style="background: #F3F4F6; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                                                ${item.level}
+                                            </span>
+                                        </td>
+                                        <td style="font-weight: 600; color: #3B82F6;">${item.views}</td>
+                                        <td>
+                                            <span class="status-badge ${item.status}">${getStatusLabel(item.status)}</span>
+                                        </td>
+                                        <td style="font-size: 0.75rem; color: #6B7280;">${formatDate(item.updatedAt)}</td>
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" onclick="editContent('${item.id}')">✏️ Modifier</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+
+                    document.getElementById('content-list').innerHTML = contentHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement contenu:', error);
+                document.getElementById('content-list').innerHTML = '<p style="color: #EF4444;">❌ Erreur de chargement</p>';
+            }
+        }
+
+        // Load Student Tracking
+        async function loadStudentTracking() {
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/students`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const studentsHtml = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Étudiant</th>
+                                    <th>Classe</th>
+                                    <th>Progression</th>
+                                    <th>Score Moyen</th>
+                                    <th>Temps d'étude</th>
+                                    <th>Dernière activité</th>
+                                    <th>Performance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.data.students.map(student => `
+                                    <tr>
+                                        <td>
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #10B981); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem;">
+                                                    ${student.firstName.charAt(0)}${student.lastName.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <div style="font-weight: 500;">${student.firstName} ${student.lastName}</div>
+                                                    <div style="font-size: 0.75rem; color: #6B7280;">${student.email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${student.className}</td>
+                                        <td>
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div class="progress-bar" style="width: 80px;">
+                                                    <div class="progress-fill" style="width: ${student.progressPercentage}%;"></div>
+                                                </div>
+                                                <span style="font-size: 0.75rem; font-weight: 600;">${student.progressPercentage}%</span>
+                                            </div>
+                                        </td>
+                                        <td style="font-weight: 600; color: ${student.averageScore >= 80 ? '#10B981' : student.averageScore >= 60 ? '#F59E0B' : '#EF4444'};">
+                                            ${student.averageScore}%
+                                        </td>
+                                        <td style="font-weight: 500;">${student.studyTime}h</td>
+                                        <td style="font-size: 0.75rem; color: #6B7280;">${formatDate(student.lastActivity)}</td>
+                                        <td>
+                                            <span class="status-badge ${student.performance.toLowerCase().replace(' ', '-')}">${student.performance}</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" onclick="viewStudentProfile('${student.id}')">👤 Profil</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+
+                    document.getElementById('student-list-table').innerHTML = studentsHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement étudiants:', error);
+                document.getElementById('student-list-table').innerHTML = '<p style="color: #EF4444;">❌ Erreur de chargement</p>';
+            }
+        }
+
+        // File Upload Handling
+        function handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+            });
+            displayUploadedFiles();
+        }
+
+        function displayUploadedFiles() {
+            const filesHtml = uploadedFiles.map((file, index) => `
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; background: #F3F4F6; border-radius: 6px; margin-bottom: 0.5rem;">
+                    <div style="font-size: 1.5rem;">${getFileIcon(file.type)}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500;">${file.name}</div>
+                        <div style="font-size: 0.75rem; color: #6B7280;">${formatFileSize(file.size)}</div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="removeFile(${index})">🗑️</button>
+                </div>
+            `).join('');
+            
+            document.getElementById('uploaded-files').innerHTML = filesHtml;
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayUploadedFiles();
+        }
+
+        function getFileIcon(type) {
+            if (type.includes('video')) return '🎥';
+            if (type.includes('audio')) return '🎵';
+            if (type.includes('image')) return '🖼️';
+            if (type.includes('pdf')) return '📄';
+            if (type.includes('document') || type.includes('word')) return '📝';
+            if (type.includes('presentation')) return '📊';
+            return '📁';
+        }
+
+        function formatFileSize(bytes) {
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            if (bytes === 0) return '0 B';
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Content Actions
+        async function publishContent() {
+            const contentData = {
+                title: document.getElementById('content-title').value,
+                subject: document.getElementById('content-subject').value,
+                level: document.getElementById('content-level').value,
+                duration: document.getElementById('content-duration').value,
+                description: document.getElementById('content-description').value,
+                files: uploadedFiles,
+                notifyStudents: document.getElementById('notify-students').checked
+            };
+
+            if (!contentData.title || !contentData.description) {
+                alert('❌ Veuillez remplir au moins le titre et la description');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/content`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ...contentData, status: 'published' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Contenu publié avec succès !');
+                    resetContentForm();
+                    loadTeacherContent();
+                } else {
+                    alert('❌ Erreur: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Erreur publication:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        async function saveAsDraft() {
+            // Similar to publishContent but with status: 'draft'
+            const contentData = {
+                title: document.getElementById('content-title').value,
+                subject: document.getElementById('content-subject').value,
+                level: document.getElementById('content-level').value,
+                duration: document.getElementById('content-duration').value,
+                description: document.getElementById('content-description').value,
+                files: uploadedFiles,
+                status: 'draft'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/content`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(contentData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('💾 Brouillon sauvegardé !');
+                    loadTeacherContent();
+                } else {
+                    alert('❌ Erreur: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        function resetContentForm() {
+            document.getElementById('content-title').value = '';
+            document.getElementById('content-description').value = '';
+            document.getElementById('content-duration').value = '';
+            uploadedFiles = [];
+            displayUploadedFiles();
+        }
+
+        // Utility Functions
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                published: 'Publié',
+                draft: 'Brouillon',
+                pending: 'En attente',
+                excellent: 'Excellent',
+                good: 'Bon',
+                'needs-improvement': 'À améliorer'
+            };
+            return labels[status] || status;
+        }
+
+        // Quick Actions
+        function createQuiz() {
+            alert('Création de quiz - Fonctionnalité à implémenter');
+        }
+
+        function startLiveClass() {
+            alert('Classe en direct - Fonctionnalité à implémenter');
+        }
+
+        function refreshActivity() {
+            loadTeacherDashboard();
+        }
+
+        function editContent(contentId) {
+            alert(`Édition du contenu ${contentId} - Fonctionnalité à implémenter`);
+        }
+
+        function viewStudentProfile(studentId) {
+            alert(`Profil étudiant ${studentId} - Fonctionnalité à implémenter`);
+        }
+
+        function exportStudentData() {
+            alert('Export des données étudiants - Fonctionnalité à implémenter');
+        }
+
+        // Chargement initial
+        window.addEventListener('load', function() {
+            loadTeacherDashboard();
+        });
+
+        // Drag and Drop for file upload
+        const fileUpload = document.querySelector('.file-upload');
+        
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                uploadedFiles.push({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+            });
+            displayUploadedFiles();
+        });
+    </script>
+</body>
+</html>

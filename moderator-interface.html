@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudyne - Interface Modérateur/Validateur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "🔍";
+            margin-right: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .card h3::before {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .pending-validation h3::before { content: "⏳"; }
+        .content-review h3::before { content: "📚"; }
+        .forum-moderation h3::before { content: "💬"; }
+        .quality-control h3::before { content: "⭐"; }
+        .reports h3::before { content: "📊"; }
+        .user-management h3::before { content: "👥"; }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success { background: linear-gradient(45deg, #4CAF50, #45a049); }
+        .btn-danger { background: linear-gradient(45deg, #f44336, #da190b); }
+        .btn-warning { background: linear-gradient(45deg, #ff9800, #e68900); }
+
+        .content-item {
+            background: #f8f9ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .content-meta {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .content-actions {
+            margin-top: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .forum-post {
+            background: #f8f9ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-author {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .post-time {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .post-content {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .quality-score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .star {
+            font-size: 1.5em;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .star.active {
+            color: #ffa500;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { background: #4CAF50; }
+        .notification.error { background: #f44336; }
+        .notification.info { background: #2196F3; }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Claudyne - Modération</div>
+            <div class="user-info">
+                <span>👤 <span id="moderatorName">Jean Modérateur</span></span>
+                <span class="user-badge">Modérateur</span>
+                <button class="btn" onclick="logout()">🚪 Déconnexion</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card pending-validation">
+                <h3>Contenus en Attente</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="pendingCourses">12</div>
+                        <div>Cours</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="pendingQuizzes">8</div>
+                        <div>Quiz</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="pendingResources">15</div>
+                        <div>Ressources</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="showPendingContent()">📋 Voir la Liste</button>
+                <button class="btn btn-success" onclick="bulkValidate()">✅ Validation Groupée</button>
+            </div>
+
+            <div class="card content-review">
+                <h3>Révision de Contenu</h3>
+                <div id="contentToReview">
+                    <div class="content-item">
+                        <div class="content-meta">
+                            <span class="status-badge status-pending">En attente</span>
+                            Cours - Mathématiques CE1 - 15/01/2025
+                        </div>
+                        <strong>Les fractions simples</strong>
+                        <p>Introduction aux fractions avec des exemples pratiques...</p>
+                        <div class="content-actions">
+                            <button class="btn btn-success" onclick="validateContent(1)">✅ Approuver</button>
+                            <button class="btn btn-danger" onclick="rejectContent(1)">❌ Rejeter</button>
+                            <button class="btn btn-warning" onclick="requestRevision(1)">📝 Demander Révision</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="loadMoreContent()">⬇️ Charger Plus</button>
+            </div>
+
+            <div class="card forum-moderation">
+                <h3>Modération Forum</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="reportedPosts">5</div>
+                        <div>Posts Signalés</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="activeDiscussions">42</div>
+                        <div>Discussions</div>
+                    </div>
+                </div>
+                <div id="reportedContent">
+                    <div class="forum-post">
+                        <div class="post-header">
+                            <span class="post-author">Marie Elève</span>
+                            <span class="post-time">Il y a 2h</span>
+                        </div>
+                        <div class="post-content">Ce cours est vraiment difficile à comprendre...</div>
+                        <div class="content-actions">
+                            <button class="btn btn-success" onclick="approvePost(1)">✅ Approuver</button>
+                            <button class="btn btn-danger" onclick="deletePost(1)">🗑️ Supprimer</button>
+                            <button class="btn btn-warning" onclick="warnUser(1)">⚠️ Avertir</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="showForumDashboard()">💬 Tableau de Bord Forum</button>
+            </div>
+
+            <div class="card quality-control">
+                <h3>Contrôle Qualité</h3>
+                <div class="quality-score">
+                    <span>Note Qualité Globale:</span>
+                    <div class="stars">
+                        <span class="star active">⭐</span>
+                        <span class="star active">⭐</span>
+                        <span class="star active">⭐</span>
+                        <span class="star active">⭐</span>
+                        <span class="star">⭐</span>
+                    </div>
+                    <span><strong>4.2/5</strong></span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="qualityChecks">28</div>
+                        <div>Vérifications</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="improvements">7</div>
+                        <div>Améliorations</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="runQualityCheck()">🔍 Audit Qualité</button>
+                <button class="btn btn-warning" onclick="generateQualityReport()">📈 Rapport Qualité</button>
+            </div>
+
+            <div class="card reports">
+                <h3>Rapports & Analytics</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="dailyValidations">45</div>
+                        <div>Validations/Jour</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="averageTime">12min</div>
+                        <div>Temps Moyen</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="generateModerationReport()">📊 Rapport Modération</button>
+                <button class="btn" onclick="exportData()">💾 Exporter Données</button>
+            </div>
+
+            <div class="card user-management">
+                <h3>Gestion Utilisateurs</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="suspendedUsers">3</div>
+                        <div>Suspendus</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="warningsIssued">12</div>
+                        <div>Avertissements</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="showUserManagement()">👥 Gérer Utilisateurs</button>
+                <button class="btn btn-warning" onclick="showViolations()">⚠️ Infractions</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour révision de contenu -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('contentModal')">&times;</span>
+            <h2>Révision de Contenu</h2>
+            <div id="modalContent">
+                <div class="form-group">
+                    <label>Titre du Contenu:</label>
+                    <input type="text" id="contentTitle" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Auteur:</label>
+                    <input type="text" id="contentAuthor" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Date de Soumission:</label>
+                    <input type="text" id="contentDate" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Contenu:</label>
+                    <textarea id="contentBody" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Commentaires de Modération:</label>
+                    <textarea id="moderationComments" placeholder="Ajoutez vos commentaires..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Action:</label>
+                    <select id="moderationAction">
+                        <option value="approve">Approuver</option>
+                        <option value="reject">Rejeter</option>
+                        <option value="revision">Demander Révision</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="submitModeration()">💾 Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour gestion des utilisateurs -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('userModal')">&times;</span>
+            <h2>Gestion des Utilisateurs</h2>
+            <div id="userList">
+                <!-- Liste des utilisateurs sera chargée ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        let currentUser = {
+            id: 1,
+            name: 'Jean Modérateur',
+            role: 'moderator',
+            permissions: ['validate_content', 'moderate_forum', 'manage_users', 'quality_control']
+        };
+
+        // Gestion des contenus en attente
+        function showPendingContent() {
+            fetch('/api/moderator/pending-content')
+                .then(response => response.json())
+                .then(data => {
+                    // Afficher la liste des contenus en attente
+                    console.log('Contenus en attente:', data);
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors du chargement des contenus', 'error');
+                });
+        }
+
+        function validateContent(contentId) {
+            fetch(`/api/moderator/validate-content/${contentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'approve',
+                    moderatorId: currentUser.id,
+                    comments: ''
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showNotification('Contenu approuvé avec succès', 'success');
+                updateStats();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la validation', 'error');
+            });
+        }
+
+        function rejectContent(contentId) {
+            const comments = prompt('Raison du rejet:');
+            if (comments) {
+                fetch(`/api/moderator/validate-content/${contentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'reject',
+                        moderatorId: currentUser.id,
+                        comments: comments
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification('Contenu rejeté', 'info');
+                    updateStats();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors du rejet', 'error');
+                });
+            }
+        }
+
+        function requestRevision(contentId) {
+            const comments = prompt('Commentaires pour la révision:');
+            if (comments) {
+                fetch(`/api/moderator/validate-content/${contentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'revision',
+                        moderatorId: currentUser.id,
+                        comments: comments
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification('Révision demandée', 'info');
+                    updateStats();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la demande de révision', 'error');
+                });
+            }
+        }
+
+        function bulkValidate() {
+            if (confirm('Valider tous les contenus en attente approuvables?')) {
+                fetch('/api/moderator/bulk-validate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        moderatorId: currentUser.id,
+                        action: 'approve_safe'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification(`${data.validated} contenus validés`, 'success');
+                    updateStats();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la validation groupée', 'error');
+                });
+            }
+        }
+
+        // Gestion du forum
+        function approvePost(postId) {
+            fetch(`/api/moderator/forum/approve/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    moderatorId: currentUser.id
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showNotification('Post approuvé', 'success');
+                updateForumStats();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de l\'approbation', 'error');
+            });
+        }
+
+        function deletePost(postId) {
+            if (confirm('Supprimer définitivement ce post?')) {
+                fetch(`/api/moderator/forum/delete/${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        moderatorId: currentUser.id,
+                        reason: 'Violation des règles'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification('Post supprimé', 'info');
+                    updateForumStats();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la suppression', 'error');
+                });
+            }
+        }
+
+        function warnUser(userId) {
+            const reason = prompt('Raison de l\'avertissement:');
+            if (reason) {
+                fetch(`/api/moderator/users/warn/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        moderatorId: currentUser.id,
+                        reason: reason,
+                        severity: 'warning'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification('Avertissement envoyé', 'info');
+                    updateUserStats();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de l\'avertissement', 'error');
+                });
+            }
+        }
+
+        // Contrôle qualité
+        function runQualityCheck() {
+            showNotification('Audit qualité en cours...', 'info');
+            fetch('/api/moderator/quality-check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    moderatorId: currentUser.id,
+                    checkType: 'full_audit'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showNotification(`Audit terminé: ${data.score}/5 étoiles`, 'success');
+                updateQualityStats(data);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de l\'audit', 'error');
+            });
+        }
+
+        function generateQualityReport() {
+            fetch('/api/moderator/quality-report')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `rapport-qualite-${new Date().toISOString().split('T')[0]}.pdf`;
+                    a.click();
+                    showNotification('Rapport généré et téléchargé', 'success');
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la génération du rapport', 'error');
+                });
+        }
+
+        // Rapports et analytics
+        function generateModerationReport() {
+            fetch('/api/moderator/moderation-report')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `rapport-moderation-${new Date().toISOString().split('T')[0]}.pdf`;
+                    a.click();
+                    showNotification('Rapport de modération téléchargé', 'success');
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la génération du rapport', 'error');
+                });
+        }
+
+        function exportData() {
+            fetch('/api/moderator/export-data')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `donnees-moderation-${new Date().toISOString().split('T')[0]}.json`;
+                    a.click();
+                    showNotification('Données exportées', 'success');
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de l\'export', 'error');
+                });
+        }
+
+        // Gestion des utilisateurs
+        function showUserManagement() {
+            fetch('/api/moderator/users')
+                .then(response => response.json())
+                .then(users => {
+                    const userList = document.getElementById('userList');
+                    userList.innerHTML = users.map(user => `
+                        <div class="content-item">
+                            <div class="content-meta">
+                                <span class="status-badge ${user.status === 'active' ? 'status-approved' : 'status-pending'}">${user.status}</span>
+                                ${user.email} - ${user.role}
+                            </div>
+                            <strong>${user.name}</strong>
+                            <p>Inscrit le: ${new Date(user.createdAt).toLocaleDateString()}</p>
+                            <p>Dernière connexion: ${new Date(user.lastLogin).toLocaleDateString()}</p>
+                            <div class="content-actions">
+                                <button class="btn btn-warning" onclick="suspendUser(${user.id})">⏸️ Suspendre</button>
+                                <button class="btn btn-danger" onclick="banUser(${user.id})">🚫 Bannir</button>
+                                <button class="btn" onclick="resetPassword(${user.id})">🔑 Reset MdP</button>
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('userModal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors du chargement des utilisateurs', 'error');
+                });
+        }
+
+        function suspendUser(userId) {
+            const duration = prompt('Durée de suspension (en jours):');
+            const reason = prompt('Raison de la suspension:');
+            
+            if (duration && reason) {
+                fetch(`/api/moderator/users/suspend/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        moderatorId: currentUser.id,
+                        duration: parseInt(duration),
+                        reason: reason
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification('Utilisateur suspendu', 'info');
+                    showUserManagement(); // Refresh the list
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la suspension', 'error');
+                });
+            }
+        }
+
+        function banUser(userId) {
+            if (confirm('Bannir définitivement cet utilisateur?')) {
+                const reason = prompt('Raison du bannissement:');
+                if (reason) {
+                    fetch(`/api/moderator/users/ban/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            moderatorId: currentUser.id,
+                            reason: reason
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        showNotification('Utilisateur banni', 'info');
+                        showUserManagement(); // Refresh the list
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        showNotification('Erreur lors du bannissement', 'error');
+                    });
+                }
+            }
+        }
+
+        // Utilitaires
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function updateStats() {
+            // Mettre à jour les statistiques de validation
+            fetch('/api/moderator/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('pendingCourses').textContent = data.pendingCourses || 0;
+                    document.getElementById('pendingQuizzes').textContent = data.pendingQuizzes || 0;
+                    document.getElementById('pendingResources').textContent = data.pendingResources || 0;
+                    document.getElementById('dailyValidations').textContent = data.dailyValidations || 0;
+                })
+                .catch(error => console.error('Erreur stats:', error));
+        }
+
+        function updateForumStats() {
+            fetch('/api/moderator/forum-stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('reportedPosts').textContent = data.reportedPosts || 0;
+                    document.getElementById('activeDiscussions').textContent = data.activeDiscussions || 0;
+                })
+                .catch(error => console.error('Erreur stats forum:', error));
+        }
+
+        function updateUserStats() {
+            fetch('/api/moderator/user-stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('suspendedUsers').textContent = data.suspendedUsers || 0;
+                    document.getElementById('warningsIssued').textContent = data.warningsIssued || 0;
+                })
+                .catch(error => console.error('Erreur stats utilisateurs:', error));
+        }
+
+        function logout() {
+            if (confirm('Vous êtes sûr de vouloir vous déconnecter?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            updateForumStats();
+            updateUserStats();
+            
+            // Actualiser les stats toutes les 5 minutes
+            setInterval(() => {
+                updateStats();
+                updateForumStats();
+                updateUserStats();
+            }, 300000);
+        });
+
+        // Fermer les modals en cliquant à l'extérieur
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

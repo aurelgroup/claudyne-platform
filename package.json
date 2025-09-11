@@ -1,0 +1,71 @@
+{
+  "name": "claudyne-platform",
+  "version": "1.2.0",
+  "description": "Plateforme éducative camerounaise - La force du savoir en héritage. En hommage à Meffo Mehtah Tchandjio Claudine.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "admin": "node serve-admin.js",
+    "backend": "cd backend && node minimal-server.js",
+    "backend:dev": "cd backend && npm run dev",
+    "build": "echo 'Building Claudyne platform...' && npm run optimize",
+    "optimize": "node scripts/optimize-assets.js",
+    "test": "echo 'Running tests...' && exit 0",
+    "lint": "echo 'Linting code...'",
+    "deploy": "echo 'Deploying Claudyne...'",
+    "install:all": "npm install && cd backend && npm install"
+  },
+  "keywords": [
+    "education",
+    "cameroon",
+    "learning",
+    "family",
+    "claudine",
+    "pwa",
+    "mobile-first",
+    "2g-3g-optimized"
+  ],
+  "author": "Équipe Claudyne <contact@claudyne.com>",
+  "license": "MIT",
+  "homepage": "https://www.claudyne.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/claudyne.com/claudyne-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/claudyne.com/claudyne-platform/issues",
+    "email": "support@claudyne.com"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "config": {
+    "port": 3007,
+    "api_port": 3001
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "claudyne": {
+    "tribute": "En hommage à Meffo Mehtah Tchandjio Claudine 👨‍👩‍👧‍👦",
+    "mission": "La force du savoir en héritage",
+    "target": "Familles camerounaises",
+    "optimized_for": ["2G", "3G", "Mobile", "Low-bandwidth"],
+    "features": {
+      "pwa": true,
+      "offline": true,
+      "mobile_payments": ["MTN", "Orange"],
+      "glassmorphism": true,
+      "service_worker": true,
+      "smart_caching": true
+    }
+  }
+}

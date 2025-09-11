@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation Claudyne</title>
+    <link rel="stylesheet" href="styles/glassmorphism.css">
+    <style>
+        .container {
+            display: flex;
+            min-height: 100vh;
+            padding: 2rem;
+            gap: 2rem;
+        }
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+        .content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.3);
+        }
+        .log {
+            background: rgba(0,0,0,0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3 class="glass-text-primary">Navigation</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('dashboard'); return false;">
+                        🏠 Tableau de bord
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('users'); return false;">
+                        👥 Gestion des familles
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('content'); return false;">
+                        📚 Contenu Pédagogique
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('settings'); return false;">
+                        ⚙️ Paramètres
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content">
+            <div id="dashboard-section" class="section active">
+                <h2 class="glass-text-primary">🏠 Tableau de bord</h2>
+                <p class="glass-text-secondary">Bienvenue dans l'interface admin Claudyne</p>
+            </div>
+            
+            <div id="users-section" class="section">
+                <h2 class="glass-text-primary">👥 Gestion des familles</h2>
+                <p class="glass-text-secondary">Ici vous pouvez gérer les comptes familiaux</p>
+            </div>
+            
+            <div id="content-section" class="section">
+                <h2 class="glass-text-primary">📚 Contenu Pédagogique</h2>
+                <p class="glass-text-secondary">Gérez les cours et modules d'apprentissage</p>
+            </div>
+            
+            <div id="settings-section" class="section">
+                <h2 class="glass-text-primary">⚙️ Paramètres</h2>
+                <p class="glass-text-secondary">Configuration du système</p>
+            </div>
+            
+            <div class="log" id="debug-log">
+                <strong style="color: #00ff00;">Debug Log:</strong><br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('debug-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div style="color: #00ff00;">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function showSection(sectionName) {
+            log(`🔄 Tentative d'affichage de la section: ${sectionName}`);
+            
+            // Masquer toutes les sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+                log(`  - Section ${section.id} masquée`);
+            });
+
+            // Afficher la section demandée
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+                log(`✅ Section ${sectionName}-section affichée`);
+            } else {
+                log(`❌ Section ${sectionName}-section non trouvée`);
+                return;
+            }
+
+            // Mettre à jour la navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Trouver et activer le lien correspondant
+            const clickedLink = event.target.closest('.nav-link');
+            if (clickedLink) {
+                clickedLink.classList.add('active');
+                log(`✅ Navigation mise à jour - lien actif: ${clickedLink.textContent.trim()}`);
+            } else {
+                log(`❌ Lien cliqué non trouvé`);
+            }
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', function() {
+            log('🚀 Page de test chargée');
+            log('📍 URL actuelle: ' + window.location.href);
+            
+            // Activer le premier lien
+            const firstLink = document.querySelector('.nav-link');
+            if (firstLink) {
+                firstLink.classList.add('active');
+                log('✅ Premier lien activé par défaut');
+            }
+        });
+
+        // Surveiller les changements d'URL
+        window.addEventListener('hashchange', function() {
+            log('⚠️ Hash changé vers: ' + window.location.hash);
+        });
+
+        // Intercepter tous les clics sur les liens
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('a[href="#"]')) {
+                log('🔗 Clic détecté sur lien avec href="#"');
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

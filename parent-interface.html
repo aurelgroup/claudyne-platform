@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Famille - Claudyne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F8FAFC;
+            color: #1F2937;
+        }
+
+        .parent-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem 1rem;
+            border-bottom: 1px solid #7C3AED;
+            text-align: center;
+        }
+
+        .parent-logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .parent-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .parent-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .family-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .subscription-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-right: 3px solid #F59E0B;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .page-description {
+            color: #6B7280;
+            margin-top: 0.5rem;
+        }
+
+        /* Children Cards */
+        .children-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .child-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .child-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .child-header {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .child-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .child-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .child-info p {
+            opacity: 0.9;
+            font-size: 0.875rem;
+        }
+
+        .child-content {
+            padding: 1.5rem;
+        }
+
+        .child-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: #F9FAFB;
+            border-radius: 8px;
+        }
+
+        .stat-item .value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #8B5CF6;
+        }
+
+        .stat-item .label {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-top: 0.25rem;
+        }
+
+        .progress-section {
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8B5CF6, #7C3AED);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .recent-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .badge-mini {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #F59E0B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        /* Subscription Card */
+        .subscription-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #F59E0B;
+        }
+
+        .subscription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .subscription-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .subscription-badge {
+            background: #F59E0B;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Content Sections */
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #7C3AED;
+        }
+
+        .btn-secondary {
+            background: #6B7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+        }
+
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #D97706;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .data-table th {
+            background: #F9FAFB;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .data-table tr:hover {
+            background: #F9FAFB;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-badge.trial {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .status-badge.expired {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* Notification */
+        .notification {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification.info {
+            background: #EFF6FF;
+            border-left: 4px solid #3B82F6;
+        }
+
+        .notification.warning {
+            background: #FFFBEB;
+            border-left: 4px solid #F59E0B;
+        }
+
+        .notification.success {
+            background: #ECFDF5;
+            border-left: 4px solid #10B981;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .payment-method {
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: #8B5CF6;
+            background: #F5F3FF;
+        }
+
+        .payment-method.selected {
+            border-color: #8B5CF6;
+            background: #F5F3FF;
+        }
+
+        .payment-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .children-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .child-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 200px;
+            background: #F9FAFB;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6B7280;
+        }
+
+        /* Family Learning */
+        .family-activity {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #FAFAFA;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #8B5CF6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="parent-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="parent-logo">👨‍👩‍👧‍👦</div>
+                <div class="parent-title">Espace Famille</div>
+                <div class="parent-subtitle" id="family-name">Famille Mbarga</div>
+                
+                <div class="family-info">
+                    <div style="font-size: 0.875rem; margin-bottom: 0.5rem;">
+                        <strong id="children-count">3</strong> enfants inscrits
+                    </div>
+                    <div class="subscription-status" id="subscription-status">
+                        Plan Famille - Actif
+                    </div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                            <span class="nav-icon">🏠</span>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('children-progress')">
+                            <span class="nav-icon">📊</span>
+                            Suivi des enfants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('subscription')">
+                            <span class="nav-icon">💳</span>
+                            Mon Abonnement
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('reports')">
+                            <span class="nav-icon">📈</span>
+                            Rapports & Bilans
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('communication')">
+                            <span class="nav-icon">💬</span>
+                            Messages
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('family-learning')">
+                            <span class="nav-icon">🎯</span>
+                            Apprentissage Familial
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('settings')">
+                            <span class="nav-icon">⚙️</span>
+                            Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">📊 Tableau de bord familial</h1>
+                        <p class="page-description">Suivi global des progrès de vos enfants</p>
+                    </div>
+                </div>
+
+                <!-- Subscription Alert -->
+                <div id="subscription-alert"></div>
+
+                <!-- Children Overview -->
+                <div class="children-grid" id="children-overview">
+                    <!-- Children cards will be loaded here -->
+                </div>
+
+                <!-- Family Statistics -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Statistiques familiales</h2>
+                        <button class="btn btn-primary btn-sm" onclick="downloadFamilyReport()">📥 Télécharger rapport</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="chart-container">
+                            <div>📊 Graphique de progression familiale</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Activité récente</h2>
+                    </div>
+                    <div class="section-content">
+                        <div id="family-recent-activity">
+                            <!-- Recent activity will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Children Progress Section -->
+            <div id="children-progress-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">📊 Suivi détaillé des enfants</h1>
+                        <p class="page-description">Progression, notes, temps d'étude et badges de chaque enfant</p>
+                    </div>
+                </div>
+
+                <div id="detailed-children-progress">
+                    <!-- Detailed progress will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Subscription Section -->
+            <div id="subscription-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">💳 Gestion de l'abonnement</h1>
+                        <p class="page-description">Votre plan, paiements et renouvellement</p>
+                    </div>
+                </div>
+
+                <!-- Current Subscription -->
+                <div class="subscription-card">
+                    <div class="subscription-header">
+                        <div>
+                            <h3 class="subscription-title" id="current-plan-title">Plan Famille Annuel</h3>
+                            <p style="color: #6B7280; margin-top: 0.25rem;">Accès complet pour toute la famille</p>
+                        </div>
+                        <div class="subscription-badge" id="subscription-badge">ACTIF</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">Prix mensuel</div>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #F59E0B;" id="monthly-price">15,000 FCFA</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">Prochain paiement</div>
+                            <div style="font-size: 1rem; font-weight: 500;" id="next-payment">15 mars 2024</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">Enfants inclus</div>
+                            <div style="font-size: 1rem; font-weight: 500;" id="included-children">Jusqu'à 5 enfants</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">Économies annuelles</div>
+                            <div style="font-size: 1rem; font-weight: 500; color: #10B981;">36,000 FCFA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Méthodes de paiement</h2>
+                        <button class="btn btn-primary btn-sm" onclick="addPaymentMethod()">+ Ajouter méthode</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="payment-methods">
+                            <div class="payment-method selected">
+                                <div class="payment-icon">📱</div>
+                                <div style="font-weight: 500;">MTN Mobile Money</div>
+                                <div style="font-size: 0.75rem; color: #6B7280; margin-top: 0.25rem;">**** **** **** 5678</div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">💳</div>
+                                <div style="font-weight: 500;">Orange Money</div>
+                                <div style="font-size: 0.75rem; color: #6B7280; margin-top: 0.25rem;">**** **** **** 1234</div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">🏦</div>
+                                <div style="font-weight: 500;">Virement Bancaire</div>
+                                <div style="font-size: 0.75rem; color: #6B7280; margin-top: 0.25rem;">UBA - Compte épargne</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment History -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Historique des paiements</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="exportPaymentHistory()">📊 Exporter</button>
+                    </div>
+                    <div class="section-content">
+                        <div id="payment-history-table">
+                            <!-- Payment history will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">📈 Rapports & Bilans</h1>
+                        <p class="page-description">Bilans hebdomadaires et rapports de progression</p>
+                    </div>
+                </div>
+
+                <!-- Weekly Report -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Bilan de la semaine</h2>
+                        <select style="padding: 0.375rem 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            <option>Cette semaine</option>
+                            <option>Semaine dernière</option>
+                            <option>Il y a 2 semaines</option>
+                        </select>
+                    </div>
+                    <div class="section-content">
+                        <div id="weekly-report">
+                            <!-- Weekly report will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Section -->
+            <div id="communication-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">💬 Messages & Communications</h1>
+                        <p class="page-description">Messages administratifs et communications enseignants</p>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-content">
+                        <div id="messages-list">
+                            <!-- Messages will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Learning Section -->
+            <div id="family-learning-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">🎯 Apprentissage Familial</h1>
+                        <p class="page-description">Cours et activités adaptés parents/enfants</p>
+                    </div>
+                </div>
+
+                <!-- Family Courses -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Cours pour toute la famille</h2>
+                    </div>
+                    <div class="section-content">
+                        <div id="family-courses">
+                            <!-- Family courses will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Family Challenges -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Défis familiaux</h2>
+                    </div>
+                    <div class="section-content">
+                        <div id="family-challenges">
+                            <!-- Family challenges will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">⚙️ Paramètres Famille</h1>
+                        <p class="page-description">Configuration du compte et préférences</p>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-content">
+                        <div id="family-settings">
+                            <!-- Settings will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        let currentSection = 'dashboard';
+
+        // Navigation between sections
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Show requested section
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Load section data
+            loadSectionData(sectionName);
+            currentSection = sectionName;
+        }
+
+        // Load data for each section
+        async function loadSectionData(section) {
+            switch (section) {
+                case 'dashboard':
+                    await loadFamilyDashboard();
+                    break;
+                case 'children-progress':
+                    await loadChildrenProgress();
+                    break;
+                case 'subscription':
+                    await loadSubscriptionData();
+                    break;
+                case 'reports':
+                    await loadReports();
+                    break;
+                case 'communication':
+                    await loadCommunication();
+                    break;
+                case 'family-learning':
+                    await loadFamilyLearning();
+                    break;
+                case 'settings':
+                    await loadFamilySettings();
+                    break;
+            }
+        }
+
+        // Load Family Dashboard
+        async function loadFamilyDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/api/family/dashboard`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update family info
+                    document.getElementById('family-name').textContent = data.data.familyName;
+                    document.getElementById('children-count').textContent = data.data.children.length;
+                    document.getElementById('subscription-status').textContent = data.data.subscription.status;
+
+                    // Check subscription status and show alert if needed
+                    if (data.data.subscription.daysUntilExpiry <= 7) {
+                        showSubscriptionAlert(data.data.subscription);
+                    }
+
+                    // Load children cards
+                    const childrenHtml = data.data.children.map(child => `
+                        <div class="child-card">
+                            <div class="child-header">
+                                <div class="child-avatar">
+                                    ${child.firstName.charAt(0)}${child.lastName.charAt(0)}
+                                </div>
+                                <div class="child-info">
+                                    <h3>${child.firstName} ${child.lastName}</h3>
+                                    <p>${child.className} • ${child.age} ans</p>
+                                </div>
+                            </div>
+                            <div class="child-content">
+                                <div class="child-stats">
+                                    <div class="stat-item">
+                                        <div class="value">${child.studyTime}h</div>
+                                        <div class="label">Cette semaine</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="value">${child.averageScore}%</div>
+                                        <div class="label">Score moyen</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="value">${child.claudinePoints}</div>
+                                        <div class="label">Points</div>
+                                    </div>
+                                </div>
+                                <div class="progress-section">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6B7280;">
+                                        <span>Progression générale</span>
+                                        <span>${child.overallProgress}%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${child.overallProgress}%;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                                    <div class="recent-badges">
+                                        ${child.recentBadges.map(badge => `
+                                            <div class="badge-mini" title="${badge.name}">${badge.icon}</div>
+                                        `).join('')}
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" onclick="viewChildDetails('${child.id}')">
+                                        👤 Voir détails
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('children-overview').innerHTML = childrenHtml;
+
+                    // Load recent family activity
+                    const activityHtml = data.data.recentActivity.map(activity => `
+                        <div class="family-activity">
+                            <div class="activity-header">
+                                <div class="activity-icon">${activity.icon}</div>
+                                <div>
+                                    <div style="font-weight: 500;">${activity.message}</div>
+                                    <div style="font-size: 0.75rem; color: #6B7280;">${formatDate(activity.timestamp)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('family-recent-activity').innerHTML = activityHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement dashboard famille:', error);
+            }
+        }
+
+        // Show subscription alert
+        function showSubscriptionAlert(subscription) {
+            let alertClass, alertMessage;
+            
+            if (subscription.status === 'expired') {
+                alertClass = 'warning';
+                alertMessage = '⚠️ Votre abonnement a expiré. Renouvelez pour continuer à accéder au contenu.';
+            } else if (subscription.daysUntilExpiry <= 3) {
+                alertClass = 'warning';
+                alertMessage = `⚠️ Votre abonnement expire dans ${subscription.daysUntilExpiry} jours. Pensez à le renouveler.`;
+            } else if (subscription.daysUntilExpiry <= 7) {
+                alertClass = 'info';
+                alertMessage = `ℹ️ Votre abonnement expire dans ${subscription.daysUntilExpiry} jours.`;
+            }
+
+            if (alertMessage) {
+                const alertHtml = `
+                    <div class="notification ${alertClass}">
+                        <div style="flex: 1;">${alertMessage}</div>
+                        <button class="btn btn-primary btn-sm" onclick="showSection('subscription')">
+                            Gérer l'abonnement
+                        </button>
+                    </div>
+                `;
+                document.getElementById('subscription-alert').innerHTML = alertHtml;
+            }
+        }
+
+        // Load Children Detailed Progress
+        async function loadChildrenProgress() {
+            try {
+                const response = await fetch(`${API_BASE}/api/family/children-progress`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const progressHtml = data.data.children.map(child => `
+                        <div class="content-section">
+                            <div class="section-header">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="child-avatar" style="width: 50px; height: 50px;">
+                                        ${child.firstName.charAt(0)}${child.lastName.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <h2 class="section-title">${child.firstName} ${child.lastName}</h2>
+                                        <p style="color: #6B7280; margin: 0;">${child.className} • Dernière activité: ${formatDate(child.lastActivity)}</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" onclick="sendEncouragement('${child.id}')">
+                                    💌 Encourager
+                                </button>
+                            </div>
+                            <div class="section-content">
+                                <!-- Subject progress for this child -->
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                                    ${child.subjects.map(subject => `
+                                        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 1rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                                <span style="font-size: 1.25rem;">${subject.icon}</span>
+                                                <div>
+                                                    <div style="font-weight: 500;">${subject.name}</div>
+                                                    <div style="font-size: 0.75rem; color: #6B7280;">${subject.lessonsCompleted} leçons</div>
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar" style="margin-bottom: 0.5rem;">
+                                                <div class="progress-fill" style="width: ${subject.progress}%;"></div>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                                                <span>${subject.progress}% complété</span>
+                                                <span style="color: #10B981; font-weight: 600;">${subject.averageScore}%</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Recent achievements -->
+                                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #E5E7EB;">
+                                    <h4 style="margin-bottom: 1rem; color: #374151;">🏆 Réalisations récentes</h4>
+                                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                        ${child.recentAchievements.map(achievement => `
+                                            <div style="background: #F3F4F6; padding: 0.75rem; border-radius: 8px; text-align: center; min-width: 120px;">
+                                                <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">${achievement.icon}</div>
+                                                <div style="font-size: 0.75rem; font-weight: 500;">${achievement.name}</div>
+                                                <div style="font-size: 0.625rem; color: #6B7280;">${formatDate(achievement.earnedAt)}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                    document.getElementById('detailed-children-progress').innerHTML = progressHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement progression enfants:', error);
+            }
+        }
+
+        // Load Subscription Data
+        async function loadSubscriptionData() {
+            try {
+                const response = await fetch(`${API_BASE}/api/family/subscription`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const sub = data.data.subscription;
+                    
+                    document.getElementById('current-plan-title').textContent = sub.planName;
+                    document.getElementById('subscription-badge').textContent = sub.status.toUpperCase();
+                    document.getElementById('monthly-price').textContent = formatCurrency(sub.monthlyPrice);
+                    document.getElementById('next-payment').textContent = formatDate(sub.nextPayment);
+
+                    // Load payment history
+                    const historyHtml = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                    <th>Méthode</th>
+                                    <th>Statut</th>
+                                    <th>Reçu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.data.paymentHistory.map(payment => `
+                                    <tr>
+                                        <td>${formatDate(payment.date)}</td>
+                                        <td style="font-weight: 600; color: #10B981;">${formatCurrency(payment.amount)}</td>
+                                        <td>${payment.method}</td>
+                                        <td>
+                                            <span class="status-badge ${payment.status}">${getStatusLabel(payment.status)}</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" onclick="downloadReceipt('${payment.id}')">
+                                                📄 Télécharger
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    document.getElementById('payment-history-table').innerHTML = historyHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement abonnement:', error);
+            }
+        }
+
+        // Utility Functions
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR').format(amount) + ' FCFA';
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                active: 'Actif',
+                expired: 'Expiré',
+                trial: 'Essai',
+                pending: 'En attente',
+                completed: 'Terminé',
+                failed: 'Échec'
+            };
+            return labels[status] || status;
+        }
+
+        // Action Functions
+        function viewChildDetails(childId) {
+            alert(`Détails de l'enfant ${childId} - Fonctionnalité à implémenter`);
+        }
+
+        function sendEncouragement(childId) {
+            alert(`Envoi d'encouragement à l'enfant ${childId} - Fonctionnalité à implémenter`);
+        }
+
+        function downloadFamilyReport() {
+            alert('Téléchargement du rapport familial - Fonctionnalité à implémenter');
+        }
+
+        function addPaymentMethod() {
+            alert('Ajout d\'une méthode de paiement - Fonctionnalité à implémenter');
+        }
+
+        function exportPaymentHistory() {
+            alert('Export de l\'historique des paiements - Fonctionnalité à implémenter');
+        }
+
+        function downloadReceipt(paymentId) {
+            alert(`Téléchargement du reçu ${paymentId} - Fonctionnalité à implémenter`);
+        }
+
+        // Placeholder functions for other sections
+        async function loadReports() {
+            // Implementation for reports
+        }
+
+        async function loadCommunication() {
+            // Implementation for communication
+        }
+
+        async function loadFamilyLearning() {
+            // Implementation for family learning
+        }
+
+        async function loadFamilySettings() {
+            // Implementation for family settings
+        }
+
+        // Initialize
+        window.addEventListener('load', function() {
+            loadFamilyDashboard();
+        });
+    </script>
+</body>
+</html>

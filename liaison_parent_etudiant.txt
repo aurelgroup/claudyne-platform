@@ -1,0 +1,88 @@
+● 🔗 Système de Liaison Étudiant-Parent dans Claudyne
+
+  Après analyse des modèles de données, voici comment fonctionne la liaison entre comptes
+  Étudiants et Parents :
+
+  📊 Structure de Liaison
+
+  🏠 FAMILLE (Family) ←→ 👨‍👩‍👧‍👦 UTILISATEURS (User) ←→ 🎓 ÉTUDIANTS (Student)       
+
+  Family {
+    id: UUID (Primary Key)
+    name: "Nom de famille"
+    maxMembers: 6 (défaut)
+    currentMembersCount: INT
+  }
+
+  User {
+    id: UUID (Primary Key)
+    role: 'PARENT' | 'STUDENT' | 'ADMIN'
+    familyId: UUID (Foreign Key → Family.id)
+  }
+
+  Student {
+    id: UUID (Primary Key)
+    familyId: UUID (Foreign Key → Family.id)
+    userId: UUID (Nullable, Foreign Key → User.id)
+    firstName: STRING
+    lastName: STRING
+  }
+
+  🔑 Points de Liaison Clés
+
+  1. Famille → Utilisateurs : User.familyId → Family.id
+  2. Famille → Étudiants : Student.familyId → Family.id
+  3. Utilisateur → Étudiant : Student.userId → User.id (optionnel)
+
+  👨‍👩‍👧‍👦 Scénarios de Liaison
+
+  🟢 PARENT PRINCIPAL
+  Parent {
+    role: 'PARENT',
+    familyId: 'famille-uuid-123'
+  }
+  → Peut gérer tous les étudiants de la famille
+
+  🟡 ÉTUDIANT MAJEUR (avec compte)
+  EtudiantUser {
+    role: 'STUDENT',
+    familyId: 'famille-uuid-123'
+  }
+  ↔
+  StudentProfile {
+    familyId: 'famille-uuid-123',
+    userId: 'user-uuid-456'  // Lié au compte utilisateur
+  }
+
+  🔵 ENFANT MINEUR (sans compte)
+  StudentProfile {
+    familyId: 'famille-uuid-123',
+    userId: null  // Pas de compte utilisateur dédié
+  }
+  → Géré par le parent via familyId
+
+  📋 Comment Identifier les Liaisons
+
+  SQL pour trouver étudiants d'un parent :
+  SELECT s.*, u.firstName as parent_name
+  FROM students s
+  JOIN families f ON s.familyId = f.id
+  JOIN users u ON u.familyId = f.id
+  WHERE u.role = 'PARENT'
+  AND u.id = :parentUserId;
+
+  SQL pour trouver parent d'un étudiant :
+  SELECT u.*
+  FROM users u
+  JOIN students s ON u.familyId = s.familyId
+  WHERE s.id = :studentId
+  AND u.role = 'PARENT';
+
+  🛠️ Interfaces de Gestion
+
+  Interface Admin : Voir toutes les familles et leurs membres
+  Interface Parent : Gérer les étudiants de sa famille uniquementInterface Étudiant : Accès    
+   à son profil via userId ou gestion parent
+
+  Cette architecture permet une gestion flexible des familles avec jusqu'à 6 membres par       
+  famille !

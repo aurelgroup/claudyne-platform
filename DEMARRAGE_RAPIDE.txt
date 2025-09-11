@@ -1,0 +1,37 @@
+🎓 CLAUDYNE - DÉMARRAGE RAPIDE
+=====================================
+
+En hommage à Meffo Mehtah Tchandjio Claudine 👨‍👩‍👧‍👦
+"La force du savoir en héritage"
+
+🚀 COMMANDE DE DÉMARRAGE
+-----------------------
+node server.js
+
+✅ INTERFACES DISPONIBLES
+-------------------------
+🏠 Interface Principale:  http://localhost:3000/
+👨‍💼 Interface Admin:      http://localhost:3000/admin  
+🎓 Interface Étudiant:    http://localhost:3000/student
+📴 Page Offline:         http://localhost:3000/offline
+
+🔧 SERVEUR ADMIN SEUL (si nécessaire)
+------------------------------------
+node serve-admin.js
+Accès: http://localhost:3007
+
+⚙️ API BACKEND (optionnel)
+--------------------------
+cd backend
+node minimal-server.js
+API: http://localhost:3001
+
+🎯 DIFFÉRENCES IMPORTANTES
+--------------------------
+- server.js (port 3000)    = SERVEUR PRINCIPAL avec toutes les interfaces
+- serve-admin.js (port 3007) = SERVEUR ADMIN SEULEMENT  
+
+✨ MAINTENANT CORRIGÉ ✨
+Interface principale et admin ont des contenus différents !
+
+🇨🇲 Made with ❤️ for Cameroon Education 🇨🇲

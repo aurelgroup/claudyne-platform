@@ -1,0 +1,119 @@
+{
+  "name": "Claudyne - Plateforme Éducative",
+  "short_name": "Claudyne",
+  "description": "Plateforme éducative camerounaise - La force du savoir en héritage. En hommage à Meffo Mehtah Tchandjio Claudine.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik0zNiA1MkM0NC44MzY2IDUyIDUyIDQ0LjgzNjYgNTIgMzZDNTIgMjcuMTYzNCA0NC44MzY2IDIwIDM2IDIwQzI3LjE2MzQgMjAgMjAgMjcuMTYzNCAyMCAzNkMyMCA0NC44MzY2IDI3LjE2MzQgNTIgMzYgNTIiIGZpbGw9IiNGRkQ3MDAiLz4KPHBhdGggZD0iTTMxIDMxSDE0MSIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjIiLz4KPHA/gthIGQ9Ik0zMSAzNkg0MSIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjIiLz4KPHI+YXRoIGQ9Ik0zMSA0MUg0MSIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjIiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjcyIiB5Mj0iNzIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzFhMWEyZSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxNjIxM2UiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K",
+      "sizes": "72x72",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjQiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik00OCA3MkM1OS4wNDU3IDcyIDY4IDYzLjA0NTcgNjggNDhDNjggMzIuOTU0MyA1OS4wNDU3IDI0IDQ4IDI0QzM2Ljk1NDMgMjQgMjggMzIuOTU0MyAyOCA0OEMyOCA2My4wNDU3IDM2Ljk1NDMgNzIgNDggNzIiIGZpbGw9IiNGRkQ3MDAiLz4KPHI+YXRoIGQ9Ik00MCA0MEg1NiIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjMiLz4KPHI+YXRoIGQ9Ik00MCA0OEg1NiIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjMiLz4KPFI+YXRoIGQ9Ik00MCA1Nkg1NiIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjMiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9Ijk2IiB5Mj0iOTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzFhMWEyZSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxNjIxM2UiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K",
+      "sizes": "96x96",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMzIiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik02NCA5NkM4MC41Njg1IDk2IDk0IDgyLjU2ODUgOTQgNjRDOTQgNDUuNDMxNSA4MC41Njg1IDMyIDY0IDMyQzQ3LjQzMTUgMzIgMzQgNDUuNDMxNSAzNCA2NEMzNCA4Mi41Njg1IDQ3LjQzMTUgOTYgNjQgOTYiIGZpbGw9IiNGRkQ3MDAiLz4KPHI+YXRoIGQ9Ik01MCA1Mkg3OCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjQiLz4KPHI+YXRoIGQ9Ik01MCA2NEg3OCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjQiLz4KPHI+YXRoIGQ9Ik01MCA3Nkg3OCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjQiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjEyOCIgeTI9IjEyOCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMWExYTJlIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE2MjEzZSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=",
+      "sizes": "128x128",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iNDgiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik05NiAxNDRDMTIwLjg1MiAxNDQgMTQxIDEyMy44NTIgMTQxIDk2Qzk2IDcyLjE0NzkgMTIwLjg1MiA0OCA5NiA0OEM3MS4xNDc5IDQ4IDQ4IDcyLjE0NzkgNDggOTZDNDggMTIzLjg1MiA3MS4xNDc5IDE0NCA5NiAxNDQiIGZpbGw9IiNGRkQ3MDAiLz4KPCI+YXRoIGQ9Ik03NiA3NkgxMTYiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CjxwYXRoIGQ9Ik03NiA5NkgxMTYiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CjxwYXRoIGQ9Ik03NiAxMTZIMTE2IiBzdHJva2U9IiMxYTFhMmUiIHN0cm9rZS13aWR0aD0iNiIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDBfbGluZWFyXzFfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMTkyIiB5Mj0iMTkyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiMxYTFhMmUiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMTYyMTNlIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+Cg==",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTI4IiBmaWxsPSJ1cmwoI2dyYWRpZW50MF9saW5lYXJfMV8xKSIvPgo8cGF0aCBkPSJNMjU2IDM4NEMzMjIuMjc0IDM4NCAzNzYgMzMwLjI3NCAzNzYgMjU2QzM3NiAxOTEuNzI2IDMyMi4yNzQgMTI4IDI1NiAxMjhDMTg5LjcyNiAxMjggMTM2IDE5MS43MjYgMTM2IDI1NkMxMzYgMzMwLjI3NCAxODkuNzI2IDM4NCAyNTYgMzg0IiBmaWxsPSIjRkZENzAwIi8+CjxwYXRoIGQ9Ik0yMDggMjA4SDMwNCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjE2Ii8+CjxwYXRoIGQ9Ik0yMDggMjU2SDMwNCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjE2Ii8+CjxwYXRoIGQ9Ik0yMDggMzA0SDMwNCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjE2Ii8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSI1MTIiIHkyPSI1MTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzFhMWEyZSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxNjIxM2UiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "categories": ["education", "learning", "social"],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Interface principale de Claudyne sur desktop"
+    },
+    {
+      "src": "/screenshots/mobile.png", 
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Interface mobile optimisée pour 2G/3G"
+    }
+  ],
+  
+  "features": [
+    "Cross Origin Embedder Policy",
+    "Cross Origin Opener Policy"
+  ],
+  
+  "prefer_related_applications": false,
+  
+  "shortcuts": [
+    {
+      "name": "Interface Étudiant",
+      "short_name": "Étudiant",
+      "description": "Accès direct à l'interface étudiante",
+      "url": "/student-interface-modern.html",
+      "icons": [{ "src": "/icons/student.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Interface Admin",
+      "short_name": "Admin",
+      "description": "Accès à l'administration",
+      "url": "/admin-interface.html",
+      "icons": [{ "src": "/icons/admin.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Essai Gratuit",
+      "short_name": "Essai",
+      "description": "Commencer un essai gratuit",
+      "url": "/?action=trial",
+      "icons": [{ "src": "/icons/trial.png", "sizes": "96x96" }]
+    }
+  ],
+
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+
+  "protocol_handlers": [],
+
+  "file_handlers": [],
+
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", ".pdf", ".doc", ".docx"]
+        }
+      ]
+    }
+  }
+}

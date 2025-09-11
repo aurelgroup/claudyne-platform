@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(npm install)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(start admin-interface.html)",
+      "Bash(node:*)",
+      "Bash(start http://localhost:3007)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

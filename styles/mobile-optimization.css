@@ -1,0 +1,223 @@
+/* 
+ * Optimisations pour connexions 2G/3G
+ * Spécialement adapté pour le marché camerounais
+ */
+
+/* Variables pour optimisations mobiles */
+:root {
+    --mobile-transition-speed: 0.15s; /* Réduit de 0.3s à 0.15s */
+    --mobile-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombres simplifiées */
+    --mobile-border-radius: 8px; /* Bordures moins complexes */
+}
+
+/* Optimisations générales pour mobiles */
+@media (max-width: 768px) {
+    /* Réduction des effets coûteux */
+    .glass-card,
+    .glass-button,
+    .modal-content {
+        backdrop-filter: blur(5px) !important; /* Réduit de 20px à 5px */
+        -webkit-backdrop-filter: blur(5px) !important;
+        box-shadow: var(--mobile-shadow) !important;
+        border-radius: var(--mobile-border-radius) !important;
+    }
+
+    /* Désactivation des animations complexes sur connexions lentes */
+    .slow-connection * {
+        animation: none !important;
+        transition: opacity var(--mobile-transition-speed) ease !important;
+    }
+
+    /* Images optimisées */
+    img {
+        image-rendering: optimizeSpeed !important;
+        image-rendering: -moz-crisp-edges !important;
+        image-rendering: -webkit-optimize-contrast !important;
+        image-rendering: optimize-contrast !important;
+        -ms-interpolation-mode: nearest-neighbor !important;
+    }
+
+    /* Réduction de la complexité visuelle */
+    .gradient-bg {
+        background: var(--primary-color) !important; /* Background uni au lieu de dégradé */
+    }
+
+    /* Simplification des bordures */
+    .glass-border {
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Optimisations spécifiques pour très faibles connexions (2G) */
+@media (max-width: 480px) and (max-height: 800px) {
+    /* Suppression complète des effets visuels coûteux */
+    * {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        filter: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    /* Mode haute performance */
+    .performance-mode {
+        transform: none !important;
+        transition: none !important;
+        animation: none !important;
+    }
+
+    /* Backgrounds simplifiés */
+    body {
+        background: var(--dark-bg) !important;
+        background-image: none !important;
+    }
+
+    /* Texte optimisé pour la lisibilité */
+    body, input, button, select, textarea {
+        text-rendering: optimizeSpeed !important;
+        -webkit-font-smoothing: none !important;
+        -moz-osx-font-smoothing: auto !important;
+    }
+}
+
+/* Optimisations pour les connexions lentes détectées */
+.slow-connection {
+    /* Réduction drastique des effets */
+    * {
+        transition-duration: 0.1s !important;
+        animation-duration: 0.1s !important;
+    }
+
+    /* Images en mode économique */
+    img {
+        filter: none !important;
+        transform: none !important;
+    }
+
+    /* Désactivation du glassmorphism */
+    .glass-card,
+    .glass-button,
+    .modal-content {
+        background: rgba(30, 30, 30, 0.95) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+}
+
+/* Optimisations pour économiser la bande passante */
+@media (prefers-reduced-data: reduce) {
+    /* Suppression des images de fond non essentielles */
+    .hero-section::before,
+    .background-pattern {
+        display: none !important;
+    }
+
+    /* Réduction de la qualité visuelle pour économiser les données */
+    .high-quality-bg {
+        background: var(--primary-color) !important;
+        background-image: none !important;
+    }
+}
+
+/* Mode offline/connexion très limitée */
+.offline-mode {
+    /* Interface simplifiée */
+    .glass-effect {
+        background: #2a2a2a !important;
+        border: 1px solid #444 !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    /* Messages d'état de connexion */
+    .connection-status {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 9999;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .connection-slow {
+        background: orange;
+    }
+
+    .connection-offline {
+        background: red;
+    }
+
+    .connection-online {
+        background: green;
+        display: none; /* Masqué quand tout va bien */
+    }
+}
+
+/* Optimisations pour les anciens appareils Android */
+@media screen and (-webkit-min-device-pixel-ratio: 1) and (max-width: 768px) {
+    /* Désactivation des transformations 3D coûteuses */
+    * {
+        transform-style: flat !important;
+        backface-visibility: hidden !important;
+    }
+
+    /* Optimisation GPU */
+    .gpu-optimized {
+        will-change: auto !important; /* Évite la surconsommation GPU */
+    }
+
+    /* Scroll optimisé */
+    .scroll-container {
+        -webkit-overflow-scrolling: auto !important; /* Évite les problèmes sur anciens Android */
+        overflow-scrolling: auto !important;
+    }
+}
+
+/* Préchargement intelligent des ressources critiques */
+.preload-critical {
+    /* Styles pour le contenu critique qui doit se charger en premier */
+    display: block !important;
+    visibility: visible !important;
+}
+
+.preload-deferred {
+    /* Styles pour le contenu qui peut attendre */
+    display: none;
+}
+
+/* Chargement progressif activé */
+.progressive-loading .preload-deferred {
+    display: block;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.progressive-loading .preload-deferred.loaded {
+    opacity: 1;
+}
+
+/* Optimisations typographiques pour les petits écrans */
+@media (max-width: 480px) {
+    h1 { font-size: 1.8rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.3rem !important; }
+    h4 { font-size: 1.1rem !important; }
+    
+    /* Espacement optimisé */
+    .container {
+        padding: 10px !important;
+        margin: 5px !important;
+    }
+    
+    /* Boutons plus grands pour le tactile */
+    button, .btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        padding: 12px 16px !important;
+    }
+}

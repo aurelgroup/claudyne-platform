@@ -1,0 +1,278 @@
+# Docker Compose pour Claudyne - Développement et Production
+# La force du savoir en héritage
+
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: claudyne-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: claudyne_dev
+      POSTGRES_USER: claudyne_user
+      POSTGRES_PASSWORD: claudyne_secure_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=fr_CM.UTF-8 --lc-ctype=fr_CM.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - claudyne-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U claudyne_user -d claudyne_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: claudyne-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass claudyne_redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - claudyne-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API Node.js
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: claudyne-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      
+      # Base de données
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: claudyne_dev
+      DB_USER: claudyne_user
+      DB_PASSWORD: claudyne_secure_password
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: claudyne_redis_password
+      
+      # JWT
+      JWT_SECRET: claudyne_development_secret_key_change_in_production
+      JWT_EXPIRE: 7d
+      JWT_REFRESH_SECRET: claudyne_refresh_secret_development
+      JWT_REFRESH_EXPIRE: 30d
+      
+      # Services externes
+      MTN_API_BASE_URL: https://sandbox.momodeveloper.mtn.com
+      ORANGE_API_BASE_URL: https://api.orange.com
+      
+      # Email
+      EMAIL_FROM: noreply@claudyne.local
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      
+      # Prix Claudine
+      PRIX_CLAUDINE_SEASON: 2025-september
+      
+      # URLs
+      FRONTEND_URL: http://localhost:3000
+      CORS_ORIGIN: http://localhost:3000
+      
+    volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
+      - ./backend/public/uploads:/app/public/uploads
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - claudyne-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: claudyne-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api
+      NEXT_PUBLIC_APP_VERSION: 1.0.0
+      NEXT_PUBLIC_SOCKET_URL: ws://localhost:3001
+      CLAUDYNE_REGION: africa
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - ./frontend/.next:/app/.next
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - claudyne-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MailHog pour les emails en développement
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: claudyne-mailhog
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Interface web
+      - "1025:1025" # SMTP
+    networks:
+      - claudyne-network
+
+  # Nginx pour le reverse proxy (production)
+  nginx:
+    image: nginx:alpine
+    container_name: claudyne-nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./backend/public:/var/www/public:ro
+      - nginx_cache:/var/cache/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - claudyne-network
+    profiles:
+      - production
+
+  # Service de monitoring (production)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: claudyne-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - claudyne-network
+    profiles:
+      - monitoring
+
+  # Grafana pour les dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: claudyne-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: claudyne_admin_password
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    ports:
+      - "3030:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - claudyne-network
+    profiles:
+      - monitoring
+
+  # Worker pour les tâches asynchrones
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: claudyne-worker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      WORKER_MODE: true
+      
+      # Base de données (mêmes que backend)
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: claudyne_dev
+      DB_USER: claudyne_user
+      DB_PASSWORD: claudyne_secure_password
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: claudyne_redis_password
+      
+    volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - claudyne-network
+    command: ["npm", "run", "worker"]
+
+# Volumes persistants
+volumes:
+  postgres_data:
+    name: claudyne_postgres_data
+  redis_data:
+    name: claudyne_redis_data
+  backend_node_modules:
+    name: claudyne_backend_node_modules
+  frontend_node_modules:
+    name: claudyne_frontend_node_modules
+  nginx_cache:
+    name: claudyne_nginx_cache
+  prometheus_data:
+    name: claudyne_prometheus_data
+  grafana_data:
+    name: claudyne_grafana_data
+
+# Réseau
+networks:
+  claudyne-network:
+    name: claudyne-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

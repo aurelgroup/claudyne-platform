@@ -22,6 +22,28 @@
     <meta name="preload-critical-css" content="styles/glassmorphism.css,styles/mobile-optimization.css">
     <meta name="defer-non-critical" content="true">
     <style>
+        /* Fond de secours pour mobile - CRITIQUE */
+        body {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #6B73FF, #9A9CE6) !important;
+            background-size: 400% 400% !important;
+            animation: gradientShift 15s ease infinite !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Fallback pour anciens navigateurs mobiles */
+        html {
+            background: #667eea !important;
+            min-height: 100vh !important;
+        }
+
         .hero-section {
             min-height: 100vh;
             display: flex;
@@ -31,6 +53,7 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            background: transparent;
         }
 
         .hero-content {

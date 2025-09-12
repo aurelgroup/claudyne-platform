@@ -7,7 +7,8 @@
       "Bash(powershell:*)",
       "Bash(start admin-interface.html)",
       "Bash(node:*)",
-      "Bash(start http://localhost:3007)"
+      "Bash(start http://localhost:3007)",
+      "Bash(npm start)"
     ],
     "deny": [],
     "ask": []

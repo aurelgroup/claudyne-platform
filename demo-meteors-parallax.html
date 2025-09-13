@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Météores + Parallax 3D</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0f, #1a1a2e, #16213e);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .demo-header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .demo-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .meteor {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        }
+        
+        .meteor-trail {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            border-radius: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>🌠 DEMO: Météores + Parallax 3D</h1>
+        <p>Scrollez pour voir l'effet parallax multicouches avec météores</p>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <div class="demo-section" style="background: rgba(255,0,100,0.1);">
+        <div>SECTION 1 - ACCUEIL</div>
+    </div>
+    
+    <div class="demo-section" style="background: rgba(0,255,100,0.1);">
+        <div>SECTION 2 - FONCTIONNALITÉS</div>
+    </div>
+    
+    <div class="demo-section" style="background: rgba(100,0,255,0.1);">
+        <div>SECTION 3 - TARIFS</div>
+    </div>
+    
+    <div class="demo-section" style="background: rgba(255,255,0,0.1);">
+        <div>SECTION 4 - CONTACT</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let particles = [];
+        let meteors = [];
+        let scrollY = 0;
+        
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        // Particule avec couche parallax
+        class Particle {
+            constructor(layer) {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.layer = layer; // 1, 2, ou 3 pour différentes vitesses
+                this.baseY = this.y;
+                this.speed = 0.2 + layer * 0.1;
+                this.size = 0.5 + layer * 0.5;
+                this.opacity = 0.3 + layer * 0.2;
+            }
+            
+            update() {
+                // Effet parallax basé sur le scroll
+                this.y = this.baseY + (scrollY * this.speed * this.layer * 0.001);
+                
+                // Recyclage
+                if (this.y > canvas.height + 50) {
+                    this.baseY = -50;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = `hsl(${180 + this.layer * 30}, 70%, 70%)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        // Météore
+        class Meteor {
+            constructor() {
+                this.reset();
+                this.trail = [];
+            }
+            
+            reset() {
+                this.x = -50;
+                this.y = Math.random() * canvas.height * 0.3;
+                this.vx = 8 + Math.random() * 4;
+                this.vy = 2 + Math.random() * 3;
+                this.life = 1;
+                this.decay = 0.01 + Math.random() * 0.01;
+                this.trail = [];
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+                
+                // Ajouter à la traînée
+                this.trail.push({
+                    x: this.x,
+                    y: this.y,
+                    life: this.life
+                });
+                
+                // Limiter la traînée
+                if (this.trail.length > 20) {
+                    this.trail.shift();
+                }
+                
+                // Reset si hors écran ou mort
+                if (this.x > canvas.width + 100 || this.life <= 0) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                // Dessiner la traînée
+                ctx.save();
+                this.trail.forEach((point, i) => {
+                    const alpha = (point.life * i) / this.trail.length;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = '#00ffff';
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 1 + i * 0.1, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Dessiner le météore
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#00ffff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        // Initialisation
+        function init() {
+            particles = [];
+            meteors = [];
+            
+            // 3 couches de particules
+            for (let layer = 1; layer <= 3; layer++) {
+                for (let i = 0; i < 50; i++) {
+                    particles.push(new Particle(layer));
+                }
+            }
+            
+            // Quelques météores
+            for (let i = 0; i < 3; i++) {
+                meteors.push(new Meteor());
+            }
+        }
+        
+        function animate() {
+            ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            meteors.forEach(m => {
+                m.update();
+                m.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Events
+        window.addEventListener('resize', resize);
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+        });
+        
+        // Ajouter météore au clic
+        canvas.addEventListener('click', (e) => {
+            const meteor = new Meteor();
+            meteor.x = e.clientX;
+            meteor.y = e.clientY;
+            meteors.push(meteor);
+        });
+        
+        resize();
+        init();
+        animate();
+    </script>
+</body>
+</html>

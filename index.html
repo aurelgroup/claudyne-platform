@@ -1786,9 +1786,10 @@
             // Masquer le preloader avec une transition
             preloader.classList.add('hidden');
             
-            // Initialiser le starfield maintenant que la page est visible
+            // Initialiser le starfield et les effets magnétiques maintenant que la page est visible
             setTimeout(() => {
                 initializeStarfield();
+                initMagneticEffects();
             }, 100);
             
             // Supprimer le preloader du DOM après la transition
@@ -1944,7 +1945,10 @@
             addNodes();
         }
 
-        window.addEventListener('resize', debounce(resizeCanvas, 250));
+        window.addEventListener('resize', debounce(() => {
+            resizeCanvas();
+            resizeMagneticCanvas();
+        }, 250));
         
         // Optimisation des événements de souris
         window.addEventListener('mousemove', throttle((event) => {
@@ -1952,7 +1956,35 @@
                 mouse.x = event.x;
                 mouse.y = event.y;
             }
+            // Mise à jour pour les effets magnétiques
+            magneticMouse.x = event.clientX;
+            magneticMouse.y = event.clientY;
         }, 16));
+
+        // Events pour les effets magnétiques
+        document.addEventListener('click', (e) => {
+            // Vérifier si c'est un élément interactif
+            const interactiveElements = ['button', '.cta-button', '.magnetic-button', '.bottom-nav-item', '.demo-card'];
+            const isInteractive = interactiveElements.some(selector => {
+                if (selector.startsWith('.')) {
+                    return e.target.closest(selector);
+                } else {
+                    return e.target.tagName.toLowerCase() === selector;
+                }
+            });
+            
+            if (isInteractive) {
+                createMagneticExplosion(e.clientX, e.clientY);
+            }
+        });
+        
+        // Gestion mobile pour les effets magnétiques
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                magneticMouse.x = e.touches[0].clientX;
+                magneticMouse.y = e.touches[0].clientY;
+            }
+        }, { passive: true });
 
         // Gestion des cartes interactives
         document.querySelectorAll('.glass-card').forEach(card => {
@@ -2102,6 +2134,245 @@
             observer.observe(element);
         });
 
+        // =========================================
+        // EFFETS MAGNÉTIQUES INTERACTIFS
+        // =========================================
+        
+        // Variables pour les effets magnétiques
+        let magneticParticles = [];
+        let magneticExplosions = [];
+        let magneticMouse = { x: 0, y: 0 };
+        let magneticAudioContext, magneticOscillator, magneticGainNode;
+        let magneticCanvas, magneticCtx;
+        
+        // Particule magnétique
+        class MagneticParticle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 3 + 1;
+                this.color = `hsl(${Math.random() * 60 + 160}, 70%, 60%)`;
+                this.mass = this.size;
+                this.attracted = false;
+                this.baseOpacity = Math.random() * 0.6 + 0.2;
+            }
+            
+            update() {
+                // Force magnétique vers la souris
+                const dx = magneticMouse.x - this.x;
+                const dy = magneticMouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 250) {
+                    const force = (250 - distance) / 250;
+                    this.vx += (dx / distance) * force * 0.8;
+                    this.vy += (dy / distance) * force * 0.8;
+                    this.attracted = true;
+                } else {
+                    this.attracted = false;
+                }
+                
+                // Mouvement
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                
+                // Limites écran
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -0.8;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -0.8;
+                
+                this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+                this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+            }
+            
+            draw() {
+                if (!magneticCtx) return;
+                magneticCtx.save();
+                
+                if (this.attracted) {
+                    magneticCtx.shadowBlur = 15;
+                    magneticCtx.shadowColor = this.color;
+                    magneticCtx.globalAlpha = this.baseOpacity * 2;
+                } else {
+                    magneticCtx.globalAlpha = this.baseOpacity * 0.7;
+                }
+                
+                magneticCtx.fillStyle = this.color;
+                magneticCtx.beginPath();
+                magneticCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                magneticCtx.fill();
+                magneticCtx.restore();
+            }
+        }
+        
+        // Explosion magnétique
+        class MagneticExplosion {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.particles = [];
+                this.life = 1;
+                
+                for (let i = 0; i < 25; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: (Math.random() - 0.5) * 15,
+                        life: 1,
+                        decay: Math.random() * 0.03 + 0.02
+                    });
+                }
+            }
+            
+            update() {
+                this.life -= 0.03;
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vx *= 0.96;
+                    p.vy *= 0.96;
+                    p.life -= p.decay;
+                });
+            }
+            
+            draw() {
+                if (!magneticCtx) return;
+                magneticCtx.save();
+                this.particles.forEach(p => {
+                    if (p.life > 0) {
+                        magneticCtx.globalAlpha = p.life * 0.8;
+                        magneticCtx.fillStyle = '#00FFC2';
+                        magneticCtx.beginPath();
+                        magneticCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                        magneticCtx.fill();
+                    }
+                });
+                magneticCtx.restore();
+            }
+        }
+        
+        // Initialisation des effets magnétiques
+        function initMagneticEffects() {
+            console.log('🧲 Initialisation des effets magnétiques...');
+            
+            // Vérifier que le DOM est prêt
+            if (!document.body) {
+                console.log('❌ DOM pas prêt, report de 500ms');
+                setTimeout(initMagneticEffects, 500);
+                return;
+            }
+            
+            // Créer le canvas magnétique
+            magneticCanvas = document.createElement('canvas');
+            magneticCanvas.id = 'magneticCanvas';
+            magneticCanvas.style.position = 'fixed';
+            magneticCanvas.style.top = '0';
+            magneticCanvas.style.left = '0';
+            magneticCanvas.style.width = '100%';
+            magneticCanvas.style.height = '100%';
+            magneticCanvas.style.pointerEvents = 'none';
+            magneticCanvas.style.zIndex = '2';
+            magneticCanvas.style.opacity = '1';
+            document.body.appendChild(magneticCanvas);
+            
+            console.log('✅ Canvas magnétique créé');
+            
+            magneticCtx = magneticCanvas.getContext('2d');
+            resizeMagneticCanvas();
+            
+            // Créer les particules
+            magneticParticles = [];
+            for (let i = 0; i < 100; i++) {
+                magneticParticles.push(new MagneticParticle());
+            }
+            
+            console.log(`Créé ${magneticParticles.length} particules magnétiques`);
+            
+            // Démarrer l'animation
+            animateMagneticEffects();
+        }
+        
+        function resizeMagneticCanvas() {
+            if (magneticCanvas) {
+                magneticCanvas.width = window.innerWidth;
+                magneticCanvas.height = window.innerHeight;
+            }
+        }
+        
+        function animateMagneticEffects() {
+            if (!magneticCtx) return;
+            
+            // Nettoyer le canvas sans assombrir
+            magneticCtx.clearRect(0, 0, magneticCanvas.width, magneticCanvas.height);
+            
+            // Dessiner connexions magnétiques
+            magneticCtx.strokeStyle = 'rgba(0, 255, 194, 0.6)';
+            magneticCtx.lineWidth = 2;
+            magneticParticles.forEach(p => {
+                if (p.attracted) {
+                    magneticCtx.beginPath();
+                    magneticCtx.moveTo(p.x, p.y);
+                    magneticCtx.lineTo(magneticMouse.x, magneticMouse.y);
+                    magneticCtx.stroke();
+                }
+            });
+            
+            // Animer particules
+            magneticParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            // Animer explosions
+            magneticExplosions = magneticExplosions.filter(e => e.life > 0);
+            magneticExplosions.forEach(e => {
+                e.update();
+                e.draw();
+            });
+            
+            // Audio réactif
+            if (audioEnabled && magneticParticles.some(p => p.attracted)) {
+                const attractedCount = magneticParticles.filter(p => p.attracted).length;
+                if (magneticOscillator && magneticGainNode) {
+                    try {
+                        magneticOscillator.frequency.setValueAtTime(150 + attractedCount * 3, magneticAudioContext.currentTime);
+                        magneticGainNode.gain.setValueAtTime(0.05, magneticAudioContext.currentTime);
+                    } catch(e) {}
+                }
+            }
+            
+            requestAnimationFrame(animateMagneticEffects);
+        }
+        
+        function createMagneticExplosion(x, y) {
+            magneticExplosions.push(new MagneticExplosion(x, y));
+            if (audioEnabled) playMagneticBeep(660, 0.1, 150);
+        }
+        
+        function playMagneticBeep(frequency, volume, duration) {
+            if (!audioEnabled || !magneticAudioContext) return;
+            try {
+                const beep = magneticAudioContext.createOscillator();
+                const gain = magneticAudioContext.createGain();
+                
+                beep.connect(gain);
+                gain.connect(magneticAudioContext.destination);
+                
+                beep.frequency.setValueAtTime(frequency, magneticAudioContext.currentTime);
+                gain.gain.setValueAtTime(volume, magneticAudioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, magneticAudioContext.currentTime + duration / 1000);
+                
+                beep.start();
+                beep.stop(magneticAudioContext.currentTime + duration / 1000);
+            } catch(e) {}
+        }
+
         // Fonctions utilitaires de performance
         function throttle(func, limit) {
             let inThrottle;
@@ -2128,19 +2399,39 @@
             };
         }
 
-        // Gestion de l'audio
+        // Gestion de l'audio avec effets magnétiques
         let audioEnabled = false;
         function toggleAudio() {
             const audio = document.getElementById('backgroundAudio');
             const icon = document.querySelector('.audio-control .material-icons-outlined');
             
             if (!audioEnabled) {
+                // Initialiser le contexte audio pour les effets magnétiques
+                try {
+                    magneticAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    magneticOscillator = magneticAudioContext.createOscillator();
+                    magneticGainNode = magneticAudioContext.createGain();
+                    
+                    magneticOscillator.connect(magneticGainNode);
+                    magneticGainNode.connect(magneticAudioContext.destination);
+                    magneticOscillator.start();
+                    
+                    magneticGainNode.gain.setValueAtTime(0, magneticAudioContext.currentTime);
+                } catch(e) {
+                    console.log('Erreur initialisation audio magnétique:', e);
+                }
+                
                 audio.play().then(() => {
                     audioEnabled = true;
                     icon.textContent = 'volume_up';
                 }).catch(e => console.log('Audio autoplay prevented'));
             } else {
                 audio.pause();
+                if (magneticOscillator) {
+                    try {
+                        magneticOscillator.stop();
+                    } catch(e) {}
+                }
                 audioEnabled = false;
                 icon.textContent = 'volume_off';
             }

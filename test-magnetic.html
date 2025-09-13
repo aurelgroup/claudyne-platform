@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Magnétique Simple</title>
+    <style>
+        body { 
+            margin: 0; 
+            background: #020205; 
+            color: white; 
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .test-button {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            background: rgba(0, 255, 194, 0.2);
+            border: 2px solid #00FFC2;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h3>🧪 Test Effets Magnétiques</h3>
+        <p>Particules: <span id="particleCount">0</span></p>
+        <p>Canvas: <span id="canvasStatus">Non créé</span></p>
+        <p>Souris: <span id="mousePos">0, 0</span></p>
+    </div>
+    
+    <button class="test-button" onclick="explode(event)">CLIC POUR EXPLOSION</button>
+
+    <script>
+        // Variables
+        let magneticParticles = [];
+        let magneticExplosions = [];
+        let magneticMouse = { x: 0, y: 0 };
+        let magneticCanvas, magneticCtx;
+        
+        // Particule magnétique simplifiée
+        class MagneticParticle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.size = Math.random() * 3 + 1;
+                this.color = `hsl(${Math.random() * 60 + 160}, 70%, 60%)`;
+                this.attracted = false;
+            }
+            
+            update() {
+                const dx = magneticMouse.x - this.x;
+                const dy = magneticMouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 200) {
+                    const force = (200 - distance) / 200;
+                    this.vx += (dx / distance) * force * 0.5;
+                    this.vy += (dy / distance) * force * 0.5;
+                    this.attracted = true;
+                } else {
+                    this.attracted = false;
+                }
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -0.8;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -0.8;
+                
+                this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+                this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+            }
+            
+            draw() {
+                magneticCtx.save();
+                magneticCtx.fillStyle = this.color;
+                if (this.attracted) {
+                    magneticCtx.shadowBlur = 10;
+                    magneticCtx.shadowColor = this.color;
+                }
+                magneticCtx.beginPath();
+                magneticCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                magneticCtx.fill();
+                magneticCtx.restore();
+            }
+        }
+        
+        // Explosion
+        class MagneticExplosion {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.particles = [];
+                this.life = 1;
+                
+                for (let i = 0; i < 15; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10,
+                        life: 1,
+                        decay: Math.random() * 0.03 + 0.02
+                    });
+                }
+            }
+            
+            update() {
+                this.life -= 0.02;
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vx *= 0.96;
+                    p.vy *= 0.96;
+                    p.life -= p.decay;
+                });
+            }
+            
+            draw() {
+                magneticCtx.save();
+                this.particles.forEach(p => {
+                    if (p.life > 0) {
+                        magneticCtx.globalAlpha = p.life;
+                        magneticCtx.fillStyle = '#00FFC2';
+                        magneticCtx.beginPath();
+                        magneticCtx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                        magneticCtx.fill();
+                    }
+                });
+                magneticCtx.restore();
+            }
+        }
+        
+        // Initialisation
+        function init() {
+            console.log('🚀 Initialisation test magnétique...');
+            
+            // Créer canvas
+            magneticCanvas = document.createElement('canvas');
+            magneticCanvas.style.position = 'fixed';
+            magneticCanvas.style.top = '0';
+            magneticCanvas.style.left = '0';
+            magneticCanvas.style.zIndex = '1';
+            magneticCanvas.width = window.innerWidth;
+            magneticCanvas.height = window.innerHeight;
+            document.body.appendChild(magneticCanvas);
+            
+            magneticCtx = magneticCanvas.getContext('2d');
+            document.getElementById('canvasStatus').textContent = 'Créé ✅';
+            
+            // Créer particules
+            for (let i = 0; i < 50; i++) {
+                magneticParticles.push(new MagneticParticle());
+            }
+            
+            document.getElementById('particleCount').textContent = magneticParticles.length;
+            console.log(`Créé ${magneticParticles.length} particules`);
+            
+            // Démarrer animation
+            animate();
+        }
+        
+        function animate() {
+            magneticCtx.fillStyle = 'rgba(2, 2, 5, 0.1)';
+            magneticCtx.fillRect(0, 0, magneticCanvas.width, magneticCanvas.height);
+            
+            // Connexions
+            magneticCtx.strokeStyle = 'rgba(0, 255, 194, 0.3)';
+            magneticCtx.lineWidth = 1;
+            magneticParticles.forEach(p => {
+                if (p.attracted) {
+                    magneticCtx.beginPath();
+                    magneticCtx.moveTo(p.x, p.y);
+                    magneticCtx.lineTo(magneticMouse.x, magneticMouse.y);
+                    magneticCtx.stroke();
+                }
+            });
+            
+            // Particules
+            magneticParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            // Explosions
+            magneticExplosions = magneticExplosions.filter(e => e.life > 0);
+            magneticExplosions.forEach(e => {
+                e.update();
+                e.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        function explode(event) {
+            magneticExplosions.push(new MagneticExplosion(event.clientX, event.clientY));
+        }
+        
+        // Events
+        window.addEventListener('mousemove', (e) => {
+            magneticMouse.x = e.clientX;
+            magneticMouse.y = e.clientY;
+            document.getElementById('mousePos').textContent = `${e.clientX}, ${e.clientY}`;
+        });
+        
+        window.addEventListener('resize', () => {
+            magneticCanvas.width = window.innerWidth;
+            magneticCanvas.height = window.innerHeight;
+        });
+        
+        // Lancer après chargement
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

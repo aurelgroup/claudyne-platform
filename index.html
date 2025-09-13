@@ -1786,12 +1786,40 @@
             // Masquer le preloader avec une transition
             preloader.classList.add('hidden');
             
+            // Initialiser le starfield maintenant que la page est visible
+            setTimeout(() => {
+                initializeStarfield();
+            }, 100);
+            
             // Supprimer le preloader du DOM après la transition
             setTimeout(() => {
                 if (preloader.parentNode) {
                     preloader.parentNode.removeChild(preloader);
                 }
             }, 500);
+        }
+
+        // Initialisation du starfield
+        function initializeStarfield() {
+            const canvas = document.getElementById('starfieldCanvas');
+            if (canvas && typeof initParticles === 'function') {
+                // Forcer le redimensionnement et l'initialisation
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                // Réinitialiser les particules et nodes
+                initParticles();
+                if (typeof addNodes === 'function') {
+                    addNodes();
+                }
+                
+                // S'assurer que l'animation démarre
+                if (!animationId && typeof animate === 'function') {
+                    animate();
+                }
+                
+                console.log('🌟 Starfield réinitialisé avec', particles.length, 'particules');
+            }
         }
 
         // Déclencheurs pour masquer le preloader

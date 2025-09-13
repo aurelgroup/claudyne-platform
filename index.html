@@ -79,7 +79,14 @@
         
         /* Reset et base */
         * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { 
+            scroll-behavior: smooth;
+            /* Anti-overscroll sur mobile */
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--color-dark-bg);
+            min-height: 100%;
+        }
         body { 
             margin: 0; 
             font-family: 'Montserrat', sans-serif; 
@@ -89,6 +96,11 @@
             line-height: 1.6; 
             padding-top: 80px; /* Espace pour la navigation fixe */
             visibility: hidden; /* Anti-FOUC : masquer jusqu'au chargement */
+            /* Anti-overscroll mobile */
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+            position: relative;
+            min-height: 100vh;
         }
 
         body.loaded {
@@ -680,6 +692,18 @@
             50% { opacity: 1; }
         }
 
+        /* Couche de protection contre l'overscroll */
+        .overscroll-protection {
+            position: fixed;
+            top: -100vh;
+            left: 0;
+            right: 0;
+            height: 300vh;
+            background: var(--color-dark-bg);
+            z-index: -1;
+            pointer-events: none;
+        }
+
         /* Navigation en bas pour mobile */
         .bottom-nav {
             display: none;
@@ -928,6 +952,9 @@
     </style>
 </head>
 <body>
+    <!-- Protection contre l'overscroll -->
+    <div class="overscroll-protection"></div>
+    
     <!-- Preloader anti-FOUC -->
     <div class="preloader" id="preloader">
         <div class="preloader-logo">CLAUDYNE</div>
@@ -1792,6 +1819,48 @@
 
         // Sécurité : forcer le masquage après 5 secondes maximum
         setTimeout(hidePreloader, 5000);
+
+        // =========================================
+        // PROTECTION CONTRE L'OVERSCROLL MOBILE
+        // =========================================
+
+        // Empêcher l'overscroll bounce sur mobile
+        function preventOverscroll() {
+            let lastY = 0;
+            let isScrolling = false;
+
+            document.addEventListener('touchstart', function(e) {
+                lastY = e.touches[0].pageY;
+                isScrolling = false;
+            }, { passive: false });
+
+            document.addEventListener('touchmove', function(e) {
+                const currentY = e.touches[0].pageY;
+                const deltaY = currentY - lastY;
+                
+                // Vérifier si on est au début ou à la fin de la page
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                
+                // Empêcher l'overscroll au début de la page
+                if (scrollTop <= 0 && deltaY > 0) {
+                    e.preventDefault();
+                }
+                
+                // Empêcher l'overscroll à la fin de la page
+                if (scrollTop + clientHeight >= scrollHeight && deltaY < 0) {
+                    e.preventDefault();
+                }
+                
+                lastY = currentY;
+            }, { passive: false });
+        }
+
+        // Activer la protection overscroll sur mobile
+        if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            preventOverscroll();
+        }
 
         // Configuration optimisée pour les performances
         const canvas = document.getElementById('starfieldCanvas');

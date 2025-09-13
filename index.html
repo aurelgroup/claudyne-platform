@@ -604,42 +604,85 @@
             z-index: 1002;
         }
 
+        /* Navigation en bas pour mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 2, 5, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--color-glass-border);
+            padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .bottom-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            padding: 0.5rem 0.25rem;
+            border-radius: 12px;
+            min-width: 50px;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+            color: var(--color-accent-1);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .bottom-nav-item .material-icons-outlined {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .bottom-nav-item span:not(.material-icons-outlined) {
+            font-size: 0.65rem;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1;
+        }
+
         /* Responsive amélioré */
         @media (max-width: 768px) {
             .nav-links { 
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 0.3rem;
-                font-size: 0.75rem;
+                display: none;
             }
             
-            .nav-links li {
-                margin: 0;
-            }
-            
-            .nav-links a {
-                padding: 0.4rem 0.6rem;
-                border-radius: 6px;
-                background: rgba(255, 255, 255, 0.15);
-                backdrop-filter: blur(5px);
-                font-size: 0.7rem;
-                white-space: nowrap;
+            .bottom-nav {
+                display: block;
             }
             
             .container {
                 padding: 0.5rem 1rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                justify-content: center;
             }
             
             .logo {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
             }
             
             .navbar {
                 padding: 0.75rem 1rem;
+            }
+            
+            body {
+                padding-bottom: 80px; /* Espace pour la navigation en bas */
             }
             
             .btn-group { 
@@ -2346,5 +2389,83 @@
         // 5. Implémenter la vérification du statut de paiement
         // 6. Configurer les webhooks Maviance
 
+        // =========================================
+        // NAVIGATION EN BAS - GESTION ACTIVE STATE
+        // =========================================
+
+        function setActiveTab(sectionId) {
+            // Retirer active de tous les items
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Ajouter active à l'item correspondant
+            const activeItem = document.querySelector(`[data-section="${sectionId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+        }
+
+        // Observer pour détecter la section visible
+        const observerOptions = {
+            threshold: 0.6,
+            rootMargin: '-80px 0px -80px 0px'
+        };
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveTab(entry.target.id);
+                }
+            });
+        }, observerOptions);
+
+        // Observer toutes les sections principales
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = ['hero', 'features', 'pricing', 'testimonials', 'donation', 'contact'];
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    sectionObserver.observe(section);
+                }
+            });
+
+            // Définir l'onglet actif initial
+            setActiveTab('hero');
+        });
 
     </script>
+
+
+    <!-- Navigation en bas pour mobile -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="#hero" class="bottom-nav-item active" data-section="hero">
+                <span class="material-icons-outlined">home</span>
+                <span>Accueil</span>
+            </a>
+            <a href="#features" class="bottom-nav-item" data-section="features">
+                <span class="material-icons-outlined">auto_awesome</span>
+                <span>Features</span>
+            </a>
+            <a href="#pricing" class="bottom-nav-item" data-section="pricing">
+                <span class="material-icons-outlined">monetization_on</span>
+                <span>Tarifs</span>
+            </a>
+            <a href="#testimonials" class="bottom-nav-item" data-section="testimonials">
+                <span class="material-icons-outlined">star</span>
+                <span>Avis</span>
+            </a>
+            <a href="#donation" class="bottom-nav-item" data-section="donation">
+                <span class="material-icons-outlined">volunteer_activism</span>
+                <span>Don</span>
+            </a>
+            <a href="javascript:void(0)" class="bottom-nav-item" onclick="showLoginModal()">
+                <span class="material-icons-outlined">account_circle</span>
+                <span>Connexion</span>
+            </a>
+        </div>
+    </nav>
+
+</body>
+</html>

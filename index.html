@@ -88,6 +88,17 @@
             overflow-x: hidden; 
             line-height: 1.6; 
             padding-top: 80px; /* Espace pour la navigation fixe */
+            visibility: hidden; /* Anti-FOUC : masquer jusqu'au chargement */
+        }
+
+        body.loaded {
+            visibility: visible;
+            animation: fadeInPage 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* Navigation fixe */
@@ -611,17 +622,62 @@
         }
 
         /* Indicateur de chargement */
-        .loading-indicator {
+        /* Preloader anti-FOUC */
+        .preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-            z-index: 1002;
+            height: 100%;
+            background: var(--color-dark-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .preloader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 255, 194, 0.1);
+            border-top: 3px solid var(--color-accent-1);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .preloader-text {
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         /* Navigation en bas pour mobile */
@@ -872,8 +928,12 @@
     </style>
 </head>
 <body>
-    <!-- Indicateur de chargement -->
-    <div class="loading-indicator" id="loadingIndicator"></div>
+    <!-- Preloader anti-FOUC -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-logo">CLAUDYNE</div>
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Chargement de votre expérience éducative...</div>
+    </div>
     
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -1684,6 +1744,55 @@
     </div>
     
     <script>
+        // =========================================
+        // ANTI-FOUC ET PRELOADER
+        // =========================================
+        
+        // Fonction pour masquer le preloader et afficher le contenu
+        function hidePreloader() {
+            const preloader = document.getElementById('preloader');
+            const body = document.body;
+            
+            // Ajouter la classe loaded au body pour déclencher l'animation
+            body.classList.add('loaded');
+            
+            // Masquer le preloader avec une transition
+            preloader.classList.add('hidden');
+            
+            // Supprimer le preloader du DOM après la transition
+            setTimeout(() => {
+                if (preloader.parentNode) {
+                    preloader.parentNode.removeChild(preloader);
+                }
+            }, 500);
+        }
+
+        // Déclencheurs pour masquer le preloader
+        let resourcesLoaded = false;
+        let domReady = false;
+
+        function checkReadyState() {
+            if (resourcesLoaded && domReady) {
+                // Attendre un minimum de 800ms pour une expérience fluide
+                setTimeout(hidePreloader, 800);
+            }
+        }
+
+        // Quand le DOM est prêt
+        document.addEventListener('DOMContentLoaded', function() {
+            domReady = true;
+            checkReadyState();
+        });
+
+        // Quand toutes les ressources sont chargées
+        window.addEventListener('load', function() {
+            resourcesLoaded = true;
+            checkReadyState();
+        });
+
+        // Sécurité : forcer le masquage après 5 secondes maximum
+        setTimeout(hidePreloader, 5000);
+
         // Configuration optimisée pour les performances
         const canvas = document.getElementById('starfieldCanvas');
         const ctx = canvas.getContext('2d');

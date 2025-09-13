@@ -182,6 +182,16 @@
             transition: var(--transition);
         }
 
+        /* Ajustement position sur mobile pour éviter la navigation en bas */
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 100px; /* Au-dessus de la navigation bottom */
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
         .back-to-top.visible {
             opacity: 1;
             transform: scale(1);
@@ -583,6 +593,16 @@
             cursor: pointer;
             transition: var(--transition);
             border: 2px solid var(--color-accent-1);
+        }
+
+        /* Ajustement position audio sur mobile */
+        @media (max-width: 768px) {
+            .audio-control {
+                bottom: 160px; /* Au-dessus de la navigation et du back-to-top */
+                right: 15px;
+                width: 50px;
+                height: 50px;
+            }
         }
 
         .audio-control:hover {

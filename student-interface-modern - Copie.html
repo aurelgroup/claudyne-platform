@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudyne - Plateforme Éducative</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --glass: rgba(255, 255, 255, 0.15);
+            --text: #ffffff;
+            --border: rgba(255, 255, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 280px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem 0;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-menu { padding: 2rem 0; }
+        .nav-item { margin: 0.5rem 1rem; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: var(--primary);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before { left: 0; }
+
+        .nav-link:hover,
+        .nav-link.active {
+            transform: translateX(8px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-icon { margin-right: 1rem; width: 20px; text-align: center; }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .user-header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-avatar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .user-details h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subscription-badge {
+            background: var(--warning);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label { opacity: 0.8; font-size: 0.9rem; }
+
+        .section { display: none; }
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 50px; height: 50px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary { background: var(--secondary); }
+        .btn-success { background: var(--success); }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem; right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show { transform: translateX(0); }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem; left: 1rem;
+            z-index: 1001;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .user-info { flex-direction: column; text-align: center; }
+        }
+
+        .chat-container {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message.user { flex-direction: row-reverse; }
+
+        .message-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .message-bubble {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            max-width: 70%;
+        }
+
+        .message.user .message-bubble { background: var(--primary); }
+
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            gap: 1rem;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 1rem 1.5rem;
+            color: var(--text);
+        }
+
+        .chat-input input::placeholder { color: rgba(255,255,255,0.6); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>Claudyne</h1>
+                <p>Plateforme Éducative</p>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <div class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-home nav-icon"></i>
+                        <span>Tableau de bord</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('courses')">
+                        <i class="fas fa-book nav-icon"></i>
+                        <span>Mes Cours</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('quiz')">
+                        <i class="fas fa-brain nav-icon"></i>
+                        <span>Quiz Intelligents</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('ai')">
+                        <i class="fas fa-robot nav-icon"></i>
+                        <span>Mentor IA</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('progress')">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span>Analytics</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('diplomas')">
+                        <i class="fas fa-certificate nav-icon"></i>
+                        <span>Diplômes</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('claudine-award')">
+                        <i class="fas fa-award nav-icon"></i>
+                        <span>Prix Claudine</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('affiliation')">
+                        <i class="fas fa-handshake nav-icon"></i>
+                        <span>Affiliation</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('offline')">
+                        <i class="fas fa-download nav-icon"></i>
+                        <span>Mode Hors-ligne</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('social')">
+                        <i class="fas fa-users nav-icon"></i>
+                        <span>Communauté</span>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-link" onclick="showSection('settings')">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span>Paramètres</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="user-header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="user-details">
+                        <h1>Richy NONO</h1>
+                        <p>Terminale C • Lycée Bilingue de Logpom</p>
+                        <div class="subscription-badge">
+                            <i class="fas fa-clock"></i>
+                            Expire dans 2 mois, 15 jours
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">85%</div>
+                        <div class="stat-label">Moyenne générale</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Cours terminés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Quiz réussis</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">3ème</div>
+                        <div class="stat-label">Classement</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <section id="dashboard" class="section active">
+                <h2 class="section-title">Tableau de bord</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <h3 class="card-title">Cours en cours</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Mathématiques - Dérivées :</strong> 67%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 67%"></div>
+                            </div>
+                            <p><strong>Physique - Électricité :</strong> 50%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%"></div>
+                            </div>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Continuer
+                            </button>
+                            <button class="btn btn-secondary" onclick="showSection('offline')">
+                                <i class="fas fa-download"></i>
+                                Test Hors-ligne
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <h3 class="card-title">Performance</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Temps d'étude : <strong>18h 45min</strong></p>
+                            <p>Quiz complétés : <strong>5/7</strong></p>
+                            <p>Objectifs atteints : <strong>80%</strong></p>
+                            <button class="btn btn-success">
+                                <i class="fas fa-calendar"></i>
+                                Planifier
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 class="card-title">Actions rapides</h3>
+                        </div>
+                        <div class="card-content">
+                            <button class="btn" onclick="showSection('affiliation')" style="width: 100%; margin-bottom: 0.5rem;">
+                                <i class="fas fa-handshake"></i>
+                                Affiliation
+                            </button>
+                            <button class="btn btn-secondary" onclick="showSection('offline')" style="width: 100%; margin-bottom: 0.5rem;">
+                                <i class="fas fa-download"></i>
+                                Mode Hors-ligne
+                            </button>
+                            <button class="btn btn-success" onclick="showSection('claudine-award')" style="width: 100%;">
+                                <i class="fas fa-award"></i>
+                                Prix Claudine
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mes Cours -->
+            <section id="courses" class="section">
+                <h2 class="section-title">Mes Cours</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3 class="card-title">Mathématiques</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Algèbre, Géométrie, Analyse</p>
+                            <p><strong>Progression :</strong> 75%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <p><strong>Prochain :</strong> Intégrales</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Continuer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-atom"></i>
+                            </div>
+                            <h3 class="card-title">Physique</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Mécanique, Électricité, Optique</p>
+                            <p><strong>Progression :</strong> 60%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <p><strong>Prochain :</strong> Ondes</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Continuer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <h3 class="card-title">Chimie</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Réactions, Mécanismes</p>
+                            <p><strong>Progression :</strong> 45%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                            <p><strong>Prochain :</strong> Polymères</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Commencer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h3 class="card-title">Histoire-Géographie</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Histoire du Cameroun, Géographie</p>
+                            <p><strong>Progression :</strong> 55%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 55%"></div>
+                            </div>
+                            <p><strong>Prochain :</strong> Colonisation</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Continuer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h3 class="card-title">Français</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Expression écrite, Littérature africaine</p>
+                            <p><strong>Progression :</strong> 70%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%"></div>
+                            </div>
+                            <p><strong>Prochain :</strong> Poésie moderne</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Continuer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-dna"></i>
+                            </div>
+                            <h3 class="card-title">Sciences de la Vie</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Biologie cellulaire, Génétique</p>
+                            <p><strong>Progression :</strong> 40%</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%"></div>
+                            </div>
+                            <p><strong>Prochain :</strong> Photosynthèse</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Commencer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quiz -->
+            <section id="quiz" class="section">
+                <h2 class="section-title">Quiz Intelligents</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3 class="card-title">Quiz Adaptatif</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Quiz basé sur vos forces et faiblesses</p>
+                            <p><i class="fas fa-clock"></i> 5-10 minutes</p>
+                            <p><i class="fas fa-brain"></i> Difficulté adaptative</p>
+                            <button class="btn" onclick="startQuiz()">
+                                <i class="fas fa-rocket"></i>
+                                Démarrer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-target"></i>
+                            </div>
+                            <h3 class="card-title">Simulation Examen</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Conditions réelles d'examen</p>
+                            <p><i class="fas fa-clock"></i> 2 heures</p>
+                            <p><i class="fas fa-chart-line"></i> Prédiction score</p>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-play"></i>
+                                Lancer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="card-title">Révision Espacée</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Questions basées sur courbe d'oubli</p>
+                            <p><i class="fas fa-brain"></i> 12 concepts à réviser</p>
+                            <p><i class="fas fa-fire"></i> Série de 7 jours</p>
+                            <button class="btn btn-success">
+                                <i class="fas fa-repeat"></i>
+                                Réviser
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3 class="card-title">Historique</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Maths Quiz Rapide :</strong> 18/20 (Hier)</p>
+                        <p><strong>Physique Test :</strong> 14/20 (3 jours)</p>
+                        <p><strong>Français Analyse :</strong> 16/20 (5 jours)</p>
+                        <p><strong>Chimie Quiz :</strong> 12/20 (1 semaine)</p>
+                        <button class="btn">
+                            <i class="fas fa-chart-line"></i>
+                            Analyse détaillée
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mentor IA -->
+            <section id="ai" class="section">
+                <h2 class="section-title">Mentor IA MEUGACK</h2>
+                
+                <div class="cards-grid">
+                    <div class="card" style="border-left: 4px solid #ff6b6b;">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">
+                                <i class="fas fa-chart-line-down"></i>
+                            </div>
+                            <h3 class="card-title">Points faibles</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Équations 2nd degré :</strong> 62% (moy. classe: 78%)</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 62%; background: #ff6b6b;"></div>
+                            </div>
+                            <p><strong>Réactions chimiques :</strong> 58% (moy. classe: 71%)</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 58%; background: #ff6b6b;"></div>
+                            </div>
+                            <button class="btn">
+                                <i class="fas fa-target"></i>
+                                Programme renforcement
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="border-left: 4px solid #4ecdc4;">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">
+                                <i class="fas fa-chart-line-up"></i>
+                            </div>
+                            <h3 class="card-title">Points forts</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Fonctions et dérivées :</strong> 94% (moy. classe: 76%)</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 94%;"></div>
+                            </div>
+                            <p><strong>Électricité circuits :</strong> 89% (moy. classe: 68%)</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 89%;"></div>
+                            </div>
+                            <button class="btn btn-success">
+                                <i class="fas fa-rocket"></i>
+                                Modules avancés
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="card-title">Style d'apprentissage</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Mode dominant :</strong> Visuel (85%)</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%;"></div>
+                            </div>
+                            <p><strong>Mode complémentaire :</strong> Kinesthésique (15%)</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 15%; background: #ffd700;"></div>
+                            </div>
+                            <p>Interface optimisée pour votre profil</p>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                Ajuster interface
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="card-title">Chat IA Spécialisé</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="chat-container">
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="message">
+                                    <div class="message-avatar">IA</div>
+                                    <div class="message-bubble">
+                                        Bonjour Jean ! Je suis MEUGACK, votre Mentor IA éducatif. Basé sur votre profil, je peux vous aider avec les équations du 2nd degré ou approfondir vos connaissances en dérivées. Que voulez-vous étudier ?
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-input">
+                                <input type="text" id="chatInput" placeholder="Posez votre question..." onkeypress="handleEnter(event)">
+                                <button class="btn" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics -->
+            <section id="progress" class="section">
+                <h2 class="section-title">Analytics Avancés</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="card-title">Performance Temporelle</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Tendance : <strong style="color: #4facfe;">+15% ce mois</strong></p>
+                            <div style="height: 100px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 1rem 0;">
+                                <span>Graphique de progression 30 jours</span>
+                            </div>
+                            <p><strong>Forces :</strong></p>
+                            <p>• Raisonnement logique (95%)</p>
+                            <p>• Analyse graphique (88%)</p>
+                            <p><strong>À améliorer :</strong></p>
+                            <p>• Calcul mental (65%)</p>
+                            <p>• Géométrie spatiale (72%)</p>
+                            <button class="btn">
+                                <i class="fas fa-lightbulb"></i>
+                                Plan amélioration
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="card-title">Objectifs BAC</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="width: 80px; height: 80px; border-radius: 50%; background: conic-gradient(#4facfe 71%, rgba(255,255,255,0.2) 0); display: flex; justify-content: center; align-items: center; margin: 0 auto; position: relative;">
+                                    <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--glass); position: absolute;"></div>
+                                    <div style="font-size: 1.2rem; font-weight: bold; z-index: 1;">71%</div>
+                                </div>
+                            </div>
+                            <p><strong>Objectif :</strong> 16/20</p>
+                            <p><strong>Prédiction actuelle :</strong> 14.2/20</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 71%"></div>
+                            </div>
+                            <p><strong>Temps estimé :</strong> 6 semaines</p>
+                            <button class="btn btn-success">
+                                <i class="fas fa-calendar-alt"></i>
+                                Planifier révisions
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3 class="card-title">Temps d'étude détaillé</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-grid" style="margin-bottom: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">2h 30m</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Aujourd'hui</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">18h 45m</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Cette semaine</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: bold;">67h 20m</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Ce mois</div>
+                                </div>
+                            </div>
+                            <p><strong>Répartition par matière :</strong></p>
+                            <p>• Maths : 34% (6h 20min)</p>
+                            <p>• Physique : 28% (5h 15min)</p>
+                            <p>• Français : 22% (4h 10min)</p>
+                            <p>• Histoire : 16% (3h 00min)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Diplômes -->
+            <section id="diplomas" class="section">
+                <h2 class="section-title">Diplômes & Certificats</h2>
+                
+                <div class="cards-grid">
+                    <div class="card" style="border-left: 4px solid #ffd700;">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #ffd700, #ffed4a);">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="card-title">Certificat Excellence Maths</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Maîtrise des fondamentaux en algèbre et géométrie</p>
+                            <p><strong>Délivré :</strong> 12 Février 2025</p>
+                            <p><strong>Score :</strong> 18.5/20</p>
+                            <p><strong>Validité :</strong> Vie entière</p>
+                            <button class="btn">
+                                <i class="fas fa-download"></i>
+                                Télécharger PDF
+                            </button>
+                            <button class="btn btn-secondary" style="margin-left: 0.5rem;">
+                                <i class="fas fa-share"></i>
+                                Partager
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="border-left: 4px solid #667eea;">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <h3 class="card-title">Badge Excellence Physique</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Résultats exceptionnels en Physique-Chimie</p>
+                            <p><strong>Délivré :</strong> 2 Mars 2025</p>
+                            <p><strong>Score :</strong> 17.8/20</p>
+                            <p><strong>Rang :</strong> Top 5% national</p>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-eye"></i>
+                                Voir en ligne
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="opacity: 0.7; border: 2px dashed rgba(255,255,255,0.3);">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: rgba(255,255,255,0.2);">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="card-title">Diplôme Supérieur (En cours)</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Certification complète toutes matières scientifiques</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 73%"></div>
+                            </div>
+                            <p><strong>Progression :</strong> 73%</p>
+                            <p><strong>Matières restantes :</strong> Chimie Avancée, SVT</p>
+                            <button class="btn">
+                                <i class="fas fa-play"></i>
+                                Continuer parcours
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prix Claudine -->
+            <section id="claudine-award" class="section">
+                <h2 class="section-title">Prix Claudine</h2>
+                
+                <div class="card" style="background: linear-gradient(135deg, #ffd700 0%, rgba(255,215,0,0.3) 100%); border: 2px solid #ffd700;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h3>En hommage à</h3>
+                        <h2 style="font-size: 1.8rem; margin: 0.5rem 0;">Meffo TCHANDJIO Claudine (Mètah)</h2>
+                        <p style="font-style: italic;">"La force du savoir en héritage"</p>
+                    </div>
+                    
+                    <div class="stats-grid" style="margin-bottom: 2rem;">
+                        <div class="stat-card" style="background: rgba(255,255,255,0.2);">
+                            <div class="stat-value">3ème</div>
+                            <div class="stat-label">Position</div>
+                        </div>
+                        <div class="stat-card" style="background: rgba(255,255,255,0.2);">
+                            <div class="stat-value">1,250</div>
+                            <div class="stat-label">Points</div>
+                        </div>
+                        <div class="stat-card" style="background: rgba(255,255,255,0.2);">
+                            <div class="stat-value">+50</div>
+                            <div class="stat-label">Cette semaine</div>
+                        </div>
+                        <div class="stat-card" style="background: rgba(255,255,255,0.2);">
+                            <div class="stat-value">127</div>
+                            <div class="stat-label">Points pour 2ème</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.15); border-radius: 16px; padding: 2rem;">
+                        <h3 style="text-align: center; margin-bottom: 1.5rem;">Classement de la classe</h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: linear-gradient(135deg, #ffd700, #ffed4a); border-radius: 12px; box-shadow: 0 5px 15px rgba(255,215,0,0.3);">
+                                <span><strong>🥇 Beltrade YOUGANG</strong></span>
+                                <span><strong>1,580 pts</strong></span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(192,192,192,0.8); border-radius: 12px;">
+                                <span><strong>🥈 Fanuel TCHANDJIO</strong></span>
+                                <span><strong>1,377 pts</strong></span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(205,127,50,0.8); border-radius: 12px; border: 2px solid #ffd700; transform: scale(1.02);">
+                                <span><strong>🥉 Richy NONO(Vous)</strong></span>
+                                <span><strong>1,250 pts</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <button class="btn">
+                                <i class="fas fa-list"></i>
+                                Voir classement complet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Affiliation -->
+            <section id="affiliation" class="section">
+                <h2 class="section-title">Programme d'Affiliation</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <h3 class="card-title">Comment ça marche</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="margin-bottom: 1rem;">
+                                <p><strong>1.</strong> Partagez votre lien unique avec vos amis</p>
+                                <p><strong>2.</strong> Ils s'inscrivent et payent leur abonnement</p>
+                                <p><strong>3.</strong> Vous gagnez <strong>5 000 XAF</strong> par parrainage réussi</p>
+                            </div>
+                            <div style="background: rgba(255,215,0,0.2); border: 1px solid rgba(255,215,0,0.4); border-radius: 12px; padding: 1rem;">
+                                <p style="text-align: center; margin: 0;"><strong>Bonus :</strong> Vos bons d'achat sont cumulables et utilisables pour réduire le coût de votre abonnement</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <h3 class="card-title">Votre lien de parrainage</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.3); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                                <p style="text-align: center; margin-bottom: 0.5rem;"><strong>Lien unique</strong></p>
+                                <div style="background: rgba(255,215,0,0.2); padding: 0.75rem; border-radius: 8px; font-family: monospace; word-break: break-all; font-size: 0.9rem;" id="affiliateLink">
+                                    https://claudyne.cm/ref/richy-nono-12345
+                                </div>
+                            </div>
+                            <button class="btn" onclick="copyLink()">
+                                <i class="fas fa-copy"></i>
+                                Copier le lien
+                            </button>
+                            <button class="btn btn-secondary" onclick="shareLink()">
+                                <i class="fas fa-share"></i>
+                                Partager
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <h3 class="card-title">Vos statistiques</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-grid">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: bold;">3</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Personnes parrainées</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #ffd700;">15,000</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">XAF gagnés</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #4ecdc4;">2</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">En attente</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="card-title">Personnes parrainées ayant payé</h3>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem;">
+                            <div>
+                                <strong>Paul Biya</strong>
+                                <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">Abonnement Premium 1 an</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: #4ecdc4; font-weight: bold;">+5,000 XAF</div>
+                                <div style="opacity: 0.7; font-size: 0.8rem;">05/09/2025</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px; margin-bottom: 1rem;">
+                            <div>
+                                <strong>Roger Milla</strong>
+                                <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">Abonnement Standard 6 mois</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: #4ecdc4; font-weight: bold;">+5,000 XAF</div>
+                                <div style="opacity: 0.7; font-size: 0.8rem;">01/09/2025</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px;">
+                            <div>
+                                <strong>Samuel Eto'o</strong>
+                                <p style="margin: 0; opacity: 0.8; font-size: 0.9rem;">Abonnement Premium 1 an</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: #4ecdc4; font-weight: bold;">+5,000 XAF</div>
+                                <div style="opacity: 0.7; font-size: 0.8rem;">28/08/2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mode Hors-ligne -->
+            <section id="offline" class="section">
+                <h2 class="section-title">Mode Hors-ligne</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <h3 class="card-title">Contenu Téléchargé</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: bold;">2.4 GB</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Total téléchargé</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: bold;">8/12</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Cours disponibles</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #4ecdc4;">✓</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Sync: il y a 2h</div>
+                                </div>
+                            </div>
+                            <button class="btn" onclick="syncContent()">
+                                <i class="fas fa-sync"></i>
+                                Synchroniser maintenant
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                Paramètres sync
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h3 class="card-title">Cours Mathématiques Ch. 1-8</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <p><strong>Taille :</strong> 450 MB • <strong>Pages :</strong> 120</p>
+                                    <p style="opacity: 0.8;">Dernière mise à jour : il y a 2 jours</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <i class="fas fa-check-circle" style="color: #4ecdc4; font-size: 2rem;"></i>
+                                    <p style="margin: 0; color: #4ecdc4; font-size: 0.8rem; font-weight: bold;">Disponible</p>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%;"></div>
+                            </div>
+                            <p style="margin-top: 0.5rem;">Téléchargement : 100% ✓</p>
+                            <button class="btn btn-success">
+                                <i class="fas fa-eye"></i>
+                                Ouvrir hors-ligne
+                            </button>
+                            <button class="btn btn-secondary" onclick="deleteContent('math')" style="margin-left: 0.5rem;">
+                                <i class="fas fa-trash"></i>
+                                Supprimer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="card-title">Quiz Physique - Électricité</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <p><strong>Taille :</strong> 15 MB • <strong>Questions :</strong> 50</p>
+                                    <p style="opacity: 0.8;">Nouveau contenu disponible</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <i class="fas fa-download" style="color: #ffd700; font-size: 2rem;"></i>
+                                    <p style="margin: 0; color: #ffd700; font-size: 0.8rem; font-weight: bold;">En cours</p>
+                                </div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;" id="downloadProgress"></div>
+                            </div>
+                            <p style="margin-top: 0.5rem;">Téléchargement : 75% - Temps restant : ~2 min</p>
+                            <button class="btn" onclick="pauseDownload()">
+                                <i class="fas fa-pause"></i>
+                                Pause
+                            </button>
+                            <button class="btn btn-secondary" onclick="cancelDownload()">
+                                <i class="fas fa-times"></i>
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h3 class="card-title">Fiches Révision Français</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <p><strong>Taille :</strong> 3.2 MB • <strong>Fiches :</strong> 15</p>
+                                    <p style="opacity: 0.8;">Littérature africaine moderne</p>
+                                </div>
+                                <div style="text-align: center;">
+                                    <i class="fas fa-cloud-download-alt" style="color: #667eea; font-size: 2rem;"></i>
+                                    <p style="margin: 0; color: #667eea; font-size: 0.8rem; font-weight: bold;">À télécharger</p>
+                                </div>
+                            </div>
+                            <button class="btn" onclick="downloadContent('french-sheets')">
+                                <i class="fas fa-download"></i>
+                                Télécharger
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-info"></i>
+                                Aperçu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-wifi-off"></i>
+                        </div>
+                        <h3 class="card-title">Gestion Mode Hors-ligne</h3>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px;">
+                                <i class="fas fa-wifi" style="font-size: 2rem; margin-bottom: 0.5rem; color: #4ecdc4;"></i>
+                                <p style="margin-bottom: 0.5rem;"><strong>Auto-téléchargement WiFi</strong></p>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked style="transform: scale(1.2);">
+                                    <span style="color: #4ecdc4;">Activé</span>
+                                </div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px;">
+                                <i class="fas fa-broom" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                <p style="margin-bottom: 0.5rem;"><strong>Nettoyage automatique</strong></p>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <input type="checkbox" style="transform: scale(1.2);">
+                                    <span>Après 30 jours</span>
+                                </div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 12px;">
+                                <i class="fas fa-battery-half" style="font-size: 2rem; margin-bottom: 0.5rem; color: #ffd700;"></i>
+                                <p style="margin-bottom: 0.5rem;"><strong>Mode éco batterie</strong></p>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked style="transform: scale(1.2);">
+                                    <span style="color: #ffd700;">Activé</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn" onclick="downloadAllContent()">
+                                <i class="fas fa-download"></i>
+                                Tout télécharger
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearCache()">
+                                <i class="fas fa-broom"></i>
+                                Vider cache
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                Paramètres avancés
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Communauté -->
+            <section id="social" class="section">
+                <h2 class="section-title">Communauté</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="card-title">Groupes d'étude</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Terminale C - Maths :</strong> 24 membres actifs</p>
+                            <p><strong>Dernière discussion :</strong> Exercices dérivées</p>
+                            <p><strong>Prochaine session :</strong> Dimanche 19h</p>
+                            <button class="btn">
+                                <i class="fas fa-comments"></i>
+                                Rejoindre discussion
+                            </button>
+                            <button class="btn btn-secondary" style="margin-left: 0.5rem;">
+                                <i class="fas fa-plus"></i>
+                                Créer groupe
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="card-title">Programme Mentorat</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Votre mentor :</strong> Marie Dupont (BAC mention TB)</p>
+                            <p><strong>Spécialités :</strong> Maths, Physique</p>
+                            <p><strong>Prochaine session :</strong> Mardi 15h00 - Révision intégrales</p>
+                            <button class="btn">
+                                <i class="fas fa-video"></i>
+                                Rejoindre appel
+                            </button>
+                            <button class="btn btn-secondary" style="margin-left: 0.5rem;">
+                                <i class="fas fa-calendar"></i>
+                                Programmer session
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                            <h3 class="card-title">Notes & Ressources</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-grid" style="margin-bottom: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.8rem; font-weight: bold;">47</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Vos consultations</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.8rem; font-weight: bold; color: #ffd700;">12</div>
+                                    <div style="opacity: 0.8; font-size: 0.9rem;">Notes favorites</div>
+                                </div>
+                            </div>
+                            <p><strong>Dernière note consultée :</strong> "Formulaire dérivées - Term C" par Paul M.</p>
+                            <button class="btn btn-success">
+                                <i class="fas fa-upload"></i>
+                                Partager une note
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="card-title">Classement & Défis</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Top amis cette semaine :</strong></p>
+                            <p>🥇 Marie K. - 892 pts</p>
+                            <p>🥈 Paul D. - 756 pts</p>
+                            <p style="color: #4ecdc4;">🥉 Vous - 734 pts</p>
+                            <p><strong>Défis en cours :</strong></p>
+                            <p>• Marathon lecture (3/7 jours)</p>
+                            <p>• Quiz parfaits (2/5)</p>
+                            <button class="btn">
+                                <i class="fas fa-sword"></i>
+                                Défier un ami
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Paramètres -->
+            <section id="settings" class="section">
+                <h2 class="section-title">Paramètres</h2>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <h3 class="card-title">Profil & Préférences</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Nom :</strong> Richy NONO</p>
+                            <p><strong>Email :</strong> richy.nono@claudyne.com</p>
+                            <p><strong>Classe :</strong> Terminale C</p>
+                            <p><strong>Mode d'apprentissage :</strong> Visuel (85%) + Kinesthésique (15%)</p>
+                            <p><strong>Rythme préféré :</strong> Intensif</p>
+                            <p><strong>Objectif BAC :</strong> Mention Bien (16/20)</p>
+                            <button class="btn">
+                                <i class="fas fa-edit"></i>
+                                Modifier profil
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <h3 class="card-title">Notifications</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>✅ Rappels d'étude personnalisés</p>
+                            <p>✅ Suggestions IA avancées</p>
+                            <p>❌ Communauté & Social</p>
+                            <p>✅ Résultats d'examens</p>
+                            <p>❌ Notifications marketing</p>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-cog"></i>
+                                Configurer détaillé
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3 class="card-title">Apparence & Interface</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Thème actuel :</strong> Glassmorphism</p>
+                            <p>❌ Mode haute performance</p>
+                            <p>❌ Interface compacte</p>
+                            <p>✅ Animations fluides</p>
+                            <select onchange="changeTheme(this.value)" style="width: 100%; padding: 0.5rem; margin: 1rem 0; border-radius: 8px; background: rgba(255,255,255,0.2); border: 1px solid var(--border); color: var(--text);">
+                                <option value="glassmorphism">Glassmorphism (défaut)</option>
+                                <option value="dark">Mode sombre</option>
+                                <option value="light">Mode clair</option>
+                                <option value="colorful">Mode coloré</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <h3 class="card-title">Mode Hors-ligne</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Contenu téléchargé :</strong> 2.4 GB</p>
+                            <p><strong>Cours disponibles :</strong> 8/12</p>
+                            <p><strong>Dernière sync :</strong> Il y a 2h</p>
+                            <p>✅ Auto-téléchargement sur WiFi</p>
+                            <p>❌ Nettoyage automatique (30 jours)</p>
+                            <p>✅ Mode économie batterie</p>
+                            <button class="btn btn-success" onclick="syncContent()">
+                                <i class="fas fa-sync"></i>
+                                Synchroniser
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3 class="card-title">Confidentialité & Sécurité</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Visibilité profil :</strong> Public</p>
+                            <p>✅ Visible dans les classements</p>
+                            <p>✅ Partage de notes autorisé</p>
+                            <p>❌ Données de géolocalisation</p>
+                            <p>✅ Cookies analytiques</p>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-key"></i>
+                                Changer mot de passe
+                            </button>
+                            <button class="btn btn-secondary" style="margin-top: 0.5rem;">
+                                <i class="fas fa-download"></i>
+                                Exporter mes données
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-plug"></i>
+                            </div>
+                            <h3 class="card-title">Intégrations</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>✅ Google Calendar (Planning synchronisé)</p>
+                            <p>❌ WhatsApp (Rappels et notifications)</p>
+                            <p>❌ Moodle/ENT Lycée (Import notes)</p>
+                            <p>❌ Discord (Groupes d'étude)</p>
+                            <button class="btn">
+                                <i class="fas fa-plus"></i>
+                                Ajouter intégrations
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentSection = 'dashboard';
+
+        function showSection(sectionName) {
+            console.log('Navigation vers:', sectionName);
+            
+            // Masquer toutes les sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Afficher la section demandée
+            const section = document.getElementById(sectionName);
+            if (section) {
+                section.classList.add('active');
+                currentSection = sectionName;
+                
+                // Mettre à jour la navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Trouver et activer le lien correspondant
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.onclick && link.onclick.toString().includes(`'${sectionName}'`)) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                showToast(`Section ${sectionName} ouverte`);
+            }
+            
+            // Fermer le menu mobile
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fonctions Affiliation
+        function copyLink() {
+            const link = document.getElementById('affiliateLink').textContent;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('Lien d\'affiliation copié !');
+            }).catch(() => {
+                showToast('Erreur de copie');
+            });
+        }
+
+        function shareLink() {
+            const link = document.getElementById('affiliateLink').textContent;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Rejoignez Claudyne !',
+                    text: 'Découvrez cette excellente plateforme éducative',
+                    url: link
+                });
+            } else {
+                copyLink();
+            }
+        }
+
+        // Fonctions Mode Hors-ligne
+        function syncContent() {
+            showToast('Synchronisation en cours...');
+            setTimeout(() => {
+                showToast('Synchronisation terminée ! 3 nouveaux contenus disponibles');
+            }, 2000);
+        }
+
+        function downloadContent(contentId) {
+            showToast('Démarrage du téléchargement...');
+            
+            let progress = 0;
+            const progressBar = document.getElementById('downloadProgress');
+            
+            const downloadInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(downloadInterval);
+                    showToast('Téléchargement terminé !');
+                    
+                    if (progressBar) {
+                        progressBar.style.width = '100%';
+                    }
+                }
+                
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+                
+                if (progress < 100) {
+                    showToast(`Téléchargement: ${Math.round(progress)}%`);
+                }
+            }, 1000);
+        }
+
+        function pauseDownload() {
+            showToast('Téléchargement mis en pause');
+        }
+
+        function cancelDownload() {
+            showToast('Téléchargement annulé');
+            const progressBar = document.getElementById('downloadProgress');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+        }
+
+        function deleteContent(contentId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce contenu ?')) {
+                showToast('Contenu supprimé');
+            }
+        }
+
+        function downloadAllContent() {
+            showToast('Téléchargement de tous les cours en cours...');
+            setTimeout(() => {
+                showToast('Tous les contenus téléchargés (4.2 GB)');
+            }, 3000);
+        }
+
+        function clearCache() {
+            if (confirm('Vider le cache supprimera les fichiers temporaires. Continuer ?')) {
+                showToast('Cache vidé - 156 MB libérés');
+            }
+        }
+
+        // Autres fonctions
+        function startQuiz() {
+            showToast('Quiz adaptatif en préparation...');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+            
+            setTimeout(() => {
+                const responses = [
+                    "Excellente question ! D'après votre profil, vous excellez en dérivées mais avez des difficultés avec les équations du 2nd degré. Commençons par réviser le discriminant...",
+                    "Pour ce problème de physique, utilisons votre mode d'apprentissage visuel. Je vais vous expliquer avec des schémas mentaux...",
+                    "Basé sur votre progression de 75% en maths, vous êtes prêt pour les intégrales. Voici la méthode étape par étape...",
+                    "Votre analyse des circuits électriques est excellente (89%). Appliquons ces connaissances aux exercices avancés..."
+                ];
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(response, false);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function addMessage(text, isUser) {
+            const messages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : ''}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? 'JK' : 'IA'}</div>
+                <div class="message-bubble">${text}</div>
+            `;
+            
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function changeTheme(theme) {
+            const root = document.documentElement;
+            
+            switch(theme) {
+                case 'dark':
+                    root.style.setProperty('--primary', 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)');
+                    root.style.setProperty('--glass', 'rgba(45, 55, 72, 0.8)');
+                    break;
+                case 'light':
+                    root.style.setProperty('--primary', 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%)');
+                    root.style.setProperty('--text', '#2d3748');
+                    root.style.setProperty('--glass', 'rgba(255, 255, 255, 0.8)');
+                    break;
+                case 'colorful':
+                    root.style.setProperty('--primary', 'linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%)');
+                    root.style.setProperty('--secondary', 'linear-gradient(135deg, #96ceb4 0%, #ffecd2 100%)');
+                    break;
+                default:
+                    root.style.setProperty('--primary', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                    root.style.setProperty('--text', '#ffffff');
+                    root.style.setProperty('--glass', 'rgba(255, 255, 255, 0.15)');
+            }
+            
+            showToast(`Thème ${theme} appliqué avec succès !`);
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            showToast('Bienvenue sur Claudyne - Plateforme complète !');
+            
+            // Animation des barres de progression
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }, 500);
+
+            // Messages contextuels périodiques
+            setInterval(() => {
+                const messages = [
+                    "Session de révision prévue dans 1h",
+                    "Nouveau quiz de maths disponible",
+                    "Marie vient de partager ses notes",
+                    "Objectif hebdomadaire à 80%"
+                ];
+                
+                if (Math.random() > 0.85) {
+                    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                    showToast(randomMsg);
+                }
+            }, 30000);
+        });
+
+        console.log('Claudyne - Plateforme complète chargée avec succès !');
+    </script>
+</body>
+</html>

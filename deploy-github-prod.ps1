@@ -30,7 +30,7 @@ git add .
 
 $commitMsg = Read-Host "💬 Message de commit"
 if ([string]::IsNullOrEmpty($commitMsg)) {
-    $commitMsg = "🔐✨ Nouvelles fonctionnalités - Sécurité & Abonnement Premium"
+    $commitMsg = "Nouvelles fonctionnalités - Sécurité et Abonnement Premium"
 }
 
 Write-Host "📤 Création du commit..." -ForegroundColor Blue
@@ -54,7 +54,7 @@ Write-Host "🚀 Déploiement sur le serveur $VPS_IP..." -ForegroundColor Blue
 
 # Déploiement direct des fichiers statiques
 Write-Host "⚡ Déploiement des fichiers sur le serveur..." -ForegroundColor Blue
-ssh ${VPS_USER}@${VPS_IP} "cd /var/www/html && git pull origin main && systemctl reload nginx"
+ssh ${VPS_USER}@${VPS_IP} "cd /var/www/html; git pull origin main; systemctl reload nginx"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

@@ -143,6 +143,6 @@ curl https://claudyne.com/student
 
 **La force du savoir en héritage** ✨
 
-*En hommage à Meffo Mehtah Tchandjio Claudine* 👨‍👩‍👧‍👦
+*En hommage à Meffo TCHANDJIO Claudine (Mètah) * 👨‍👩‍👧‍👦
 
 </div>

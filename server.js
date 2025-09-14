@@ -46,8 +46,8 @@ const server = http.createServer((req, res) => {
     // Routing spécifique
     if (parsedUrl.pathname === '/') {
         filePath = './index.html'; // Interface principale
-    } else if (parsedUrl.pathname === '/admin') {
-        filePath = './admin-interface.html'; // Interface admin
+    } else if (parsedUrl.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
+        filePath = './admin-interface.html'; // Interface admin sécurisée
     } else if (parsedUrl.pathname === '/student') {
         filePath = './student-interface-modern.html'; // Interface étudiant
     } else if (parsedUrl.pathname === '/offline') {

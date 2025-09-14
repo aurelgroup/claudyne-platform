@@ -52,13 +52,9 @@ Write-Host "✅ Push GitHub réussi!" -ForegroundColor Green
 Write-Host ""
 Write-Host "🚀 Déploiement sur le serveur $VPS_IP..." -ForegroundColor Blue
 
-# Copie du script de mise à jour
-Write-Host "📋 Copie du script de mise à jour..." -ForegroundColor Blue
-scp deploy-scripts/quick-update.sh ${VPS_USER}@${VPS_IP}:/var/www/claudyne/claudyne-platform/
-
-# Exécution du script de déploiement
-Write-Host "⚡ Exécution du déploiement..." -ForegroundColor Blue
-ssh ${VPS_USER}@${VPS_IP} "cd /var/www/claudyne/claudyne-platform && chmod +x quick-update.sh && ./quick-update.sh"
+# Déploiement direct des fichiers statiques
+Write-Host "⚡ Déploiement des fichiers sur le serveur..." -ForegroundColor Blue
+ssh ${VPS_USER}@${VPS_IP} "cd /var/www/html && git pull origin main && systemctl reload nginx"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

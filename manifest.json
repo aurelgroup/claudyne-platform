@@ -68,14 +68,14 @@
       "name": "Interface Étudiant",
       "short_name": "Étudiant",
       "description": "Accès direct à l'interface étudiante",
-      "url": "/student-interface-modern.html",
+      "url": "/student",
       "icons": [{ "src": "/icons/student.png", "sizes": "96x96" }]
     },
     {
       "name": "Interface Admin",
       "short_name": "Admin",
       "description": "Accès à l'administration",
-      "url": "/admin-interface.html",
+      "url": "/admin-secure-k7m9x4n2p8w5z1c6",
       "icons": [{ "src": "/icons/admin.png", "sizes": "96x96" }]
     },
     {

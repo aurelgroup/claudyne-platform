@@ -13,9 +13,9 @@
 
 ## 🔧 Scripts Disponibles
 
-### 1. **test-ssh.bat** - Test de Connexion
+### 1. **Connexion SSH** - Test manuel
 ```bash
-test-ssh.bat
+ssh root@89.117.58.53
 ```
 **Utilisation:** Vérifier que la connexion SSH fonctionne avant le déploiement
 
@@ -37,11 +37,6 @@ PowerShell -ExecutionPolicy Bypass -File deploy-github-prod.ps1
 ```
 **Utilisation:** Version PowerShell avancée avec couleurs et meilleure gestion d'erreurs
 
-### 4. **deploy-local.bat** - Déploiement Complet (Original)
-```bash
-deploy-local.bat
-```
-**Utilisation:** Script original avec interaction manuelle
 
 ---
 
@@ -49,14 +44,19 @@ deploy-local.bat
 
 ### **Méthode Recommandée:**
 
-1. **Tester la connexion:**
+1. **Tester la connexion SSH:**
    ```bash
-   test-ssh.bat
+   ssh root@89.117.58.53
    ```
 
-2. **Déployer rapidement:**
+2. **Déployer rapidement (Windows):**
    ```bash
    deploy-rapide.bat
+   ```
+
+3. **Ou déployer avec PowerShell (recommandé):**
+   ```powershell
+   PowerShell -ExecutionPolicy Bypass -File deploy-github-prod.ps1
    ```
 
 ### **Que fait le déploiement:**
@@ -67,10 +67,10 @@ deploy-local.bat
 - Push vers GitHub (`origin main`)
 
 #### 🖥️ **Côté Serveur (89.117.58.53):**
-- `git pull origin main` - Récupère les modifications
-- `npm install --production` - Met à jour les dépendances
-- `pm2 reload all` - Redémarre les services
-- Tests de santé automatiques
+- `git pull origin main` - Récupère les modifications depuis GitHub
+- `systemctl reload nginx` - Recharge la configuration nginx
+- Fichiers statiques servis directement depuis `/var/www/html`
+- Route `/student` → interface étudiante moderne automatique
 
 ---
 
@@ -90,26 +90,25 @@ Après déploiement, votre site sera accessible sur :
 ## 🔍 Vérifications Post-Déploiement
 
 ### **Tests Automatiques:**
-- ✅ Frontend accessible (port 3000)
-- ✅ Backend accessible (port 3001)
+- ✅ Site principal accessible (https://claudyne.com)
+- ✅ Interface étudiante accessible (https://claudyne.com/student)
 - ✅ SSL/HTTPS fonctionnel
-- ✅ Services PM2 actifs
+- ✅ Nginx actif et configuré
 
 ### **Commandes de Monitoring SSH:**
 ```bash
 # Se connecter au serveur
 ssh root@89.117.58.53
 
-# Vérifier les services
-pm2 status
-pm2 logs
-
 # Vérifier Nginx
 systemctl status nginx
 
+# Vérifier le repository
+cd /var/www/html && git status
+
 # Tester les endpoints
 curl https://claudyne.com
-curl https://claudyne.com/api/health
+curl https://claudyne.com/student
 ```
 
 ---

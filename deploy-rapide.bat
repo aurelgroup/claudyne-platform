@@ -29,9 +29,8 @@ echo ✅ Push GitHub reussi!
 echo.
 echo 🚀 Deploiement sur le serveur...
 
-:: Copie et execution du script de mise a jour
-scp deploy-scripts\quick-update.sh %VPS_USER%@%VPS_IP%:/var/www/claudyne/claudyne-platform/
-ssh %VPS_USER%@%VPS_IP% "cd /var/www/claudyne/claudyne-platform && chmod +x quick-update.sh && ./quick-update.sh"
+:: Deploiement direct des fichiers statiques
+ssh %VPS_USER%@%VPS_IP% "cd /var/www/html && git pull origin main && systemctl reload nginx"
 
 echo.
 echo 🎉 DEPLOIEMENT TERMINE !

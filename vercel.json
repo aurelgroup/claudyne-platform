@@ -42,7 +42,15 @@
       "dest": "/admin-interface.html"
     },
     {
+      "src": "/admin-secure-k7m9x4n2p8w5z1c6",
+      "dest": "/admin-interface.html"
+    },
+    {
       "src": "/student-interface-modern.html",
+      "dest": "/student-interface-modern.html"
+    },
+    {
+      "src": "/student",
       "dest": "/student-interface-modern.html"
     },
     {

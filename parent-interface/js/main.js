@@ -396,7 +396,7 @@ export class ParentApp {
         // Load component CSS
         const componentCSS = document.createElement('link');
         componentCSS.rel = 'stylesheet';
-        componentCSS.href = './css/components/main.css';
+        componentCSS.href = './css/main.css';
         document.head.appendChild(componentCSS);
     }
 

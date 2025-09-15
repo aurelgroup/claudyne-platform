@@ -8,7 +8,10 @@
       "Bash(start admin-interface.html)",
       "Bash(node:*)",
       "Bash(start http://localhost:3007)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(scp:*)",
+      "Bash(ssh:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

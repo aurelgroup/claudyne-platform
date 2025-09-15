@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudyne Parent</title>
+
+    <!-- Critical CSS Inline (2G/3G optimized) -->
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#fafbfc;color:#1e293b;overflow-x:hidden}
+        .loading{position:fixed;inset:0;background:#fafbfc;display:flex;align-items:center;justify-content:center;z-index:9999}
+        .spinner{width:40px;height:40px;border:3px solid #f3f3f3;border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        .app{display:none;min-height:100vh;flex-direction:column}
+        .main{flex:1;padding:1rem;padding-bottom:5rem}
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;padding:.5rem 0;z-index:100}
+        .nav-item{display:flex;flex-direction:column;align-items:center;padding:.5rem;color:#64748b;text-decoration:none;font-size:.75rem;transition:color .2s}
+        .nav-item.active{color:#6366f1}
+        .nav-item i{font-size:1.2rem;margin-bottom:.25rem}
+        .page{display:none}
+        .page.active{display:block}
+        @media(min-width:768px){.bottom-nav{display:none}.app{flex-direction:row}.sidebar{width:250px;background:#fff;border-right:1px solid #e2e8f0}.main{padding:2rem;padding-bottom:2rem}}
+    </style>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+    <link rel="preload" href="js/main.js" as="script">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/parent-manifest.json">
+    <meta name="theme-color" content="#6366f1">
+
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='90' font-size='90'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- App Shell -->
+    <div class="app" id="app">
+        <!-- Desktop Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div style="padding:1rem">
+                <h2>👨‍👩‍👧‍👦 Claudyne Parent</h2>
+            </div>
+            <nav id="desktopNav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div id="dashboard" class="page active"></div>
+            <div id="children" class="page"></div>
+            <div id="planning" class="page"></div>
+            <div id="psychology" class="page"></div>
+            <div id="messages" class="page"></div>
+            <div id="reports" class="page"></div>
+            <div id="finance" class="page"></div>
+            <div id="community" class="page"></div>
+            <div id="settings" class="page"></div>
+        </main>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Accueil</span>
+            </a>
+            <a href="#children" class="nav-item" data-page="children">
+                <i class="fas fa-user-graduate"></i>
+                <span>Enfants</span>
+            </a>
+            <a href="#planning" class="nav-item" data-page="planning">
+                <i class="fas fa-calendar"></i>
+                <span>Planning</span>
+            </a>
+            <a href="#psychology" class="nav-item" data-page="psychology">
+                <i class="fas fa-heart"></i>
+                <span>Copilote</span>
+            </a>
+            <a href="#messages" class="nav-item" data-page="messages">
+                <i class="fas fa-comments"></i>
+                <span>Messages</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Progressive Enhancement -->
+    <script>
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/parent-sw.js');
+        }
+
+        // Load main app
+        import('./js/main.js').then(module => {
+            new module.ParentApp().init();
+        });
+    </script>
+</body>
+</html>

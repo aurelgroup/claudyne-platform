@@ -4,7 +4,7 @@
  */
 
 import { ChildAnalytics } from '../shared/child-analytics.js';
-import { AIRecommendationsEngine } from '../shared/ai-recommendations.js';
+import AIRecommendationsEngine from '../shared/ai-recommendations.js';
 import { ProgressTracker } from '../shared/progress-tracker.js';
 
 export default class Children {
@@ -1066,7 +1066,7 @@ export default class Children {
     async loadStyles() {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = '../css/main.css';
+        link.href = './css/main.css';
         document.head.appendChild(link);
     }
 

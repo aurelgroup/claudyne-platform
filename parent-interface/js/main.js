@@ -397,8 +397,8 @@ export class ParentApp {
     async preloadPages(pages) {
         // Preload modules with low priority
         if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => {
-                pages.forEach(async (pageId) => {
+            requestIdleCallback(async () => {
+                for (const pageId of pages) {
                     if (!this.modules.has(pageId)) {
                         try {
                             const module = await this.lazyLoadModule(pageId);
@@ -408,7 +408,7 @@ export class ParentApp {
                             console.warn(`[ParentApp] Preload failed: ${pageId}`, error);
                         }
                     }
-                });
+                }
             });
         }
     }

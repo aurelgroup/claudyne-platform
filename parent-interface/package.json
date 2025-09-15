@@ -1,0 +1,8 @@
+{
+  "name": "claudyne-parent-interface",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Interface parent pour le suivi scolaire et la communication familiale",
+  "main": "js/main.js",
+  "private": true
+}

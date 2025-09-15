@@ -372,8 +372,8 @@ self.addEventListener('waiting', event => {
         if (notifications.length === 0) {
             self.registration.showNotification('Claudyne', {
                 body: 'Une nouvelle version est disponible',
-                icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236366f1'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3EC%3C/text%3E%3C/svg%3E",
-                badge: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236366f1'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3EC%3C/text%3E%3C/svg%3E",
+                icon: 'images/icons/icon-192x192.png',
+                badge: 'images/icons/icon-144x144.png',
                 tag: 'update-available',
                 requireInteraction: true,
                 actions: [

@@ -387,13 +387,6 @@ export class ParentApp {
     }
 
     loadNonCriticalCSS() {
-        // Load Font Awesome
-        const fontAwesome = document.createElement('link');
-        fontAwesome.rel = 'stylesheet';
-        fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-        fontAwesome.setAttribute('crossorigin', '');
-        document.head.appendChild(fontAwesome);
-
         // Load component CSS
         const componentCSS = document.createElement('link');
         componentCSS.rel = 'stylesheet';

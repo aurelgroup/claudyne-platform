@@ -318,3 +318,5 @@ export default class Settings {
 if (typeof window !== 'undefined') {
     window.settings = new Settings();
 }
+
+export default Settings;

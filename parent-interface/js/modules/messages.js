@@ -771,3 +771,5 @@ export class MessagesModule {
 if (typeof window !== 'undefined') {
     window.messagesModule = null; // Sera initialisé par main.js
 }
+
+export default Messages;

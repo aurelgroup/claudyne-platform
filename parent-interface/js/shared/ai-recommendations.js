@@ -3,6 +3,8 @@
  * Moteur de recommandations IA pour optimisation pédagogique
  */
 
+import { apiConfig } from './api-config.js';
+
 export class AIRecommendationsEngine {
     constructor(options = {}) {
         this.options = {
@@ -34,7 +36,8 @@ export class AIRecommendationsEngine {
         if (!this.options.realTimeUpdates) return;
 
         try {
-            this.websocket = new WebSocket('wss://api.claudyne.com/ai/recommendations');
+            const wsEndpoints = apiConfig.getWebSocketEndpoints();
+            this.websocket = new WebSocket(wsEndpoints.aiRecommendations);
 
             this.websocket.onopen = () => {
                 console.log('[AIRecommendations] WebSocket connected');
@@ -50,7 +53,10 @@ export class AIRecommendationsEngine {
             this.websocket.onclose = () => {
                 console.log('[AIRecommendations] WebSocket disconnected');
                 this.isConnected = false;
-                setTimeout(() => this.setupWebSocket(), 5000);
+                // Only attempt to reconnect if not in development mode
+                if (!apiConfig.shouldUseMockData()) {
+                    setTimeout(() => this.setupWebSocket(), 5000);
+                }
             };
 
         } catch (error) {
@@ -87,9 +93,8 @@ export class AIRecommendationsEngine {
 
     async loadChildProfiles() {
         try {
-            const response = await fetch('/api/parent/children/profiles', {
-                headers: this.getAuthHeaders()
-            });
+            const endpoints = apiConfig.getParentEndpoints();
+            const response = await apiConfig.fetch(endpoints.childrenProfiles);
 
             if (response.ok) {
                 const profiles = await response.json();
@@ -454,9 +459,8 @@ export class AIRecommendationsEngine {
     // Helper methods
     async getChildAnalysis(childId) {
         try {
-            const response = await fetch(`/api/ai/analysis/${childId}`, {
-                headers: this.getAuthHeaders()
-            });
+            const endpoints = apiConfig.getAIEndpoints();
+            const response = await apiConfig.fetch(endpoints.childAnalysis(childId));
 
             if (response.ok) {
                 return await response.json();
@@ -589,8 +593,7 @@ export class AIRecommendationsEngine {
     }
 
     getAuthHeaders() {
-        const token = localStorage.getItem('parentToken');
-        return token ? { 'Authorization': `Bearer ${token}` } : {};
+        return apiConfig.getAuthHeaders();
     }
 
     triggerUpdate() {
@@ -671,4 +674,5 @@ export class AIRecommendationsEngine {
     }
 }
 
+export { AIRecommendationsEngine };
 export default AIRecommendationsEngine;

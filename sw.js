@@ -14,17 +14,17 @@ const CRITICAL_RESOURCES = [
     '/admin-interface.html',
     '/admin-secure-k7m9x4n2p8w5z1c6',
     '/student-interface-modern.html',
-    '/student',
+    '/teacher-interface.html',
+    '/parent-interface.html',
     '/styles/glassmorphism.css',
     '/styles/mobile-optimization.css',
-    '/js/network-optimization.js',
-    '/offline.html'
+    '/js/network-optimization.js'
 ];
 
 // Ressources secondaires (chargées en mode progressive)
 const SECONDARY_RESOURCES = [
-    '/student-interface.html',
-    '/claudyne-demo.html'
+    '/parent-interface/index.html',
+    '/moderator-interface.html'
 ];
 
 // Installation du Service Worker

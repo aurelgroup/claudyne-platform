@@ -833,3 +833,5 @@ export class PsychologyModule {
 if (typeof window !== 'undefined') {
     window.psychologyModule = null; // Sera initialisé par main.js
 }
+
+export default Psychology;

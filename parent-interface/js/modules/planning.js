@@ -1166,3 +1166,5 @@ export class PlanningModule {
 if (typeof window !== 'undefined') {
     window.planningModule = null; // Sera initialisé par main.js
 }
+
+export default Planning;

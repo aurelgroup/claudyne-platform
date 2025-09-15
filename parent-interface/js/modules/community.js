@@ -194,7 +194,7 @@ export default class Community {
             {
                 id: 'p1',
                 author: 'Marie Dupont',
-                avatar: 'https://i.ibb.co/b34Xp9M/user-placeholder.png',
+                avatar: '/assets/images/user-placeholder.svg',
                 content: 'Excellents résultats de ma fille en mathématiques grâce aux sessions IA de Claudyne ! Merci pour cette plateforme innovante.',
                 time: 'Il y a 2h',
                 likes: 15,
@@ -203,7 +203,7 @@ export default class Community {
             {
                 id: 'p2',
                 author: 'Jean Mbarga',
-                avatar: 'https://i.ibb.co/b34Xp9M/user-placeholder.png',
+                avatar: '/assets/images/user-placeholder.svg',
                 content: 'Quelqu\'un a-t-il des conseils pour motiver un adolescent en physique ? Mon fils a des difficultés...',
                 time: 'Il y a 4h',
                 likes: 8,
@@ -252,3 +252,5 @@ export default class Community {
 if (typeof window !== 'undefined') {
     window.community = new Community();
 }
+
+export default Community;

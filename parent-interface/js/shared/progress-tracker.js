@@ -3,6 +3,8 @@
  * Suivi avancé des progrès avec analytics prédictives
  */
 
+import { apiConfig } from './api-config.js';
+
 export class ProgressTracker {
     constructor(options = {}) {
         this.options = {
@@ -32,9 +34,8 @@ export class ProgressTracker {
 
     async loadHistoricalData() {
         try {
-            const response = await fetch('/api/parent/progress/historical', {
-                headers: this.getAuthHeaders()
-            });
+            const endpoints = apiConfig.getParentEndpoints();
+            const response = await apiConfig.fetch(endpoints.progressHistorical);
 
             if (response.ok) {
                 const data = await response.json();
@@ -789,8 +790,7 @@ export class ProgressTracker {
 
     // Utility methods
     getAuthHeaders() {
-        const token = localStorage.getItem('parentToken');
-        return token ? { 'Authorization': `Bearer ${token}` } : {};
+        return apiConfig.getAuthHeaders();
     }
 
     // Public API

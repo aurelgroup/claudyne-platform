@@ -3,6 +3,8 @@
  * Analytics avancées par enfant avec IA prédictive
  */
 
+import { apiConfig } from './api-config.js';
+
 export class ChildAnalytics {
     constructor(childId, options = {}) {
         this.childId = childId;
@@ -31,9 +33,8 @@ export class ChildAnalytics {
 
     async loadHistoricalData() {
         try {
-            const response = await fetch(`/api/parent/children/${this.childId}/analytics`, {
-                headers: this.getAuthHeaders()
-            });
+            const endpoints = apiConfig.getParentEndpoints();
+            const response = await apiConfig.fetch(endpoints.childAnalytics(this.childId));
 
             if (response.ok) {
                 const data = await response.json();
@@ -85,13 +86,70 @@ export class ChildAnalytics {
         this.setupPerformanceTracking();
     }
 
+    setupPerformanceTracking() {
+        if (!window.PerformanceObserver) {
+            console.warn('[ChildAnalytics] PerformanceObserver not supported');
+            return;
+        }
+
+        try {
+            // Track user interactions for engagement metrics
+            const observer = new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                entries.forEach(entry => {
+                    if (entry.entryType === 'measure') {
+                        this.trackPerformanceEntry(entry);
+                    }
+                });
+            });
+
+            observer.observe({ entryTypes: ['measure'] });
+            this.performanceObserver = observer;
+
+        } catch (error) {
+            console.error('[ChildAnalytics] Performance tracking setup failed:', error);
+        }
+    }
+
+    trackPerformanceEntry(entry) {
+        // Track performance metrics for engagement analysis
+        const engagementData = {
+            type: 'performance_metric',
+            name: entry.name,
+            duration: entry.duration,
+            timestamp: entry.startTime + performance.timeOrigin
+        };
+
+        // Update behavior metrics based on performance data
+        if (entry.name.includes('exercise') || entry.name.includes('lesson')) {
+            this.updateBehaviorMetrics({
+                engagement: Math.min(100, (entry.duration / 1000) * 10), // Convert to engagement score
+                concentrationTime: entry.duration / 1000,
+                timestamp: engagementData.timestamp
+            });
+        }
+    }
+
     connectWebSocket() {
         try {
-            this.websocket = new WebSocket(`wss://api.claudyne.com/child/${this.childId}/analytics`);
+            const wsEndpoints = apiConfig.getWebSocketEndpoints();
+            this.websocket = new WebSocket(wsEndpoints.childAnalytics(this.childId));
 
             this.websocket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 this.processRealTimeUpdate(data);
+            };
+
+            this.websocket.onerror = (error) => {
+                console.error('[ChildAnalytics] WebSocket error:', error);
+            };
+
+            this.websocket.onclose = () => {
+                console.log('[ChildAnalytics] WebSocket connection closed');
+                // Only attempt to reconnect if not in development mode
+                if (!apiConfig.shouldUseMockData()) {
+                    setTimeout(() => this.connectWebSocket(), 5000);
+                }
             };
 
         } catch (error) {
@@ -316,9 +374,8 @@ export class ChildAnalytics {
     // Comparative analytics
     async compareWithPeers() {
         try {
-            const response = await fetch(`/api/parent/children/${this.childId}/compare`, {
-                headers: this.getAuthHeaders()
-            });
+            const endpoints = apiConfig.getParentEndpoints();
+            const response = await apiConfig.fetch(endpoints.childComparison(this.childId));
 
             if (response.ok) {
                 return await response.json();
@@ -334,9 +391,8 @@ export class ChildAnalytics {
 
     async compareWithSiblings() {
         try {
-            const response = await fetch(`/api/parent/children/${this.childId}/siblings-compare`, {
-                headers: this.getAuthHeaders()
-            });
+            const endpoints = apiConfig.getParentEndpoints();
+            const response = await apiConfig.fetch(endpoints.siblingComparison(this.childId));
 
             if (response.ok) {
                 return await response.json();
@@ -483,8 +539,7 @@ export class ChildAnalytics {
 
     // Utility methods
     getAuthHeaders() {
-        const token = localStorage.getItem('parentToken');
-        return token ? { 'Authorization': `Bearer ${token}` } : {};
+        return apiConfig.getAuthHeaders();
     }
 
     triggerUpdate() {

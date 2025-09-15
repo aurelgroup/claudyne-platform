@@ -4,7 +4,7 @@
  */
 
 import { ChildAnalytics } from '../shared/child-analytics.js';
-import AIRecommendationsEngine from '../shared/ai-recommendations.js';
+import { AIRecommendationsEngine } from '../shared/ai-recommendations.js';
 import { ProgressTracker } from '../shared/progress-tracker.js';
 
 export default class Children {
@@ -1166,7 +1166,7 @@ export default class Children {
             // Process form data
             childData.subjects = formData.getAll('subjects');
             childData.id = `child-${Date.now()}`;
-            childData.avatar = 'https://i.ibb.co/b34Xp9M/user-placeholder.png';
+            childData.avatar = '/assets/images/user-placeholder.svg';
             childData.status = 'offline';
             childData.level = 'beginner';
 
@@ -1220,3 +1220,5 @@ export default class Children {
 if (typeof window !== 'undefined') {
     window.children = new Children();
 }
+
+export default Children;

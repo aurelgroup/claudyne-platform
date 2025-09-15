@@ -212,3 +212,5 @@ export default class Finance {
 if (typeof window !== 'undefined') {
     window.finance = new Finance();
 }
+
+export default Finance;

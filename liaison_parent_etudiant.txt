@@ -10,7 +10,7 @@
   Family {
     id: UUID (Primary Key)
     name: "Nom de famille"
-    maxMembers: 6 (défaut)
+    maxMembers: 3 (défaut)
     currentMembersCount: INT
   }
 

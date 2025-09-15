@@ -140,3 +140,5 @@ export default class Reports {
 if (typeof window !== 'undefined') {
     window.reports = new Reports();
 }
+
+export default Reports;

@@ -4,7 +4,7 @@
  */
 
 import { ChildAnalytics } from '../shared/child-analytics.js';
-import { AIRecommendations } from '../shared/ai-recommendations.js';
+import { AIRecommendationsEngine } from '../shared/ai-recommendations.js';
 import { ProgressTracker } from '../shared/progress-tracker.js';
 
 export default class Children {
@@ -56,7 +56,7 @@ export default class Children {
             }
         });
 
-        this.aiRecommendations = new AIRecommendations({
+        this.aiRecommendations = new AIRecommendationsEngine({
             modelType: 'adaptive-learning',
             contextualInsights: true,
             parentNotifications: true

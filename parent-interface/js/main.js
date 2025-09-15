@@ -391,7 +391,7 @@ export class ParentApp {
         const fontAwesome = document.createElement('link');
         fontAwesome.rel = 'stylesheet';
         fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-        fontAwesome.crossOrigin = 'anonymous';
+        fontAwesome.setAttribute('crossorigin', '');
         document.head.appendChild(fontAwesome);
 
         // Load component CSS

@@ -1,0 +1,155 @@
+{
+  "name": "Claudyne Parent",
+  "short_name": "Claudyne",
+  "description": "Interface parent pour le suivi scolaire et la communication familiale",
+  "start_url": "/parent-interface/",
+  "display": "standalone",
+  "background_color": "#fafbfc",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "scope": "/parent-interface/",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["education", "lifestyle", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Tableau de bord",
+      "short_name": "Dashboard",
+      "description": "Accès rapide au tableau de bord",
+      "url": "/parent-interface/#dashboard",
+      "icons": [
+        {
+          "src": "/images/icons/dashboard-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Mes enfants",
+      "short_name": "Enfants",
+      "description": "Gestion et suivi des enfants",
+      "url": "/parent-interface/#children",
+      "icons": [
+        {
+          "src": "/images/icons/children-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "short_name": "Messages",
+      "description": "Communication familiale",
+      "url": "/parent-interface/#messages",
+      "icons": [
+        {
+          "src": "/images/icons/messages-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "/images/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/images/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/screenshots/dashboard-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tableau de bord mobile"
+    },
+    {
+      "src": "/images/screenshots/children-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Gestion des enfants mobile"
+    },
+    {
+      "src": "/images/screenshots/dashboard-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tableau de bord desktop"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.claudyne.parent",
+      "id": "com.claudyne.parent"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+claudyne",
+      "url": "/parent-interface/?action=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/parent-interface/import",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls", ".xlsx"]
+      }
+    }
+  ]
+}

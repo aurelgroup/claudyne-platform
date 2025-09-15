@@ -23,48 +23,14 @@
       "short_name": "Enfants",
       "description": "Gestion et suivi des enfants",
       "url": "/parent-interface/#children"
-    },
-    {
-      "name": "Messages",
-      "short_name": "Messages",
-      "description": "Communication familiale",
-      "url": "/parent-interface/#messages"
     }
   ],
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236366f1'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%236366f1'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3EC%3C/text%3E%3C/svg%3E",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "maskable any"
-    }
-  ],
-  "screenshots": [],
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=com.claudyne.parent",
-      "id": "com.claudyne.parent"
-    }
-  ],
-  "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  "protocol_handlers": [
-    {
-      "protocol": "web+claudyne",
-      "url": "/parent-interface/?action=%s"
-    }
-  ],
-  "file_handlers": [
-    {
-      "action": "/parent-interface/import",
-      "accept": {
-        "application/pdf": [".pdf"],
-        "text/csv": [".csv"],
-        "application/vnd.ms-excel": [".xls", ".xlsx"]
-      }
+      "purpose": "any"
     }
   ]
 }

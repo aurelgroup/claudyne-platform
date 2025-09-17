@@ -13,13 +13,15 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 // Import des modules internes
 const logger = require('./utils/logger');
-const database = require('./config/database');
+const { sequelize, testConnection } = require('./config/database');
+const cacheService = require('./services/cacheService');
 const routes = require('./routes');
-const { initializeWebSocket } = require('./websockets/socketHandler');
-const { errorHandler, notFound } = require('./middleware/errorHandlers');
+const { configureSocket } = require('./websockets/socketHandler');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandlers');
 const { authenticate } = require('./middleware/auth');
 
 const app = express();
@@ -88,19 +90,24 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Fichiers statiques
 app.use('/uploads', express.static('public/uploads'));
+app.use('/parent-interface', express.static(path.join(__dirname, '../../parent-interface')));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', async (req, res) => {
+  const cacheStats = cacheService.getStats();
+
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     version: process.env.npm_package_version || '1.0.0',
     environment: process.env.NODE_ENV,
     services: {
-      database: 'connected', // À améliorer avec vérification réelle
-      redis: 'connected',
+      database: 'connected',
+      cache: cacheStats.enabled ? 'connected' : 'disabled',
+      cache_type: cacheStats.type,
       ai_service: 'available'
     },
+    cache_stats: cacheStats,
     message: 'Claudyne API fonctionne correctement - La force du savoir en héritage'
   });
 });
@@ -108,7 +115,7 @@ app.get('/health', (req, res) => {
 // Route de bienvenue
 app.get('/', (req, res) => {
   res.json({
-    message: 'Bienvenue sur l\\'API Claudyne 🎓',
+    message: 'Bienvenue sur l\'API Claudyne 🎓',
     subtitle: 'La force du savoir en héritage',
     documentation: '/api/docs',
     health: '/health',
@@ -144,23 +151,27 @@ app.get('/api/docs', (req, res) => {
 });
 
 // Middleware de gestion des erreurs
-app.use(notFound);
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Initialisation de Socket.IO pour les fonctionnalités temps réel
-initializeWebSocket(io);
+configureSocket(io);
 
 // Fonction de démarrage du serveur
 async function startServer() {
   try {
     // Test de connexion à la base de données
-    await database.authenticate();
-    logger.info('✅ Connexion à PostgreSQL établie avec succès');
+    const isConnected = await testConnection();
+    if (isConnected) {
+      logger.info('✅ Connexion à PostgreSQL établie avec succès');
 
-    // Synchronisation des modèles (uniquement en développement)
-    if (process.env.NODE_ENV === 'development') {
-      await database.sync({ force: false });
-      logger.info('✅ Modèles de base de données synchronisés');
+      // Synchronisation des modèles (uniquement en développement)
+      if (process.env.NODE_ENV === 'development') {
+        await sequelize.sync({ force: false });
+        logger.info('✅ Modèles de base de données synchronisés');
+      }
+    } else {
+      logger.warn('⚠️ PostgreSQL non disponible - Mode sans base de données');
     }
 
     const PORT = process.env.PORT || 3001;
@@ -193,12 +204,13 @@ async function gracefulShutdown(signal) {
   
   server.close(async (err) => {
     if (err) {
-      logger.error('Erreur lors de l\\'arrêt du serveur HTTP:', err);
+      logger.error('Erreur lors de l\'arrêt du serveur HTTP:', err);
       process.exit(1);
     }
     
     try {
-      await database.close();
+      await sequelize.close();
+      await cacheService.close();
       logger.info('✅ Connexion à la base de données fermée');
       logger.info('👋 Serveur Claudyne arrêté proprement');
       process.exit(0);

@@ -43,13 +43,19 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Routing spécifique
+    // Routing spécifique pour toutes les interfaces Claudyne
     if (parsedUrl.pathname === '/') {
         filePath = './index.html'; // Interface principale
-    } else if (parsedUrl.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
+    } else if (parsedUrl.pathname === '/admin' || parsedUrl.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
         filePath = './admin-interface.html'; // Interface admin sécurisée
+    } else if (parsedUrl.pathname === '/moderator') {
+        filePath = './moderator-interface.html'; // Interface modérateur
+    } else if (parsedUrl.pathname === '/teacher') {
+        filePath = './teacher-interface.html'; // Interface enseignant
     } else if (parsedUrl.pathname === '/student') {
         filePath = './student-interface-modern.html'; // Interface étudiant
+    } else if (parsedUrl.pathname === '/parent') {
+        filePath = './parent-interface.html'; // Interface parent
     } else if (parsedUrl.pathname === '/offline') {
         filePath = './offline.html'; // Page offline
     }
@@ -149,10 +155,13 @@ server.listen(PORT, () => {
     console.log('🎓 ============================================');
     console.log('');
     console.log(`✅ Interfaces disponibles:`);
-    console.log(`🏠 Interface Principale:  http://localhost:${PORT}/`);
-    console.log(`👨‍💼 Interface Admin:      http://localhost:${PORT}/admin`);
-    console.log(`🎓 Interface Étudiant:    http://localhost:${PORT}/student`);
-    console.log(`📴 Page Offline:         http://localhost:${PORT}/offline`);
+    console.log(`🏠 Interface Principale:     http://localhost:${PORT}/`);
+    console.log(`👨‍💼 Interface Admin:         http://localhost:${PORT}/admin`);
+    console.log(`👮 Interface Modérateur:     http://localhost:${PORT}/moderator`);
+    console.log(`👨‍🏫 Interface Enseignant:     http://localhost:${PORT}/teacher`);
+    console.log(`🎓 Interface Étudiant:       http://localhost:${PORT}/student`);
+    console.log(`👨‍👩‍👧‍👦 Interface Parent:        http://localhost:${PORT}/parent`);
+    console.log(`📴 Page Offline:            http://localhost:${PORT}/offline`);
     console.log('');
     console.log('💡 Ouvrez une de ces URLs dans votre navigateur');
     console.log('🔄 Pour l\'API backend, utilisez le port 3001');

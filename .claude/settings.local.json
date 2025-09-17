@@ -11,7 +11,11 @@
       "Bash(npm start)",
       "Bash(scp:*)",
       "Bash(ssh:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(curl:*)",
+      "Bash(start http://localhost:3000)",
+      "Bash(start http://localhost:3000/student)",
+      "Bash(start http://localhost:3000/admin)"
     ],
     "deny": [],
     "ask": []

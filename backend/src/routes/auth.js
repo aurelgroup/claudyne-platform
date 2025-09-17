@@ -45,7 +45,7 @@ const authLimiter = rateLimit({
 // Rate limiting plus strict pour la création de compte
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
-  max: 3, // Maximum 3 comptes par IP/heure
+  max: process.env.NODE_ENV === 'development' ? 50 : 3, // 50 comptes en dev, 3 en prod
   message: {
     success: false,
     message: 'Limite de création de comptes atteinte. Contactez le support si nécessaire.',
@@ -97,7 +97,7 @@ router.post('/register', registerLimiter, [
     .withMessage('Ville non reconnue'),
   body('acceptTerms')
     .equals('true')
-    .withMessage('Vous devez accepter les conditions d\\'utilisation')
+    .withMessage('Vous devez accepter les conditions d\'utilisation')
 ], async (req, res) => {
   try {
     initializeModels();
@@ -170,6 +170,11 @@ router.post('/register', registerLimiter, [
         region: region || null,
         status: 'TRIAL',
         subscriptionType: 'TRIAL',
+        // Configuration financière par défaut
+        walletBalance: 0.00,
+        currency: 'FCFA',
+        totalClaudinePoints: 0,
+        claudineRank: null,
         // Configuration d'essai par défaut
         trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 jours
         currentMembersCount: 1,

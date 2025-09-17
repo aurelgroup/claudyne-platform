@@ -7,6 +7,7 @@ import { WidgetSystem } from '../shared/widget-system.js';
 import { AnalyticsEngine } from '../shared/analytics.js';
 import { ExportManager } from '../shared/export.js';
 import { mockData, getMockData } from '../shared/mock-data.js';
+import apiService, { getData } from '../shared/api-service.js';
 
 export default class Dashboard {
     constructor() {
@@ -329,32 +330,23 @@ export default class Dashboard {
 
     async loadInitialData() {
         try {
-            // Try to load real data first, fallback to mock data
-            let metrics, children, activities, insights;
+            console.log('[Dashboard] Loading data from API...');
 
-            try {
-                // Attempt to load real data
-                [metrics, children, activities, insights] = await Promise.all([
-                    this.analytics.getMetrics(),
-                    window.parentApp.getModule('api')?.getChildren(),
-                    this.analytics.getRecentActivities(),
-                    this.analytics.getAIInsights()
-                ]);
-            } catch (apiError) {
-                console.warn('[Dashboard] API unavailable, using mock data:', apiError.message);
-                // Use mock data when API is unavailable
-                metrics = getMockData('dashboard.metrics');
-                children = getMockData('children');
-                activities = getMockData('dashboard.recentActivities');
-                insights = getMockData('dashboard.aiInsight');
+            // Try to load real data from API, fallback to mock data
+            const dashboardResponse = await getData('/families/dashboard', mockData.dashboard);
+
+            if (dashboardResponse.source === 'api') {
+                console.log('[Dashboard] ✅ Using real API data');
+            } else {
+                console.log('[Dashboard] ⚠️  Using mock data fallback');
             }
 
-            // Fallback to mock data if any data is missing
+            // Transform the data to match dashboard expectations
             this.data = {
-                metrics: metrics || getMockData('dashboard.metrics'),
-                children: children || getMockData('children'),
-                activities: activities || getMockData('dashboard.recentActivities'),
-                insights: insights || getMockData('dashboard.aiInsight')
+                metrics: dashboardResponse.data.metrics || getMockData('dashboard.metrics'),
+                children: dashboardResponse.data.children || getMockData('children'),
+                activities: dashboardResponse.data.activities || getMockData('dashboard.recentActivities'),
+                insights: dashboardResponse.data.insights || getMockData('dashboard.aiInsight')
             };
 
             // Mise à jour des métriques animées

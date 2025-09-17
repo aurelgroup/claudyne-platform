@@ -47,7 +47,7 @@ const authenticate = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Token d\\'authentification manquant',
+        message: 'Token d\'authentification manquant',
         code: 'NO_TOKEN'
       });
     }
@@ -155,11 +155,11 @@ const authenticate = async (req, res, next) => {
     next();
     
   } catch (error) {
-    logger.error('Erreur dans le middleware d\\'authentification:', error);
+    logger.error('Erreur dans le middleware d\'authentification:', error);
     
     return res.status(500).json({
       success: false,
-      message: 'Erreur interne d\\'authentification',
+      message: 'Erreur interne d\'authentification',
       code: 'AUTH_ERROR'
     });
   }
@@ -296,7 +296,7 @@ const requireStudentAccess = async (req, res, next) => {
     logger.error('Erreur vérification accès étudiant:', error);
     return res.status(500).json({
       success: false,
-      message: 'Erreur de vérification d\\'accès'
+      message: 'Erreur de vérification d\'accès'
     });
   }
 };

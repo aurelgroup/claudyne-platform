@@ -3,105 +3,3550 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claudyne Parent</title>
+    <title>Claudyne - Espace Parent Premium | Suivi Scolaire Personnalisé</title>
 
-    <!-- Critical CSS Inline (2G/3G optimized) -->
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#fafbfc;color:#1e293b;overflow-x:hidden}
-        .loading{position:fixed;inset:0;background:#fafbfc;display:flex;align-items:center;justify-content:center;z-index:9999}
-        .spinner{width:40px;height:40px;border:3px solid #f3f3f3;border-top:3px solid #6366f1;border-radius:50%;animation:spin 1s linear infinite}
-        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        .app{display:none;min-height:100vh;flex-direction:column}
-        .main{flex:1;padding:1rem;padding-bottom:5rem}
-        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;padding:.5rem 0;z-index:100}
-        .nav-item{display:flex;flex-direction:column;align-items:center;padding:.5rem;color:#64748b;text-decoration:none;font-size:.75rem;transition:color .2s}
-        .nav-item.active{color:#6366f1}
-        .nav-item i{font-size:1.2rem;margin-bottom:.25rem}
-        .page{display:none}
-        .page.active{display:block}
-        @media(min-width:768px){.bottom-nav{display:none}.app{flex-direction:row}.sidebar{width:250px;background:#fff;border-right:1px solid #e2e8f0}.main{padding:2rem;padding-bottom:2rem}}
-    </style>
+    <!-- Interface parent validée - servie directement depuis le dossier -->
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Interface parent premium Claudyne : suivez en temps réel les performances scolaires de vos enfants, communiquez avec les professeurs et planifiez le succès académique.">
+    <meta name="keywords" content="suivi scolaire parent, education Cameroun, interface parent, Claudyne, performance académique, communication école-parent">
+    <meta name="author" content="Claudyne Education">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#6366f1">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-    <link rel="preload"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      as="style" crossorigin="anonymous"
-      onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://claudyne.com/parent-interface.html">
+    <meta property="og:title" content="Claudyne - Espace Parent Premium | Suivi Scolaire">
+    <meta property="og:description" content="Suivez les performances de vos enfants en temps réel avec l'interface parent Claudyne. Tableaux de bord, analyses et communication directe avec l'école.">
+    <meta property="og:image" content="https://claudyne.com/images/parent-dashboard-preview.jpg">
+    <meta property="og:locale" content="fr_CM">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://claudyne.com/parent-interface.html">
+    <meta name="twitter:title" content="Claudyne - Espace Parent Premium">
+    <meta name="twitter:description" content="Interface parent pour le suivi scolaire personnalisé au Cameroun">
+    <meta name="twitter:image" content="https://claudyne.com/images/parent-dashboard-preview.jpg">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#6366f1">
 
     <!-- Icons -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='90' font-size='90'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='90' font-size='90'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="images/parent-icon-192.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Claudyne - Espace Parent Premium",
+        "description": "Interface parent pour le suivi des performances scolaires et la communication avec l'établissement",
+        "url": "https://claudyne.com/parent-interface.html",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "category": "Premium",
+            "price": "0",
+            "priceCurrency": "XAF"
+        },
+        "featureList": [
+            "Tableaux de bord personnalisés",
+            "Suivi temps réel des performances",
+            "Communication directe avec les professeurs",
+            "Planification et calendrier familial",
+            "Rapports détaillés et analyses",
+            "Support psychologique et émotionnel"
+        ]
+    }
+    </script>
+
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js" as="script">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script>
+
+    <!-- Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/parent-sw.js')
+                    .then(registration => console.log('[SW] Registered'))
+                    .catch(error => console.log('[SW] Registration failed'));
+            });
+        }
+    </script>
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --warning: #f97316;
+            
+            --bg-light: #fafbfc;
+            --bg-dark: #0f0f23;
+            --surface-light: #ffffff;
+            --surface-dark: #1e1e2e;
+            --surface-2-light: #f8fafc;
+            --surface-2-dark: #313244;
+            
+            --text-light: #1e293b;
+            --text-dark: #cdd6f4;
+            --text-muted-light: #64748b;
+            --text-muted-dark: #a6adc8;
+            
+            --border-light: #e2e8f0;
+            --border-dark: #45475a;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .animate-in {
+            animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-left {
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Layout */
+        .app {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 1024px) {
+            .app {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--surface-light);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        body.dark .sidebar {
+            background: var(--surface-dark);
+            border-right: 1px solid var(--border-dark);
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        body.dark .sidebar-header {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius);
+            color: var(--text-muted-light);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark .nav-link {
+            color: var(--text-muted-dark);
+        }
+
+        .nav-link:hover {
+            background: var(--surface-2-light);
+            color: var(--text-light);
+            transform: translateX(4px);
+        }
+
+        body.dark .nav-link:hover {
+            background: var(--surface-2-dark);
+            color: var(--text-dark);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem;
+            max-width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--surface-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark .header {
+            background: var(--surface-dark);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .welcome {
+            flex: 1;
+        }
+
+        .welcome h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome p {
+            color: var(--text-muted-light);
+            font-size: 1.1rem;
+        }
+
+        body.dark .welcome p {
+            color: var(--text-muted-dark);
+        }
+
+        .user-info {
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
+            box-shadow: var(--shadow);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--secondary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        body.dark .card {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        body.dark .card-header {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        /* Progress */
+        .progress {
+            height: 8px;
+            background: var(--surface-2-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        body.dark .progress {
+            background: var(--surface-2-dark);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--surface-2-light);
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark .btn-secondary {
+            background: var(--surface-2-dark);
+            color: var(--text-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-light);
+        }
+
+        body.dark .btn-secondary:hover {
+            background: var(--surface-dark);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .theme-toggle {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Page Content */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: slideInUp 0.6s ease;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-description {
+            color: var(--text-muted-light);
+            font-size: 1.1rem;
+        }
+
+        body.dark .page-description {
+            color: var(--text-muted-dark);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark .mobile-menu {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu {
+                display: flex;
+            }
+            .main {
+                padding: 1rem;
+            }
+        }
+
+        /* Specific Components */
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark .metric-value {
+            color: var(--secondary);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .metric-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+        }
+
+        .metric-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            background: var(--surface-2-light);
+        }
+
+        body.dark .activity-item {
+            background: var(--surface-2-dark);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .activity-meta {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+        }
+
+        .badge-warning {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .badge-primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        /* Table styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        body.dark .table th,
+        body.dark .table td {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .table th {
+            font-weight: 600;
+            background: var(--surface-2-light);
+        }
+
+        body.dark .table th {
+            background: var(--surface-2-dark);
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        body.dark .form-label {
+            color: var(--text-dark);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            background: var(--surface-light);
+            color: var(--text-light);
+            transition: all 0.2s ease;
+        }
+
+        body.dark .form-input, 
+        body.dark .form-select,
+        body.dark .form-textarea {
+            border: 1px solid var(--border-dark);
+            background: var(--surface-dark);
+            color: var(--text-dark);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--surface-light);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        body.dark .modal-content {
+            background: var(--surface-dark);
+        }
+
+        .modal.open .modal-content {
+            transform: scale(1);
+        }
+
+        /* Chat styles */
+        .chat {
+            height: 400px;
+            background: var(--surface-2-light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        body.dark .chat {
+            background: var(--surface-2-dark);
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: var(--radius);
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: var(--surface-light);
+            color: var(--text-light);
+            align-self: flex-start;
+        }
+
+        body.dark .message.received {
+            background: var(--surface-dark);
+            color: var(--text-dark);
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 2rem;
+        }
+
+        body.dark .tabs {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: var(--surface-2-light);
+        }
+
+        body.dark .tab:hover {
+            background: var(--surface-2-dark);
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        body.dark .tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        body.dark .notification {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            opacity: 0.7;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-    </div>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-    <!-- App Shell -->
-    <div class="app" id="app">
-        <!-- Desktop Sidebar -->
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="app">
+        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
-            <div style="padding:1rem">
-                <h2>👨‍👩‍👧‍👦 Claudyne Parent</h2>
+            <div class="sidebar-header animate-left">
+                <div class="logo">Claudyne</div>
+                <p style="opacity: 0.7; margin-top: 0.5rem;">Espace Parent Premium</p>
             </div>
-            <nav id="desktopNav"></nav>
+            
+            <nav class="nav">
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="children">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Mes enfants</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="planning">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Planification</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="psychology">
+                        <i class="fas fa-heart"></i>
+                        <span>Copilote Émotionnel</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="messages">
+                        <i class="fas fa-comments"></i>
+                        <span>Messages</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="reports">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Rapports</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="finance">
+                        <i class="fas fa-wallet"></i>
+                        <span>Finance</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="community">
+                        <i class="fas fa-users"></i>
+                        <span>Communauté</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div style="padding: 1rem;">
+                <button class="btn btn-primary" style="width: 100%;" onclick="openModal('donation')">
+                    <i class="fas fa-heart"></i>
+                    Soutenir Claudyne
+                </button>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main">
-            <div id="dashboard" class="page active"></div>
-            <div id="children" class="page"></div>
-            <div id="planning" class="page"></div>
-            <div id="psychology" class="page"></div>
-            <div id="messages" class="page"></div>
-            <div id="reports" class="page"></div>
-            <div id="finance" class="page"></div>
-            <div id="community" class="page"></div>
-            <div id="settings" class="page"></div>
-        </main>
+            <!-- Header -->
+            <header class="header animate-in">
+                <div class="welcome">
+                    <h1>Bonjour Samuel !</h1>
+                    <p>Dernière connexion: Aujourd'hui à 14:30 • 2 nouvelles notifications</p>
+                </div>
+                <div class="user-info">
+                    <img src="/assets/images/user-placeholder.svg" alt="Avatar" class="user-avatar">
+                    <div style="font-weight: 600;">Samuel Kouotou</div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;">Niveau 5 - Parent Engagé</div>
+                    <div class="user-status">
+                        <div class="status-dot"></div>
+                        <span>En ligne</span>
+                    </div>
+                </div>
+            </header>
 
-        <!-- Mobile Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="#dashboard" class="nav-item active" data-page="dashboard">
-                <i class="fas fa-home"></i>
-                <span>Accueil</span>
-            </a>
-            <a href="#children" class="nav-item" data-page="children">
-                <i class="fas fa-user-graduate"></i>
-                <span>Enfants</span>
-            </a>
-            <a href="#planning" class="nav-item" data-page="planning">
-                <i class="fas fa-calendar"></i>
-                <span>Planning</span>
-            </a>
-            <a href="#psychology" class="nav-item" data-page="psychology">
-                <i class="fas fa-heart"></i>
-                <span>Copilote</span>
-            </a>
-            <a href="#messages" class="nav-item" data-page="messages">
-                <i class="fas fa-comments"></i>
-                <span>Messages</span>
-            </a>
-        </nav>
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard">
+                <div class="page-header animate-in">
+                    <h2 class="page-title">Dashboard Intelligent</h2>
+                    <p class="page-description">Analytics en temps réel et insights personnalisés pour optimiser l'apprentissage de vos enfants</p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card-grid animate-in" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                    <div class="card metric-card">
+                        <div class="metric-value" id="total-exercises">127</div>
+                        <div class="metric-label">Exercices complétés cette semaine</div>
+                        <div class="metric-change positive">+15% vs semaine dernière</div>
+                    </div>
+                    <div class="card metric-card">
+                        <div class="metric-value" id="average-score">89%</div>
+                        <div class="metric-label">Score moyen général</div>
+                        <div class="metric-change positive">+3% ce mois</div>
+                    </div>
+                    <div class="card metric-card">
+                        <div class="metric-value" id="study-time">24h</div>
+                        <div class="metric-label">Temps d'étude cette semaine</div>
+                        <div class="metric-change negative">-2h vs objectif</div>
+                    </div>
+                    <div class="card metric-card">
+                        <div class="metric-value" id="achievements">15</div>
+                        <div class="metric-label">Nouveaux badges débloqués</div>
+                        <div class="metric-change positive">+8 ce mois</div>
+                    </div>
+                </div>
+
+                <!-- AI Insights Alert -->
+                <div class="card animate-in" style="border-left: 4px solid var(--warning); margin-bottom: 2rem;">
+                    <div class="card-body">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 50px; height: 50px; background: rgba(249, 115, 22, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-brain" style="color: var(--warning); font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <h3 style="margin-bottom: 0.5rem;">Insight IA - Action recommandée</h3>
+                                <p style="opacity: 0.8;">Richy montre des difficultés en géométrie (score de 65% sur les 5 derniers exercices). L'IA recommande une session de révision interactive de 30 minutes sur les théorèmes de Thalès.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-play"></i>
+                                Démarrer la session IA
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-calendar"></i>
+                                Programmer plus tard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="card-grid">
+                    <!-- Progress Chart -->
+                    <div class="card animate-in" style="grid-column: span 2;">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line" style="color: var(--primary);"></i>
+                            <h3>Évolution des performances cette semaine</h3>
+                            <div style="margin-left: auto;">
+                                <select style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-light);">
+                                    <option>Cette semaine</option>
+                                    <option>Ce mois</option>
+                                    <option>Ce trimestre</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="progressChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activities -->
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-clock" style="color: var(--accent);"></i>
+                            <h3>Activités récentes</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: var(--secondary);">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Blandine a obtenu 95% en Français</div>
+                                    <div class="activity-meta">Il y a 2 heures • Dissertation sur Candide</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: var(--primary);">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Richy a complété 5 exercices de Math</div>
+                                    <div class="activity-meta">Il y a 4 heures • Géométrie dans l'espace</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: var(--warning);">
+                                    <i class="fas fa-exclamation"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Session de révision IA programmée</div>
+                                    <div class="activity-meta">Demain 16h00 • Physique-Chimie pour Richy</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: var(--secondary);">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Badge "Persévérance" débloqué</div>
+                                    <div class="activity-meta">Hier • Blandine - 7 jours consécutifs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Overview -->
+                <div class="card-grid" style="margin-top: 2rem;">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-user-graduate" style="color: var(--primary);"></i>
+                            <h3>Performance par matière - Richy</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Mathématiques</span>
+                                    <span style="font-weight: 600; color: var(--warning);">65%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 65%; background: var(--warning);"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Physique-Chimie</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">78%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 78%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>SVT</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">82%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 82%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Philosophie</span>
+                                    <span style="font-weight: 600; color: var(--primary);">71%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 71%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-user-graduate" style="color: var(--secondary);"></i>
+                            <h3>Performance par matière - Blandine</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Français</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">95%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 95%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Histoire-Géographie</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">89%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 89%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Anglais</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">91%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 91%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Mathématiques</span>
+                                    <span style="font-weight: 600; color: var(--primary);">76%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 76%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-trophy" style="color: var(--accent);"></i>
+                            <h3>Badges & Récompenses</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                                <div>
+                                    <div style="width: 50px; height: 50px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                                        <i class="fas fa-medal" style="color: white; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: 600;">Champion</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">Français</div>
+                                </div>
+                                <div>
+                                    <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                                        <i class="fas fa-fire" style="color: white; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: 600;">Série</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">7 jours</div>
+                                </div>
+                                <div>
+                                    <div style="width: 50px; height: 50px; background: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                                        <i class="fas fa-star" style="color: white; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: 600;">Expert</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">Histoire</div>
+                                </div>
+                                <div>
+                                    <div style="width: 50px; height: 50px; background: #8b5cf6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                                        <i class="fas fa-brain" style="color: white; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: 600;">Génie</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">Logique</div>
+                                </div>
+                                <div>
+                                    <div style="width: 50px; height: 50px; background: #06b6d4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                                        <i class="fas fa-rocket" style="color: white; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: 600;">Rapide</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">Réflexes</div>
+                                </div>
+                                <div>
+                                    <div style="width: 50px; height: 50px; background: #84cc16; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem;">
+                                        <i class="fas fa-leaf" style="color: white; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div style="font-size: 0.8rem; font-weight: 600;">Régulier</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.7;">Assiduité</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card animate-in" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <i class="fas fa-bolt" style="color: var(--accent);"></i>
+                        <h3>Actions rapides</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-robot"></i>
+                                Démarrer session IA
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-calendar-plus"></i>
+                                Programmer révision
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-chart-bar"></i>
+                                Générer rapport
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-message"></i>
+                                Envoyer encouragement
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Children Page -->
+            <div class="page" id="children">
+                <div class="page-header">
+                    <h2 class="page-title">Mes Enfants</h2>
+                    <p class="page-description">Suivi détaillé et personnalisé de chaque enfant</p>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('overview')">Vue d'ensemble</div>
+                    <div class="tab" onclick="switchTab('individual')">Suivi individuel</div>
+                    <div class="tab" onclick="switchTab('comparison')">Comparaison</div>
+                </div>
+
+                <div class="tab-content active" id="overview">
+                    <div class="card-grid">
+                        <!-- Richy's Card -->
+                        <div class="card animate-in">
+                            <div class="card-body" style="text-align: center;">
+                                <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" alt="Richy" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; margin-bottom: 1rem;">
+                                <h3 style="margin-bottom: 0.5rem;">Richy Nono</h3>
+                                <div style="margin-bottom: 1rem;">
+                                    <span class="badge badge-primary">Terminale C</span>
+                                    <span class="badge badge-secondary" style="margin-left: 0.5rem;">17 ans</span>
+                                </div>
+                                
+                                <!-- Progress Circle -->
+                                <div style="position: relative; width: 100px; height: 100px; margin: 1rem auto;">
+                                    <svg width="100" height="100" style="transform: rotate(-90deg);">
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-2-light)" stroke-width="8"></circle>
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="75"></circle>
+                                    </svg>
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: 700;">70%</div>
+                                </div>
+                                
+                                <div style="text-align: left; margin: 1rem 0;">
+                                    <div style="margin-bottom: 1rem;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Temps d'étude cette semaine</span>
+                                            <span style="font-weight: 600;">12h 30min</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Exercices complétés</span>
+                                            <span style="font-weight: 600;">47</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Points faibles détectés</span>
+                                            <span style="font-weight: 600; color: var(--warning);">Géométrie</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Prochain objectif</span>
+                                            <span style="font-weight: 600; color: var(--secondary);">BAC Blanc</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary btn-small" style="flex: 1;">
+                                        <i class="fas fa-chart-line"></i>
+                                        Détails
+                                    </button>
+                                    <button class="btn btn-secondary btn-small">
+                                        <i class="fas fa-message"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blandine's Card -->
+                        <div class="card animate-in">
+                            <div class="card-body" style="text-align: center;">
+                                <img src="https://i.ibb.co/qC6zC9J/orange-money.png" alt="Blandine" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--secondary); object-fit: cover; margin-bottom: 1rem;">
+                                <h3 style="margin-bottom: 0.5rem;">Blandine Mbarga</h3>
+                                <div style="margin-bottom: 1rem;">
+                                    <span class="badge badge-secondary">Seconde A</span>
+                                    <span class="badge badge-primary" style="margin-left: 0.5rem;">15 ans</span>
+                                </div>
+                                
+                                <!-- Progress Circle -->
+                                <div style="position: relative; width: 100px; height: 100px; margin: 1rem auto;">
+                                    <svg width="100" height="100" style="transform: rotate(-90deg);">
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-2-light)" stroke-width="8"></circle>
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--secondary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="20"></circle>
+                                    </svg>
+                                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: 700;">92%</div>
+                                </div>
+                                
+                                <div style="text-align: left; margin: 1rem 0;">
+                                    <div style="margin-bottom: 1rem;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Temps d'étude cette semaine</span>
+                                            <span style="font-weight: 600;">15h 45min</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Exercices complétés</span>
+                                            <span style="font-weight: 600;">68</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Matière favorite</span>
+                                            <span style="font-weight: 600; color: var(--secondary);">Français</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span>Prochain objectif</span>
+                                            <span style="font-weight: 600; color: var(--secondary);">100% Français</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-primary btn-small" style="flex: 1;">
+                                        <i class="fas fa-chart-line"></i>
+                                        Détails
+                                    </button>
+                                    <button class="btn btn-secondary btn-small">
+                                        <i class="fas fa-message"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Child Card -->
+                        <div class="card animate-in" style="border: 2px dashed var(--border-light); display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; padding: 2rem;">
+                                <i class="fas fa-plus" style="font-size: 3rem; color: var(--text-muted-light); margin-bottom: 1rem;"></i>
+                                <h3 style="margin-bottom: 1rem; color: var(--text-muted-light);">Ajouter un enfant</h3>
+                                <button class="btn btn-primary" onclick="openModal('addChild')">
+                                    <i class="fas fa-user-plus"></i>
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="individual">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-user-graduate" style="color: var(--primary);"></i>
+                            <h3>Suivi individuel détaillé</h3>
+                            <div style="margin-left: auto;">
+                                <select id="childSelect" style="padding: 0.5rem; border-radius: 6px; border: 1px solid var(--border-light);">
+                                    <option value="richy">Richy Nono</option>
+                                    <option value="blandine">Blandine Mbarga</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-grid">
+                                <div>
+                                    <h4 style="margin-bottom: 1rem;">Statistiques de la semaine</h4>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                        <div style="text-align: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">47</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Exercices</div>
+                                        </div>
+                                        <div style="text-align: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary);">12h30</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Temps d'étude</div>
+                                        </div>
+                                        <div style="text-align: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">3</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Difficultés</div>
+                                        </div>
+                                        <div style="text-align: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">8</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Réussites</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h4 style="margin-bottom: 1rem;">Recommandations IA</h4>
+                                    <div style="space-y: 0.5rem;">
+                                        <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                            <div style="font-weight: 600; color: var(--secondary); margin-bottom: 0.5rem;">Session recommandée</div>
+                                            <div style="font-size: 0.9rem;">Révision géométrie - Théorèmes de Thalès (30 min)</div>
+                                        </div>
+                                        <div style="padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                            <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">Objectif de la semaine</div>
+                                            <div style="font-size: 0.9rem;">Améliorer le score en mathématiques de 10 points</div>
+                                        </div>
+                                        <div style="padding: 1rem; background: rgba(249, 115, 22, 0.1); border-radius: var(--radius);">
+                                            <div style="font-weight: 600; color: var(--warning); margin-bottom: 0.5rem;">Point d'attention</div>
+                                            <div style="font-size: 0.9rem;">Temps de concentration en baisse (-15 min/session)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="comparison">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-balance-scale" style="color: var(--accent);"></i>
+                            <h3>Comparaison des performances</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="comparisonChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planning Page -->
+            <div class="page" id="planning">
+                <div class="page-header">
+                    <h2 class="page-title">Planification Familiale</h2>
+                    <p class="page-description">Organisez et synchronisez les activités d'apprentissage de toute la famille</p>
+                </div>
+
+                <div class="card-grid" style="grid-template-columns: 1fr 300px;">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-calendar" style="color: var(--primary);"></i>
+                            <h3>Calendrier de la semaine</h3>
+                            <div style="margin-left: auto;">
+                                <button class="btn btn-primary btn-small" onclick="openModal('addEvent')">
+                                    <i class="fas fa-plus"></i>
+                                    Ajouter
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border-light); border-radius: var(--radius); overflow: hidden;">
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Lun</div>
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Mar</div>
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Mer</div>
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Jeu</div>
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Ven</div>
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Sam</div>
+                                <div style="padding: 1rem; background: var(--surface-light); text-align: center; font-weight: 600;">Dim</div>
+                                
+                                <!-- Week content -->
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;">
+                                    <div style="background: var(--primary); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                                        16h - Math Richy
+                                    </div>
+                                    <div style="background: var(--secondary); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        19h - Français Blandine
+                                    </div>
+                                </div>
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;">
+                                    <div style="background: var(--warning); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        17h - Session IA Richy
+                                    </div>
+                                </div>
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;">
+                                    <div style="background: var(--secondary); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                                        15h - Histoire Blandine
+                                    </div>
+                                    <div style="background: var(--primary); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        18h - Physique Richy
+                                    </div>
+                                </div>
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;">
+                                    <div style="background: var(--accent); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        16h30 - Révision générale
+                                    </div>
+                                </div>
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;">
+                                    <div style="background: var(--primary); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        14h - BAC Blanc Richy
+                                    </div>
+                                </div>
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;"></div>
+                                <div style="padding: 1rem; background: var(--surface-light); min-height: 120px;">
+                                    <div style="background: var(--secondary); color: white; padding: 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                                        10h - Temps libre
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card animate-in" style="margin-bottom: 1rem;">
+                            <div class="card-header">
+                                <i class="fas fa-tasks" style="color: var(--secondary);"></i>
+                                <h3>Objectifs hebdomadaires</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.9rem;">Richy - Math</span>
+                                        <span style="font-size: 0.8rem; opacity: 0.7;">75%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 75%;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.9rem;">Blandine - Français</span>
+                                        <span style="font-size: 0.8rem; opacity: 0.7;">95%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 95%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.9rem;">Temps famille</span>
+                                        <span style="font-size: 0.8rem; opacity: 0.7;">60%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 60%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-bell" style="color: var(--warning);"></i>
+                                <h3>Rappels</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="space-y: 0.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                        <div style="width: 8px; height: 8px; background: var(--danger); border-radius: 50%;"></div>
+                                        <div style="font-size: 0.8rem;">BAC Blanc demain 14h</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                        <div style="width: 8px; height: 8px; background: var(--warning); border-radius: 50%;"></div>
+                                        <div style="font-size: 0.8rem;">Session IA prévue 17h</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                        <div style="width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></div>
+                                        <div style="font-size: 0.8rem;">Rapport hebdomadaire prêt</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Psychology Page -->
+            <div class="page" id="psychology">
+                <div class="page-header">
+                    <h2 class="page-title">Copilote Émotionnel</h2>
+                    <p class="page-description">Soutien psychologique et bien-être familial personnalisé</p>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-heart" style="color: var(--danger);"></i>
+                            <h3>État émotionnel général</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">😊</div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary);">Famille épanouie</div>
+                                <div style="opacity: 0.7;">Niveau de stress: Faible</div>
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Bien-être Richy</span>
+                                    <span style="font-weight: 600; color: var(--warning);">78%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 78%; background: var(--warning);"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Bien-être Blandine</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">92%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 92%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Harmonie familiale</span>
+                                    <span style="font-weight: 600; color: var(--secondary);">85%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 85%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-brain" style="color: var(--primary);"></i>
+                            <h3>Recommandations IA</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: var(--radius); border-left: 4px solid var(--danger); margin-bottom: 1rem;">
+                                    <div style="font-weight: 600; color: var(--danger); margin-bottom: 0.5rem;">⚠️ Attention</div>
+                                    <div style="font-size: 0.9rem;">Richy montre des signes de stress liés aux mathématiques. Privilégier des sessions courtes et encourageantes.</div>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius); border-left: 4px solid var(--secondary); margin-bottom: 1rem;">
+                                    <div style="font-weight: 600; color: var(--secondary); margin-bottom: 0.5rem;">✅ Réussite</div>
+                                    <div style="font-size: 0.9rem;">Excellente dynamique avec Blandine. Maintenir les encouragements positifs.</div>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: var(--radius); border-left: 4px solid var(--primary);">
+                                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">💡 Suggestion</div>
+                                    <div style="font-size: 0.9rem;">Organiser une activité familiale ce weekend pour renforcer les liens.</div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-comments"></i>
+                                Consultation avec psychologue
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-spa" style="color: var(--secondary);"></i>
+                            <h3>Espace détente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="text-align: center;">
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--secondary), #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                        <i class="fas fa-leaf" style="color: white; font-size: 2rem;"></i>
+                                    </div>
+                                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Moment de sérénité</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.7;">Prenez 5 minutes pour vous détendre</div>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <button class="btn btn-secondary" style="padding: 1rem;">
+                                        <i class="fas fa-wind"></i><br>
+                                        <span style="font-size: 0.8rem;">Respiration</span>
+                                    </button>
+                                    <button class="btn btn-secondary" style="padding: 1rem;">
+                                        <i class="fas fa-music"></i><br>
+                                        <span style="font-size: 0.8rem;">Méditation</span>
+                                    </button>
+                                    <button class="btn btn-secondary" style="padding: 1rem;">
+                                        <i class="fas fa-smile"></i><br>
+                                        <span style="font-size: 0.8rem;">Affirmations</span>
+                                    </button>
+                                    <button class="btn btn-secondary" style="padding: 1rem;">
+                                        <i class="fas fa-heart"></i><br>
+                                        <span style="font-size: 0.8rem;">Gratitude</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie" style="color: var(--accent);"></i>
+                            <h3>Analyse comportementale</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 1.5rem;">
+                                <h4 style="margin-bottom: 1rem;">Richy - Dernière semaine</h4>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">Motivation</span>
+                                    <div style="display: flex; gap: 2px;">
+                                        <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--surface-2-light); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--surface-2-light); border-radius: 2px;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">Concentration</span>
+                                    <div style="display: flex; gap: 2px;">
+                                        <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--surface-2-light); border-radius: 2px;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.9rem;">Confiance</span>
+                                    <div style="display: flex; gap: 2px;">
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 style="margin-bottom: 1rem;">Blandine - Dernière semaine</h4>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">Motivation</span>
+                                    <div style="display: flex; gap: 2px;">
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">Concentration</span>
+                                    <div style="display: flex; gap: 2px;">
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--surface-2-light); border-radius: 2px;"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.9rem;">Confiance</span>
+                                    <div style="display: flex; gap: 2px;">
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                        <div style="width: 12px; height: 12px; background: var(--secondary); border-radius: 2px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Page -->
+            <div class="page" id="messages">
+                <div class="page-header">
+                    <h2 class="page-title">Messages Familiale</h2>
+                    <p class="page-description">Communication en temps réel avec vos enfants</p>
+                </div>
+
+                <div class="card-grid" style="grid-template-columns: 300px 1fr;">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-users" style="color: var(--primary);"></i>
+                            <h3>Conversations</h3>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <div class="conversation-item" style="padding: 1rem; border-bottom: 1px solid var(--border-light); cursor: pointer; background: rgba(99, 102, 241, 0.1);">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="position: relative;">
+                                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">F</div>
+                                        <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--secondary); border: 2px solid white; border-radius: 50%;"></div>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 600;">Famille Samuel</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Papa, j'ai fini mes devoirs!</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 0.7rem; opacity: 0.7;">14:30</div>
+                                        <div style="width: 18px; height: 18px; background: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem; margin-top: 0.25rem; margin-left: auto;">2</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="conversation-item" style="padding: 1rem; border-bottom: 1px solid var(--border-light); cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="position: relative;">
+                                        <img src="https://i.ibb.co/qC6zC9J/orange-money.png" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                        <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--secondary); border: 2px solid white; border-radius: 50%;"></div>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 600;">Blandine</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Merci pour ton aide papa!</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 0.7rem; opacity: 0.7;">Hier</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-comments" style="color: var(--primary);"></i>
+                            <h3>Groupe Famille Samuel</h3>
+                            <div style="margin-left: auto; display: flex; align-items: center; gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></div>
+                                    <span style="font-size: 0.8rem; opacity: 0.7;">2 en ligne</span>
+                                </div>
+                                <button class="btn btn-secondary btn-small">
+                                    <i class="fas fa-phone"></i>
+                                    Appel
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chat" id="chat">
+                                <div class="message received">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <strong>Richy</strong>
+                                    </div>
+                                    Papa, j'ai une interro de maths demain 😰 Je suis un peu stressé pour la géométrie
+                                    <div class="message-time">Aujourd'hui 14:25</div>
+                                </div>
+                                <div class="message sent">
+                                    Ne t'inquiète pas mon champion! Tu as bien progressé cette semaine. As-tu révisé le chapitre sur les théorèmes de Thalès comme on avait prévu?
+                                    <div class="message-time">Aujourd'hui 14:27</div>
+                                </div>
+                                <div class="message received">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <strong>Richy</strong>
+                                    </div>
+                                    Oui j'ai fait les exercices que l'IA m'a proposés. Mais j'ai encore du mal avec les calculs de distances...
+                                    <div class="message-time">Aujourd'hui 14:28</div>
+                                </div>
+                                <div class="message received">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <img src="https://i.ibb.co/qC6zC9J/orange-money.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <strong>Blandine</strong>
+                                    </div>
+                                    Courage grand frère! Moi j'ai fini ma dissertation de français 🎉 J'ai eu 18/20 au dernier devoir!
+                                    <div class="message-time">Aujourd'hui 14:30</div>
+                                </div>
+                                <div class="message sent">
+                                    Félicitations Blandine! Je suis très fier de vous deux ❤️ Richy, on peut faire une petite session de révision ensemble ce soir après le dîner si tu veux?
+                                    <div class="message-time">Aujourd'hui 14:32</div>
+                                </div>
+                                <div class="message received">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <strong>Richy</strong>
+                                    </div>
+                                    Oui papa ce serait super! Et merci Blandine pour tes encouragements 😊
+                                    <div class="message-time">Aujourd'hui 14:35</div>
+                                </div>
+                            </div>
+                            
+                            <form style="display: flex; gap: 1rem; margin-top: 1rem;" onsubmit="sendMessage(event)">
+                                <input type="text" class="form-input" placeholder="Tapez votre message..." id="messageInput" style="flex: 1;">
+                                <button type="button" class="btn btn-secondary">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div class="page" id="reports">
+                <div class="page-header">
+                    <h2 class="page-title">Rapports & Analytics</h2>
+                    <p class="page-description">Analyses détaillées et insights de performance pour un suivi optimal</p>
+                </div>
+
+                <div class="card animate-in" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <i class="fas fa-download" style="color: var(--primary);"></i>
+                        <h3>Générateur de rapports personnalisés</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Enfant</label>
+                                <select class="form-select">
+                                    <option value="">Tous les enfants</option>
+                                    <option value="richy">Richy Nono</option>
+                                    <option value="blandine">Blandine Mbarga</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Période</label>
+                                <select class="form-select">
+                                    <option value="week">Cette semaine</option>
+                                    <option value="month">Ce mois</option>
+                                    <option value="quarter">Ce trimestre</option>
+                                    <option value="custom">Période personnalisée</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Type de rapport</label>
+                                <select class="form-select">
+                                    <option value="performance">Performance académique</option>
+                                    <option value="behavior">Analyse comportementale</option>
+                                    <option value="progress">Évolution des progrès</option>
+                                    <option value="complete">Rapport complet</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: end;">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-file-pdf"></i>
+                                    Générer PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar" style="color: var(--secondary);"></i>
+                            <h3>Performance cette semaine</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="weeklyPerformanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-trophy" style="color: var(--accent);"></i>
+                            <h3>Classement des matières</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Rang</th>
+                                        <th>Matière</th>
+                                        <th>Score moyen</th>
+                                        <th>Tendance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>🥇</td>
+                                        <td>Français</td>
+                                        <td><span class="badge badge-success">95%</span></td>
+                                        <td><i class="fas fa-arrow-up" style="color: var(--secondary);"></i> +2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>🥈</td>
+                                        <td>Histoire-Géo</td>
+                                        <td><span class="badge badge-success">89%</span></td>
+                                        <td><i class="fas fa-arrow-up" style="color: var(--secondary);"></i> +5%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>🥉</td>
+                                        <td>SVT</td>
+                                        <td><span class="badge badge-success">82%</span></td>
+                                        <td><i class="fas fa-minus" style="color: var(--text-muted-light);"></i> 0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Physique</td>
+                                        <td><span class="badge badge-primary">78%</span></td>
+                                        <td><i class="fas fa-arrow-up" style="color: var(--secondary);"></i> +3%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Mathématiques</td>
+                                        <td><span class="badge badge-warning">65%</span></td>
+                                        <td><i class="fas fa-arrow-down" style="color: var(--danger);"></i> -5%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-clock" style="color: var(--warning);"></i>
+                            <h3>Temps d'étude détaillé</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                    <span style="font-weight: 600;">Cette semaine</span>
+                                    <span style="font-weight: 700; font-size: 1.2rem;">28h 15min</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Objectif hebdomadaire</span>
+                                    <span>30h 00min</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 94%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="space-y: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                    <span>Richy - Mathématiques</span>
+                                    <span style="font-weight: 600;">4h 30min</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                    <span>Blandine - Français</span>
+                                    <span style="font-weight: 600;">6h 15min</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                    <span>Richy - Physique</span>
+                                    <span style="font-weight: 600;">3h 45min</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                    <span>Blandine - Histoire</span>
+                                    <span style="font-weight: 600;">5h 20min</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-brain" style="color: var(--primary);"></i>
+                            <h3>Insights IA de la semaine</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius); border-left: 4px solid var(--secondary); margin-bottom: 1rem;">
+                                    <div style="font-weight: 600; color: var(--secondary); margin-bottom: 0.5rem;">✅ Point fort identifié</div>
+                                    <div style="font-size: 0.9rem;">Blandine excelle en expression écrite. Encourager la participation aux concours littéraires.</div>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: rgba(249, 115, 22, 0.1); border-radius: var(--radius); border-left: 4px solid var(--warning); margin-bottom: 1rem;">
+                                    <div style="font-weight: 600; color: var(--warning); margin-bottom: 0.5rem;">⚠️ Zone d'amélioration</div>
+                                    <div style="font-size: 0.9rem;">Richy a besoin de renforcement en géométrie. Temps de révision optimal: 20-25 minutes/session.</div>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: var(--radius); border-left: 4px solid var(--primary);">
+                                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">💡 Recommandation</div>
+                                    <div style="font-size: 0.9rem;">Optimiser les sessions d'étude: réduire à 45min max avec pause de 10min pour maintenir la concentration.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finance Page -->
+            <div class="page" id="finance">
+                <div class="page-header">
+                    <h2 class="page-title">Hub Financier</h2>
+                    <p class="page-description">Gestion complète de vos abonnements, dons et services premium</p>
+                </div>
+
+                <div class="card animate-in" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <i class="fas fa-crown" style="color: var(--accent);"></i>
+                        <h3>Votre Plan Actuel - Plan Familial Premium</h3>
+                        <div style="margin-left: auto;">
+                            <span class="badge badge-success">Actif</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem;">
+                            <div>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">25 000 XAF/mois</div>
+                                    <div style="opacity: 0.7;">Renouvellement automatique le 15 octobre 2025</div>
+                                </div>
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <h4 style="margin-bottom: 1rem;">Avantages inclus:</h4>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check" style="color: var(--secondary);"></i>
+                                            <span>Jusqu'à 3 enfants</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check" style="color: var(--secondary);"></i>
+                                            <span>IA tuteur personnalisé</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check" style="color: var(--secondary);"></i>
+                                            <span>Rapports détaillés illimités</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check" style="color: var(--secondary);"></i>
+                                            <span>Support prioritaire 24/7</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check" style="color: var(--secondary);"></i>
+                                            <span>Accès aux webinaires premium</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-check" style="color: var(--secondary);"></i>
+                                            <span>Coaching parental mensuel</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 1rem;">
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-edit"></i>
+                                        Modifier le plan
+                                    </button>
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-upgrade"></i>
+                                        Découvrir Premium+
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; padding: 2rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), #d97706); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <i class="fas fa-crown" style="color: white; font-size: 2rem;"></i>
+                                </div>
+                                <div style="font-weight: 700; margin-bottom: 1rem;">Utilisation ce mois</div>
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="font-size: 2rem; font-weight: 700; color: var(--primary);">47h</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">sur 100h incluses</div>
+                                </div>
+                                <div class="progress" style="margin-bottom: 1rem;">
+                                    <div class="progress-bar" style="width: 47%;"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; opacity: 0.7;">53h restantes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-plus-circle" style="color: var(--primary);"></i>
+                            <h3>Services additionnels</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="space-y: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Enfant supplémentaire</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Ajoutez jusqu'à 3 enfants de plus</div>
+                                        <div style="font-weight: 700; color: var(--primary); margin-top: 0.5rem;">6 000 XAF/enfant/mois</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-small">Ajouter</button>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Mentor IA MEUGACK</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Tuteur IA avancé avec sessions en direct</div>
+                                        <div style="font-weight: 700; color: var(--primary); margin-top: 0.5rem;">15 000 XAF/mois</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-small">En savoir +</button>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius);">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Coaching parental hebdomadaire</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Sessions 1-à-1 avec nos experts</div>
+                                        <div style="font-weight: 700; color: var(--primary); margin-top: 0.5rem;">20 000 XAF/mois</div>
+                                    </div>
+                                    <button class="btn btn-secondary btn-small">Découvrir</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-receipt" style="color: var(--secondary);"></i>
+                            <h3>Historique des paiements</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>15/09/2025</td>
+                                        <td>Plan Familial Premium</td>
+                                        <td>25 000 XAF</td>
+                                        <td><span class="badge badge-success">Payé</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>15/08/2025</td>
+                                        <td>Plan Familial Premium</td>
+                                        <td>25 000 XAF</td>
+                                        <td><span class="badge badge-success">Payé</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>12/08/2025</td>
+                                        <td>Session coaching</td>
+                                        <td>10 000 XAF</td>
+                                        <td><span class="badge badge-success">Payé</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>15/07/2025</td>
+                                        <td>Plan Familial Premium</td>
+                                        <td>25 000 XAF</td>
+                                        <td><span class="badge badge-success">Payé</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-heart" style="color: var(--danger);"></i>
+                            <h3>Historique des dons</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="text-align: center; margin-bottom: 1.5rem;">
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.5rem;">47 000 XAF</div>
+                                <div style="opacity: 0.7;">Total des dons cette année</div>
+                                <div style="font-size: 0.8rem; opacity: 0.6; margin-top: 0.5rem;">🏆 Vous êtes dans le top 5% des donateurs</div>
+                            </div>
+                            
+                            <div style="space-y: 0.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                    <div>
+                                        <div style="font-weight: 600;">Écoles Rurales du Nord</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">20 juillet 2025</div>
+                                    </div>
+                                    <div style="font-weight: 700; color: var(--secondary);">15 000 XAF</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                    <div>
+                                        <div style="font-weight: 600;">Bourses d'Excellence</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">5 juin 2025</div>
+                                    </div>
+                                    <div style="font-weight: 700; color: var(--secondary);">20 000 XAF</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                    <div>
+                                        <div style="font-weight: 600;">Bibliothèques Numériques</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">12 avril 2025</div>
+                                    </div>
+                                    <div style="font-weight: 700; color: var(--secondary);">12 000 XAF</div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="openModal('donation')">
+                                <i class="fas fa-heart"></i>
+                                Faire un nouveau don
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Page -->
+            <div class="page" id="community">
+                <div class="page-header">
+                    <h2 class="page-title">Communauté Claudyne</h2>
+                    <p class="page-description">Connectez-vous, partagez et apprenez avec d'autres parents engagés</p>
+                </div>
+
+                <div class="card-grid" style="grid-template-columns: 1fr 300px;">
+                    <div>
+                        <div class="card animate-in" style="margin-bottom: 1rem;">
+                            <div class="card-header">
+                                <i class="fas fa-users" style="color: var(--primary);"></i>
+                                <h3>Mes groupes</h3>
+                                <div style="margin-left: auto;">
+                                    <button class="btn btn-primary btn-small" onclick="openModal('createGroup')">
+                                        <i class="fas fa-plus"></i>
+                                        Créer un groupe
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div style="space-y: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: var(--radius); margin-bottom: 1rem;">
+                                        <div style="width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">PS</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600;">Parents de Seconde - Yaoundé</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">24 membres • 3 nouveaux messages</div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="width: 20px; height: 20px; background: var(--danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem;">3</div>
+                                            <span class="badge badge-primary">Admin</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                        <div style="width: 50px; height: 50px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">FF</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600;">Femmes Fortes et Dynamiques</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">156 membres • Très actif</div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></div>
+                                            <span style="font-size: 0.8rem; opacity: 0.7;">En ligne</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                        <div style="width: 50px; height: 50px; background: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">PC</div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600;">Parents du Canada</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">89 membres • Modérément actif</div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-moon" style="color: var(--text-muted-light); font-size: 0.8rem;"></i>
+                                            <span style="font-size: 0.8rem; opacity: 0.7;">Hors ligne</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-comments" style="color: var(--secondary);"></i>
+                                <h3>Discussion - Parents de Seconde</h3>
+                                <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></div>
+                                    <span style="font-size: 0.8rem; opacity: 0.7;">12 en ligne</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chat" style="height: 350px;">
+                                    <div class="message received">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <div style="width: 24px; height: 24px; background: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem;">MK</div>
+                                            <strong>Maman Karine</strong>
+                                        </div>
+                                        Bonjour tout le monde! Mon fils a du mal avec les équations du second degré. Quelqu'un a des conseils ou ressources à partager?
+                                        <div class="message-time">Aujourd'hui 13:45</div>
+                                    </div>
+                                    
+                                    <div class="message received">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <div style="width: 24px; height: 24px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem;">PJ</div>
+                                            <strong>Papa Jean</strong>
+                                        </div>
+                                        Salut Karine! J'ai eu le même problème avec ma fille. Le module de révision interactive de Claudyne sur les équations est excellent. Elle a progressé de 20 points en 2 semaines!
+                                        <div class="message-time">Aujourd'hui 13:47</div>
+                                    </div>
+                                    
+                                    <div class="message sent">
+                                        Je confirme! Mon fils Richy utilise aussi Claudyne. L'IA adapte automatiquement la difficulté selon ses progrès. Très efficace pour identifier les lacunes spécifiques.
+                                        <div class="message-time">Aujourd'hui 13:50</div>
+                                    </div>
+                                    
+                                    <div class="message received">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <div style="width: 24px; height: 24px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7rem;">MA</div>
+                                            <strong>Maman Anne</strong>
+                                        </div>
+                                        @Samuel merci pour l'info! Est-ce que l'IA propose aussi des exercices pratiques? Ma fille apprend mieux avec des exemples concrets.
+                                        <div class="message-time">Aujourd'hui 14:12</div>
+                                    </div>
+                                    
+                                    <div class="message sent">
+                                        Oui absolument! L'IA génère des problèmes liés à la vie quotidienne. Par exemple, calculer la trajectoire d'un ballon ou optimiser l'aire d'un jardin. Très motivant!
+                                        <div class="message-time">Aujourd'hui 14:15</div>
+                                    </div>
+                                </div>
+                                
+                                <form style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                    <input type="text" class="form-input" placeholder="Participez à la discussion..." style="flex: 1;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card animate-in" style="margin-bottom: 1rem;">
+                            <div class="card-header">
+                                <i class="fas fa-search" style="color: var(--warning);"></i>
+                                <h3>Découvrir des groupes</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <input type="text" class="form-input" placeholder="Rechercher par nom, région, niveau...">
+                                </div>
+                                
+                                <div style="space-y: 1rem;">
+                                    <div style="padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Parents de Terminale</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1rem;">67 membres • Focus sur la préparation au BAC</div>
+                                        <button class="btn btn-primary btn-small" style="width: 100%;">Rejoindre</button>
+                                    </div>
+                                    
+                                    <div style="padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Maths Excellence</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1rem;">134 membres • Aide et ressources en mathématiques</div>
+                                        <button class="btn btn-primary btn-small" style="width: 100%;">Rejoindre</button>
+                                    </div>
+                                    
+                                    <div style="padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius);">
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Parents Entrepreneurs</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 1rem;">43 membres • Concilier business et éducation</div>
+                                        <button class="btn btn-secondary btn-small" style="width: 100%;">En savoir plus</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in" style="margin-bottom: 1rem;">
+                            <div class="card-header">
+                                <i class="fas fa-calendar" style="color: var(--accent);"></i>
+                                <h3>Événements à venir</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="space-y: 1rem;">
+                                    <div style="padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Webinaire: Réussir en Sciences</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.5rem;">20 septembre 2025 • 19h00</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Dr. Amina Kone, Professeure à l'ENS</div>
+                                        <button class="btn btn-primary btn-small" style="margin-top: 0.5rem;">S'inscrire</button>
+                                    </div>
+                                    
+                                    <div style="padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Rencontre Parents-Yaoundé</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.5rem;">25 septembre 2025 • 14h00</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Centre Culturel Camerounais</div>
+                                        <button class="btn btn-secondary btn-small" style="margin-top: 0.5rem;">Intéressé</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-star" style="color: var(--secondary);"></i>
+                                <h3>Parents de la semaine</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="text-align: center; margin-bottom: 1rem;">
+                                    <div style="width: 60px; height: 60px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; margin: 0 auto 0.5rem;">MF</div>
+                                    <div style="font-weight: 600;">Maman Fatou</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Douala • 3 enfants</div>
+                                </div>
+                                <div style="font-size: 0.9rem; text-align: center; font-style: italic; margin-bottom: 1rem;">
+                                    "Grâce à Claudyne et au soutien de la communauté, mes enfants ont tous amélioré leurs notes de plus de 15%!"
+                                </div>
+                                <div style="text-align: center;">
+                                    <span class="badge badge-secondary">🏆 Parent Exemplaire</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div class="page" id="settings">
+                <div class="page-header">
+                    <h2 class="page-title">Paramètres</h2>
+                    <p class="page-description">Personnalisez votre expérience Claudyne</p>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('profile')">Profil</div>
+                    <div class="tab" onclick="switchTab('notifications')">Notifications</div>
+                    <div class="tab" onclick="switchTab('privacy')">Confidentialité</div>
+                    <div class="tab" onclick="switchTab('account')">Compte</div>
+                </div>
+
+                <div class="tab-content active" id="profile">
+                    <div class="card-grid">
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-user" style="color: var(--primary);"></i>
+                                <h3>Informations personnelles</h3>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label class="form-label">Nom complet</label>
+                                        <input type="text" class="form-input" value="Samuel Kouotou">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-input" value="samuel.kouotou@email.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Téléphone</label>
+                                        <input type="tel" class="form-input" value="+237 690 123 456">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Ville</label>
+                                        <input type="text" class="form-input" value="Yaoundé">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Bio</label>
+                                        <textarea class="form-textarea" placeholder="Parlez-nous de vous...">Père de famille passionné par l'éducation et l'épanouissement de mes enfants. Entrepreneur dans le secteur technologique.</textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Sauvegarder
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-image" style="color: var(--secondary);"></i>
+                                <h3>Photo de profil</h3>
+                            </div>
+                            <div class="card-body" style="text-align: center;">
+                                <div style="margin-bottom: 2rem;">
+                                    <img src="/assets/images/user-placeholder.svg" alt="Avatar" style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.9rem; opacity: 0.7;">Photo actuelle</div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-upload"></i>
+                                        Changer la photo
+                                    </button>
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-trash"></i>
+                                        Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="notifications">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-bell" style="color: var(--warning);"></i>
+                            <h3>Préférences de notification</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="space-y: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Notifications d'activité</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Exercices complétés, nouveaux scores, badges débloqués</div>
+                                    </div>
+                                    <input type="checkbox" checked style="transform: scale(1.2);">
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Alertes IA</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Recommandations, difficultés détectées, suggestions</div>
+                                    </div>
+                                    <input type="checkbox" checked style="transform: scale(1.2);">
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Messages familiaux</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Nouveaux messages de vos enfants</div>
+                                    </div>
+                                    <input type="checkbox" checked style="transform: scale(1.2);">
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Communauté</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Nouveaux messages dans vos groupes</div>
+                                    </div>
+                                    <input type="checkbox" style="transform: scale(1.2);">
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Rapports hebdomadaires</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Résumé automatique des progrès</div>
+                                    </div>
+                                    <input type="checkbox" checked style="transform: scale(1.2);">
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Marketing</div>
+                                        <div style="font-size: 0.8rem; opacity: 0.7;">Nouvelles fonctionnalités, offres spéciales</div>
+                                    </div>
+                                    <input type="checkbox" style="transform: scale(1.2);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="privacy">
+                    <div class="card animate-in">
+                        <div class="card-header">
+                            <i class="fas fa-shield-alt" style="color: var(--secondary);"></i>
+                            <h3>Confidentialité et sécurité</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="space-y: 1.5rem;">
+                                <div style="padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1.5rem;">
+                                    <div style="font-weight: 600; margin-bottom: 1rem;">Visibilité du profil</div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <input type="radio" name="visibility" value="public" checked>
+                                            <span>Public - Visible par tous les membres de la communauté</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <input type="radio" name="visibility" value="friends">
+                                            <span>Amis - Visible uniquement par vos connexions</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <input type="radio" name="visibility" value="private">
+                                            <span>Privé - Profil non visible dans la communauté</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1.5rem;">
+                                    <div style="font-weight: 600; margin-bottom: 1rem;">Partage des données d'apprentissage</div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span>Permettre l'amélioration de l'IA avec les données anonymisées</span>
+                                        <input type="checkbox" checked style="transform: scale(1.2);">
+                                    </div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7;">Aide Claudyne à améliorer ses recommandations pour tous les utilisateurs</div>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 1.5rem;">
+                                    <div style="font-weight: 600; margin-bottom: 1rem;">Authentification à deux facteurs</div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <span>Activer la 2FA pour plus de sécurité</span>
+                                        <input type="checkbox" style="transform: scale(1.2);">
+                                    </div>
+                                    <button class="btn btn-secondary btn-small">
+                                        <i class="fas fa-mobile-alt"></i>
+                                        Configurer
+                                    </button>
+                                </div>
+                                
+                                <div style="padding: 1rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                    <div style="font-weight: 600; margin-bottom: 1rem;">Gestion des données</div>
+                                    <div style="display: flex; gap: 1rem;">
+                                        <button class="btn btn-secondary btn-small">
+                                            <i class="fas fa-download"></i>
+                                            Exporter mes données
+                                        </button>
+                                        <button class="btn btn-danger btn-small">
+                                            <i class="fas fa-trash"></i>
+                                            Supprimer mon compte
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="account">
+                    <div class="card-grid">
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-key" style="color: var(--danger);"></i>
+                                <h3>Sécurité du compte</h3>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="openModal('changePassword')">
+                                    <i class="fas fa-lock"></i>
+                                    Changer le mot de passe
+                                </button>
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Dernière connexion</div>
+                                    <div style="font-size: 0.9rem; opacity: 0.7;">Aujourd'hui, 14:30 depuis Yaoundé, Cameroun</div>
+                                </div>
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Sessions actives</div>
+                                    <div style="space-y: 0.5rem;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius); margin-bottom: 0.5rem;">
+                                            <div>
+                                                <div style="font-size: 0.9rem; font-weight: 600;">iPhone - Safari</div>
+                                                <div style="font-size: 0.8rem; opacity: 0.7;">Yaoundé • Session actuelle</div>
+                                            </div>
+                                            <span class="badge badge-success">Actif</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--surface-2-light); border-radius: var(--radius);">
+                                            <div>
+                                                <div style="font-size: 0.9rem; font-weight: 600;">MacBook - Chrome</div>
+                                                <div style="font-size: 0.8rem; opacity: 0.7;">Yaoundé • Il y a 2 heures</div>
+                                            </div>
+                                            <button class="btn btn-danger btn-small">Déconnecter</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card animate-in">
+                            <div class="card-header">
+                                <i class="fas fa-cog" style="color: var(--accent);"></i>
+                                <h3>Préférences système</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="space-y: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <div>
+                                            <div style="font-weight: 600;">Langue de l'interface</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Choisir la langue d'affichage</div>
+                                        </div>
+                                        <select class="form-select" style="width: auto;">
+                                            <option>Français</option>
+                                            <option>English</option>
+                                            <option>Español</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <div>
+                                            <div style="font-weight: 600;">Fuseau horaire</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Pour les rappels et notifications</div>
+                                        </div>
+                                        <select class="form-select" style="width: auto;">
+                                            <option>GMT+1 (Yaoundé)</option>
+                                            <option>GMT+0 (Londres)</option>
+                                            <option>GMT-5 (New York)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                        <div>
+                                            <div style="font-weight: 600;">Mode sombre automatique</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Suivre les paramètres système</div>
+                                        </div>
+                                        <input type="checkbox" style="transform: scale(1.2);">
+                                    </div>
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-weight: 600;">Sons de notification</div>
+                                            <div style="font-size: 0.8rem; opacity: 0.7;">Jouer un son pour les notifications</div>
+                                        </div>
+                                        <input type="checkbox" checked style="transform: scale(1.2);">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <!-- Progressive Enhancement -->
+    <!-- Modals -->
+    <div class="modal" id="donationModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>❤️ Soutenir Claudyne</h3>
+                <button onclick="closeModal('donationModal')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7;">×</button>
+            </div>
+            <p style="margin-bottom: 2rem; opacity: 0.8;">Votre générosité nous aide à démocratiser l'éducation de qualité au Cameroun et en Afrique. Chaque don compte!</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <button class="btn btn-secondary" onclick="setDonationAmount(5000)">5 000 XAF</button>
+                <button class="btn btn-secondary" onclick="setDonationAmount(10000)">10 000 XAF</button>
+                <button class="btn btn-secondary" onclick="setDonationAmount(25000)">25 000 XAF</button>
+            </div>
+            
+            <form onsubmit="processDonation(event)">
+                <div class="form-group">
+                    <label class="form-label">Montant personnalisé (XAF)</label>
+                    <input type="number" class="form-input" id="donationAmount" min="1000" value="10000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message (optionnel)</label>
+                    <textarea class="form-textarea" placeholder="Un message d'encouragement pour nos équipes..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-heart"></i>
+                    Faire un don
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>🔐 Changer le mot de passe</h3>
+                <button onclick="closeModal('changePasswordModal')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7;">×</button>
+            </div>
+            
+            <form onsubmit="changePassword(event)">
+                <div class="form-group">
+                    <label class="form-label">Mot de passe actuel</label>
+                    <input type="password" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nouveau mot de passe</label>
+                    <input type="password" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmer le nouveau mot de passe</label>
+                    <input type="password" class="form-input" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-save"></i>
+                    Mettre à jour
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="addChildModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>👶 Ajouter un enfant</h3>
+                <button onclick="closeModal('addChildModal')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7;">×</button>
+            </div>
+            
+            <form onsubmit="addChild(event)">
+                <div class="form-group">
+                    <label class="form-label">Prénom</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date de naissance</label>
+                    <input type="date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Niveau scolaire</label>
+                    <select class="form-select" required>
+                        <option value="">Sélectionner un niveau</option>
+                        <option value="cm2">CM2</option>
+                        <option value="6eme">6ème</option>
+                        <option value="5eme">5ème</option>
+                        <option value="4eme">4ème</option>
+                        <option value="3eme">3ème</option>
+                        <option value="seconde">Seconde</option>
+                        <option value="premiere">Première</option>
+                        <option value="terminale">Terminale</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-plus"></i>
+                    Ajouter cet enfant
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="addEventModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>📅 Ajouter un événement</h3>
+                <button onclick="closeModal('addEventModal')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7;">×</button>
+            </div>
+            
+            <form onsubmit="addEvent(event)">
+                <div class="form-group">
+                    <label class="form-label">Titre de l'événement</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date et heure</label>
+                    <input type="datetime-local" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Enfant concerné</label>
+                    <select class="form-select" required>
+                        <option value="">Sélectionner</option>
+                        <option value="richy">Richy Nono</option>
+                        <option value="blandine">Blandine Mbarga</option>
+                        <option value="family">Toute la famille</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" required>
+                        <option value="">Sélectionner un type</option>
+                        <option value="study">Session d'étude</option>
+                        <option value="exam">Examen/Contrôle</option>
+                        <option value="meeting">Rendez-vous école</option>
+                        <option value="family">Activité familiale</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-calendar-plus"></i>
+                    Ajouter l'événement
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="createGroupModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>👥 Créer un groupe</h3>
+                <button onclick="closeModal('createGroupModal')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7;">×</button>
+            </div>
+            
+            <form onsubmit="createGroup(event)">
+                <div class="form-group">
+                    <label class="form-label">Nom du groupe</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" placeholder="Décrivez l'objectif et les règles du groupe..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Catégorie</label>
+                    <select class="form-select" required>
+                        <option value="">Sélectionner une catégorie</option>
+                        <option value="level">Niveau scolaire</option>
+                        <option value="subject">Matière spécifique</option>
+                        <option value="region">Région géographique</option>
+                        <option value="support">Entraide et support</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox">
+                        <span>Groupe privé (sur invitation uniquement)</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-users"></i>
+                    Créer le groupe
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Service Worker registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+        // Global state
+        let currentActiveTab = {
+            children: 'overview',
+            settings: 'profile'
+        };
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            icon.className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+            
+            // Save preference
+            localStorage.setItem('darkMode', document.body.classList.contains('dark'));
         }
 
-        // Load main app
-        import('./js/main.js').then(module => {
-            new module.ParentApp().init();
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('darkMode');
+            if (savedTheme === 'true') {
+                document.body.classList.add('dark');
+                document.getElementById('theme-icon').className = 'fas fa-sun';
+            }
         });
+
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show page
+                const pageId = link.dataset.page;
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('open');
+                }
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            const currentPage = document.querySelector('.page.active').id;
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            // Save current tab
+            currentActiveTab[currentPage] = tabName;
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId + 'Modal').classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId + 'Modal').classList.remove('open');
+        }
+
+        // Chat functionality
+        function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const chat = document.getElementById('chat');
+            
+            if (input.value.trim()) {
+                const message = document.createElement('div');
+                message.className = 'message sent';
+                message.innerHTML = `
+                    ${input.value}
+                    <div class="message-time">Maintenant</div>
+                `;
+                chat.appendChild(message);
+                chat.scrollTop = chat.scrollHeight;
+                input.value = '';
+                
+                // Show notification
+                showNotification('Message envoyé!', 'success');
+            }
+        }
+
+        // Donation functionality
+        function setDonationAmount(amount) {
+            document.getElementById('donationAmount').value = amount;
+        }
+
+        function processDonation(e) {
+            e.preventDefault();
+            const amount = document.getElementById('donationAmount').value;
+            closeModal('donation');
+            showNotification(`Merci pour votre don de ${parseInt(amount).toLocaleString()} XAF! Redirection vers le paiement...`, 'success');
+        }
+
+        // Form handlers
+        function changePassword(e) {
+            e.preventDefault();
+            closeModal('changePassword');
+            showNotification('Mot de passe mis à jour avec succès!', 'success');
+        }
+
+        function addChild(e) {
+            e.preventDefault();
+            closeModal('addChild');
+            showNotification('Enfant ajouté avec succès! Synchronisation en cours...', 'success');
+        }
+
+        function addEvent(e) {
+            e.preventDefault();
+            closeModal('addEvent');
+            showNotification('Événement ajouté au calendrier!', 'success');
+        }
+
+        function createGroup(e) {
+            e.preventDefault();
+            closeModal('createGroup');
+            showNotification('Demande de création envoyée! Vous recevrez une confirmation sous 24h.', 'success');
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification show`;
+            notification.style.background = type === 'success' ? 'var(--secondary)' : 
+                                          type === 'error' ? 'var(--danger)' : 'var(--primary)';
+            notification.style.color = 'white';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Progress Chart
+            const progressCtx = document.getElementById('progressChart');
+            if (progressCtx) {
+                new Chart(progressCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                        datasets: [{
+                            label: 'Richy',
+                            data: [65, 67, 68, 66, 70, 72, 70],
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            tension: 0.4,
+                            pointBackgroundColor: '#6366f1'
+                        }, {
+                            label: 'Blandine',
+                            data: [88, 89, 91, 90, 92, 94, 92],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            pointBackgroundColor: '#10b981'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Weekly Performance Chart
+            const weeklyCtx = document.getElementById('weeklyPerformanceChart');
+            if (weeklyCtx) {
+                new Chart(weeklyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Math', 'Français', 'Physique', 'Histoire', 'SVT'],
+                        datasets: [{
+                            label: 'Cette semaine',
+                            data: [70, 92, 78, 89, 82],
+                            backgroundColor: ['#f59e0b', '#10b981', '#6366f1', '#8b5cf6', '#06b6d4'],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Comparison Chart
+            const comparisonCtx = document.getElementById('comparisonChart');
+            if (comparisonCtx) {
+                new Chart(comparisonCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Mathématiques', 'Français', 'Physique', 'Histoire', 'SVT', 'Anglais'],
+                        datasets: [{
+                            label: 'Richy',
+                            data: [70, 75, 78, 73, 82, 76],
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                            pointBackgroundColor: '#6366f1'
+                        }, {
+                            label: 'Blandine',
+                            data: [76, 92, 85, 89, 87, 91],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            pointBackgroundColor: '#10b981'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Animated counters
+        function animateCounters() {
+            const counters = [
+                { id: 'total-exercises', target: 127 },
+                { id: 'average-score', target: 89, suffix: '%' },
+                { id: 'study-time', target: 24, suffix: 'h' },
+                { id: 'achievements', target: 15 }
+            ];
+            
+            counters.forEach(counter => {
+                const element = document.getElementById(counter.id);
+                if (element) {
+                    let current = 0;
+                    const increment = counter.target / 50;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= counter.target) {
+                            current = counter.target;
+                            clearInterval(timer);
+                        }
+                        
+                        element.textContent = Math.floor(current) + (counter.suffix || '');
+                    }, 50);
+                }
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize core functionality
+            initializeCharts();
+            animateCounters();
+
+            // Initialize our enhancement modules
+            if (typeof parentDB !== 'undefined') {
+                parentDB.init().then(() => {
+                    console.log('[Parent] Database initialized');
+                }).catch(err => {
+                    console.error('[Parent] Database init failed:', err);
+                });
+            }
+            
+            // Add intersection observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.animate-in').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('open');
+            }
+        });
+
+        // Auto-scroll chat to bottom
+        document.querySelectorAll('.chat').forEach(chat => {
+            chat.scrollTop = chat.scrollHeight;
+        });
+    </script>
+
+    <!-- Enhancement Scripts - À implémenter -->
+    <!-- <script src="js/parent-db.js"></script> -->
+    <!-- <script src="js/parent-validation.js"></script> -->
+
+    <!-- Analytics & Performance -->
+    <script>
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            if ('performance' in window) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`[Performance] Page loaded in ${loadTime}ms`);
+
+                // Send to analytics if available
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'page_load_time', {
+                        value: loadTime,
+                        custom_parameter: 'parent_interface'
+                    });
+                }
+            }
+        });
+
+        // PWA Install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show install button or notification
+            const installBanner = document.createElement('div');
+            installBanner.innerHTML = `
+                <div style="position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 1rem; border-radius: 8px; z-index: 1000; box-shadow: var(--shadow-lg);">
+                    <p style="margin: 0 0 0.5rem 0;">Installer l'app Claudyne Parent</p>
+                    <button onclick="installPWA()" style="background: white; color: var(--primary); border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Installer</button>
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; margin-left: 0.5rem; cursor: pointer;">×</button>
+                </div>
+            `;
+            document.body.appendChild(installBanner);
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('[PWA] App installed');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
     </script>
 </body>
 </html>

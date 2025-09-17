@@ -9,13 +9,15 @@ const logger = require('../utils/logger');
 // Configuration selon l'environnement
 const config = {
   development: {
+    dialect: process.env.DB_DIALECT || 'sqlite',
+    storage: process.env.DB_STORAGE || './database/claudyne.sqlite',
+    logging: (msg) => logger.debug(`[SQL] ${msg}`),
+    // Configuration PostgreSQL (si DB_DIALECT=postgres)
     username: process.env.DB_USER || 'claudyne_user',
-    password: process.env.DB_PASSWORD || 'password',
+    password: process.env.DB_PASSWORD || 'claudyne_secure_password',
     database: process.env.DB_NAME || 'claudyne_dev',
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
-    logging: (msg) => logger.debug(`[SQL] ${msg}`),
     pool: {
       max: 10,
       min: 0,

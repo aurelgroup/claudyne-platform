@@ -2718,17 +2718,28 @@
         };
 
         const API_BASE = 'http://localhost:3001';
-        let USE_MOCK_DATA = true; // FORCE MODE DEMO pour le développement
+        let USE_MOCK_DATA = false; // VRAI BACKEND ACTIVÉ - Données réelles depuis l'API
         
-        // Mode démo activé - affichage d'un message informatif
-        console.log('🎭 MODE DÉMO ACTIVÉ - Interface fonctionnelle avec données simulées');
-        console.log('📝 En production, USE_MOCK_DATA sera automatiquement à false');
+        // Backend réel activé - données authentiques
+        console.log('🚀 BACKEND RÉEL ACTIVÉ - Interface connectée aux vraies APIs');
+        console.log('📡 Connexion à l\'API backend sur http://localhost:3001');
         
         // Vérifier si l'API backend est disponible (désactivé en mode démo)
         async function checkBackendAvailability() {
-            // MODE DEMO - toujours utiliser des données simulées
-            console.log('🟡 Mode développement - Utilisation de données simulées');
-            USE_MOCK_DATA = true;
+            try {
+                const response = await fetch(`${API_BASE}/health`, { timeout: 5000 });
+                if (response.ok) {
+                    console.log('✅ Backend disponible - Utilisation des données réelles');
+                    USE_MOCK_DATA = false;
+                } else {
+                    console.log('⚠️ Backend indisponible - Basculement vers les données simulées');
+                    USE_MOCK_DATA = true;
+                }
+            } catch (error) {
+                console.log('❌ Erreur connexion backend - Utilisation des données simulées');
+                console.error('Détails:', error.message);
+                USE_MOCK_DATA = true;
+            }
         }
         
         // Initialiser la vérification backend

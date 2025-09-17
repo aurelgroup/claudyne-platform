@@ -39,7 +39,7 @@ module.exports = (sequelize) => {
     nickname: {
       type: DataTypes.STRING,
       allowNull: true,
-      comment: 'Surnom d\\'affichage dans l\\'interface'
+      comment: 'Surnom d\'affichage dans l\'interface'
     },
     
     dateOfBirth: {
@@ -80,7 +80,7 @@ module.exports = (sequelize) => {
     schoolName: {
       type: DataTypes.STRING,
       allowNull: true,
-      comment: 'Nom de l\\'établissement scolaire'
+      comment: 'Nom de l\'établissement scolaire'
     },
     
     schoolType: {
@@ -144,7 +144,7 @@ module.exports = (sequelize) => {
     totalStudents: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      comment: 'Nombre total d\\'étudiants dans la classe'
+      comment: 'Nombre total d\'étudiants dans la classe'
     },
     
     // Progression Claudyne
@@ -156,13 +156,13 @@ module.exports = (sequelize) => {
     totalStudyTimeMinutes: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-      comment: 'Temps d\\'étude total en minutes'
+      comment: 'Temps d\'étude total en minutes'
     },
     
     currentStreak: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-      comment: 'Jours consécutifs d\\'activité'
+      comment: 'Jours consécutifs d\'activité'
     },
     
     longestStreak: {
@@ -197,7 +197,7 @@ module.exports = (sequelize) => {
     experiencePoints: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
-      comment: 'Points d\\'expérience pour progression de niveau'
+      comment: 'Points d\'expérience pour progression de niveau'
     },
     
     // Battle Royale
@@ -254,13 +254,13 @@ module.exports = (sequelize) => {
     strongSubjects: {
       type: DataTypes.JSONB,
       defaultValue: [],
-      comment: 'Matières où l\\'étudiant excelle'
+      comment: 'Matières où l\'étudiant excelle'
     },
     
     weakSubjects: {
       type: DataTypes.JSONB,
       defaultValue: [],
-      comment: 'Matières nécessitant plus d\\'attention'
+      comment: 'Matières nécessitant plus d\'attention'
     },
     
     subjectPreferences: {

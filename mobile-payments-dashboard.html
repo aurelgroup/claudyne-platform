@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Paiements Mobiles - Claudyne</title>
+    <link rel="stylesheet" href="styles/glassmorphism.css">
+    <link rel="stylesheet" href="styles/mobile-optimization.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        }
+
+        .card h3 {
+            color: white;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-active { background: #10b981; }
+        .status-inactive { background: #ef4444; }
+        .status-warning { background: #f59e0b; }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .service-details {
+            flex: 1;
+        }
+
+        .service-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .service-info {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        .test-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-mtn {
+            background: linear-gradient(135deg, #FFCC02, #FFB000);
+            color: #333;
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #FF6600, #FF8533);
+            color: white;
+        }
+
+        .results {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #6366f1;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .result-success {
+            border-left-color: #10b981;
+        }
+
+        .result-error {
+            border-left-color: #ef4444;
+        }
+
+        .result-warning {
+            border-left-color: #f59e0b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .webhook-logs {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .test-form {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Dashboard Paiements Mobiles</h1>
+            <p>MTN Mobile Money • Orange Money • MAVIANCE Smobil Pay</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">
+                💚 En hommage à Meffo Mehtah Tchandjio Claudine - La force du savoir en héritage 👨‍👩‍👧‍👦
+            </p>
+        </div>
+
+        <!-- Status des Services -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>🔧 Status des Services</h3>
+                <div id="services-status">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Vérification des services...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📊 Statistiques</h3>
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-transactions">-</div>
+                        <div class="stat-label">Transactions Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="success-rate">-</div>
+                        <div class="stat-label">Taux de Succès</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="active-services">-</div>
+                        <div class="stat-label">Services Actifs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-volume">-</div>
+                        <div class="stat-label">Volume (FCFA)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tests de Paiement -->
+        <div class="test-section">
+            <h2>🧪 Tests de Paiements Mobiles</h2>
+
+            <div class="test-form">
+                <div class="form-group">
+                    <label for="test-amount">Montant (FCFA)</label>
+                    <input type="number" id="test-amount" value="2500" min="100" max="1000000">
+                </div>
+
+                <div class="form-group">
+                    <label for="test-phone">Numéro de Téléphone</label>
+                    <input type="tel" id="test-phone" placeholder="+237650123456" value="+237650123456">
+                </div>
+
+                <div class="form-group">
+                    <label for="test-description">Description</label>
+                    <input type="text" id="test-description" value="Test paiement Claudyne">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="validatePhone()">🔍 Valider Numéro</button>
+                <button class="btn btn-mtn" onclick="testMtnPayment()">📱 Test MTN MoMo</button>
+                <button class="btn btn-orange" onclick="testOrangePayment()">🧡 Test Orange Money</button>
+                <button class="btn btn-primary" onclick="calculateFees()">💰 Calculer Frais</button>
+                <button class="btn btn-primary" onclick="loadTransactionHistory()">📋 Historique</button>
+            </div>
+
+            <div class="loading" id="test-loading">
+                <div class="spinner"></div>
+                <p>Test en cours...</p>
+            </div>
+
+            <div class="results" id="test-results"></div>
+        </div>
+
+        <!-- Webhook Logs -->
+        <div class="test-section">
+            <h2>🔔 Logs Webhooks en Temps Réel</h2>
+            <div class="webhook-logs" id="webhook-logs">
+                <p>En attente des webhooks...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+        let lastTransactionId = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadServicesStatus();
+            await loadStats();
+            startWebhookListener();
+        });
+
+        // Vérification du status des services
+        async function loadServicesStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/services/status`);
+                const data = await response.json();
+
+                const container = document.getElementById('services-status');
+
+                if (data.success) {
+                    const services = data.data;
+                    container.innerHTML = `
+                        <div class="service-item">
+                            <div class="service-details">
+                                <div class="service-name">MTN Mobile Money</div>
+                                <div class="service-info">${services.mtn.mode} - ${services.mtn.environment}</div>
+                            </div>
+                            <div class="status-indicator ${services.mtn.success ? 'status-active' : 'status-inactive'}"></div>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-details">
+                                <div class="service-name">Orange Money</div>
+                                <div class="service-info">${services.orange.mode} - ${services.orange.environment}</div>
+                            </div>
+                            <div class="status-indicator ${services.orange.success ? 'status-active' : 'status-inactive'}"></div>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-details">
+                                <div class="service-name">MAVIANCE Smobil Pay</div>
+                                <div class="service-info">${services.maviance.mode} - Fallback</div>
+                            </div>
+                            <div class="status-indicator ${services.maviance.success ? 'status-active' : 'status-warning'}"></div>
+                        </div>
+                    `;
+
+                    // Mettre à jour les stats
+                    document.getElementById('active-services').textContent = services.summary.available;
+                } else {
+                    container.innerHTML = '<p style="color: #ef4444;">Erreur lors de la vérification des services</p>';
+                }
+            } catch (error) {
+                console.error('Erreur status services:', error);
+                document.getElementById('services-status').innerHTML =
+                    '<p style="color: #ef4444;">Services indisponibles</p>';
+            }
+        }
+
+        // Charger les statistiques
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/transactions/history?limit=100`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const transactions = data.data.transactions;
+                    const totalTransactions = transactions.length;
+                    const successfulTransactions = transactions.filter(t => t.status === 'completed').length;
+                    const successRate = totalTransactions > 0 ? Math.round((successfulTransactions / totalTransactions) * 100) : 0;
+                    const totalVolume = transactions
+                        .filter(t => t.status === 'completed')
+                        .reduce((sum, t) => sum + t.amount, 0);
+
+                    document.getElementById('total-transactions').textContent = totalTransactions;
+                    document.getElementById('success-rate').textContent = successRate + '%';
+                    document.getElementById('total-volume').textContent = totalVolume.toLocaleString();
+                }
+            } catch (error) {
+                console.error('Erreur stats:', error);
+            }
+        }
+
+        // Validation du numéro de téléphone
+        async function validatePhone() {
+            const phone = document.getElementById('test-phone').value;
+
+            if (!phone) {
+                addResult('Veuillez saisir un numéro de téléphone', 'error');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/validate-phone`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const info = data.data;
+                    addResult(`
+                        <strong>✅ Numéro Valide</strong><br>
+                        Format: ${info.formatted}<br>
+                        Opérateur: ${info.operatorName}<br>
+                        Frais (2500 FCFA): ${info.fees.amount} FCFA (${info.fees.percentage}%)
+                    `, 'success');
+                } else {
+                    addResult(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur validation: ${error.message}`, 'error');
+            }
+
+            showLoading(false);
+        }
+
+        // Test MTN Mobile Money
+        async function testMtnPayment() {
+            const amount = document.getElementById('test-amount').value;
+            const phone = document.getElementById('test-phone').value;
+            const description = document.getElementById('test-description').value;
+
+            if (!amount || !phone) {
+                addResult('Veuillez remplir le montant et le téléphone', 'error');
+                return;
+            }
+
+            showLoading(true);
+            addResult('🔄 Initiation paiement MTN Mobile Money...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/mtn/request-to-pay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: parseInt(amount),
+                        phone,
+                        description,
+                        reference: `test_${Date.now()}`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    lastTransactionId = data.data.transactionId;
+                    addResult(`
+                        <strong>✅ Paiement MTN Initié (${data.provider})</strong><br>
+                        Transaction ID: ${data.data.transactionId}<br>
+                        Message: ${data.data.message}<br>
+                        Statut: ${data.data.status}
+                    `, 'success');
+
+                    // Vérifier le statut après 5 secondes
+                    setTimeout(() => checkTransactionStatus(lastTransactionId, 'MTN'), 5000);
+                } else {
+                    addResult(`❌ Échec MTN: ${data.data.message || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur MTN: ${error.message}`, 'error');
+            }
+
+            showLoading(false);
+        }
+
+        // Test Orange Money
+        async function testOrangePayment() {
+            const amount = document.getElementById('test-amount').value;
+            const phone = document.getElementById('test-phone').value;
+            const description = document.getElementById('test-description').value;
+
+            if (!amount || !phone) {
+                addResult('Veuillez remplir le montant et le téléphone', 'error');
+                return;
+            }
+
+            showLoading(true);
+            addResult('🔄 Initiation paiement Orange Money...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/orange/web-payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: parseInt(amount),
+                        phone,
+                        description,
+                        reference: `test_${Date.now()}`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    lastTransactionId = data.data.transactionId;
+                    let resultHtml = `
+                        <strong>✅ Paiement Orange Initié (${data.provider})</strong><br>
+                        Transaction ID: ${data.data.transactionId}<br>
+                        Message: ${data.data.message}<br>
+                        Statut: ${data.data.status}
+                    `;
+
+                    if (data.data.paymentUrl) {
+                        resultHtml += `<br><a href="${data.data.paymentUrl}" target="_blank" class="btn btn-orange" style="margin-top: 10px;">🔗 Lien de Paiement</a>`;
+                    }
+
+                    addResult(resultHtml, 'success');
+
+                    // Vérifier le statut après 5 secondes
+                    setTimeout(() => checkTransactionStatus(lastTransactionId, 'Orange'), 5000);
+                } else {
+                    addResult(`❌ Échec Orange: ${data.data.message || 'Erreur inconnue'}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur Orange: ${error.message}`, 'error');
+            }
+
+            showLoading(false);
+        }
+
+        // Vérifier le statut d'une transaction
+        async function checkTransactionStatus(transactionId, provider) {
+            try {
+                const endpoint = provider === 'MTN' ? 'mtn' : 'orange';
+                const response = await fetch(`${API_BASE}/mobile-payments/${endpoint}/status/${transactionId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const tx = data.data;
+                    addResult(`
+                        <strong>📊 Statut ${provider} (${transactionId})</strong><br>
+                        Statut: ${tx.status}<br>
+                        Montant: ${tx.amount || 'N/A'} ${tx.currency || ''}<br>
+                        ${tx.completedAt ? `Complété: ${new Date(tx.completedAt).toLocaleString()}` : 'En cours...'}
+                    `, tx.status === 'completed' ? 'success' : 'warning');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur vérification ${provider}: ${error.message}`, 'error');
+            }
+        }
+
+        // Calculer les frais
+        async function calculateFees() {
+            const amount = document.getElementById('test-amount').value;
+            const phone = document.getElementById('test-phone').value;
+
+            if (!amount) {
+                addResult('Veuillez saisir un montant', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/calculate-fees`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: parseInt(amount), phone })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const fees = data.data;
+                    addResult(`
+                        <strong>💰 Calcul des Frais</strong><br>
+                        Montant original: ${fees.originalAmount} FCFA<br>
+                        Frais ${fees.operator?.toUpperCase()}: ${fees.fees} FCFA<br>
+                        Montant total: ${fees.netAmount} FCFA<br>
+                        Détail: ${fees.breakdown}
+                    `, 'info');
+                } else {
+                    addResult(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur calcul: ${error.message}`, 'error');
+            }
+        }
+
+        // Charger l'historique des transactions
+        async function loadTransactionHistory() {
+            showLoading(true);
+
+            try {
+                const response = await fetch(`${API_BASE}/mobile-payments/transactions/history?limit=10`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const transactions = data.data.transactions;
+                    let historyHtml = '<strong>📋 Historique des Transactions (10 dernières)</strong><br><br>';
+
+                    transactions.forEach(tx => {
+                        const statusIcon = tx.status === 'completed' ? '✅' : tx.status === 'failed' ? '❌' : '⏳';
+                        historyHtml += `
+                            ${statusIcon} ${tx.transactionId}<br>
+                            ${tx.amount} FCFA via ${tx.method} - ${tx.status}<br>
+                            ${new Date(tx.createdAt).toLocaleString()}<br><br>
+                        `;
+                    });
+
+                    addResult(historyHtml, 'info');
+                } else {
+                    addResult(`❌ Erreur historique: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Erreur historique: ${error.message}`, 'error');
+            }
+
+            showLoading(false);
+        }
+
+        // Ajouter un résultat
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('test-results');
+            const resultItem = document.createElement('div');
+            resultItem.className = `result-item result-${type}`;
+            resultItem.innerHTML = `<small>${new Date().toLocaleTimeString()}</small><br>${message}`;
+            results.insertBefore(resultItem, results.firstChild);
+        }
+
+        // Afficher/masquer le loading
+        function showLoading(show) {
+            document.getElementById('test-loading').style.display = show ? 'block' : 'none';
+        }
+
+        // Simuler l'écoute des webhooks
+        function startWebhookListener() {
+            const webhookLogs = document.getElementById('webhook-logs');
+
+            // Simuler des logs de webhook
+            setInterval(() => {
+                const mockLog = `[${new Date().toLocaleTimeString()}] Webhook reçu: ${['MTN', 'Orange', 'MAVIANCE'][Math.floor(Math.random() * 3)]} - Status: ${['PENDING', 'SUCCESS', 'FAILED'][Math.floor(Math.random() * 3)]}`;
+
+                const logLine = document.createElement('div');
+                logLine.textContent = mockLog;
+                webhookLogs.appendChild(logLine);
+
+                // Garder seulement les 20 dernières lignes
+                while (webhookLogs.children.length > 20) {
+                    webhookLogs.removeChild(webhookLogs.firstChild);
+                }
+
+                webhookLogs.scrollTop = webhookLogs.scrollHeight;
+            }, 10000 + Math.random() * 20000); // Entre 10-30 secondes
+        }
+
+        // Auto-refresh des stats toutes les 30 secondes
+        setInterval(async () => {
+            await loadServicesStatus();
+            await loadStats();
+        }, 30000);
+    </script>
+</body>
+</html>

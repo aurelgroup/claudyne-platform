@@ -99,7 +99,7 @@ module.exports = (sequelize) => {
       type: DataTypes.ENUM('MANAGER', 'LEARNER', 'STUDENT'),
       allowNull: false,
       defaultValue: 'MANAGER', // MANAGER: gestionnaire famille, LEARNER: parent apprenant, STUDENT: enfant
-      comment: 'Type d\\'utilisateur pour l\\'interface'
+      comment: 'Type d\'utilisateur pour l\'interface'
     },
     
     // Statut du compte
@@ -280,7 +280,7 @@ module.exports = (sequelize) => {
           });
           
           if (existingManager) {
-            throw new Error('Une famille ne peut avoir qu\\'un seul gestionnaire');
+            throw new Error('Une famille ne peut avoir qu\'un seul gestionnaire');
           }
         }
       }

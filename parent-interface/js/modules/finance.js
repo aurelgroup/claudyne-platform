@@ -3,6 +3,8 @@
  * Gestion des finances et frais scolaires
  */
 
+import apiService, { getData } from '../shared/api-service.js';
+
 export default class Finance {
     constructor() {
         this.container = null;
@@ -30,8 +32,49 @@ export default class Finance {
     }
 
     async loadFinanceData() {
-        this.transactions = this.getMockTransactions();
-        this.budgets = this.getMockBudgets();
+        try {
+            console.log('[Finance] Loading payment data from API...');
+
+            // Load payment methods and subscription plans
+            const [paymentMethodsResponse, paymentHistoryResponse, subscriptionPlansResponse] = await Promise.all([
+                getData('/payments/methods'),
+                getData('/payments/history'),
+                getData('/payments/subscriptions/plans')
+            ]);
+
+            if (paymentMethodsResponse.source === 'api') {
+                console.log('[Finance] ✅ Using real payment API data');
+                this.paymentMethods = paymentMethodsResponse.data.methods || [];
+                this.walletBalance = paymentMethodsResponse.data.wallet?.balance || 0;
+            } else {
+                console.log('[Finance] ⚠️  Using mock payment data fallback');
+                this.paymentMethods = this.getMockPaymentMethods();
+                this.walletBalance = 0;
+            }
+
+            if (paymentHistoryResponse.source === 'api') {
+                this.transactions = paymentHistoryResponse.data.payments || [];
+            } else {
+                this.transactions = this.getMockTransactions();
+            }
+
+            if (subscriptionPlansResponse.source === 'api') {
+                this.subscriptionPlans = subscriptionPlansResponse.data.plans || [];
+            } else {
+                this.subscriptionPlans = this.getMockSubscriptionPlans();
+            }
+
+            this.budgets = this.getMockBudgets(); // Keep mock for now
+
+        } catch (error) {
+            console.error('[Finance] Error loading payment data:', error);
+            // Fallback to mock data
+            this.transactions = this.getMockTransactions();
+            this.budgets = this.getMockBudgets();
+            this.paymentMethods = this.getMockPaymentMethods();
+            this.subscriptionPlans = this.getMockSubscriptionPlans();
+            this.walletBalance = 0;
+        }
     }
 
     getHTML() {

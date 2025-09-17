@@ -111,7 +111,7 @@ module.exports = (sequelize) => {
         familyValues: 0,           // Valeurs familiales (/25)
         totalScore: 0              // Score total (/100)
       },
-      comment: 'Détail des critères d\\'évaluation'
+      comment: 'Détail des critères d\'évaluation'
     },
     
     // Jury et validation
@@ -204,7 +204,7 @@ module.exports = (sequelize) => {
         communityReach: 0,         // Portée dans la communauté
         mediaVisibility: 0         // Visibilité médiatique (vues, partages)
       },
-      comment: 'Métriques d\\'impact du prix'
+      comment: 'Métriques d\'impact du prix'
     },
     
     // Parrainage et partenariats

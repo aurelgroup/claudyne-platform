@@ -462,6 +462,18 @@
                             Rapports
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('settings')">
+                            <span class="nav-icon">⚙️</span>
+                            Paramètres
+                        </a>
+                    </li>
+                    <li class="nav-item" style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem;">
+                        <a class="nav-link" href="javascript:void(0)" onclick="teacherLogout()" style="color: #F87171 !important;">
+                            <span class="nav-icon">🚪</span>
+                            Se déconnecter
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -715,6 +727,137 @@
                     </div>
                 </div>
                 <!-- Content for reports -->
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">⚙️ Paramètres de l'enseignant</h1>
+                        <p class="page-description">Configuration de votre profil et préférences</p>
+                    </div>
+                </div>
+
+                <div style="display: grid; gap: 2rem; max-width: 800px;">
+                    <!-- Profil enseignant -->
+                    <div class="stats-card">
+                        <h3 style="color: #1F2937; margin-bottom: 1.5rem; display: flex; align-items: center;">
+                            <span style="margin-right: 0.5rem;">👨‍🏫</span>
+                            Profil enseignant
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Nom complet</label>
+                                <input type="text" id="teacherName" value="Prof. Marie Ndongo" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email</label>
+                                <input type="email" id="teacherEmail" value="marie.ndongo@claudyne.edu" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Matière principale</label>
+                                <select id="teacherSubject" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                    <option>Mathématiques</option>
+                                    <option>Français</option>
+                                    <option>Sciences</option>
+                                    <option>Histoire-Géographie</option>
+                                    <option>Anglais</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Niveau d'enseignement</label>
+                                <select id="teacherLevel" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                    <option>Primaire</option>
+                                    <option>Collège</option>
+                                    <option>Lycée</option>
+                                    <option>Université</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem;">
+                            <button onclick="saveTeacherProfile()" style="
+                                background: linear-gradient(135deg, #3B82F6, #1E40AF);
+                                color: white;
+                                border: none;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 6px;
+                                font-weight: 500;
+                                cursor: pointer;
+                            ">
+                                💾 Sauvegarder le profil
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sécurité -->
+                    <div class="stats-card">
+                        <h3 style="color: #1F2937; margin-bottom: 1.5rem; display: flex; align-items: center;">
+                            <span style="margin-right: 0.5rem;">🔐</span>
+                            Sécurité du compte
+                        </h3>
+                        <div style="display: grid; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Mot de passe actuel</label>
+                                <input type="password" id="currentPasswordTeacher" placeholder="••••••••" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Nouveau mot de passe</label>
+                                <input type="password" id="newPasswordTeacher" placeholder="••••••••" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Confirmer nouveau mot de passe</label>
+                                <input type="password" id="confirmPasswordTeacher" placeholder="••••••••" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                            </div>
+                            <button onclick="changeTeacherPassword()" style="
+                                background: linear-gradient(135deg, #10B981, #059669);
+                                color: white;
+                                border: none;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 6px;
+                                font-weight: 500;
+                                cursor: pointer;
+                                width: fit-content;
+                            ">
+                                🔑 Changer le mot de passe
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Préférences -->
+                    <div class="stats-card">
+                        <h3 style="color: #1F2937; margin-bottom: 1.5rem; display: flex; align-items: center;">
+                            <span style="margin-right: 0.5rem;">🎯</span>
+                            Préférences d'enseignement
+                        </h3>
+                        <div style="display: grid; gap: 1rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F9FAFB; border-radius: 6px;">
+                                <span>Notifications par email</span>
+                                <input type="checkbox" id="emailNotifications" checked style="transform: scale(1.2);">
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F9FAFB; border-radius: 6px;">
+                                <span>Mode sombre</span>
+                                <input type="checkbox" id="darkMode" style="transform: scale(1.2);">
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #F9FAFB; border-radius: 6px;">
+                                <span>Notifications de nouveaux étudiants</span>
+                                <input type="checkbox" id="studentNotifications" checked style="transform: scale(1.2);">
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem;">
+                            <button onclick="saveTeacherPreferences()" style="
+                                background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+                                color: white;
+                                border: none;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 6px;
+                                font-weight: 500;
+                                cursor: pointer;
+                            ">
+                                💾 Sauvegarder les préférences
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1129,6 +1272,145 @@
             });
             displayUploadedFiles();
         });
+
+        // ============================
+        // FONCTIONS PARAMÈTRES ENSEIGNANT
+        // ============================
+
+        // Fonction de déconnexion enseignant
+        function teacherLogout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                // Supprimer les données de session
+                localStorage.removeItem('claudyne_teacher_token');
+                localStorage.removeItem('claudyne_teacher_user');
+                localStorage.removeItem('claudyne_teacher_data');
+
+                // Rediriger vers la page de connexion
+                window.location.href = '/';
+            }
+        }
+
+        // Sauvegarder le profil enseignant
+        async function saveTeacherProfile() {
+            const profileData = {
+                name: document.getElementById('teacherName').value,
+                email: document.getElementById('teacherEmail').value,
+                subject: document.getElementById('teacherSubject').value,
+                level: document.getElementById('teacherLevel').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('claudyne_teacher_token')}`
+                    },
+                    body: JSON.stringify(profileData)
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Profil mis à jour avec succès !');
+                    // Mettre à jour le nom dans la sidebar
+                    document.getElementById('teacher-name').textContent = profileData.name;
+                } else {
+                    alert('❌ Erreur lors de la mise à jour du profil : ' + data.message);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde profil:', error);
+                alert('❌ Erreur lors de la sauvegarde du profil');
+            }
+        }
+
+        // Changer le mot de passe enseignant
+        async function changeTeacherPassword() {
+            const currentPassword = document.getElementById('currentPasswordTeacher').value;
+            const newPassword = document.getElementById('newPasswordTeacher').value;
+            const confirmPassword = document.getElementById('confirmPasswordTeacher').value;
+
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('❌ Veuillez remplir tous les champs');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('❌ Les nouveaux mots de passe ne correspondent pas');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('❌ Le nouveau mot de passe doit contenir au moins 6 caractères');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/change-password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('claudyne_teacher_token')}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Mot de passe modifié avec succès !');
+                    // Vider les champs
+                    document.getElementById('currentPasswordTeacher').value = '';
+                    document.getElementById('newPasswordTeacher').value = '';
+                    document.getElementById('confirmPasswordTeacher').value = '';
+                } else {
+                    alert('❌ Erreur lors du changement de mot de passe : ' + data.message);
+                }
+            } catch (error) {
+                console.error('Erreur changement mot de passe:', error);
+                alert('❌ Erreur lors du changement de mot de passe');
+            }
+        }
+
+        // Sauvegarder les préférences enseignant
+        async function saveTeacherPreferences() {
+            const preferences = {
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                darkMode: document.getElementById('darkMode').checked,
+                studentNotifications: document.getElementById('studentNotifications').checked
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/teacher/preferences`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('claudyne_teacher_token')}`
+                    },
+                    body: JSON.stringify(preferences)
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Préférences sauvegardées avec succès !');
+
+                    // Appliquer le mode sombre si activé
+                    if (preferences.darkMode) {
+                        document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                    } else {
+                        document.body.style.filter = 'none';
+                    }
+                } else {
+                    alert('❌ Erreur lors de la sauvegarde des préférences : ' + data.message);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde préférences:', error);
+                alert('❌ Erreur lors de la sauvegarde des préférences');
+            }
+        }
+
     </script>
 </body>
 </html>

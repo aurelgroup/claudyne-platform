@@ -2622,33 +2622,67 @@
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
 
-            // Simulation de connexion
-            console.log('Connexion:', { accountType, username, password });
-            
+            // Validation des champs
+            if (!username || !password) {
+                alert('Veuillez saisir votre email/téléphone et mot de passe');
+                return;
+            }
+
             // Affichage d'un message de connexion
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '⏳ Connexion...';
             submitBtn.disabled = true;
 
-            setTimeout(() => {
-                // Redirection selon le type de compte
-                switch(accountType) {
-                    case 'student':
-                        window.location.href = '/student';
-                        break;
-                    case 'parent':
-                        window.location.href = '/parent-interface.html';
-                        break;
-                    case 'teacher':
+            // Appel à l'API d'authentification
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    credential: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Stockage des tokens
+                    localStorage.setItem('claudyne_token', data.data.tokens.accessToken);
+                    localStorage.setItem('claudyne_refresh_token', data.data.tokens.refreshToken);
+                    localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
+                    localStorage.setItem('claudyne_family', JSON.stringify(data.data.family));
+
+                    // Redirection selon le type de compte utilisateur
+                    const userType = data.data.user.userType;
+                    const role = data.data.user.role;
+
+                    if (role === 'ADMIN') {
+                        window.location.href = '/admin-interface.html';
+                    } else if (userType === 'MANAGER' || role === 'PARENT') {
+                        window.location.href = '/parent-interface/index.html';
+                    } else if (role === 'STUDENT') {
+                        window.location.href = '/student-interface-modern.html';
+                    } else if (role === 'TEACHER') {
                         window.location.href = '/teacher-interface.html';
-                        break;
-                    default:
-                        alert('Type de compte non reconnu');
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
+                    } else {
+                        // Par défaut, redirection vers l'interface parent
+                        window.location.href = '/parent-interface/index.html';
+                    }
+                } else {
+                    // Affichage de l'erreur
+                    alert(data.message || 'Identifiants invalides');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 }
-            }, 1500);
+            })
+            .catch(error => {
+                console.error('Erreur de connexion:', error);
+                alert('Erreur de connexion. Vérifiez votre connexion internet.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
         });
 
         // Gestion du formulaire d'inscription

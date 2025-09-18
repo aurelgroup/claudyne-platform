@@ -125,6 +125,11 @@ app.get('/', (req, res) => {
   });
 });
 
+// Route sécurisée pour l'interface admin
+app.get('/admin-secure-k7m9x4n2p8w5z1c6', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../admin-interface.html'));
+});
+
 // Routes principales de l'API
 app.use('/api', routes);
 

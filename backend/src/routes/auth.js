@@ -515,78 +515,6 @@ router.post('/logout', async (req, res) => {
   }
 });
 
-/**
- * POST /api/auth/forgot-password
- * Demande de réinitialisation de mot de passe
- */
-router.post('/forgot-password', authLimiter, [
-  body('credential')
-    .notEmpty()
-    .withMessage('Email ou téléphone requis')
-], async (req, res) => {
-  try {
-    initializeModels();
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Données invalides',
-        errors: errors.array()
-      });
-    }
-    
-    const { credential } = req.body;
-    
-    const user = await User.findByEmailOrPhone(credential);
-    
-    // On renvoie toujours un succès pour éviter l'énumération d'utilisateurs
-    const successMessage = 'Si ce compte existe, vous recevrez les instructions de réinitialisation.';
-    
-    if (!user) {
-      logger.logSecurity('Password reset attempt for non-existent user', {
-        credential,
-        ip: req.ip
-      });
-      
-      return res.json({
-        success: true,
-        message: successMessage
-      });
-    }
-    
-    // Génération d'un token de réinitialisation
-    const resetToken = require('crypto').randomBytes(32).toString('hex');
-    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 heure
-    
-    await user.update({
-      resetPasswordToken: resetToken,
-      resetPasswordExpires: resetExpires
-    });
-    
-    // TODO: Envoyer l'email ou SMS avec le token
-    logger.info('Token de réinitialisation généré', {
-      userId: user.id,
-      email: user.email,
-      phone: user.phone
-    });
-    
-    res.json({
-      success: true,
-      message: successMessage,
-      // En développement, on peut renvoyer le token pour les tests
-      ...(process.env.NODE_ENV === 'development' && { resetToken })
-    });
-    
-  } catch (error) {
-    logger.error('Erreur demande réinitialisation:', error);
-    
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la demande de réinitialisation'
-    });
-  }
-});
 
 /**
  * GET /api/auth/verify-email/:token
@@ -632,6 +560,151 @@ router.get('/verify-email/:token', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la vérification'
+    });
+  }
+});
+
+// Route pour la récupération de mot de passe
+router.post('/forgot-password', [
+  authLimiter,
+  body('email').isEmail().withMessage('Email invalide')
+], async (req, res) => {
+  try {
+    initializeModels();
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email invalide',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    // Chercher l'utilisateur par email
+    const user = await User.findOne({
+      where: { email: email.toLowerCase() }
+    });
+
+    // Toujours retourner succès pour éviter l'énumération d'emails
+    if (!user) {
+      logger.info(`Tentative de récupération pour email inexistant: ${email}`, {
+        ip: req.ip,
+        userAgent: req.get('User-Agent')
+      });
+
+      return res.json({
+        success: true,
+        message: 'Si cet email existe, un lien de réinitialisation a été envoyé.'
+      });
+    }
+
+    // Générer un token de réinitialisation
+    const crypto = require('crypto');
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetExpires = new Date(Date.now() + 3600000); // 1 heure
+
+    // Sauvegarder le token dans la base
+    await user.update({
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: resetExpires
+    });
+
+    // En mode développement, log le token (JAMAIS en production)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔑 Token de réinitialisation pour ${email}: ${resetToken}`);
+      console.log(`🔗 Lien: http://localhost:3000/reset-password?token=${resetToken}`);
+    }
+
+    // TODO: Intégrer avec un service d'email (Mailgun, SendGrid, etc.)
+    // Pour le moment, on simule l'envoi
+    logger.info(`Token de réinitialisation généré pour: ${email}`, {
+      userId: user.id,
+      tokenExpires: resetExpires
+    });
+
+    res.json({
+      success: true,
+      message: 'Si cet email existe, un lien de réinitialisation a été envoyé.',
+      // En développement seulement, inclure le token pour tester
+      ...(process.env.NODE_ENV === 'development' && {
+        resetToken,
+        resetLink: `http://localhost:3000/reset-password?token=${resetToken}`
+      })
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération mot de passe:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'envoi de l\'email de récupération'
+    });
+  }
+});
+
+// Route pour réinitialiser le mot de passe
+router.post('/reset-password', [
+  body('token').notEmpty().withMessage('Token requis'),
+  body('password').isLength({ min: 8 }).withMessage('Le mot de passe doit contenir au moins 8 caractères')
+], async (req, res) => {
+  try {
+    initializeModels();
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Données invalides',
+        errors: errors.array()
+      });
+    }
+
+    const { token, password } = req.body;
+
+    // Chercher l'utilisateur avec ce token
+    const user = await User.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: {
+          [require('sequelize').Op.gt]: new Date()
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Token invalide ou expiré'
+      });
+    }
+
+    // Mettre à jour le mot de passe et supprimer le token
+    // Le hachage sera fait automatiquement par le hook beforeSave du modèle User
+    await user.update({
+      password: password,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+      failedLoginAttempts: 0, // Reset les tentatives échouées
+      lockedUntil: null // Débloquer le compte si verrouillé
+    });
+
+    logger.info(`Mot de passe réinitialisé pour: ${user.email}`, {
+      userId: user.id,
+      ip: req.ip
+    });
+
+    res.json({
+      success: true,
+      message: 'Mot de passe réinitialisé avec succès ! Vous pouvez maintenant vous connecter.'
+    });
+
+  } catch (error) {
+    logger.error('Erreur réinitialisation mot de passe:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la réinitialisation du mot de passe'
     });
   }
 });

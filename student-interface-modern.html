@@ -1677,6 +1677,23 @@
                             <div class="mini-badge badge-silver" title="Expert Physique">🥈</div>
                             <div class="mini-badge badge-bronze" title="Apprenti Chimie">🥉</div>
                         </div>
+                        <button onclick="studentLogout()" style="
+                            background: #F87171;
+                            color: white;
+                            border: none;
+                            padding: 0.5rem 1rem;
+                            border-radius: 8px;
+                            font-size: 0.9rem;
+                            margin-top: 1rem;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                            font-weight: 500;
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                        " onmouseover="this.style.background='#EF4444'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#F87171'; this.style.transform='translateY(0)'">
+                            🚪 Se déconnecter
+                        </button>
                     </div>
                 </div>
 
@@ -5032,6 +5049,27 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                     showToast('💌 Email de renouvellement envoyé avec succès !', 'success');
                 }, 4000);
             }, 1500);
+        }
+
+        // Fonction de déconnexion étudiant
+        function studentLogout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                // Nettoyer les données de session
+                localStorage.removeItem('claudyne_token');
+                localStorage.removeItem('claudyne_refresh_token');
+                localStorage.removeItem('claudyne_user');
+                localStorage.removeItem('claudyne_family');
+
+                // Afficher un message de déconnexion
+                showToast('🚪 Déconnexion réussie - À bientôt !', 'info');
+
+                // Rediriger vers la page de connexion après 1.5 secondes
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+
+                console.log('🚪 Déconnexion étudiant effectuée');
+            }
         }
 
         console.log('🎮 Claudyne - Interface Étudiant Ultime activée');

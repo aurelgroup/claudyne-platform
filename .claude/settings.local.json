@@ -15,7 +15,8 @@
       "Bash(curl:*)",
       "Bash(start http://localhost:3000)",
       "Bash(start http://localhost:3000/student)",
-      "Bash(start http://localhost:3000/admin)"
+      "Bash(start http://localhost:3000/admin)",
+      "Bash(start http://localhost:3001/admin-secure-k7m9x4n2p8w5z1c6)"
     ],
     "deny": [],
     "ask": []

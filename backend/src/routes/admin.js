@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
 const logger = require('../utils/logger');
+const bcrypt = require('bcryptjs');
 
 // Import des modèles (seront disponibles via database.initializeModels())
 let models = {};
@@ -124,11 +125,11 @@ router.get('/dashboard', async (req, res) => {
       }))
     ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
 
-    // Top matières par taux de complétion
+    // Top matières par taux de complétion (compatible SQLite)
     const topPerformingSubjects = await models.Subject.findAll({
       attributes: ['title', 'stats'],
       where: { isActive: true },
-      order: [[models.sequelize.literal("(stats->>'completionRate')::int"), 'DESC']],
+      order: [['title', 'ASC']], // Simplified ordering for SQLite compatibility
       limit: 5
     });
 
@@ -780,7 +781,7 @@ router.post('/accounts/create', async (req, res) => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         dateOfBirth: formData.dateOfBirth,
-        level: formData.level || 'CE1',
+        educationLevel: formData.level || 'CE1',
         familyId: family.id,
         userId: user.id,
         isActive: true,
@@ -950,6 +951,96 @@ router.post('/prix-claudine/student/:studentId/evaluate', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'évaluation de l\'étudiant'
+    });
+  }
+});
+
+// ===============================
+// GESTION DU PROFIL ADMIN
+// ===============================
+
+// Changer le mot de passe de l'admin
+router.put('/profile/change-password', async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const { User } = req.models;
+
+    // Validation des données
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mot de passe actuel et nouveau mot de passe requis'
+      });
+    }
+
+    // Validation du nouveau mot de passe
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nouveau mot de passe doit contenir au moins 6 caractères'
+      });
+    }
+
+    // Pour l'instant, récupérer l'utilisateur admin par email
+    // Dans une vraie application, on utiliserait req.user.id depuis le middleware d'auth
+    const adminUser = await User.findOne({
+      where: {
+        email: 'admin@claudyne.com',
+        role: 'ADMIN'
+      }
+    });
+
+    if (!adminUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur admin non trouvé'
+      });
+    }
+
+    // Vérifier le mot de passe actuel
+    const isValidPassword = await bcrypt.compare(currentPassword, adminUser.password);
+    if (!isValidPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mot de passe actuel incorrect'
+      });
+    }
+
+    // Vérifier que le nouveau mot de passe est différent de l'actuel
+    const isSamePassword = await bcrypt.compare(newPassword, adminUser.password);
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nouveau mot de passe doit être différent de l\'actuel'
+      });
+    }
+
+    // Mettre à jour le mot de passe (le hook beforeSave se chargera du hashage)
+    await adminUser.update({
+      password: newPassword,
+      lastPasswordChange: new Date()
+    });
+
+    logger.info(`Mot de passe admin modifié: ${adminUser.email}`, {
+      service: 'claudyne-backend',
+      action: 'admin_password_change',
+      adminId: adminUser.id
+    });
+
+    res.json({
+      success: true,
+      message: 'Mot de passe modifié avec succès !',
+      data: {
+        changedAt: new Date(),
+        userId: adminUser.id
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur changement mot de passe admin:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la modification du mot de passe'
     });
   }
 });

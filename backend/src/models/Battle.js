@@ -403,7 +403,7 @@ module.exports = (sequelize) => {
       rank: index + 1,
       studentId: p.studentId,
       studentName: `${p.student.firstName} ${p.student.lastName}`,
-      level: p.student.level,
+      level: p.student.educationLevel,
       score: p.currentScore,
       timeElapsed: p.timeElapsed,
       questionsAnswered: p.questionsAnswered,

@@ -1103,6 +1103,20 @@
                         <div class="status-dot"></div>
                         <span>En ligne</span>
                     </div>
+                    <button onclick="parentLogout()" style="
+                        background: #F87171;
+                        color: white;
+                        border: none;
+                        padding: 0.4rem 0.8rem;
+                        border-radius: 6px;
+                        font-size: 0.8rem;
+                        margin-top: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        font-weight: 500;
+                    " onmouseover="this.style.background='#EF4444'" onmouseout="this.style.background='#F87171'">
+                        🚪 Se déconnecter
+                    </button>
                 </div>
             </header>
 
@@ -3545,6 +3559,21 @@
                     }
                     deferredPrompt = null;
                 });
+            }
+        }
+
+        // Fonction de déconnexion parent
+        function parentLogout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                // Nettoyer les données de session
+                localStorage.removeItem('claudyne_token');
+                localStorage.removeItem('claudyne_refresh_token');
+                localStorage.removeItem('claudyne_user');
+                localStorage.removeItem('claudyne_family');
+
+                // Rediriger vers la page de connexion
+                window.location.href = '/';
+                console.log('🚪 Déconnexion parent effectuée');
             }
         }
     </script>

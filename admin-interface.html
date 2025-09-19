@@ -7562,7 +7562,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    emailTemplates = result.data;
+                    emailTemplates = result.data.templates;
                     displayEmailTemplates(emailTemplates);
                     updateEmailTemplateStats(result.stats || {});
                 } else {

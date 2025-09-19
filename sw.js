@@ -4,7 +4,7 @@
  * Spécialement adapté pour le marché camerounais
  */
 
-const CACHE_NAME = 'claudyne-v1.2.0';
+const CACHE_NAME = 'claudyne-v1.2.1';
 const OFFLINE_URL = '/offline.html';
 
 // Ressources critiques à mettre en cache
@@ -13,12 +13,7 @@ const CRITICAL_RESOURCES = [
     '/index.html',
     '/admin-interface.html',
     '/admin-secure-k7m9x4n2p8w5z1c6',
-    '/student-interface-modern.html',
-    '/teacher-interface.html',
-    '/parent-interface.html',
-    '/styles/glassmorphism.css',
-    '/styles/mobile-optimization.css',
-    '/js/network-optimization.js'
+    '/student-interface-modern.html'
 ];
 
 // Ressources secondaires (chargées en mode progressive)
@@ -30,19 +25,41 @@ const SECONDARY_RESOURCES = [
 // Installation du Service Worker
 self.addEventListener('install', event => {
     console.log('🔧 Installation du Service Worker Claudyne');
-    
+
     event.waitUntil(
         Promise.all([
-            // Cache des ressources critiques
-            caches.open(CACHE_NAME).then(cache => {
-                console.log('📦 Mise en cache des ressources critiques');
-                return cache.addAll(CRITICAL_RESOURCES.map(url => new Request(url, {cache: 'reload'})));
-            }),
+            // Cache des ressources critiques avec gestion d'erreur
+            cacheResourcesSafely(CRITICAL_RESOURCES),
             // Prise de contrôle immédiate
             self.skipWaiting()
         ])
     );
 });
+
+// Cache les ressources de manière sécurisée (ne plante pas si une ressource n'existe pas)
+async function cacheResourcesSafely(resources) {
+    const cache = await caches.open(CACHE_NAME);
+    console.log('📦 Mise en cache sécurisée des ressources critiques');
+
+    const cachePromises = resources.map(async (url) => {
+        try {
+            const request = new Request(url, {cache: 'reload'});
+            const response = await fetch(request);
+
+            if (response.ok) {
+                await cache.put(request, response);
+                console.log('✅ Ressource cachée:', url);
+            } else {
+                console.warn('⚠️ Ressource non trouvée (ignorée):', url, response.status);
+            }
+        } catch (error) {
+            console.warn('⚠️ Impossible de cacher (ignoré):', url, error.message);
+        }
+    });
+
+    await Promise.allSettled(cachePromises);
+    console.log('📦 Cache initial terminé');
+}
 
 // Activation du Service Worker
 self.addEventListener('activate', event => {
@@ -333,15 +350,22 @@ self.addEventListener('message', event => {
 // Cache progressif des ressources secondaires
 async function cacheSecondaryResources() {
     console.log('📦 Cache progressif des ressources secondaires');
-    
+
     const cache = await caches.open(CACHE_NAME);
-    
+
     for (const url of SECONDARY_RESOURCES) {
         try {
-            await cache.add(url);
-            console.log('✅ Ressource secondaire cachée:', url);
+            const request = new Request(url);
+            const response = await fetch(request);
+
+            if (response.ok) {
+                await cache.put(request, response);
+                console.log('✅ Ressource secondaire cachée:', url);
+            } else {
+                console.warn('⚠️ Ressource secondaire non trouvée (ignorée):', url, response.status);
+            }
         } catch (error) {
-            console.warn('⚠️ Impossible de cacher:', url, error);
+            console.warn('⚠️ Impossible de cacher ressource secondaire:', url, error.message);
         }
     }
 }

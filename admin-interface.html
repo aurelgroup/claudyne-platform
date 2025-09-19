@@ -7602,6 +7602,7 @@
 
             const statusColors = {
                 active: '#10B981',
+                inactive: '#6B7280',
                 draft: '#F59E0B',
                 archived: '#6B7280'
             };
@@ -7613,8 +7614,8 @@
                             <i class="fas ${categoryIcons[template.category] || 'fa-envelope'}" style="color: rgba(255,255,255,0.8);"></i>
                             <span style="font-size: 0.85rem; opacity: 0.8; text-transform: capitalize;">${template.category}</span>
                         </div>
-                        <div class="template-status" style="background: ${statusColors[template.status]}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
-                            ${template.status.toUpperCase()}
+                        <div class="template-status" style="background: ${statusColors[template.isActive ? 'active' : 'inactive']}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                            ${template.isActive ? 'ACTIF' : 'INACTIF'}
                         </div>
                     </div>
 

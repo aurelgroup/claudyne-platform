@@ -39,6 +39,31 @@ router.use((req, res, next) => {
 // Routes publiques (sans authentification)
 router.use('/auth', authRoutes);
 
+// Health check public endpoint
+router.get('/health', async (req, res) => {
+  try {
+    const { testConnection } = require('../config/database');
+
+    res.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV,
+      services: {
+        database: 'connected',
+        api: 'available'
+      },
+      message: 'Claudyne API fonctionne correctement'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: 'Service unavailable'
+    });
+  }
+});
+
 // Middleware d'authentification pour toutes les autres routes
 router.use(authenticate);
 

@@ -347,6 +347,25 @@
             color: white !important;
         }
 
+        /* Fix dropdown menu background */
+        #addContentDropdown {
+            background: rgba(75, 85, 99, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 8px !important;
+        }
+
+        #addContentDropdown a {
+            color: white !important;
+            padding: 8px 16px !important;
+            display: block !important;
+            text-decoration: none !important;
+        }
+
+        #addContentDropdown a:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
         #email-templates-section .page-title {
             font-size: 2.5rem !important;
             font-weight: bold !important;
@@ -3973,12 +3992,12 @@
         
         // Backend réel activé - données authentiques
         console.log('🚀 BACKEND RÉEL ACTIVÉ - Interface connectée aux vraies APIs');
-        console.log('📡 Connexion à l\'API backend sur http://localhost:3001');
+        console.log('📡 Connexion à l\'API backend sur ' + API_BASE);
         
         // Vérifier si l'API backend est disponible (désactivé en mode démo)
         async function checkBackendAvailability() {
             try {
-                const response = await fetch(`${API_BASE}/health`, { timeout: 5000 });
+                const response = await fetch(`${API_BASE}/api/health`, { timeout: 5000 });
                 if (response.ok) {
                     console.log('✅ Backend disponible - Utilisation des données réelles');
                     USE_MOCK_DATA = false;
@@ -7533,7 +7552,13 @@
                 document.getElementById('templateLoading').classList.remove('hidden');
                 document.getElementById('templateEmpty').classList.add('hidden');
 
-                const response = await fetch(`${API_BASE}/api/admin/email-templates`);
+                const token = getAuthToken();
+                const response = await fetch(`${API_BASE}/api/admin/email-templates`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
                 const result = await response.json();
 
                 if (result.success) {
@@ -7747,9 +7772,11 @@
 
                 const method = isEditMode ? 'PUT' : 'POST';
 
+                const token = getAuthToken();
                 const response = await fetch(endpoint, {
                     method: method,
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
@@ -7781,9 +7808,11 @@
 
                 const method = isEditMode ? 'PUT' : 'POST';
 
+                const token = getAuthToken();
                 const response = await fetch(endpoint, {
                     method: method,
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
@@ -7867,8 +7896,13 @@
             if (!template) return;
 
             try {
+                const token = getAuthToken();
                 const response = await fetch(`${API_BASE}/api/admin/email-templates/${templateId}/duplicate`, {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
 
                 const result = await response.json();
@@ -7894,8 +7928,13 @@
             }
 
             try {
+                const token = getAuthToken();
                 const response = await fetch(`${API_BASE}/api/admin/email-templates/${templateId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
 
                 const result = await response.json();

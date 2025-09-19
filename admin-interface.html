@@ -195,20 +195,29 @@
         #email-templates-section .glass-input,
         #email-templates-section .glass-select,
         #email-templates-section .glass-textarea {
-            background: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px) !important;
             -webkit-backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
             border-radius: 12px !important;
             padding: 12px 16px !important;
-            color: white !important;
+            color: #1f2937 !important;
             transition: all 0.3s ease !important;
         }
 
+        /* Fix pour les select dropdown options */
+        #email-templates-section .glass-select option {
+            background: white !important;
+            color: #1f2937 !important;
+            padding: 8px !important;
+        }
+
+        /* Amélioration de la lisibilité pour les placeholders */
         #email-templates-section .glass-input::placeholder,
         #email-templates-section .glass-textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6) !important;
+            color: rgba(31, 41, 55, 0.6) !important;
         }
+
 
         #email-templates-section .glass-input:focus,
         #email-templates-section .glass-select:focus,
@@ -346,6 +355,43 @@
         #email-templates-section,
         #email-templates-section * {
             color: white !important;
+        }
+
+        /* Exceptions pour les éléments nécessitant du texte sombre */
+        #email-templates-section .glass-modal-content,
+        #email-templates-section .glass-modal-content *,
+        #email-templates-section .glass-input,
+        #email-templates-section .glass-select,
+        #email-templates-section .glass-textarea,
+        #email-templates-section .template-card,
+        #email-templates-section .template-card * {
+            color: #1f2937 !important;
+        }
+
+        /* Titres et labels dans les modales */
+        #email-templates-section .glass-modal-content h2,
+        #email-templates-section .glass-modal-content h3,
+        #email-templates-section .glass-modal-content label {
+            color: #1f2937 !important;
+            font-weight: 600 !important;
+        }
+
+        /* Amélioration des boutons dans les modales */
+        #email-templates-section .glass-modal-content .glass-btn,
+        #email-templates-section .glass-modal-content .btn {
+            background: rgba(59, 130, 246, 0.9) !important;
+            color: white !important;
+            border: none !important;
+            padding: 10px 20px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+        }
+
+        #email-templates-section .glass-modal-content .glass-btn:hover,
+        #email-templates-section .glass-modal-content .btn:hover {
+            background: rgba(59, 130, 246, 1) !important;
+            transform: translateY(-1px) !important;
         }
 
         /* Fix dropdown menu background */
@@ -7547,28 +7593,86 @@
         let currentTemplate = null;
         let isEditMode = false;
 
-        // Load email templates data
+        // Load email templates data (static data for testing)
         async function loadEmailTemplatesData() {
             try {
                 document.getElementById('templateLoading').classList.remove('hidden');
                 document.getElementById('templateEmpty').classList.add('hidden');
 
-                const token = getAuthToken();
-                const response = await fetch(`${API_BASE}/api/admin/email-templates`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                // Static test data
+                const staticTemplates = [
+                    {
+                        id: 1,
+                        templateKey: 'WELCOME',
+                        name: 'Bienvenue sur Claudyne',
+                        description: 'Email de bienvenue pour les nouveaux utilisateurs',
+                        category: 'authentication',
+                        subject: 'Bienvenue sur Claudyne 🎓 - La force du savoir en héritage',
+                        htmlContent: '<h1>Bienvenue {{firstName}} !</h1><p>Nous sommes ravis de vous accueillir sur Claudyne.</p>',
+                        textContent: 'Bienvenue {{firstName}} ! Nous sommes ravis de vous accueillir sur Claudyne.',
+                        variables: ['firstName', 'familyName'],
+                        isActive: true,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        templateKey: 'PASSWORD_RESET',
+                        name: 'Réinitialisation mot de passe',
+                        description: 'Template pour la réinitialisation de mot de passe',
+                        category: 'authentication',
+                        subject: 'Réinitialisation de votre mot de passe Claudyne',
+                        htmlContent: '<h1>Réinitialisation de mot de passe</h1><p>Cliquez sur le lien pour réinitialiser : {{resetLink}}</p>',
+                        textContent: 'Réinitialisation de mot de passe. Lien: {{resetLink}}',
+                        variables: ['firstName', 'resetLink'],
+                        isActive: true,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        templateKey: 'BATTLE_INVITATION',
+                        name: 'Invitation Battle Royale',
+                        description: 'Invitation à participer aux battles éducatifs',
+                        category: 'notification',
+                        subject: '🏆 Battle Royale Claudyne - {{battleTitle}}',
+                        htmlContent: '<h1>Battle Royale 🏆</h1><p>Participez au battle {{battleTitle}} le {{date}}</p>',
+                        textContent: 'Battle Royale - Participez au battle {{battleTitle}} le {{date}}',
+                        variables: ['studentName', 'battleTitle', 'date'],
+                        isActive: true,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: 4,
+                        templateKey: 'NOTIFICATION_GENERAL',
+                        name: 'Notification générale',
+                        description: 'Template pour les notifications générales',
+                        category: 'notification',
+                        subject: '📢 {{notificationTitle}}',
+                        htmlContent: '<h1>{{notificationTitle}}</h1><p>{{content}}</p>',
+                        textContent: '{{notificationTitle}} - {{content}}',
+                        variables: ['notificationTitle', 'content'],
+                        isActive: false,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
                     }
-                });
-                const result = await response.json();
+                ];
 
-                if (result.success) {
-                    emailTemplates = result.data.templates;
-                    displayEmailTemplates(emailTemplates);
-                    updateEmailTemplateStats(result.stats || {});
-                } else {
-                    throw new Error(result.message);
-                }
+                emailTemplates = staticTemplates;
+                displayEmailTemplates(emailTemplates);
+
+                const stats = {
+                    total: staticTemplates.length,
+                    active: staticTemplates.filter(t => t.isActive).length,
+                    categories: [...new Set(staticTemplates.map(t => t.category))].length
+                };
+                updateEmailTemplateStats(stats);
+
             } catch (error) {
                 console.error('Error loading email templates:', error);
                 showEmailTemplateError('Erreur lors du chargement des templates');

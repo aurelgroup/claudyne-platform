@@ -9,10 +9,11 @@ const logger = require('../utils/logger');
 // Configuration selon l'environnement
 const config = {
   development: {
-    dialect: process.env.DB_DIALECT || 'sqlite',
+    dialect: process.env.DB_DIALECT || 'postgres',
+    // SQLite fallback (si DB_DIALECT=sqlite)
     storage: process.env.DB_STORAGE || './database/claudyne.sqlite',
     logging: (msg) => logger.debug(`[SQL] ${msg}`),
-    // Configuration PostgreSQL (si DB_DIALECT=postgres)
+    // Configuration PostgreSQL (par défaut)
     username: process.env.DB_USER || 'claudyne_user',
     password: process.env.DB_PASSWORD || 'claudyne_secure_password',
     database: process.env.DB_NAME || 'claudyne_dev',
@@ -49,13 +50,16 @@ const config = {
   },
   
   production: {
+    dialect: process.env.DB_TYPE || 'postgres',
+    // SQLite fallback (si DB_TYPE=sqlite)
+    storage: process.env.DB_STORAGE || './database/claudyne_production.sqlite',
+    logging: false,
+    // Configuration PostgreSQL (par défaut)
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT || 5432,
-    dialect: 'postgres',
-    logging: false,
     pool: {
       max: 20,
       min: 5,
@@ -63,10 +67,10 @@ const config = {
       idle: 10000
     },
     dialectOptions: {
-      ssl: {
+      ssl: process.env.DB_SSL === 'true' ? {
         require: true,
         rejectUnauthorized: false
-      }
+      } : false
     }
   }
 };
@@ -86,10 +90,10 @@ const sequelize = new Sequelize(
 async function testConnection() {
   try {
     await sequelize.authenticate();
-    logger.info(`✅ Connexion PostgreSQL établie (${env})`);
+    logger.info(`✅ Connexion base de données établie (${env} - ${dbConfig.dialect})`);
     return true;
   } catch (error) {
-    logger.error('❌ Impossible de se connecter à PostgreSQL:', error);
+    logger.error('❌ Impossible de se connecter à la base de données:', error);
     return false;
   }
 }
@@ -110,6 +114,7 @@ function initializeModels() {
   const ChatMessage = require('../models/ChatMessage')(sequelize);
   const Notification = require('../models/Notification')(sequelize);
   const AdminSetting = require('../models/AdminSetting')(sequelize);
+  const EmailTemplate = require('../models/EmailTemplate')(sequelize);
 
   // Définition des associations
   defineAssociations({
@@ -125,7 +130,8 @@ function initializeModels() {
     Subscription,
     ChatMessage,
     Notification,
-    AdminSetting
+    AdminSetting,
+    EmailTemplate
   });
 
   return {
@@ -142,6 +148,7 @@ function initializeModels() {
     ChatMessage,
     Notification,
     AdminSetting,
+    EmailTemplate,
     sequelize
   };
 }
@@ -151,7 +158,7 @@ function defineAssociations(models) {
   const {
     User, Family, Student, Subject, Lesson, Progress,
     Battle, PrixClaudine, Payment, Subscription,
-    ChatMessage, Notification, AdminSetting
+    ChatMessage, Notification, AdminSetting, EmailTemplate
   } = models;
 
   // Relations Famille -> Utilisateurs

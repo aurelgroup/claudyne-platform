@@ -389,11 +389,67 @@ module.exports = (sequelize) => {
   // Méthodes de classe
   User.findByEmailOrPhone = function(emailOrPhone) {
     const isEmail = emailOrPhone.includes('@');
-    const whereClause = isEmail 
+    const whereClause = isEmail
       ? { email: emailOrPhone.toLowerCase() }
       : { phone: emailOrPhone };
-      
+
     return this.findOne({ where: whereClause });
+  };
+
+  User.findByEmailPhoneOrUsername = function(credential) {
+    const { Op } = sequelize.Sequelize;
+
+    // Check if it's an email (contains @)
+    if (credential.includes('@')) {
+      return this.findOne({
+        where: { email: credential.toLowerCase() }
+      });
+    }
+
+    // Check if it's a phone number (starts with + or contains only numbers)
+    if (/^(\+237|237)?[26][0-9]{8}$/.test(credential)) {
+      return this.findOne({
+        where: { phone: credential }
+      });
+    }
+
+    // Otherwise treat as username - search by firstName, lastName, full name, or email prefix
+    const lowercaseCredential = credential.toLowerCase();
+
+    return this.findOne({
+      where: {
+        [Op.or]: [
+          // Match by firstName (case-insensitive)
+          sequelize.where(
+            sequelize.fn('LOWER', sequelize.col('firstName')),
+            lowercaseCredential
+          ),
+          // Match by lastName (case-insensitive)
+          sequelize.where(
+            sequelize.fn('LOWER', sequelize.col('lastName')),
+            lowercaseCredential
+          ),
+          // Match by full name (firstName + lastName)
+          sequelize.where(
+            sequelize.fn('LOWER',
+              sequelize.literal('firstName || " " || lastName')
+            ),
+            lowercaseCredential
+          ),
+          // Match by email prefix (part before @) - SQLite compatible
+          sequelize.where(
+            sequelize.fn('LOWER',
+              sequelize.fn('SUBSTR',
+                sequelize.col('email'),
+                1,
+                sequelize.literal('INSTR(email, "@") - 1')
+              )
+            ),
+            lowercaseCredential
+          )
+        ]
+      }
+    });
   };
   
   User.createFamilyManager = async function(userData, familyId) {

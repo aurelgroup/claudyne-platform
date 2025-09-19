@@ -78,7 +78,7 @@ self.addEventListener('fetch', event => {
     }
 
     // Stratégie différente selon le type de ressource
-    if (url.pathname.endsWith('.html')) {
+    if (url.pathname.endsWith('.html') || url.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
         event.respondWith(handlePageRequest(request));
     } else if (url.pathname.includes('/api/')) {
         event.respondWith(handleAPIRequest(request));
@@ -92,12 +92,45 @@ self.addEventListener('fetch', event => {
 // Gestion des pages HTML - Cache First avec fallback
 async function handlePageRequest(request) {
     try {
+        const url = new URL(request.url);
+
+        // Si c'est le chemin admin sécurisé, servir admin-interface.html
+        if (url.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
+            console.log('🔐 Requête admin sécurisée détectée');
+            const adminRequest = new Request('/admin-interface.html', {
+                method: request.method,
+                headers: request.headers
+            });
+
+            // Essayer depuis le cache d'abord
+            const cachedResponse = await caches.match(adminRequest);
+            if (cachedResponse) {
+                console.log('📖 Admin interface servie depuis le cache');
+                return cachedResponse;
+            }
+
+            // Sinon récupérer depuis le réseau
+            if (navigator.onLine) {
+                try {
+                    const networkResponse = await fetch(adminRequest);
+                    if (networkResponse.ok) {
+                        const cache = await caches.open(CACHE_NAME);
+                        cache.put(adminRequest, networkResponse.clone());
+                        console.log('🌐 Admin interface récupérée et mise en cache');
+                        return networkResponse;
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Impossible de récupérer admin-interface.html depuis le réseau');
+                }
+            }
+        }
+
         // Tentative de récupération depuis le cache
         const cachedResponse = await caches.match(request);
-        
+
         if (cachedResponse) {
             console.log('📖 Page servie depuis le cache:', request.url);
-            
+
             // Mise à jour en arrière-plan si en ligne
             if (navigator.onLine) {
                 fetch(request).then(response => {
@@ -110,14 +143,14 @@ async function handlePageRequest(request) {
                     // Ignore les erreurs de mise à jour en arrière-plan
                 });
             }
-            
+
             return cachedResponse;
         }
 
         // Si pas en cache et en ligne, récupérer et cacher
         if (navigator.onLine) {
             const networkResponse = await fetch(request);
-            
+
             if (networkResponse.ok) {
                 const cache = await caches.open(CACHE_NAME);
                 cache.put(request, networkResponse.clone());
@@ -129,7 +162,7 @@ async function handlePageRequest(request) {
         // Fallback vers la page offline
         console.log('📴 Redirection vers page offline');
         return caches.match(OFFLINE_URL);
-        
+
     } catch (error) {
         console.error('❌ Erreur lors du chargement de page:', error);
         return caches.match(OFFLINE_URL);

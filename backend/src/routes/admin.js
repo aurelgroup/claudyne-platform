@@ -1138,4 +1138,584 @@ router.get('/trial-stats', async (req, res) => {
   }
 });
 
+// ===============================
+// TESTS EMAIL
+// ===============================
+
+// Test connexion SMTP
+router.get('/email/test-connection', async (req, res) => {
+  try {
+    const { EmailService } = require('../services/emailService');
+    const emailService = new EmailService();
+
+    const isConnected = await emailService.verifyConnection();
+
+    res.json({
+      success: true,
+      data: {
+        connected: isConnected,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        user: process.env.SMTP_USER,
+        message: isConnected ? 'Connexion SMTP réussie' : 'Échec de la connexion SMTP'
+      }
+    });
+  } catch (error) {
+    logger.error('Erreur test connexion SMTP:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors du test de connexion',
+      error: error.message
+    });
+  }
+});
+
+// Test envoi email
+router.post('/email/test-send', async (req, res) => {
+  try {
+    const { email, type = 'test' } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email destinataire requis'
+      });
+    }
+
+    const { EmailService } = require('../services/emailService');
+    const emailService = new EmailService();
+
+    let result;
+
+    if (type === 'welcome') {
+      // Test email de bienvenue
+      const mockUser = {
+        firstName: 'Test',
+        lastName: 'Utilisateur',
+        email: email,
+        role: 'PARENT',
+        userType: 'MANAGER'
+      };
+      result = await emailService.sendWelcomeEmail(mockUser);
+    } else {
+      // Email de test générique
+      const subject = '🧪 Test Email Claudyne';
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #2563eb;">Test Email Claudyne</h1>
+          <p>Ceci est un email de test pour vérifier la configuration SMTP.</p>
+          <p><strong>Serveur:</strong> ${process.env.SMTP_HOST}</p>
+          <p><strong>Port:</strong> ${process.env.SMTP_PORT}</p>
+          <p><strong>Expéditeur:</strong> ${process.env.EMAIL_FROM}</p>
+          <p><strong>Date:</strong> ${new Date().toLocaleString('fr-FR')}</p>
+          <hr>
+          <p style="color: #64748b;">💚 La force du savoir en héritage - Claudyne</p>
+        </div>
+      `;
+      result = await emailService.sendEmail(email, subject, html);
+    }
+
+    res.json({
+      success: true,
+      data: {
+        messageId: result.messageId,
+        recipient: email,
+        type: type,
+        message: 'Email envoyé avec succès'
+      }
+    });
+  } catch (error) {
+    logger.error('Erreur test envoi email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'envoi de l\'email',
+      error: error.message
+    });
+  }
+});
+
+// Envoyer email de bienvenue à tous les utilisateurs
+router.post('/email/send-welcome-all', async (req, res) => {
+  try {
+    const { User } = req.models;
+    const { EmailService } = require('../services/emailService');
+    const emailService = new EmailService();
+
+    // Récupérer tous les utilisateurs actifs avec email
+    const users = await User.findAll({
+      where: {
+        email: { [Op.ne]: null },
+        isActive: true
+      }
+    });
+
+    const results = [];
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const user of users) {
+      try {
+        await emailService.sendWelcomeEmail(user);
+        results.push({
+          email: user.email,
+          status: 'success'
+        });
+        successCount++;
+      } catch (error) {
+        results.push({
+          email: user.email,
+          status: 'error',
+          error: error.message
+        });
+        errorCount++;
+      }
+    }
+
+    res.json({
+      success: true,
+      data: {
+        totalUsers: users.length,
+        successCount,
+        errorCount,
+        results
+      }
+    });
+  } catch (error) {
+    logger.error('Erreur envoi emails de bienvenue:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'envoi des emails',
+      error: error.message
+    });
+  }
+});
+
+// ===============================
+// GESTION DES TEMPLATES EMAIL
+// ===============================
+
+/**
+ * GET /api/admin/email-templates
+ * Récupérer tous les templates email
+ */
+router.get('/email-templates', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const { category, isActive, search, page = 1, limit = 20 } = req.query;
+
+    const where = {};
+
+    if (category) where.category = category;
+    if (isActive !== undefined) where.isActive = isActive === 'true';
+    if (search) {
+      where[Op.or] = [
+        { name: { [Op.like]: `%${search}%` } },
+        { description: { [Op.like]: `%${search}%` } },
+        { templateKey: { [Op.like]: `%${search}%` } }
+      ];
+    }
+
+    const offset = (page - 1) * limit;
+
+    const { count, rows: templates } = await EmailTemplate.findAndCountAll({
+      where,
+      order: [['category', 'ASC'], ['name', 'ASC']],
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+
+    res.json({
+      success: true,
+      data: {
+        templates,
+        pagination: {
+          total: count,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(count / limit)
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération templates email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des templates email'
+    });
+  }
+});
+
+/**
+ * GET /api/admin/email-templates/:id
+ * Récupérer un template email par ID
+ */
+router.get('/email-templates/:id', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const { id } = req.params;
+
+    const template = await EmailTemplate.findByPk(id);
+
+    if (!template) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template non trouvé'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: template
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération template email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du template email'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/email-templates
+ * Créer un nouveau template email
+ */
+router.post('/email-templates', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const {
+      templateKey,
+      name,
+      description,
+      category,
+      subject,
+      htmlContent,
+      textContent,
+      variables,
+      isActive = true,
+      isDefault = false
+    } = req.body;
+
+    // Validation des champs requis
+    if (!templateKey || !name || !subject || !htmlContent || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Champs requis manquants: templateKey, name, subject, htmlContent, category'
+      });
+    }
+
+    // Vérifier l'unicité du templateKey
+    const existingTemplate = await EmailTemplate.findOne({
+      where: { templateKey }
+    });
+
+    if (existingTemplate) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un template avec cette clé existe déjà'
+      });
+    }
+
+    const template = await EmailTemplate.create({
+      templateKey,
+      name,
+      description,
+      category,
+      subject,
+      htmlContent,
+      textContent,
+      variables: variables || [],
+      isActive,
+      isDefault,
+      createdBy: req.user?.id
+    });
+
+    logger.info(`Template email créé: ${template.name} (${template.templateKey})`);
+
+    res.status(201).json({
+      success: true,
+      data: template,
+      message: 'Template email créé avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur création template email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création du template email'
+    });
+  }
+});
+
+/**
+ * PUT /api/admin/email-templates/:id
+ * Mettre à jour un template email
+ */
+router.put('/email-templates/:id', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const { id } = req.params;
+    const {
+      name,
+      description,
+      category,
+      subject,
+      htmlContent,
+      textContent,
+      variables,
+      isActive,
+      isDefault
+    } = req.body;
+
+    const template = await EmailTemplate.findByPk(id);
+
+    if (!template) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template non trouvé'
+      });
+    }
+
+    // Mise à jour
+    await template.update({
+      name: name || template.name,
+      description: description !== undefined ? description : template.description,
+      category: category || template.category,
+      subject: subject || template.subject,
+      htmlContent: htmlContent || template.htmlContent,
+      textContent: textContent !== undefined ? textContent : template.textContent,
+      variables: variables !== undefined ? variables : template.variables,
+      isActive: isActive !== undefined ? isActive : template.isActive,
+      isDefault: isDefault !== undefined ? isDefault : template.isDefault,
+      updatedBy: req.user?.id
+    });
+
+    logger.info(`Template email mis à jour: ${template.name} (${template.templateKey})`);
+
+    res.json({
+      success: true,
+      data: template,
+      message: 'Template email mis à jour avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour template email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour du template email'
+    });
+  }
+});
+
+/**
+ * DELETE /api/admin/email-templates/:id
+ * Supprimer un template email (soft delete)
+ */
+router.delete('/email-templates/:id', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const { id } = req.params;
+
+    const template = await EmailTemplate.findByPk(id);
+
+    if (!template) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template non trouvé'
+      });
+    }
+
+    // Soft delete
+    await template.destroy();
+
+    logger.info(`Template email supprimé: ${template.name} (${template.templateKey})`);
+
+    res.json({
+      success: true,
+      message: 'Template email supprimé avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur suppression template email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression du template email'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/email-templates/:id/preview
+ * Prévisualiser un template avec des données de test
+ */
+router.post('/email-templates/:id/preview', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const { id } = req.params;
+    const { testData } = req.body;
+
+    const template = await EmailTemplate.findByPk(id);
+
+    if (!template) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template non trouvé'
+      });
+    }
+
+    // Données de test par défaut
+    const defaultTestData = {
+      user: {
+        firstName: 'Jean',
+        lastName: 'Dupont',
+        email: 'jean.dupont@example.com',
+        role: 'STUDENT',
+        userType: 'LEARNER'
+      },
+      resetToken: 'test-token-123',
+      verificationToken: 'verify-token-456',
+      battle: {
+        title: 'Battle Royale Mathématiques',
+        date: new Date().toLocaleDateString('fr-FR')
+      }
+    };
+
+    const data = { ...defaultTestData, ...testData };
+
+    // Remplacer les variables dans le contenu
+    let previewSubject = template.subject;
+    let previewHtml = template.htmlContent;
+
+    // Remplacements simples
+    Object.keys(data).forEach(key => {
+      if (typeof data[key] === 'object') {
+        Object.keys(data[key]).forEach(subKey => {
+          const placeholder = `\${${key}.${subKey}}`;
+          const value = data[key][subKey] || '';
+          previewSubject = previewSubject.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+          previewHtml = previewHtml.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+        });
+      } else {
+        const placeholder = `\${${key}}`;
+        const value = data[key] || '';
+        previewSubject = previewSubject.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+        previewHtml = previewHtml.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+      }
+    });
+
+    res.json({
+      success: true,
+      data: {
+        subject: previewSubject,
+        htmlContent: previewHtml,
+        testData: data
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur prévisualisation template email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la prévisualisation du template email'
+    });
+  }
+});
+
+/**
+ * POST /api/admin/email-templates/:id/duplicate
+ * Dupliquer un template email
+ */
+router.post('/email-templates/:id/duplicate', async (req, res) => {
+  try {
+    const { EmailTemplate } = req.models;
+    const { id } = req.params;
+    const { name, templateKey } = req.body;
+
+    const originalTemplate = await EmailTemplate.findByPk(id);
+
+    if (!originalTemplate) {
+      return res.status(404).json({
+        success: false,
+        message: 'Template original non trouvé'
+      });
+    }
+
+    // Générer un nouveau templateKey si non fourni
+    const newTemplateKey = templateKey || `${originalTemplate.templateKey}_copy_${Date.now()}`;
+    const newName = name || `${originalTemplate.name} (Copie)`;
+
+    // Vérifier l'unicité du nouveau templateKey
+    const existingTemplate = await EmailTemplate.findOne({
+      where: { templateKey: newTemplateKey }
+    });
+
+    if (existingTemplate) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un template avec cette clé existe déjà'
+      });
+    }
+
+    const duplicatedTemplate = await EmailTemplate.create({
+      templateKey: newTemplateKey,
+      name: newName,
+      description: originalTemplate.description,
+      category: originalTemplate.category,
+      subject: originalTemplate.subject,
+      htmlContent: originalTemplate.htmlContent,
+      textContent: originalTemplate.textContent,
+      variables: originalTemplate.variables,
+      isActive: false, // Nouvelle copie désactivée par défaut
+      isDefault: false, // Jamais par défaut
+      createdBy: req.user?.id
+    });
+
+    logger.info(`Template email dupliqué: ${newName} (${newTemplateKey})`);
+
+    res.status(201).json({
+      success: true,
+      data: duplicatedTemplate,
+      message: 'Template email dupliqué avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur duplication template email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la duplication du template email'
+    });
+  }
+});
+
+/**
+ * GET /api/admin/email-templates/categories
+ * Récupérer les catégories disponibles
+ */
+router.get('/email-templates/categories', async (req, res) => {
+  try {
+    const categories = [
+      { value: 'AUTH', label: 'Authentification', description: 'Welcome, reset, verification' },
+      { value: 'NOTIFICATION', label: 'Notifications', description: 'Notifications générales' },
+      { value: 'BATTLE', label: 'Battle Royale', description: 'Invitations et résultats' },
+      { value: 'PROGRESS', label: 'Progression', description: 'Achievements et progression' },
+      { value: 'MARKETING', label: 'Marketing', description: 'Promotions et marketing' },
+      { value: 'SYSTEM', label: 'Système', description: 'Notifications système' }
+    ];
+
+    res.json({
+      success: true,
+      data: categories
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération catégories:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des catégories'
+    });
+  }
+});
+
 module.exports = router;

@@ -294,8 +294,8 @@ router.post('/login', authLimiter, [
     
     const { credential, password } = req.body;
     
-    // Recherche de l'utilisateur par email ou téléphone
-    const user = await User.findByEmailOrPhone(credential);
+    // Recherche de l'utilisateur par email, téléphone ou nom d'utilisateur
+    const user = await User.findByEmailPhoneOrUsername(credential);
     
     if (!user) {
       logger.logSecurity('Login attempt with non-existent credential', {

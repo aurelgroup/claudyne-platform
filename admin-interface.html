@@ -87,6 +87,452 @@
             color: #1F2937 !important;
         }
 
+        /* Special glassmorphism styles for email templates section */
+        #email-templates-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #email-templates-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3), transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3), transparent 50%);
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Glass effect components */
+        #email-templates-section .glass-card {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 20px !important;
+            padding: 2rem !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s ease !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        #email-templates-section .glass-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        #email-templates-section .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        }
+
+        #email-templates-section .glass-accent {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 0 20px 0 80px;
+        }
+
+        #email-templates-section .glass-btn {
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 15px !important;
+            color: white !important;
+            padding: 12px 24px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            text-decoration: none !important;
+        }
+
+        #email-templates-section .glass-btn:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        #email-templates-section .glass-btn.btn-primary {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(99, 102, 241, 0.8)) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        #email-templates-section .glass-btn.btn-secondary {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        #email-templates-section .glass-panel {
+            background: rgba(255, 255, 255, 0.08) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 16px !important;
+            padding: 1.5rem !important;
+            margin-bottom: 2rem !important;
+        }
+
+        #email-templates-section .glass-input,
+        #email-templates-section .glass-select,
+        #email-templates-section .glass-textarea {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 12px !important;
+            padding: 12px 16px !important;
+            color: white !important;
+            transition: all 0.3s ease !important;
+        }
+
+        #email-templates-section .glass-input::placeholder,
+        #email-templates-section .glass-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        #email-templates-section .glass-input:focus,
+        #email-templates-section .glass-select:focus,
+        #email-templates-section .glass-textarea:focus {
+            outline: none !important;
+            border-color: rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+        }
+
+        #email-templates-section .glass-icon {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)) !important;
+            border-radius: 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 64px !important;
+            height: 64px !important;
+            margin-bottom: 1rem !important;
+        }
+
+        #email-templates-section .glass-icon i {
+            font-size: 24px !important;
+            color: white !important;
+        }
+
+        /* Glass Modal */
+        #email-templates-section .glass-modal {
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+        }
+
+        #email-templates-section .glass-modal-content {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 24px !important;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3) !important;
+            color: #1f2937 !important;
+        }
+
+        #email-templates-section .glass-modal-content * {
+            color: #1f2937 !important;
+        }
+
+        #email-templates-section .glass-modal-content .glass-input,
+        #email-templates-section .glass-modal-content .glass-select,
+        #email-templates-section .glass-modal-content .glass-textarea {
+            background: rgba(0, 0, 0, 0.05) !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            color: #1f2937 !important;
+        }
+
+        #email-templates-section .glass-modal-content .glass-input::placeholder,
+        #email-templates-section .glass-modal-content .glass-textarea::placeholder {
+            color: rgba(31, 41, 55, 0.6) !important;
+        }
+
+        /* Grid layouts for email templates */
+        #email-templates-section .glass-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+            gap: 1.5rem !important;
+            margin-bottom: 2rem !important;
+        }
+
+        #email-templates-section .filter-controls {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 1rem !important;
+            align-items: end !important;
+            margin-bottom: 2rem !important;
+        }
+
+        #email-templates-section .filter-group {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+        }
+
+        #email-templates-section .filter-group label {
+            font-weight: 500 !important;
+            color: white !important;
+            font-size: 0.9rem !important;
+        }
+
+        #email-templates-section .templates-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
+            gap: 1.5rem !important;
+            margin-bottom: 2rem !important;
+        }
+
+        #email-templates-section .template-card {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 16px !important;
+            padding: 1.5rem !important;
+            transition: all 0.3s ease !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        #email-templates-section .template-card:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        #email-templates-section .loading-state,
+        #email-templates-section .empty-state {
+            text-align: center !important;
+            padding: 4rem 2rem !important;
+            color: white !important;
+        }
+
+        #email-templates-section .loading-spinner {
+            width: 48px !important;
+            height: 48px !important;
+            border: 4px solid rgba(255, 255, 255, 0.2) !important;
+            border-top: 4px solid white !important;
+            border-radius: 50% !important;
+            animation: spin 1s linear infinite !important;
+            margin: 0 auto 1rem !important;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Text colors for email templates section */
+        #email-templates-section,
+        #email-templates-section * {
+            color: white !important;
+        }
+
+        #email-templates-section .page-title {
+            font-size: 2.5rem !important;
+            font-weight: bold !important;
+            margin-bottom: 0.5rem !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        #email-templates-section .page-description {
+            font-size: 1.1rem !important;
+            opacity: 0.9 !important;
+        }
+
+        #email-templates-section .stat-content h3 {
+            font-size: 2rem !important;
+            font-weight: bold !important;
+            margin-bottom: 0.25rem !important;
+        }
+
+        #email-templates-section .stat-content p {
+            font-size: 0.9rem !important;
+            opacity: 0.8 !important;
+        }
+
+        /* Modal specific styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal.show {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: 800px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6 !important;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .preview-container {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .email-preview {
+            padding: 1.5rem;
+        }
+
+        .email-subject {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        .email-content {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 200px;
+            background: white;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
         /* Ensure main content area is always light */
         .admin-interface .main-content {
             background: #F8FAFC !important;
@@ -950,8 +1396,8 @@
 
             <form id="adminAuthForm" class="admin-login-form">
                 <div class="input-group">
-                    <label for="adminEmail">Email administrateur</label>
-                    <input type="email" id="adminEmail" name="email" placeholder="admin@claudyne.com" required>
+                    <label for="adminEmail">Email, nom d'utilisateur ou téléphone</label>
+                    <input type="text" id="adminEmail" name="credential" placeholder="admin@claudyne.com, admin ou Admin" required>
                 </div>
 
                 <div class="input-group">
@@ -1166,6 +1612,12 @@
                         <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('communication')">
                             <span class="nav-icon">📧</span>
                             Communication
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('email-templates')">
+                            <span class="nav-icon">🎨</span>
+                            Templates Email
                         </a>
                     </li>
                     <li class="nav-item">
@@ -1944,6 +2396,267 @@
                         <div id="message-history-table">
                             <div class="loading"></div> Chargement de l'historique...
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Templates Section -->
+            <div id="email-templates-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">📧 Gestion des Templates Email</h1>
+                        <p class="page-description">Interface futuriste pour créer et gérer vos templates d'emails</p>
+                    </div>
+                    <button class="btn-primary glass-btn" onclick="openTemplateModal()">
+                        <i class="fas fa-plus"></i>
+                        Nouveau Template
+                    </button>
+                </div>
+
+                <!-- Glass Stats Cards -->
+                <div class="stats-grid glass-grid">
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalTemplates">0</h3>
+                            <p>Templates Actifs</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="emailsSent">0</h3>
+                            <p>Emails Envoyés</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="successRate">98%</h3>
+                            <p>Taux de Succès</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="lastUpdate">Maintenant</h3>
+                            <p>Dernière MAJ</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="filter-controls glass-panel">
+                    <div class="filter-group">
+                        <label>Catégorie</label>
+                        <select id="categoryFilter" class="glass-select">
+                            <option value="">Toutes les catégories</option>
+                            <option value="authentication">Authentification</option>
+                            <option value="notification">Notification</option>
+                            <option value="battle">Battle Royale</option>
+                            <option value="system">Système</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Statut</label>
+                        <select id="statusFilter" class="glass-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="active">Actif</option>
+                            <option value="draft">Brouillon</option>
+                            <option value="archived">Archivé</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Recherche</label>
+                        <input type="text" id="searchFilter" class="glass-input" placeholder="Rechercher un template...">
+                    </div>
+
+                    <button class="btn-secondary glass-btn" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i>
+                        Reset
+                    </button>
+                </div>
+
+                <!-- Templates Grid -->
+                <div class="templates-grid" id="templatesGrid">
+                    <!-- Templates will be loaded here -->
+                </div>
+
+                <!-- Loading State -->
+                <div id="templateLoading" class="loading-state glass-card">
+                    <div class="loading-spinner"></div>
+                    <p>Chargement des templates...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="templateEmpty" class="empty-state glass-card hidden">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h3>Aucun template trouvé</h3>
+                    <p>Créez votre premier template email pour commencer</p>
+                    <button class="btn-primary glass-btn" onclick="openTemplateModal()">
+                        Créer un Template
+                    </button>
+                </div>
+            </div>
+
+            <!-- Template Modal -->
+            <div id="templateModal" class="modal glass-modal">
+                <div class="modal-content glass-modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalTitle">Nouveau Template Email</h2>
+                        <button class="close-btn" onclick="closeTemplateModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="modal-tabs">
+                        <button class="tab-btn active" onclick="switchTab('editor')">
+                            <i class="fas fa-edit"></i>
+                            Éditeur
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('preview')">
+                            <i class="fas fa-eye"></i>
+                            Aperçu
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('settings')">
+                            <i class="fas fa-cog"></i>
+                            Paramètres
+                        </button>
+                    </div>
+
+                    <!-- Editor Tab -->
+                    <div id="editorTab" class="tab-content active">
+                        <form id="templateForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="templateName">Nom du Template</label>
+                                    <input type="text" id="templateName" class="glass-input" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="templateCategory">Catégorie</label>
+                                    <select id="templateCategory" class="glass-select" required>
+                                        <option value="">Sélectionner une catégorie</option>
+                                        <option value="authentication">Authentification</option>
+                                        <option value="notification">Notification</option>
+                                        <option value="battle">Battle Royale</option>
+                                        <option value="system">Système</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="templateSubject">Sujet de l'Email</label>
+                                <input type="text" id="templateSubject" class="glass-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="templateContent">Contenu HTML</label>
+                                <div class="editor-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{userName}}')">
+                                        <i class="fas fa-user"></i> Nom Utilisateur
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{email}}')">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{resetLink}}')">
+                                        <i class="fas fa-link"></i> Lien Reset
+                                    </button>
+                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{verificationCode}}')">
+                                        <i class="fas fa-key"></i> Code Vérification
+                                    </button>
+                                </div>
+                                <textarea id="templateContent" class="glass-textarea" rows="15" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="templateVariables">Variables Disponibles</label>
+                                <input type="text" id="templateVariables" class="glass-input" placeholder="userName,email,resetLink,verificationCode">
+                                <small>Variables séparées par des virgules</small>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Preview Tab -->
+                    <div id="previewTab" class="tab-content">
+                        <div class="preview-container glass-card">
+                            <div class="preview-header">
+                                <h3>Aperçu Email</h3>
+                                <button class="btn-secondary" onclick="refreshPreview()">
+                                    <i class="fas fa-sync"></i>
+                                    Actualiser
+                                </button>
+                            </div>
+                            <div class="email-preview" id="emailPreview">
+                                <div class="email-subject">
+                                    <strong>Sujet:</strong> <span id="previewSubject">Sujet de l'email</span>
+                                </div>
+                                <div class="email-content" id="previewContent">
+                                    Contenu de l'email apparaîtra ici...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div id="settingsTab" class="tab-content">
+                        <div class="settings-grid">
+                            <div class="form-group">
+                                <label for="templateStatus">Statut</label>
+                                <select id="templateStatus" class="glass-select">
+                                    <option value="active">Actif</option>
+                                    <option value="draft">Brouillon</option>
+                                    <option value="archived">Archivé</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="templateVersion">Version</label>
+                                <input type="number" id="templateVersion" class="glass-input" value="1" min="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="isDefault"> Template par défaut
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="templateDescription">Description</label>
+                                <textarea id="templateDescription" class="glass-textarea" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary glass-btn" onclick="closeTemplateModal()">
+                            Annuler
+                        </button>
+                        <button type="button" class="btn-secondary glass-btn" onclick="saveAsDraft()">
+                            <i class="fas fa-save"></i>
+                            Sauvegarder Brouillon
+                        </button>
+                        <button type="button" class="btn-primary glass-btn" onclick="saveTemplate()">
+                            <i class="fas fa-check"></i>
+                            Enregistrer
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3018,12 +3731,12 @@
             adminAuthForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                const email = document.getElementById('adminEmail').value;
+                const credential = document.getElementById('adminEmail').value;
                 const password = document.getElementById('adminPassword').value;
 
                 // Validation des champs
-                if (!email || !password) {
-                    showError('Veuillez saisir votre email et mot de passe');
+                if (!credential || !password) {
+                    showError('Veuillez saisir vos identifiants et mot de passe');
                     return;
                 }
 
@@ -3034,13 +3747,13 @@
 
                 try {
                     // Appel API d'authentification
-                    const response = await fetch('http://localhost:3001/api/auth/login', {
+                    const response = await fetch(`${API_BASE}/api/auth/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            credential: email,
+                            credential: credential,
                             password: password
                         })
                     });
@@ -3255,7 +3968,7 @@
             return false;
         };
 
-        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://claudyne.com/api';
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3002' : 'https://claudyne.com';
         let USE_MOCK_DATA = false; // VRAI BACKEND ACTIVÉ - Données réelles depuis l'API
         
         // Backend réel activé - données authentiques
@@ -3368,6 +4081,9 @@
                         break;
                     case 'settings':
                         await loadSettingsData();
+                        break;
+                    case 'email-templates':
+                        await loadEmailTemplatesData();
                         break;
                     default:
                         console.log(`✅ Section ${section} chargée (pas de données spécifiques)`);
@@ -6803,6 +7519,430 @@
         }
 
         // Fonction showSection maintenant définie au début du script
+
+        // === EMAIL TEMPLATES MANAGEMENT FUNCTIONS ===
+
+        // Global state for email templates
+        let emailTemplates = [];
+        let currentTemplate = null;
+        let isEditMode = false;
+
+        // Load email templates data
+        async function loadEmailTemplatesData() {
+            try {
+                document.getElementById('templateLoading').classList.remove('hidden');
+                document.getElementById('templateEmpty').classList.add('hidden');
+
+                const response = await fetch(`${API_BASE}/api/admin/email-templates`);
+                const result = await response.json();
+
+                if (result.success) {
+                    emailTemplates = result.data;
+                    displayEmailTemplates(emailTemplates);
+                    updateEmailTemplateStats(result.stats || {});
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error loading email templates:', error);
+                showEmailTemplateError('Erreur lors du chargement des templates');
+            } finally {
+                document.getElementById('templateLoading').classList.add('hidden');
+            }
+        }
+
+        // Display email templates in grid
+        function displayEmailTemplates(templates) {
+            const grid = document.getElementById('templatesGrid');
+            const emptyState = document.getElementById('templateEmpty');
+
+            if (!templates || templates.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = templates.map(template => createTemplateCard(template)).join('');
+        }
+
+        // Create individual template card
+        function createTemplateCard(template) {
+            const categoryIcons = {
+                authentication: 'fa-user-shield',
+                notification: 'fa-bell',
+                battle: 'fa-crown',
+                system: 'fa-cogs'
+            };
+
+            const statusColors = {
+                active: '#10B981',
+                draft: '#F59E0B',
+                archived: '#6B7280'
+            };
+
+            return `
+                <div class="template-card" data-template-id="${template.id}">
+                    <div class="template-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div class="template-category" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas ${categoryIcons[template.category] || 'fa-envelope'}" style="color: rgba(255,255,255,0.8);"></i>
+                            <span style="font-size: 0.85rem; opacity: 0.8; text-transform: capitalize;">${template.category}</span>
+                        </div>
+                        <div class="template-status" style="background: ${statusColors[template.status]}; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                            ${template.status.toUpperCase()}
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem; font-weight: 600;">${template.name}</h3>
+                    <p style="opacity: 0.8; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.4;">${template.subject}</p>
+
+                    <div class="template-meta" style="display: flex; justify-content: between; align-items: center; margin-bottom: 1.5rem; font-size: 0.8rem; opacity: 0.7;">
+                        <span>v${template.version}</span>
+                        <span>${template.isDefault ? '⭐ Défaut' : ''}</span>
+                        <span>${formatDate(template.updatedAt)}</span>
+                    </div>
+
+                    <div class="template-actions" style="display: flex; gap: 0.5rem;">
+                        <button class="glass-btn" style="flex: 1; padding: 0.5rem;" onclick="previewTemplate('${template.id}')">
+                            <i class="fas fa-eye"></i> Aperçu
+                        </button>
+                        <button class="glass-btn" style="flex: 1; padding: 0.5rem;" onclick="editTemplate('${template.id}')">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                        <button class="glass-btn" style="padding: 0.5rem;" onclick="duplicateTemplate('${template.id}')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="glass-btn" style="padding: 0.5rem;" onclick="deleteTemplate('${template.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update stats in the dashboard
+        function updateEmailTemplateStats(stats) {
+            document.getElementById('totalTemplates').textContent = stats.total || emailTemplates.length;
+            document.getElementById('emailsSent').textContent = stats.sent || '0';
+            document.getElementById('successRate').textContent = (stats.successRate || 98) + '%';
+            document.getElementById('lastUpdate').textContent = formatTimeAgo(new Date());
+        }
+
+        // Filter and search functions
+        function filterEmailTemplates() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
+
+            let filteredTemplates = emailTemplates.filter(template => {
+                const matchesCategory = !categoryFilter || template.category === categoryFilter;
+                const matchesStatus = !statusFilter || template.status === statusFilter;
+                const matchesSearch = !searchTerm ||
+                    template.name.toLowerCase().includes(searchTerm) ||
+                    template.subject.toLowerCase().includes(searchTerm);
+
+                return matchesCategory && matchesStatus && matchesSearch;
+            });
+
+            displayEmailTemplates(filteredTemplates);
+        }
+
+        function resetFilters() {
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('searchFilter').value = '';
+            displayEmailTemplates(emailTemplates);
+        }
+
+        // Modal management functions
+        function openTemplateModal(templateId = null) {
+            const modal = document.getElementById('templateModal');
+            const title = document.getElementById('modalTitle');
+
+            isEditMode = !!templateId;
+            currentTemplate = templateId ? emailTemplates.find(t => t.id === templateId) : null;
+
+            title.textContent = isEditMode ? 'Modifier le Template' : 'Nouveau Template Email';
+
+            if (isEditMode && currentTemplate) {
+                populateTemplateForm(currentTemplate);
+            } else {
+                resetTemplateForm();
+            }
+
+            modal.classList.add('show');
+            switchTab('editor');
+        }
+
+        function closeTemplateModal() {
+            const modal = document.getElementById('templateModal');
+            modal.classList.remove('show');
+            resetTemplateForm();
+            currentTemplate = null;
+            isEditMode = false;
+        }
+
+        function populateTemplateForm(template) {
+            document.getElementById('templateName').value = template.name;
+            document.getElementById('templateCategory').value = template.category;
+            document.getElementById('templateSubject').value = template.subject;
+            document.getElementById('templateContent').value = template.content;
+            document.getElementById('templateVariables').value = template.variables ? template.variables.join(',') : '';
+            document.getElementById('templateStatus').value = template.status;
+            document.getElementById('templateVersion').value = template.version;
+            document.getElementById('isDefault').checked = template.isDefault;
+            document.getElementById('templateDescription').value = template.description || '';
+        }
+
+        function resetTemplateForm() {
+            document.getElementById('templateForm').reset();
+            document.getElementById('templateVersion').value = '1';
+            document.getElementById('templateStatus').value = 'active';
+            document.getElementById('isDefault').checked = false;
+        }
+
+        // Tab management
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active class to selected tab
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
+            // Refresh preview if switching to preview tab
+            if (tabName === 'preview') {
+                refreshPreview();
+            }
+        }
+
+        // Template editor functions
+        function insertVariable(variable) {
+            const contentTextarea = document.getElementById('templateContent');
+            const start = contentTextarea.selectionStart;
+            const end = contentTextarea.selectionEnd;
+            const text = contentTextarea.value;
+
+            contentTextarea.value = text.substring(0, start) + variable + text.substring(end);
+            contentTextarea.focus();
+            contentTextarea.setSelectionRange(start + variable.length, start + variable.length);
+        }
+
+        function refreshPreview() {
+            const subject = document.getElementById('templateSubject').value;
+            const content = document.getElementById('templateContent').value;
+
+            document.getElementById('previewSubject').textContent = subject || 'Sujet de l\'email';
+            document.getElementById('previewContent').innerHTML = content || 'Contenu de l\'email apparaîtra ici...';
+        }
+
+        // Save functions
+        async function saveTemplate() {
+            try {
+                const formData = getTemplateFormData();
+                const endpoint = isEditMode ?
+                    `${API_BASE}/api/admin/email-templates/${currentTemplate.id}` :
+                    `${API_BASE}/api/admin/email-templates`;
+
+                const method = isEditMode ? 'PUT' : 'POST';
+
+                const response = await fetch(endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showEmailTemplateSuccess(isEditMode ? 'Template modifié avec succès!' : 'Template créé avec succès!');
+                    closeTemplateModal();
+                    loadEmailTemplatesData(); // Reload the list
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error saving template:', error);
+                showEmailTemplateError('Erreur lors de la sauvegarde: ' + error.message);
+            }
+        }
+
+        async function saveAsDraft() {
+            const formData = getTemplateFormData();
+            formData.status = 'draft';
+
+            try {
+                const endpoint = isEditMode ?
+                    `${API_BASE}/api/admin/email-templates/${currentTemplate.id}` :
+                    `${API_BASE}/api/admin/email-templates`;
+
+                const method = isEditMode ? 'PUT' : 'POST';
+
+                const response = await fetch(endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showEmailTemplateSuccess('Brouillon sauvegardé!');
+                    closeTemplateModal();
+                    loadEmailTemplatesData();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error saving draft:', error);
+                showEmailTemplateError('Erreur lors de la sauvegarde du brouillon: ' + error.message);
+            }
+        }
+
+        function getTemplateFormData() {
+            const variables = document.getElementById('templateVariables').value
+                .split(',')
+                .map(v => v.trim())
+                .filter(v => v.length > 0);
+
+            return {
+                name: document.getElementById('templateName').value,
+                category: document.getElementById('templateCategory').value,
+                subject: document.getElementById('templateSubject').value,
+                content: document.getElementById('templateContent').value,
+                variables: variables,
+                status: document.getElementById('templateStatus').value,
+                version: parseInt(document.getElementById('templateVersion').value),
+                isDefault: document.getElementById('isDefault').checked,
+                description: document.getElementById('templateDescription').value
+            };
+        }
+
+        // Template actions
+        function editTemplate(templateId) {
+            openTemplateModal(templateId);
+        }
+
+        function previewTemplate(templateId) {
+            const template = emailTemplates.find(t => t.id === templateId);
+            if (!template) return;
+
+            // Create preview modal
+            const modal = document.createElement('div');
+            modal.className = 'modal glass-modal show';
+            modal.innerHTML = `
+                <div class="modal-content glass-modal-content" style="max-width: 800px;">
+                    <div class="modal-header">
+                        <h2>Aperçu: ${template.name}</h2>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="padding: 2rem;">
+                        <div class="email-preview">
+                            <div class="email-subject">
+                                <strong>Sujet:</strong> ${template.subject}
+                            </div>
+                            <div class="email-content" style="margin-top: 1rem;">
+                                ${template.content}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        async function duplicateTemplate(templateId) {
+            const template = emailTemplates.find(t => t.id === templateId);
+            if (!template) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/email-templates/${templateId}/duplicate`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showEmailTemplateSuccess('Template dupliqué avec succès!');
+                    loadEmailTemplatesData();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error duplicating template:', error);
+                showEmailTemplateError('Erreur lors de la duplication: ' + error.message);
+            }
+        }
+
+        async function deleteTemplate(templateId) {
+            const template = emailTemplates.find(t => t.id === templateId);
+            if (!template) return;
+
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer le template "${template.name}" ?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/email-templates/${templateId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showEmailTemplateSuccess('Template supprimé avec succès!');
+                    loadEmailTemplatesData();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error deleting template:', error);
+                showEmailTemplateError('Erreur lors de la suppression: ' + error.message);
+            }
+        }
+
+        // Utility functions
+        function showEmailTemplateSuccess(message) {
+            // Use existing notification system or create a simple alert
+            if (typeof showNotification === 'function') {
+                showNotification(message, 'success');
+            } else {
+                alert('✅ ' + message);
+            }
+        }
+
+        function showEmailTemplateError(message) {
+            // Use existing notification system or create a simple alert
+            if (typeof showNotification === 'function') {
+                showNotification(message, 'error');
+            } else {
+                alert('❌ ' + message);
+            }
+        }
+
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+
+            if (minutes < 1) return 'Maintenant';
+            if (minutes < 60) return `${minutes}min`;
+            if (minutes < 1440) return `${Math.floor(minutes / 60)}h`;
+            return `${Math.floor(minutes / 1440)}j`;
+        }
+
+        // === END EMAIL TEMPLATES MANAGEMENT ===
 
         // Chargement initial
         window.addEventListener('load', function() {

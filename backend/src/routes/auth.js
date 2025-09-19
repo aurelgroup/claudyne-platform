@@ -38,7 +38,7 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
   // Personnalisation pour les familles camerounaises
   keyGenerator: (req) => {
-    return req.ip + ':' + (req.body.email || req.body.phone || 'anonymous');
+    return req.ip + ':' + (req.body.credential || req.body.email || req.body.phone || 'anonymous');
   }
 });
 
@@ -270,12 +270,12 @@ router.post('/register', registerLimiter, [
 
 /**
  * POST /api/auth/login
- * Connexion utilisateur (email ou téléphone)
+ * Connexion utilisateur (email, téléphone, prénom ou nom)
  */
 router.post('/login', authLimiter, [
   body('credential')
     .notEmpty()
-    .withMessage('Email ou téléphone requis'),
+    .withMessage('Email, téléphone, prénom ou nom requis'),
   body('password')
     .notEmpty()
     .withMessage('Mot de passe requis')

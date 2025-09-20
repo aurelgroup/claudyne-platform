@@ -510,6 +510,249 @@
             opacity: 1 !important;
         }
 
+        /* APERÇU TEMPLATES - Styles spécifiques pour prévisualisation */
+        .preview-container,
+        #email-templates-section .preview-container,
+        .glass-modal .preview-container {
+            background: #ffffff !important;
+            border: 2px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            color: #1f2937 !important;
+        }
+
+        .preview-header,
+        #email-templates-section .preview-header,
+        .glass-modal .preview-header {
+            padding: 1rem !important;
+            background: #f9fafb !important;
+            border-bottom: 2px solid #e5e7eb !important;
+            color: #1f2937 !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .preview-header h3,
+        #email-templates-section .preview-header h3,
+        .glass-modal .preview-header h3 {
+            color: #1f2937 !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+        }
+
+        .email-preview,
+        #email-templates-section .email-preview,
+        .glass-modal .email-preview {
+            padding: 1.5rem !important;
+            background: #ffffff !important;
+            color: #1f2937 !important;
+            min-height: 200px !important;
+        }
+
+        .email-subject,
+        #email-templates-section .email-subject,
+        .glass-modal .email-subject {
+            margin-bottom: 1rem !important;
+            padding: 1rem !important;
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 6px !important;
+            color: #1f2937 !important;
+        }
+
+        .email-subject strong,
+        #email-templates-section .email-subject strong,
+        .glass-modal .email-subject strong {
+            color: #1f2937 !important;
+            font-weight: 600 !important;
+        }
+
+        .email-content,
+        #email-templates-section .email-content,
+        .glass-modal .email-content {
+            color: #374151 !important;
+            line-height: 1.6 !important;
+            background: #ffffff !important;
+            padding: 1rem !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 6px !important;
+            min-height: 150px !important;
+        }
+
+        .email-metadata,
+        #email-templates-section .email-metadata,
+        .glass-modal .email-metadata {
+            margin-bottom: 1rem !important;
+            font-size: 0.9rem !important;
+            color: #6b7280 !important;
+            background: #f3f4f6 !important;
+            padding: 0.75rem !important;
+            border-radius: 4px !important;
+        }
+
+        /* Onglet d'aperçu actif */
+        #previewTab,
+        #email-templates-section #previewTab {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+            padding: 1rem !important;
+        }
+
+        /* Texte dans l'aperçu */
+        #previewTab *,
+        #email-templates-section #previewTab *,
+        #emailPreview,
+        #email-templates-section #emailPreview,
+        #emailPreview *,
+        #email-templates-section #emailPreview *,
+        #previewSubject,
+        #email-templates-section #previewSubject,
+        #previewContent,
+        #email-templates-section #previewContent {
+            color: #1f2937 !important;
+            background: transparent !important;
+        }
+
+        /* Modal d'aperçu template (popup) - styles spécifiques */
+        .modal.show .modal-content.glass-modal-content {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        .modal.show .modal-content .email-preview,
+        .modal.show .modal-content .email-subject,
+        .modal.show .modal-content .email-content,
+        .modal.show .modal-content .email-metadata {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        /* Contenu HTML dans l'aperçu */
+        .email-content p,
+        .email-content div,
+        .email-content span,
+        .email-content h1,
+        .email-content h2,
+        .email-content h3,
+        .email-content h4,
+        .email-content h5,
+        .email-content h6,
+        #email-templates-section .email-content p,
+        #email-templates-section .email-content div,
+        #email-templates-section .email-content span,
+        #email-templates-section .email-content h1,
+        #email-templates-section .email-content h2,
+        #email-templates-section .email-content h3,
+        #email-templates-section .email-content h4,
+        #email-templates-section .email-content h5,
+        #email-templates-section .email-content h6 {
+            color: #374151 !important;
+            background: transparent !important;
+        }
+
+        /* Variables template et contenu dynamique */
+        .email-content em,
+        .email-content strong,
+        .email-content b,
+        #email-templates-section .email-content em,
+        #email-templates-section .email-content strong,
+        #email-templates-section .email-content b {
+            color: #1f2937 !important;
+        }
+
+        /* Force tous les éléments textuels dans l'aperçu en mode sombre */
+        .glass-modal-content[style*="max-width: 800px"] {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        .glass-modal-content[style*="max-width: 800px"] * {
+            color: #1f2937 !important;
+        }
+
+        .glass-modal-content[style*="max-width: 800px"] .email-preview {
+            background: #ffffff !important;
+        }
+
+        .glass-modal-content[style*="max-width: 800px"] .email-subject {
+            background: #f8fafc !important;
+            color: #1f2937 !important;
+        }
+
+        .glass-modal-content[style*="max-width: 800px"] .email-content {
+            background: #ffffff !important;
+            color: #374151 !important;
+        }
+
+        /* PROTECTION GLOBALE APERÇU - Force tout contenu d'aperçu en mode clair */
+        div[style*="padding: 2rem"] .email-preview,
+        div[style*="padding: 2rem"] .email-preview *,
+        .modal-content[style*="max-width: 800px"] div,
+        .modal-content[style*="max-width: 800px"] span,
+        .modal-content[style*="max-width: 800px"] p,
+        .modal-content[style*="max-width: 800px"] h1,
+        .modal-content[style*="max-width: 800px"] h2,
+        .modal-content[style*="max-width: 800px"] h3,
+        .modal-content[style*="max-width: 800px"] h4 {
+            color: #1f2937 !important;
+            background: transparent !important;
+        }
+
+        /* Surcharge spécifique pour contenu HTML injecté */
+        .email-preview[style],
+        .email-subject[style],
+        .email-content[style],
+        .email-metadata[style] {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        .email-preview[style] *,
+        .email-subject[style] *,
+        .email-content[style] *,
+        .email-metadata[style] * {
+            color: #1f2937 !important;
+        }
+
+        /* APERÇU TEMPLATES - Style inline forcé (JavaScript généré) */
+        [style*="padding: 2rem"] {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        [style*="margin-bottom: 1rem; padding: 1rem; background: #f8fafc"] {
+            background: #f8fafc !important;
+            color: #1f2937 !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        [style*="margin-bottom: 1rem; font-size: 0.9rem; color: #6b7280"] {
+            background: #f3f4f6 !important;
+            color: #6b7280 !important;
+        }
+
+        /* Force toutes les divs générées par JS d'aperçu */
+        .modal.show div[style*="font-size: 0.9rem"],
+        .modal.show div[style*="margin-bottom: 1rem"],
+        .modal.show div[style*="padding: 1rem"] {
+            color: #1f2937 !important;
+        }
+
+        /* Styles spécifiques pour le HTML généré dans previewTemplate() */
+        .modal.show .glass-modal-content div[style*="padding: 2rem"] {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        .modal.show .glass-modal-content div[style*="padding: 2rem"] div {
+            color: #1f2937 !important;
+        }
+
+        .modal.show .glass-modal-content div[style*="padding: 2rem"] strong {
+            color: #1f2937 !important;
+        }
+
         /* Titres et labels dans les modales */
         #email-templates-section .glass-modal-content h2,
         #email-templates-section .glass-modal-content h3,

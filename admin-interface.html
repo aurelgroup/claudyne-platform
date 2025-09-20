@@ -8633,17 +8633,27 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
 
         // Modal management functions
         function openTemplateModal(templateId = null) {
+            console.log('🔍 openTemplateModal appelée avec ID:', templateId);
+
             const modal = document.getElementById('templateModal');
             const title = document.getElementById('modalTitle');
 
             isEditMode = !!templateId;
-            currentTemplate = templateId ? emailTemplates.find(t => t.id === templateId) : null;
+
+            // Convertir en nombre si c'est une string
+            const numericId = typeof templateId === 'string' ? parseInt(templateId) : templateId;
+            currentTemplate = templateId ? emailTemplates.find(t => t.id === numericId || t.id === templateId) : null;
+
+            console.log('🔍 Template trouvé:', currentTemplate);
+            console.log('🔍 Mode édition:', isEditMode);
 
             title.textContent = isEditMode ? 'Modifier le Template' : 'Nouveau Template Email';
 
             if (isEditMode && currentTemplate) {
+                console.log('🔍 Appel de populateTemplateForm avec:', currentTemplate.name);
                 populateTemplateForm(currentTemplate);
             } else {
+                console.log('🔍 Reset du formulaire (nouveau template ou template non trouvé)');
                 resetTemplateForm();
             }
 
@@ -8660,19 +8670,45 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         }
 
         function populateTemplateForm(template) {
-            document.getElementById('templateName').value = template.name || '';
-            document.getElementById('templateCategory').value = template.category || '';
-            document.getElementById('templateSubject').value = template.subject || '';
+            console.log('🔍 populateTemplateForm appelée avec:', template);
+
+            // Vérifier si tous les éléments existent
+            const elements = {
+                name: document.getElementById('templateName'),
+                category: document.getElementById('templateCategory'),
+                subject: document.getElementById('templateSubject'),
+                content: document.getElementById('templateContent'),
+                variables: document.getElementById('templateVariables'),
+                status: document.getElementById('templateStatus'),
+                version: document.getElementById('templateVersion'),
+                isDefault: document.getElementById('isDefault'),
+                description: document.getElementById('templateDescription')
+            };
+
+            console.log('🔍 Éléments du formulaire:', elements);
+
+            if (elements.name) elements.name.value = template.name || '';
+            if (elements.category) elements.category.value = template.category || '';
+            if (elements.subject) elements.subject.value = template.subject || '';
 
             // Support both 'content' and 'htmlContent' properties (prioritize htmlContent like in static data)
             const content = template.htmlContent || template.content || '';
-            document.getElementById('templateContent').value = content;
+            console.log('🔍 Contenu template à insérer:', content.substring(0, 100) + '...');
 
-            document.getElementById('templateVariables').value = template.variables ? template.variables.join(',') : '';
-            document.getElementById('templateStatus').value = template.status || 'active';
-            document.getElementById('templateVersion').value = template.version || '1';
-            document.getElementById('isDefault').checked = template.isDefault || false;
-            document.getElementById('templateDescription').value = template.description || '';
+            if (elements.content) {
+                elements.content.value = content;
+                console.log('✅ Contenu inséré dans templateContent');
+            } else {
+                console.error('❌ Élément templateContent non trouvé!');
+            }
+
+            if (elements.variables) elements.variables.value = template.variables ? template.variables.join(',') : '';
+            if (elements.status) elements.status.value = template.status || 'active';
+            if (elements.version) elements.version.value = template.version || '1';
+            if (elements.isDefault) elements.isDefault.checked = template.isDefault || false;
+            if (elements.description) elements.description.value = template.description || '';
+
+            console.log('✅ populateTemplateForm terminée');
         }
 
         function resetTemplateForm() {
@@ -8810,6 +8846,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
 
         // Template actions
         function editTemplate(templateId) {
+            console.log('🔍 editTemplate appelée avec ID:', templateId, 'Type:', typeof templateId);
+            console.log('🔍 Templates disponibles:', emailTemplates.map(t => ({id: t.id, name: t.name})));
             openTemplateModal(templateId);
         }
 

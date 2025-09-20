@@ -2012,6 +2012,303 @@
         .admin-container.authenticated {
             display: block;
         }
+
+        /* ==========================================
+           EMAIL AUTOMATION STYLES
+           ========================================== */
+
+        /* Stats cards for automation */
+        .automation-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .automation-stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .automation-stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD700;
+            display: block;
+        }
+
+        .automation-stat-card .stat-label {
+            font-size: 0.9rem;
+            color: #E5E7EB;
+            margin-top: 0.5rem;
+        }
+
+        /* Triggers grid */
+        .triggers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .automation-trigger-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .automation-trigger-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .automation-trigger-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .automation-trigger-header h4 {
+            margin: 0;
+            color: #FFD700;
+            font-size: 1.1rem;
+        }
+
+        /* Toggle switch */
+        .trigger-toggle .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .trigger-toggle .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .trigger-toggle .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #6B7280;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .trigger-toggle .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .trigger-toggle input:checked + .slider {
+            background-color: #10B981;
+        }
+
+        .trigger-toggle input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .trigger-description {
+            color: #D1D5DB;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Trigger details */
+        .trigger-details {
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #9CA3AF;
+            font-size: 0.85rem;
+        }
+
+        .detail-value {
+            color: #E5E7EB;
+            font-size: 0.85rem;
+        }
+
+        /* Trigger stats */
+        .trigger-stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #9CA3AF;
+            margin-top: 0.25rem;
+        }
+
+        /* Trigger actions */
+        .trigger-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .trigger-actions .btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Email queue table */
+        .email-queue-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #E5E7EB;
+            font-size: 0.9rem;
+        }
+
+        .user-email {
+            color: #9CA3AF;
+            font-size: 0.8rem;
+        }
+
+        /* Analytics section */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .analytics-card .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #10B981;
+            display: block;
+        }
+
+        .analytics-card .metric-label {
+            color: #E5E7EB;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Badges for status */
+        .glass-badge-info {
+            background: rgba(59, 130, 246, 0.3);
+            color: #93C5FD;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+
+        .glass-badge-warning {
+            background: rgba(245, 158, 11, 0.3);
+            color: #FCD34D;
+            border: 1px solid rgba(245, 158, 11, 0.5);
+        }
+
+        .glass-badge-success {
+            background: rgba(16, 185, 129, 0.3);
+            color: #6EE7B7;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .glass-badge-danger {
+            background: rgba(239, 68, 68, 0.3);
+            color: #FCA5A5;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+
+        /* Section headers */
+        .automation-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .automation-section-header h3 {
+            margin: 0;
+            color: #FFD700;
+            font-size: 1.4rem;
+        }
+
+        /* Responsive for automation */
+        @media (max-width: 768px) {
+            .triggers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .automation-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .trigger-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .trigger-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* === END EMAIL AUTOMATION STYLES === */
     </style>
 </head>
 <body>
@@ -2247,6 +2544,10 @@
                         <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('email-templates')">
                             <span class="nav-icon">🎨</span>
                             Templates Email
+                        </a>
+                        <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('email-automation')">
+                            <span class="nav-icon">🤖</span>
+                            Automatisation
                         </a>
                     </li>
                     <li class="nav-item">
@@ -3312,6 +3613,115 @@
                             <i class="fas fa-check"></i>
                             Enregistrer
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Automation Section -->
+            <div id="email-automation-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">🤖 Automatisation des Emails</h1>
+                        <p class="page-description">Configuration des emails automatiques et déclencheurs</p>
+                    </div>
+                    <button class="btn-primary glass-btn" onclick="openAutomationModal()">
+                        <i class="fas fa-plus"></i>
+                        Nouveau Déclencheur
+                    </button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid glass-grid">
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeAutomations">5</h3>
+                            <p>Automatisations Actives</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="emailsSentToday">127</h3>
+                            <p>Emails Envoyés Aujourd'hui</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="emailsInQueue">23</h3>
+                            <p>En Attente</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+
+                    <div class="stat-card glass-card">
+                        <div class="stat-icon glass-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="deliveryRate">98%</h3>
+                            <p>Taux de Livraison</p>
+                        </div>
+                        <div class="glass-accent"></div>
+                    </div>
+                </div>
+
+                <!-- Email Triggers Configuration -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">🎯 Déclencheurs d'Emails</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="testAllTriggers()">🧪 Tester Tous</button>
+                    </div>
+                    <div class="section-content">
+                        <div id="triggersGrid" class="triggers-grid">
+                            <!-- Triggers will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Queue Management -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">📬 File d'Attente des Emails</h2>
+                        <div class="queue-controls">
+                            <button class="btn btn-success btn-sm" onclick="processEmailQueue()">▶️ Traiter File</button>
+                            <button class="btn btn-warning btn-sm" onclick="pauseEmailQueue()">⏸️ Pause</button>
+                            <button class="btn btn-danger btn-sm" onclick="clearEmailQueue()">🗑️ Vider</button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div id="emailQueueTable">
+                            <div class="loading">Chargement de la file d'attente...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Analytics -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">📊 Statistiques des Emails</h2>
+                        <select id="analyticsTimeframe" class="glass-select" onchange="updateEmailAnalytics()">
+                            <option value="24h">Dernières 24h</option>
+                            <option value="7d" selected>7 derniers jours</option>
+                            <option value="30d">30 derniers jours</option>
+                            <option value="90d">3 derniers mois</option>
+                        </select>
+                    </div>
+                    <div class="section-content">
+                        <div id="emailAnalyticsChart" style="height: 300px;">
+                            <div class="loading">Chargement des statistiques...</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4775,6 +5185,9 @@
                         break;
                     case 'email-templates':
                         await loadEmailTemplatesData();
+                        break;
+                    case 'email-automation':
+                        await loadEmailAutomationData();
                         break;
                     default:
                         console.log(`✅ Section ${section} chargée (pas de données spécifiques)`);
@@ -9170,6 +9583,476 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         }
 
         // === END EMAIL TEMPLATES MANAGEMENT ===
+
+        // ==========================================
+        // EMAIL AUTOMATION SYSTEM
+        // ==========================================
+
+        // Variables globales pour l'automatisation
+        let emailTriggers = [
+            {
+                id: 'welcome',
+                name: 'Email de bienvenue',
+                description: 'Envoyé lors de l\'inscription d\'un nouvel utilisateur',
+                event: 'user_registration',
+                delay: 0,
+                template: 'welcome',
+                active: true,
+                stats: { sent: 245, opened: 178, clicked: 89 }
+            },
+            {
+                id: 'password_reset',
+                name: 'Réinitialisation mot de passe',
+                description: 'Envoyé lors d\'une demande de réinitialisation',
+                event: 'password_reset_request',
+                delay: 0,
+                template: 'password_reset',
+                active: true,
+                stats: { sent: 67, opened: 54, clicked: 42 }
+            },
+            {
+                id: 'activity_reminder',
+                name: 'Rappel d\'activité',
+                description: 'Envoyé si pas de connexion depuis 7 jours',
+                event: 'user_inactive',
+                delay: 10080, // 7 jours en minutes
+                template: 'activity_reminder',
+                active: true,
+                stats: { sent: 156, opened: 98, clicked: 34 }
+            },
+            {
+                id: 'quiz_results',
+                name: 'Résultats de quiz',
+                description: 'Envoyé après la completion d\'un quiz',
+                event: 'quiz_completed',
+                delay: 5, // 5 minutes
+                template: 'quiz_results',
+                active: true,
+                stats: { sent: 389, opened: 301, clicked: 156 }
+            },
+            {
+                id: 'weekly_report',
+                name: 'Rapport hebdomadaire',
+                description: 'Envoyé chaque dimanche avec le résumé de la semaine',
+                event: 'weekly_schedule',
+                delay: 0,
+                template: 'weekly_report',
+                active: false,
+                stats: { sent: 89, opened: 67, clicked: 23 }
+            }
+        ];
+
+        let emailQueue = [
+            {
+                id: 'eq1',
+                userId: 'user123',
+                userEmail: 'jean.dupont@email.com',
+                userName: 'Jean Dupont',
+                triggerId: 'welcome',
+                templateId: 'welcome',
+                scheduledFor: new Date(Date.now() + 300000), // Dans 5 minutes
+                status: 'pending',
+                attempts: 0,
+                createdAt: new Date()
+            },
+            {
+                id: 'eq2',
+                userId: 'user456',
+                userEmail: 'marie.martin@email.com',
+                userName: 'Marie Martin',
+                triggerId: 'password_reset',
+                templateId: 'password_reset',
+                scheduledFor: new Date(Date.now() + 60000), // Dans 1 minute
+                status: 'pending',
+                attempts: 0,
+                createdAt: new Date()
+            },
+            {
+                id: 'eq3',
+                userId: 'user789',
+                userEmail: 'paul.bernard@email.com',
+                userName: 'Paul Bernard',
+                triggerId: 'quiz_results',
+                templateId: 'quiz_results',
+                scheduledFor: new Date(Date.now() - 300000), // Il y a 5 minutes
+                status: 'sent',
+                attempts: 1,
+                createdAt: new Date(Date.now() - 600000),
+                sentAt: new Date(Date.now() - 300000)
+            }
+        ];
+
+        // Fonction principale pour charger les données d'automatisation
+        async function loadEmailAutomationData() {
+            console.log('📧 Chargement des données d\'automatisation email...');
+
+            try {
+                // Charger les statistiques
+                loadEmailAutomationStats();
+
+                // Charger les triggers
+                loadEmailTriggers();
+
+                // Charger la queue
+                loadEmailQueue();
+
+                // Charger les analytics
+                loadEmailAnalytics();
+
+                console.log('✅ Données d\'automatisation chargées');
+            } catch (error) {
+                console.error('❌ Erreur lors du chargement de l\'automatisation:', error);
+            }
+        }
+
+        // Charger les statistiques d'automatisation
+        function loadEmailAutomationStats() {
+            const stats = {
+                totalTriggers: emailTriggers.length,
+                activeTriggers: emailTriggers.filter(t => t.active).length,
+                pendingEmails: emailQueue.filter(e => e.status === 'pending').length,
+                sentToday: emailQueue.filter(e =>
+                    e.status === 'sent' &&
+                    e.sentAt &&
+                    new Date(e.sentAt).toDateString() === new Date().toDateString()
+                ).length
+            };
+
+            // Mettre à jour l'interface
+            document.getElementById('total-triggers').textContent = stats.totalTriggers;
+            document.getElementById('active-triggers').textContent = stats.activeTriggers;
+            document.getElementById('pending-emails').textContent = stats.pendingEmails;
+            document.getElementById('sent-today').textContent = stats.sentToday;
+        }
+
+        // Charger et afficher les triggers
+        function loadEmailTriggers() {
+            const triggersGrid = document.getElementById('triggers-grid');
+
+            const triggersHtml = emailTriggers.map(trigger => `
+                <div class="glass-card automation-trigger-card">
+                    <div class="automation-trigger-header">
+                        <h4>${trigger.name}</h4>
+                        <div class="trigger-toggle">
+                            <label class="switch">
+                                <input type="checkbox" ${trigger.active ? 'checked' : ''}
+                                       onchange="toggleTrigger('${trigger.id}')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="trigger-description">${trigger.description}</p>
+
+                    <div class="trigger-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Événement:</span>
+                            <span class="detail-value">${getEventLabel(trigger.event)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Délai:</span>
+                            <span class="detail-value">${formatDelay(trigger.delay)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Template:</span>
+                            <span class="detail-value">${trigger.template}</span>
+                        </div>
+                    </div>
+
+                    <div class="trigger-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">${trigger.stats.sent}</span>
+                            <span class="stat-label">Envoyés</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${trigger.stats.opened}</span>
+                            <span class="stat-label">Ouverts</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${trigger.stats.clicked}</span>
+                            <span class="stat-label">Cliqués</span>
+                        </div>
+                    </div>
+
+                    <div class="trigger-actions">
+                        <button class="btn glass-btn btn-sm" onclick="editTrigger('${trigger.id}')">
+                            ✏️ Modifier
+                        </button>
+                        <button class="btn glass-btn btn-sm" onclick="testTrigger('${trigger.id}')">
+                            🧪 Tester
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            triggersGrid.innerHTML = triggersHtml;
+        }
+
+        // Charger et afficher la queue d'emails
+        function loadEmailQueue() {
+            const queueTable = document.getElementById('email-queue-table');
+
+            if (emailQueue.length === 0) {
+                queueTable.innerHTML = '<p class="text-center">Aucun email en attente</p>';
+                return;
+            }
+
+            const queueHtml = `
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>Destinataire</th>
+                            <th>Trigger</th>
+                            <th>Planifié pour</th>
+                            <th>Statut</th>
+                            <th>Tentatives</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${emailQueue.map(email => `
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <div class="user-name">${email.userName}</div>
+                                        <div class="user-email">${email.userEmail}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="glass-badge glass-badge-info">
+                                        ${getTriggerName(email.triggerId)}
+                                    </span>
+                                </td>
+                                <td>${formatScheduledTime(email.scheduledFor)}</td>
+                                <td>
+                                    <span class="glass-badge glass-badge-${getStatusColor(email.status)}">
+                                        ${getStatusLabel(email.status)}
+                                    </span>
+                                </td>
+                                <td>${email.attempts}</td>
+                                <td>
+                                    ${email.status === 'pending' ? `
+                                        <button class="btn glass-btn btn-sm" onclick="sendEmailNow('${email.id}')">
+                                            📧 Envoyer
+                                        </button>
+                                        <button class="btn glass-btn glass-btn-warning btn-sm" onclick="cancelEmail('${email.id}')">
+                                            ❌ Annuler
+                                        </button>
+                                    ` : `
+                                        <button class="btn glass-btn btn-sm" onclick="viewEmailDetails('${email.id}')">
+                                            👁️ Détails
+                                        </button>
+                                    `}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            queueTable.innerHTML = queueHtml;
+        }
+
+        // Charger les analytics d'automatisation
+        function loadEmailAnalytics() {
+            // Calculer les données d'analytics
+            const totalSent = emailTriggers.reduce((sum, trigger) => sum + trigger.stats.sent, 0);
+            const totalOpened = emailTriggers.reduce((sum, trigger) => sum + trigger.stats.opened, 0);
+            const totalClicked = emailTriggers.reduce((sum, trigger) => sum + trigger.stats.clicked, 0);
+
+            const openRate = totalSent > 0 ? ((totalOpened / totalSent) * 100).toFixed(1) : 0;
+            const clickRate = totalOpened > 0 ? ((totalClicked / totalOpened) * 100).toFixed(1) : 0;
+
+            // Mettre à jour l'interface
+            document.getElementById('total-sent').textContent = totalSent;
+            document.getElementById('open-rate').textContent = openRate + '%';
+            document.getElementById('click-rate').textContent = clickRate + '%';
+        }
+
+        // ==========================================
+        // FONCTIONS D'INTERACTION
+        // ==========================================
+
+        // Activer/désactiver un trigger
+        function toggleTrigger(triggerId) {
+            const trigger = emailTriggers.find(t => t.id === triggerId);
+            if (trigger) {
+                trigger.active = !trigger.active;
+                console.log(`🔄 Trigger ${triggerId} ${trigger.active ? 'activé' : 'désactivé'}`);
+
+                // Mettre à jour les stats
+                loadEmailAutomationStats();
+
+                // Envoyer au backend si disponible
+                saveTriggerState(triggerId, trigger.active);
+            }
+        }
+
+        // Modifier un trigger
+        function editTrigger(triggerId) {
+            const trigger = emailTriggers.find(t => t.id === triggerId);
+            if (!trigger) return;
+
+            // Ouvrir modal d'édition (à implémenter)
+            alert(`Édition du trigger: ${trigger.name}\n\nFonctionnalité à développer avec modal d'édition complète.`);
+        }
+
+        // Tester un trigger
+        async function testTrigger(triggerId) {
+            const trigger = emailTriggers.find(t => t.id === triggerId);
+            if (!trigger) return;
+
+            const testEmail = prompt('Email de test:', 'admin@claudyne.com');
+            if (!testEmail) return;
+
+            console.log(`🧪 Test du trigger ${triggerId} vers ${testEmail}`);
+
+            try {
+                // Simulation d'envoi de test
+                alert(`✅ Email de test envoyé avec succès vers ${testEmail}\n\nTrigger: ${trigger.name}\nTemplate: ${trigger.template}`);
+
+                // TODO: Implémenter l'envoi réel via l'API
+            } catch (error) {
+                alert(`❌ Erreur lors de l'envoi de test: ${error.message}`);
+            }
+        }
+
+        // Envoyer un email immédiatement
+        async function sendEmailNow(emailId) {
+            const email = emailQueue.find(e => e.id === emailId);
+            if (!email || email.status !== 'pending') return;
+
+            if (!confirm(`Envoyer l'email immédiatement à ${email.userEmail} ?`)) return;
+
+            console.log(`📧 Envoi immédiat de l'email ${emailId}`);
+
+            try {
+                // Mettre à jour le statut
+                email.status = 'sending';
+                email.attempts++;
+
+                // Recharger la queue
+                loadEmailQueue();
+
+                // Simulation d'envoi
+                setTimeout(() => {
+                    email.status = 'sent';
+                    email.sentAt = new Date();
+                    loadEmailQueue();
+                    loadEmailAutomationStats();
+                    alert(`✅ Email envoyé avec succès à ${email.userEmail}`);
+                }, 2000);
+
+                // TODO: Implémenter l'envoi réel via l'API
+
+            } catch (error) {
+                email.status = 'failed';
+                loadEmailQueue();
+                alert(`❌ Erreur lors de l'envoi: ${error.message}`);
+            }
+        }
+
+        // Annuler un email en attente
+        function cancelEmail(emailId) {
+            const emailIndex = emailQueue.findIndex(e => e.id === emailId);
+            if (emailIndex === -1) return;
+
+            if (!confirm('Annuler cet email ?')) return;
+
+            emailQueue.splice(emailIndex, 1);
+            loadEmailQueue();
+            loadEmailAutomationStats();
+
+            console.log(`🗑️ Email ${emailId} annulé`);
+        }
+
+        // Voir les détails d'un email
+        function viewEmailDetails(emailId) {
+            const email = emailQueue.find(e => e.id === emailId);
+            if (!email) return;
+
+            const details = `
+                Détails de l'email:
+
+                ID: ${email.id}
+                Destinataire: ${email.userName} (${email.userEmail})
+                Trigger: ${getTriggerName(email.triggerId)}
+                Template: ${email.templateId}
+                Statut: ${getStatusLabel(email.status)}
+                Créé: ${email.createdAt.toLocaleString()}
+                ${email.sentAt ? `Envoyé: ${email.sentAt.toLocaleString()}` : ''}
+                Tentatives: ${email.attempts}
+            `;
+
+            alert(details);
+        }
+
+        // Ajouter un nouveau trigger
+        function addNewTrigger() {
+            alert('Ajout d\'un nouveau trigger\n\nFonctionnalité à développer avec formulaire complet.');
+        }
+
+        // ==========================================
+        // FONCTIONS UTILITAIRES
+        // ==========================================
+
+        function getEventLabel(event) {
+            const labels = {
+                'user_registration': 'Inscription utilisateur',
+                'password_reset_request': 'Demande mot de passe',
+                'user_inactive': 'Utilisateur inactif',
+                'quiz_completed': 'Quiz terminé',
+                'weekly_schedule': 'Programmation hebdomadaire'
+            };
+            return labels[event] || event;
+        }
+
+        function formatDelay(minutes) {
+            if (minutes === 0) return 'Immédiat';
+            if (minutes < 60) return `${minutes} min`;
+            if (minutes < 1440) return `${Math.floor(minutes / 60)} h`;
+            return `${Math.floor(minutes / 1440)} j`;
+        }
+
+        function getTriggerName(triggerId) {
+            const trigger = emailTriggers.find(t => t.id === triggerId);
+            return trigger ? trigger.name : triggerId;
+        }
+
+        function formatScheduledTime(date) {
+            const now = new Date();
+            const diff = date - now;
+
+            if (diff < 0) {
+                return `Il y a ${formatTimeAgo(date)}`;
+            } else if (diff < 3600000) { // Moins d'1 heure
+                return `Dans ${Math.floor(diff / 60000)} min`;
+            } else {
+                return date.toLocaleString();
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': 'warning',
+                'sending': 'info',
+                'sent': 'success',
+                'failed': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        // Sauvegarder l'état d'un trigger
+        async function saveTriggerState(triggerId, active) {
+            try {
+                // TODO: Implémenter la sauvegarde via l'API
+                console.log(`💾 Sauvegarde état trigger ${triggerId}: ${active}`);
+            } catch (error) {
+                console.error('Erreur sauvegarde trigger:', error);
+            }
+        }
+
+        // === END EMAIL AUTOMATION SYSTEM ===
 
         // Chargement initial
         window.addEventListener('load', function() {

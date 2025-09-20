@@ -98,8 +98,8 @@ class NetworkOptimizer {
             this.applyOptimizations();
         };
         
-        // Image de test valide (GIF transparent 1x1) avec timestamp pour éviter le cache
-        testImage.src = `data:image/gif;base64,R0lGODlhAQABAIAAAAUAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==?t=${Date.now()}`;
+        // Image de test valide (GIF transparent 1x1)
+        testImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
     }
 
     applyOptimizations() {

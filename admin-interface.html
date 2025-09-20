@@ -753,6 +753,44 @@
             color: #1f2937 !important;
         }
 
+        /* Override ultra-spécifique pour l'aperçu des templates */
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] * {
+            color: #1f2937 !important;
+        }
+
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] .email-preview,
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] .email-subject,
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] .email-content,
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] .email-metadata {
+            background: white !important;
+            color: #1f2937 !important;
+        }
+
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] div[style*="background: #f8fafc"] {
+            background: #f8fafc !important;
+            color: #1f2937 !important;
+        }
+
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] div[style*="background: white"] {
+            background: white !important;
+            color: #1f2937 !important;
+        }
+
+        .modal.glass-modal.show .modal-content.glass-modal-content[style*="max-width: 800px"] div[style*="color: #6b7280"] {
+            color: #6b7280 !important;
+        }
+
+        /* Override pour tous les éléments dans l'aperçu */
+        .modal.glass-modal.show[style*="max-width: 800px"] div[style*="padding: 1.5rem"] {
+            background: white !important;
+            color: #1f2937 !important;
+        }
+
         /* Titres et labels dans les modales */
         #email-templates-section .glass-modal-content h2,
         #email-templates-section .glass-modal-content h3,

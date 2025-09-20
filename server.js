@@ -90,6 +90,14 @@ const server = http.createServer((req, res) => {
         securityHeaders['Cache-Control'] = 'public, max-age=31536000, immutable';
     }
 
+    // Headers anti-cache pour l'interface admin pour forcer rechargement
+    if (filePath.includes('admin-interface.html')) {
+        securityHeaders['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+        securityHeaders['Pragma'] = 'no-cache';
+        securityHeaders['Expires'] = '0';
+        securityHeaders['Last-Modified'] = new Date().toUTCString();
+    }
+
     fs.readFile(filePath, (error, content) => {
         if (error) {
             if (error.code === 'ENOENT') {

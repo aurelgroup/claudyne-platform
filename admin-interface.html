@@ -8666,8 +8666,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             document.getElementById('templateCategory').value = template.category || '';
             document.getElementById('templateSubject').value = template.subject || '';
 
-            // Support both 'content' and 'htmlContent' properties (same as previewTemplate)
-            const content = template.content || template.htmlContent || '';
+            // Support both 'content' and 'htmlContent' properties (prioritize htmlContent like in static data)
+            const content = template.htmlContent || template.content || '';
             document.getElementById('templateContent').value = content;
 
             document.getElementById('templateVariables').value = template.variables ? template.variables.join(',') : '';
@@ -8841,8 +8841,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 return;
             }
 
-            // Get content - support both 'content' and 'htmlContent' properties
-            const content = template.content || template.htmlContent || 'Contenu non disponible';
+            // Get content - support both 'content' and 'htmlContent' properties (prioritize htmlContent)
+            const content = template.htmlContent || template.content || 'Contenu non disponible';
             const subject = template.subject || 'Sujet non défini';
 
             // Create preview modal

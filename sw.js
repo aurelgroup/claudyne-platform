@@ -4,7 +4,7 @@
  * Spécialement adapté pour le marché camerounais
  */
 
-const CACHE_NAME = 'claudyne-v1.3.1';
+const CACHE_NAME = 'claudyne-v1.3.2';
 const OFFLINE_URL = '/offline.html';
 
 // Ressources critiques à mettre en cache

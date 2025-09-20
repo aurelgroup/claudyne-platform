@@ -8001,9 +8001,35 @@
             openTemplateModal(templateId);
         }
 
+        // Fonction de débogage pour vérifier les templates
+        function debugTemplates() {
+            console.log('=== DEBUG TEMPLATES ===');
+            console.log('Nombre de templates:', emailTemplates.length);
+            console.log('Templates:', emailTemplates);
+            if (emailTemplates.length > 0) {
+                console.log('Premier template:', emailTemplates[0]);
+            }
+            alert(`Templates chargés: ${emailTemplates.length}\nVoir console pour détails`);
+        }
+
+        // Ajouter le debug au window pour pouvoir l'appeler depuis la console
+        window.debugTemplates = debugTemplates;
+
         function previewTemplate(templateId) {
-            const template = emailTemplates.find(t => t.id === templateId);
-            if (!template) return;
+            // Convert templateId to number if it's a string
+            const numericId = typeof templateId === 'string' ? parseInt(templateId) : templateId;
+            const template = emailTemplates.find(t => t.id === numericId || t.id === templateId);
+
+            if (!template) {
+                console.log('Template recherché:', templateId, 'Type:', typeof templateId);
+                console.log('Templates disponibles:', emailTemplates.map(t => ({id: t.id, name: t.name})));
+                alert('Template non trouvé. Vérifiez la console pour plus de détails.');
+                return;
+            }
+
+            // Get content - support both 'content' and 'htmlContent' properties
+            const content = template.content || template.htmlContent || 'Contenu non disponible';
+            const subject = template.subject || 'Sujet non défini';
 
             // Create preview modal
             const modal = document.createElement('div');
@@ -8018,12 +8044,21 @@
                     </div>
                     <div style="padding: 2rem;">
                         <div class="email-preview">
-                            <div class="email-subject">
-                                <strong>Sujet:</strong> ${template.subject}
+                            <div class="email-subject" style="margin-bottom: 1rem; padding: 1rem; background: #f8fafc; border-radius: 6px;">
+                                <strong>Sujet:</strong> ${subject}
                             </div>
-                            <div class="email-content" style="margin-top: 1rem;">
-                                ${template.content}
+                            <div class="email-metadata" style="margin-bottom: 1rem; font-size: 0.9rem; color: #6b7280;">
+                                <strong>Catégorie:</strong> ${template.category || 'Non définie'} |
+                                <strong>Statut:</strong> ${template.isActive ? '✅ Actif' : '❌ Inactif'}
                             </div>
+                            <div class="email-content" style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 1.5rem; background: white; min-height: 200px;">
+                                ${content}
+                            </div>
+                            ${template.variables && template.variables.length > 0 ? `
+                                <div style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                                    <strong>Variables disponibles:</strong> ${template.variables.map(v => `{{${v}}}`).join(', ')}
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>

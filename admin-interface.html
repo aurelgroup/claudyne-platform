@@ -7645,9 +7645,67 @@
                         name: 'Bienvenue sur Claudyne',
                         description: 'Email de bienvenue pour les nouveaux utilisateurs',
                         category: 'authentication',
-                        subject: 'Bienvenue sur Claudyne 🎓 - La force du savoir en héritage',
-                        htmlContent: '<h1>Bienvenue {{firstName}} !</h1><p>Nous sommes ravis de vous accueillir sur Claudyne.</p>',
-                        textContent: 'Bienvenue {{firstName}} ! Nous sommes ravis de vous accueillir sur Claudyne.',
+                        subject: '🎓 Bienvenue dans la famille Claudyne, {{firstName}} ! La force du savoir vous attend',
+                        htmlContent: `
+                            <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center; border-radius: 10px 10px 0 0;">
+                                    <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600;">🎓 Bienvenue {{firstName}} !</h1>
+                                    <p style="color: #f1f5f9; margin: 10px 0 0 0; font-size: 16px;">La force du savoir en héritage</p>
+                                </div>
+
+                                <div style="background: white; padding: 40px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                    <h2 style="color: #1e293b; margin-bottom: 20px;">Félicitations ! Vous venez de rejoindre la révolution éducative camerounaise 🇨🇲</h2>
+
+                                    <p style="color: #475569; line-height: 1.6; margin-bottom: 25px;">
+                                        Cher(e) {{firstName}} de la famille <strong>{{familyName}}</strong>,
+                                    </p>
+
+                                    <p style="color: #475569; line-height: 1.6; margin-bottom: 25px;">
+                                        Nous sommes <strong>ravis et honorés</strong> de vous accueillir sur <strong>Claudyne</strong>, la plateforme éducative de référence qui transforme l'apprentissage au Cameroun et en Afrique francophone.
+                                    </p>
+
+                                    <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
+                                        <h3 style="color: #1e293b; margin: 0 0 15px 0; font-size: 18px;">🚀 Ce qui vous attend :</h3>
+                                        <ul style="color: #475569; margin: 0; padding-left: 20px;">
+                                            <li style="margin-bottom: 8px;"><strong>Apprentissage adapté</strong> au système éducatif camerounais</li>
+                                            <li style="margin-bottom: 8px;"><strong>Battle Royale éducatifs</strong> pour stimuler la compétition saine</li>
+                                            <li style="margin-bottom: 8px;"><strong>Mentor IA Claudyne</strong> disponible 24h/24</li>
+                                            <li style="margin-bottom: 8px;"><strong>Prix Claudine</strong> pour récompenser l'excellence</li>
+                                            <li><strong>Suivi personnalisé</strong> des progrès de votre famille</li>
+                                        </ul>
+                                    </div>
+
+                                    <div style="text-align: center; margin: 35px 0;">
+                                        <a href="https://claudyne.com" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 15px 35px; text-decoration: none; border-radius: 25px; font-weight: 600; display: inline-block; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">
+                                            🎯 Commencer l'aventure
+                                        </a>
+                                    </div>
+
+                                    <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                                        <strong>L'équipe Claudyne</strong><br>
+                                        💚 <em>"La force du savoir en héritage - Claudine"</em> 💚<br><br>
+                                        📧 support@claudyne.com | 🌐 <a href="https://claudyne.com" style="color: #3b82f6;">www.claudyne.com</a><br>
+                                        📱 Suivez-nous : <a href="#" style="color: #3b82f6;">Facebook</a> | <a href="#" style="color: #3b82f6;">Twitter</a> | <a href="#" style="color: #3b82f6;">LinkedIn</a>
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        textContent: `Bienvenue {{firstName}} dans la famille Claudyne !
+
+Nous sommes ravis de vous accueillir sur la plateforme éducative de référence au Cameroun.
+
+Ce qui vous attend :
+- Apprentissage adapté au système camerounais
+- Battle Royale éducatifs
+- Mentor IA Claudyne 24h/24
+- Prix Claudine pour l'excellence
+- Suivi personnalisé
+
+Commencez votre aventure : https://claudyne.com
+
+L'équipe Claudyne
+"La force du savoir en héritage - Claudine"
+support@claudyne.com | www.claudyne.com`,
                         variables: ['firstName', 'familyName'],
                         isActive: true,
                         isDefault: false,
@@ -7660,9 +7718,58 @@
                         name: 'Réinitialisation mot de passe',
                         description: 'Template pour la réinitialisation de mot de passe',
                         category: 'authentication',
-                        subject: 'Réinitialisation de votre mot de passe Claudyne',
-                        htmlContent: '<h1>Réinitialisation de mot de passe</h1><p>Cliquez sur le lien pour réinitialiser : {{resetLink}}</p>',
-                        textContent: 'Réinitialisation de mot de passe. Lien: {{resetLink}}',
+                        subject: '🔐 Réinitialisation de votre mot de passe Claudyne - Action requise',
+                        htmlContent: `
+                            <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                                    <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">🔐 Réinitialisation de mot de passe</h1>
+                                </div>
+
+                                <div style="background: white; padding: 40px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                    <p style="color: #1e293b; font-size: 16px; margin-bottom: 20px;">Bonjour {{firstName}},</p>
+
+                                    <p style="color: #475569; line-height: 1.6; margin-bottom: 25px;">
+                                        Vous avez demandé la réinitialisation de votre mot de passe Claudyne. Pour des raisons de sécurité, veuillez cliquer sur le bouton ci-dessous pour créer un nouveau mot de passe.
+                                    </p>
+
+                                    <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                                        <p style="color: #92400e; margin: 0; font-size: 14px;">
+                                            ⚠️ <strong>Important :</strong> Ce lien expire dans 15 minutes pour votre sécurité.
+                                        </p>
+                                    </div>
+
+                                    <div style="text-align: center; margin: 35px 0;">
+                                        <a href="{{resetLink}}" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 15px 35px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                                            🔑 Réinitialiser mon mot de passe
+                                        </a>
+                                    </div>
+
+                                    <p style="color: #64748b; font-size: 14px; margin-top: 25px;">
+                                        Si vous n'avez pas demandé cette réinitialisation, vous pouvez ignorer cet email. Votre mot de passe restera inchangé.
+                                    </p>
+
+                                    <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                                        <strong>L'équipe Sécurité Claudyne</strong><br>
+                                        💚 <em>"La force du savoir en héritage - Claudine"</em> 💚<br><br>
+                                        📧 security@claudyne.com | 🌐 <a href="https://claudyne.com" style="color: #3b82f6;">www.claudyne.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        textContent: `Bonjour {{firstName}},
+
+Vous avez demandé la réinitialisation de votre mot de passe Claudyne.
+
+Cliquez sur ce lien pour créer un nouveau mot de passe :
+{{resetLink}}
+
+⚠️ IMPORTANT : Ce lien expire dans 15 minutes.
+
+Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.
+
+L'équipe Sécurité Claudyne
+"La force du savoir en héritage - Claudine"
+security@claudyne.com | www.claudyne.com`,
                         variables: ['firstName', 'resetLink'],
                         isActive: true,
                         isDefault: false,
@@ -7675,10 +7782,61 @@
                         name: 'Invitation Battle Royale',
                         description: 'Invitation à participer aux battles éducatifs',
                         category: 'notification',
-                        subject: '🏆 Battle Royale Claudyne - {{battleTitle}}',
-                        htmlContent: '<h1>Battle Royale 🏆</h1><p>Participez au battle {{battleTitle}} le {{date}}</p>',
-                        textContent: 'Battle Royale - Participez au battle {{battleTitle}} le {{date}}',
-                        variables: ['studentName', 'battleTitle', 'date'],
+                        subject: '🏆 {{studentName}}, prêt(e) pour le Battle Royale "{{battleTitle}}" ? La gloire vous attend !',
+                        htmlContent: `
+                            <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 40px; text-align: center; border-radius: 10px 10px 0 0;">
+                                    <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">🏆 BATTLE ROYALE 🏆</h1>
+                                    <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 18px; font-weight: 600;">{{battleTitle}}</p>
+                                </div>
+
+                                <div style="background: white; padding: 40px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                    <h2 style="color: #1e293b; margin-bottom: 20px; text-align: center;">⚡ {{studentName}}, ton moment de gloire arrive ! ⚡</h2>
+
+                                    <p style="color: #475569; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+                                        Le <strong>{{date}}</strong>, les meilleurs esprits du Cameroun s'affronteront dans un combat épique de connaissances. Auras-tu le courage de relever le défi ?
+                                    </p>
+
+                                    <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #92400e; padding: 25px; border-radius: 10px; margin: 25px 0; text-align: center;">
+                                        <h3 style="margin: 0 0 10px 0; font-size: 20px; color: #92400e;">🎯 ENJEUX DU BATTLE</h3>
+                                        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 15px;">
+                                            <div style="margin: 5px;">🏅 <strong>Points Claudine</strong></div>
+                                            <div style="margin: 5px;">🎖️ <strong>Badges d'honneur</strong></div>
+                                            <div style="margin: 5px;">🏆 <strong>Trophées</strong></div>
+                                        </div>
+                                    </div>
+
+                                    <div style="text-align: center; margin: 35px 0;">
+                                        <a href="{{battleLink}}" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 25px; font-weight: 700; display: inline-block; font-size: 16px; box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);">
+                                            ⚔️ ACCEPTER LE DÉFI ⚔️
+                                        </a>
+                                    </div>
+
+                                    <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                                        <strong>L'équipe Battle Royale Claudyne</strong><br>
+                                        💚 <em>"La force du savoir en héritage - Claudine"</em> 💚<br><br>
+                                        📧 battles@claudyne.com | 🌐 <a href="https://claudyne.com" style="color: #3b82f6;">www.claudyne.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        textContent: `🏆 BATTLE ROYALE - {{battleTitle}} 🏆
+
+{{studentName}}, ton moment de gloire arrive !
+
+Le {{date}}, les meilleurs esprits du Cameroun s'affronteront dans un combat épique de connaissances.
+
+ENJEUX :
+🏅 Points Claudine
+🎖️ Badges d'honneur
+🏆 Trophées
+
+Accepter le défi : {{battleLink}}
+
+L'équipe Battle Royale Claudyne
+"La force du savoir en héritage - Claudine"
+battles@claudyne.com | www.claudyne.com`,
+                        variables: ['studentName', 'battleTitle', 'date', 'battleLink'],
                         isActive: true,
                         isDefault: false,
                         createdAt: new Date().toISOString(),
@@ -7690,11 +7848,132 @@
                         name: 'Notification générale',
                         description: 'Template pour les notifications générales',
                         category: 'notification',
-                        subject: '📢 {{notificationTitle}}',
-                        htmlContent: '<h1>{{notificationTitle}}</h1><p>{{content}}</p>',
-                        textContent: '{{notificationTitle}} - {{content}}',
+                        subject: '📢 Important : {{notificationTitle}} - Claudyne',
+                        htmlContent: `
+                            <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <div style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                                    <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 600;">📢 {{notificationTitle}}</h1>
+                                </div>
+
+                                <div style="background: white; padding: 40px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                    <div style="color: #475569; line-height: 1.6; font-size: 16px;">
+                                        {{content}}
+                                    </div>
+
+                                    <div style="text-align: center; margin: 35px 0;">
+                                        <a href="https://claudyne.com" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 20px; font-weight: 600; display: inline-block;">
+                                            🌐 Accéder à Claudyne
+                                        </a>
+                                    </div>
+
+                                    <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                                        <strong>L'équipe Claudyne</strong><br>
+                                        💚 <em>"La force du savoir en héritage - Claudine"</em> 💚<br><br>
+                                        📧 notifications@claudyne.com | 🌐 <a href="https://claudyne.com" style="color: #3b82f6;">www.claudyne.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        textContent: `📢 {{notificationTitle}}
+
+{{content}}
+
+Accéder à Claudyne : https://claudyne.com
+
+L'équipe Claudyne
+"La force du savoir en héritage - Claudine"
+notifications@claudyne.com | www.claudyne.com`,
                         variables: ['notificationTitle', 'content'],
-                        isActive: false,
+                        isActive: true,
+                        isDefault: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    },
+                    {
+                        id: 5,
+                        templateKey: 'PRIX_CLAUDINE_NOMINATION',
+                        name: 'Nomination Prix Claudine',
+                        description: 'Email de nomination pour le Prix Claudine',
+                        category: 'prix_claudine',
+                        subject: '🏆 FÉLICITATIONS ! {{studentName}} nominé(e) pour le Prix Claudine {{season}}',
+                        htmlContent: `
+                            <div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                                <div style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); padding: 40px; text-align: center; border-radius: 10px 10px 0 0; position: relative;">
+                                    <div style="position: absolute; top: 10px; left: 10px; font-size: 24px;">🇨🇲</div>
+                                    <div style="position: absolute; top: 10px; right: 10px; font-size: 24px;">🇨🇲</div>
+                                    <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🏆 PRIX CLAUDINE 🏆</h1>
+                                    <p style="color: #fef2f2; margin: 10px 0 0 0; font-size: 20px; font-weight: 600;">{{season}}</p>
+                                    <div style="color: #fed7d7; margin-top: 15px; font-size: 14px; font-style: italic;">
+                                        "Excellence • Persévérance • Solidarité • Valeurs Familiales"
+                                    </div>
+                                </div>
+
+                                <div style="background: white; padding: 40px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                    <div style="text-align: center; margin-bottom: 30px;">
+                                        <h2 style="color: #dc2626; margin: 0; font-size: 28px; font-weight: 700;">🎉 FÉLICITATIONS ! 🎉</h2>
+                                        <p style="color: #1e293b; font-size: 18px; margin: 10px 0; font-weight: 600;">{{studentName}} de la famille {{familyName}}</p>
+                                    </div>
+
+                                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; padding: 25px; border-radius: 15px; margin: 25px 0; text-align: center;">
+                                        <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 22px;">✨ NOMINATION OFFICIELLE ✨</h3>
+                                        <p style="color: #92400e; margin: 0; font-size: 16px; font-weight: 600;">
+                                            Vous êtes officiellement nominé(e) pour le <strong>Prix Claudine {{season}}</strong><br>
+                                            Catégorie : <strong>{{category}}</strong>
+                                        </p>
+                                    </div>
+
+                                    <p style="color: #475569; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+                                        Cette nomination reconnaît votre <strong>excellence académique exceptionnelle</strong>, votre <strong>persévérance remarquable</strong>, votre <strong>esprit de solidarité</strong> et l'exemplarité de vos <strong>valeurs familiales</strong>.
+                                    </p>
+
+                                    <div style="background: #ecfdf5; border: 1px solid #10b981; padding: 20px; border-radius: 10px; margin: 25px 0;">
+                                        <h3 style="color: #047857; margin: 0 0 10px 0;">🎁 Récompenses à gagner :</h3>
+                                        <ul style="color: #047857; margin: 0; padding-left: 20px;">
+                                            <li style="margin-bottom: 5px;">🏆 Trophée Prix Claudine</li>
+                                            <li style="margin-bottom: 5px;">💰 Bourse d'études</li>
+                                            <li style="margin-bottom: 5px;">🎓 Certificat d'excellence</li>
+                                            <li style="margin-bottom: 5px;">📱 Équipements technologiques</li>
+                                            <li>🌟 Reconnaissance nationale</li>
+                                        </ul>
+                                    </div>
+
+                                    <div style="text-align: center; margin: 35px 0;">
+                                        <a href="{{candidatureLink}}" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 18px 40px; text-decoration: none; border-radius: 25px; font-weight: 700; display: inline-block; font-size: 16px; box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);">
+                                            📋 Compléter ma candidature
+                                        </a>
+                                    </div>
+
+                                    <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                                        <strong>Comité Prix Claudine</strong><br>
+                                        💚 <em>"La force du savoir en héritage - Claudine"</em> 💚<br><br>
+                                        📧 prix.claudine@claudyne.com | 🌐 <a href="https://claudyne.com/prix-claudine" style="color: #3b82f6;">Prix Claudine</a>
+                                    </p>
+                                </div>
+                            </div>
+                        `,
+                        textContent: `🏆 PRIX CLAUDINE {{season}} 🏆
+
+FÉLICITATIONS ! {{studentName}} de la famille {{familyName}}
+
+Vous êtes officiellement nominé(e) pour le Prix Claudine {{season}}
+Catégorie : {{category}}
+
+Cette nomination reconnaît votre excellence académique exceptionnelle, votre persévérance remarquable, votre esprit de solidarité et l'exemplarité de vos valeurs familiales.
+
+RÉCOMPENSES À GAGNER :
+🏆 Trophée Prix Claudine
+💰 Bourse d'études
+🎓 Certificat d'excellence
+📱 Équipements technologiques
+🌟 Reconnaissance nationale
+
+Compléter votre candidature : {{candidatureLink}}
+
+Comité Prix Claudine
+"La force du savoir en héritage - Claudine"
+prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
+                        variables: ['studentName', 'familyName', 'season', 'category', 'candidatureLink'],
+                        isActive: true,
                         isDefault: false,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString()

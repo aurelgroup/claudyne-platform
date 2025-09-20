@@ -243,49 +243,65 @@
             color: white !important;
         }
 
-        /* Glass Modal - Force blanc sur fond sombre */
+        /* Glass Modal - Force ULTRA blanc sur fond sombre */
+        .modal,
+        .glass-modal,
+        #templateModal,
         #email-templates-section .glass-modal {
-            background: rgba(0, 0, 0, 0.8) !important;
+            background: rgba(0, 0, 0, 0.9) !important;
             backdrop-filter: blur(20px) !important;
             -webkit-backdrop-filter: blur(20px) !important;
         }
 
+        .modal-content,
+        .glass-modal-content,
+        #templateModal .modal-content,
         #email-templates-section .glass-modal-content {
-            background: white !important;
+            background: #ffffff !important;
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
-            border: 2px solid #e5e7eb !important;
+            border: 3px solid #000000 !important;
             border-radius: 24px !important;
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3) !important;
-            color: #1f2937 !important;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5) !important;
+            color: #000000 !important;
+            padding: 30px !important;
         }
 
-        /* Force TOUS les éléments de la modal en noir sur blanc */
+        /* Force TOUS les éléments de TOUTES les modals en noir sur blanc */
+        .modal-content *,
+        .glass-modal-content *,
+        #templateModal *,
+        #email-templates-section .modal-content *,
         #email-templates-section .glass-modal-content *,
-        #email-templates-section .glass-modal-content h1,
-        #email-templates-section .glass-modal-content h2,
-        #email-templates-section .glass-modal-content h3,
-        #email-templates-section .glass-modal-content h4,
-        #email-templates-section .glass-modal-content label,
-        #email-templates-section .glass-modal-content span,
-        #email-templates-section .glass-modal-content p,
-        #email-templates-section .glass-modal-content div {
-            color: #1f2937 !important;
+        .modal-content h1, .modal-content h2, .modal-content h3, .modal-content h4,
+        .modal-content label, .modal-content span, .modal-content p, .modal-content div,
+        #templateModal h1, #templateModal h2, #templateModal h3, #templateModal h4,
+        #templateModal label, #templateModal span, #templateModal p, #templateModal div {
+            color: #000000 !important;
             background: transparent !important;
+            text-shadow: none !important;
         }
 
-        /* Champs de saisie avec fond blanc pur */
-        #email-templates-section .glass-modal-content .glass-input,
-        #email-templates-section .glass-modal-content .glass-select,
-        #email-templates-section .glass-modal-content .glass-textarea,
-        #email-templates-section .glass-modal-content input,
-        #email-templates-section .glass-modal-content select,
-        #email-templates-section .glass-modal-content textarea {
-            background: white !important;
-            border: 2px solid #d1d5db !important;
-            color: #1f2937 !important;
-            padding: 12px !important;
+        /* Champs de saisie ULTRA blanc pour TOUTES les modals */
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea,
+        #templateModal input,
+        #templateModal select,
+        #templateModal textarea,
+        .glass-modal-content input,
+        .glass-modal-content select,
+        .glass-modal-content textarea,
+        #email-templates-section input,
+        #email-templates-section select,
+        #email-templates-section textarea {
+            background: #ffffff !important;
+            border: 3px solid #000000 !important;
+            color: #000000 !important;
+            padding: 15px !important;
             border-radius: 8px !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
         }
 
         #email-templates-section .glass-modal-content .glass-input::placeholder,

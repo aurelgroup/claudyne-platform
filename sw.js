@@ -4,7 +4,7 @@
  * Spécialement adapté pour le marché camerounais
  */
 
-const CACHE_NAME = 'claudyne-v1.2.4';
+const CACHE_NAME = 'claudyne-v1.2.7';
 const OFFLINE_URL = '/offline.html';
 
 // Ressources critiques à mettre en cache
@@ -111,18 +111,30 @@ async function handlePageRequest(request) {
     try {
         const url = new URL(request.url);
 
-        // Si c'est le chemin admin sécurisé, servir admin-interface.html
+        // Si c'est le chemin admin sécurisé, servir admin-interface.html TOUJOURS FRAIS
         if (url.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
-            console.log('🔐 Requête admin sécurisée détectée');
+            console.log('🔐 Requête admin sécurisée - NETWORK FIRST');
             const adminRequest = new Request('/admin-interface.html', {
                 method: request.method,
-                headers: request.headers
+                headers: request.headers,
+                cache: 'no-cache' // Force la récupération réseau
             });
 
-            // Essayer depuis le cache d'abord
+            // NETWORK FIRST pour l'admin - toujours la version fraîche
+            try {
+                const networkResponse = await fetch(adminRequest);
+                if (networkResponse.ok) {
+                    console.log('📡 Admin interface servie depuis le réseau (fraîche)');
+                    return networkResponse;
+                }
+            } catch (error) {
+                console.log('⚠️ Réseau indisponible, fallback vers cache');
+            }
+
+            // Fallback vers le cache seulement si le réseau échoue
             const cachedResponse = await caches.match(adminRequest);
             if (cachedResponse) {
-                console.log('📖 Admin interface servie depuis le cache');
+                console.log('📖 Admin interface servie depuis le cache (fallback)');
                 return cachedResponse;
             }
 

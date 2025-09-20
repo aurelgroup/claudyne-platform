@@ -47,7 +47,7 @@ const server = http.createServer((req, res) => {
     if (parsedUrl.pathname === '/') {
         filePath = './index.html'; // Interface principale
     } else if (parsedUrl.pathname === '/admin' || parsedUrl.pathname === '/admin-secure-k7m9x4n2p8w5z1c6') {
-        filePath = './admin-interface.html'; // Interface admin sécurisée
+        filePath = './admin-interface-fresh.html'; // Interface admin sécurisée - NOUVEAU FICHIER ANTI-CACHE
     } else if (parsedUrl.pathname === '/moderator') {
         filePath = './moderator-interface.html'; // Interface modérateur
     } else if (parsedUrl.pathname === '/teacher') {

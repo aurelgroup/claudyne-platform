@@ -8662,14 +8662,18 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         }
 
         function populateTemplateForm(template) {
-            document.getElementById('templateName').value = template.name;
-            document.getElementById('templateCategory').value = template.category;
-            document.getElementById('templateSubject').value = template.subject;
-            document.getElementById('templateContent').value = template.content;
+            document.getElementById('templateName').value = template.name || '';
+            document.getElementById('templateCategory').value = template.category || '';
+            document.getElementById('templateSubject').value = template.subject || '';
+
+            // Support both 'content' and 'htmlContent' properties (same as previewTemplate)
+            const content = template.content || template.htmlContent || '';
+            document.getElementById('templateContent').value = content;
+
             document.getElementById('templateVariables').value = template.variables ? template.variables.join(',') : '';
-            document.getElementById('templateStatus').value = template.status;
-            document.getElementById('templateVersion').value = template.version;
-            document.getElementById('isDefault').checked = template.isDefault;
+            document.getElementById('templateStatus').value = template.status || 'active';
+            document.getElementById('templateVersion').value = template.version || '1';
+            document.getElementById('isDefault').checked = template.isDefault || false;
             document.getElementById('templateDescription').value = template.description || '';
         }
 

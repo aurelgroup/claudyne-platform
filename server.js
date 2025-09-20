@@ -52,10 +52,10 @@ const server = http.createServer((req, res) => {
         filePath = './moderator-interface.html'; // Interface modérateur
     } else if (parsedUrl.pathname === '/teacher') {
         filePath = './teacher-interface.html'; // Interface enseignant
-    } else if (parsedUrl.pathname === '/student') {
+    } else if (parsedUrl.pathname === '/student' || parsedUrl.pathname === '/student-interface' || parsedUrl.pathname === '/student-interface/') {
         filePath = './student-interface-modern.html'; // Interface étudiant
-    } else if (parsedUrl.pathname === '/parent') {
-        filePath = './parent-interface.html'; // Interface parent
+    } else if (parsedUrl.pathname === '/parent' || parsedUrl.pathname === '/parent-interface' || parsedUrl.pathname === '/parent-interface/') {
+        filePath = './parent-interface/index.html'; // Interface parent
     } else if (parsedUrl.pathname === '/offline') {
         filePath = './offline.html'; // Page offline
     }

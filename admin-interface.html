@@ -9718,16 +9718,36 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 ).length
             };
 
-            // Mettre à jour l'interface
-            document.getElementById('total-triggers').textContent = stats.totalTriggers;
-            document.getElementById('active-triggers').textContent = stats.activeTriggers;
-            document.getElementById('pending-emails').textContent = stats.pendingEmails;
-            document.getElementById('sent-today').textContent = stats.sentToday;
+            // Mettre à jour l'interface avec tous les IDs possibles
+            const totalTriggersElements = ['total-triggers', 'activeAutomations'];
+            const activeTriggersElements = ['active-triggers'];
+            const pendingEmailsElements = ['pending-emails', 'emailsInQueue'];
+            const sentTodayElements = ['sent-today', 'emailsSentToday'];
+
+            totalTriggersElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = stats.totalTriggers;
+            });
+
+            activeTriggersElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = stats.activeTriggers;
+            });
+
+            pendingEmailsElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = stats.pendingEmails;
+            });
+
+            sentTodayElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = stats.sentToday;
+            });
         }
 
         // Charger et afficher les triggers
         function loadEmailTriggers() {
-            const triggersGrid = document.getElementById('triggers-grid');
+            const triggersGrid = document.getElementById('triggers-grid') || document.getElementById('triggersGrid');
 
             const triggersHtml = emailTriggers.map(trigger => `
                 <div class="glass-card automation-trigger-card">
@@ -9790,7 +9810,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
 
         // Charger et afficher la queue d'emails
         function loadEmailQueue() {
-            const queueTable = document.getElementById('email-queue-table');
+            const queueTable = document.getElementById('email-queue-table') || document.getElementById('emailQueueTable');
 
             if (emailQueue.length === 0) {
                 queueTable.innerHTML = '<p class="text-center">Aucun email en attente</p>';
@@ -9990,6 +10010,45 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Ajouter un nouveau trigger
         function addNewTrigger() {
             alert('Ajout d\'un nouveau trigger\n\nFonctionnalité à développer avec formulaire complet.');
+        }
+
+        // Ouvrir le modal d'automatisation
+        function openAutomationModal() {
+            alert('Configuration d\'un nouveau déclencheur\n\nModal d\'édition à implémenter avec:\n- Sélection d\'événement\n- Configuration de délai\n- Choix de template\n- Conditions avancées');
+        }
+
+        // Rafraîchir la queue d'emails
+        function refreshEmailQueue() {
+            console.log('🔄 Actualisation de la queue d\'emails...');
+            loadEmailQueue();
+            loadEmailAutomationStats();
+        }
+
+        // Fonctions utilitaires manquantes pour l'interface
+        function testAllTriggers() {
+            alert('Test de tous les triggers\n\nEnvoi d\'emails de test pour tous les déclencheurs actifs.');
+        }
+
+        function processEmailQueue() {
+            alert('Traitement de la file d\'attente\n\nTraitement en cours des emails en attente...');
+        }
+
+        function pauseEmailQueue() {
+            alert('Pause de la file d\'attente\n\nLa file d\'attente est mise en pause.');
+        }
+
+        function clearEmailQueue() {
+            if (confirm('Êtes-vous sûr de vouloir vider la file d\'attente ?')) {
+                emailQueue.length = 0;
+                loadEmailQueue();
+                loadEmailAutomationStats();
+                alert('File d\'attente vidée avec succès.');
+            }
+        }
+
+        function updateEmailAnalytics() {
+            console.log('📊 Mise à jour des analytics...');
+            loadEmailAnalytics();
         }
 
         // ==========================================

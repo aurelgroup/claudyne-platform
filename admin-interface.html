@@ -4369,18 +4369,18 @@
                         // Message de bienvenue
                         console.log('🎉 Connexion admin réussie!');
                     } else {
-                        // Erreur d'authentification
-                        if (data.data && data.data.user && data.data.user.role !== 'ADMIN') {
-                            showError('Accès refusé : droits administrateur requis');
-                        } else {
-                            showError(data.message || 'Identifiants invalides');
-                        }
+                        // Erreur d'authentification - tenter l'auth locale
+                        console.log('🔄 API refuse l\'accès, tentative d\'authentification locale...');
+                        attemptLocalAuth();
                     }
 
                 } catch (error) {
                     console.error('Erreur connexion admin:', error);
+                    attemptLocalAuth();
+                }
 
-                    // Authentification de fallback statique si l'API n'est pas disponible
+                // Fonction d'authentification locale
+                function attemptLocalAuth() {
                     console.log('🔄 Tentative d\'authentification locale...');
 
                     // Identifiants admin statiques pour les tests

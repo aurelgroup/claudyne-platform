@@ -1068,6 +1068,38 @@
             background: rgba(0, 0, 0, 0.1);
         }
 
+        .toolbar-section {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            padding-right: 1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toolbar-section:last-child {
+            border-right: none;
+        }
+
+        .mode-btn.active {
+            background: #3b82f6 !important;
+            color: white !important;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+
+        .visual-editor {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        .visual-editor h1, .visual-editor h2, .visual-editor h3 {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .visual-editor p {
+            margin-bottom: 1rem;
+        }
+
         .close-btn {
             background: none;
             border: none;
@@ -3165,22 +3197,48 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="templateContent">Contenu HTML</label>
+                                <label for="templateContent">Contenu Email</label>
                                 <div class="editor-toolbar">
-                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{userName}}')">
-                                        <i class="fas fa-user"></i> Nom Utilisateur
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{email}}')">
-                                        <i class="fas fa-envelope"></i> Email
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{resetLink}}')">
-                                        <i class="fas fa-link"></i> Lien Reset
-                                    </button>
-                                    <button type="button" class="toolbar-btn" onclick="insertVariable('{{verificationCode}}')">
-                                        <i class="fas fa-key"></i> Code Vérification
-                                    </button>
+                                    <div class="toolbar-section">
+                                        <label style="margin-right: 10px; font-weight: 600;">Mode:</label>
+                                        <button type="button" class="toolbar-btn mode-btn active" onclick="switchEditorMode('html')" id="htmlModeBtn">
+                                            <i class="fas fa-code"></i> HTML
+                                        </button>
+                                        <button type="button" class="toolbar-btn mode-btn" onclick="switchEditorMode('visual')" id="visualModeBtn">
+                                            <i class="fas fa-eye"></i> Visuel
+                                        </button>
+                                    </div>
+                                    <div class="toolbar-section">
+                                        <button type="button" class="toolbar-btn" onclick="insertVariable('{{userName}}')">
+                                            <i class="fas fa-user"></i> Nom Utilisateur
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="insertVariable('{{email}}')">
+                                            <i class="fas fa-envelope"></i> Email
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="insertVariable('{{resetLink}}')">
+                                            <i class="fas fa-link"></i> Lien Reset
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="insertVariable('{{verificationCode}}')">
+                                            <i class="fas fa-key"></i> Code Vérification
+                                        </button>
+                                    </div>
+                                    <div class="toolbar-section" id="visualToolbar" style="display: none;">
+                                        <button type="button" class="toolbar-btn" onclick="formatText('bold')">
+                                            <i class="fas fa-bold"></i> Gras
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="formatText('italic')">
+                                            <i class="fas fa-italic"></i> Italique
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="formatText('insertHTML', '<strong>')">
+                                            <i class="fas fa-plus"></i> Titre
+                                        </button>
+                                        <button type="button" class="toolbar-btn" onclick="insertLink()">
+                                            <i class="fas fa-link"></i> Lien
+                                        </button>
+                                    </div>
                                 </div>
-                                <textarea id="templateContent" class="glass-textarea" rows="15" required></textarea>
+                                <textarea id="templateContent" class="glass-textarea" rows="15" required style="display: block;"></textarea>
+                                <div id="visualEditor" class="glass-textarea visual-editor" contenteditable="true" style="display: none; min-height: 400px; padding: 1rem; border: 1px solid #D1D5DB; border-radius: 6px; background: white; color: #1f2937; overflow-y: auto;"></div>
                             </div>
 
                             <div class="form-group">
@@ -8698,6 +8756,17 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             if (elements.content) {
                 elements.content.value = content;
                 console.log('✅ Contenu inséré dans templateContent');
+
+                // Synchroniser vers l'éditeur visuel si il existe
+                const visualEditor = document.getElementById('visualEditor');
+                if (visualEditor) {
+                    visualEditor.innerHTML = content;
+                }
+
+                // Initialiser la synchronisation des éditeurs
+                setTimeout(() => {
+                    setupEditorSync();
+                }, 100);
             } else {
                 console.error('❌ Élément templateContent non trouvé!');
             }
@@ -8716,6 +8785,96 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             document.getElementById('templateVersion').value = '1';
             document.getElementById('templateStatus').value = 'active';
             document.getElementById('isDefault').checked = false;
+        }
+
+        // Éditeur visuel pour templates
+        let currentEditorMode = 'html';
+
+        function switchEditorMode(mode) {
+            currentEditorMode = mode;
+            const htmlEditor = document.getElementById('templateContent');
+            const visualEditor = document.getElementById('visualEditor');
+            const htmlBtn = document.getElementById('htmlModeBtn');
+            const visualBtn = document.getElementById('visualModeBtn');
+            const visualToolbar = document.getElementById('visualToolbar');
+
+            if (mode === 'html') {
+                // Mode HTML
+                htmlEditor.style.display = 'block';
+                visualEditor.style.display = 'none';
+                visualToolbar.style.display = 'none';
+                htmlBtn.classList.add('active');
+                visualBtn.classList.remove('active');
+
+                // Synchroniser le contenu du visuel vers HTML
+                if (visualEditor.innerHTML.trim()) {
+                    htmlEditor.value = visualEditor.innerHTML;
+                }
+            } else {
+                // Mode Visuel
+                htmlEditor.style.display = 'none';
+                visualEditor.style.display = 'block';
+                visualToolbar.style.display = 'flex';
+                htmlBtn.classList.remove('active');
+                visualBtn.classList.add('active');
+
+                // Synchroniser le contenu HTML vers visuel
+                if (htmlEditor.value.trim()) {
+                    visualEditor.innerHTML = htmlEditor.value;
+                }
+
+                // Focus sur l'éditeur visuel
+                visualEditor.focus();
+            }
+        }
+
+        function formatText(command, value = null) {
+            if (currentEditorMode === 'visual') {
+                document.execCommand(command, false, value);
+                syncVisualToHtml();
+            }
+        }
+
+        function insertLink() {
+            if (currentEditorMode === 'visual') {
+                const url = prompt('URL du lien:');
+                if (url) {
+                    document.execCommand('createLink', false, url);
+                    syncVisualToHtml();
+                }
+            }
+        }
+
+        function syncVisualToHtml() {
+            const visualEditor = document.getElementById('visualEditor');
+            const htmlEditor = document.getElementById('templateContent');
+            htmlEditor.value = visualEditor.innerHTML;
+        }
+
+        function syncHtmlToVisual() {
+            const visualEditor = document.getElementById('visualEditor');
+            const htmlEditor = document.getElementById('templateContent');
+            visualEditor.innerHTML = htmlEditor.value;
+        }
+
+        // Synchronisation automatique
+        function setupEditorSync() {
+            const visualEditor = document.getElementById('visualEditor');
+            const htmlEditor = document.getElementById('templateContent');
+
+            // Sync du visuel vers HTML
+            visualEditor.addEventListener('input', () => {
+                if (currentEditorMode === 'visual') {
+                    syncVisualToHtml();
+                }
+            });
+
+            // Sync du HTML vers visuel
+            htmlEditor.addEventListener('input', () => {
+                if (currentEditorMode === 'html') {
+                    syncHtmlToVisual();
+                }
+            });
         }
 
         // Tab management

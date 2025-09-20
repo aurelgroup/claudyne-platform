@@ -5030,6 +5030,11 @@
                 // Initialiser les données spécifiques à la section
                 if (sectionName === 'family-links') {
                     setTimeout(() => initializeFamilyLinksSection(), 100);
+                } else if (sectionName === 'email-automation') {
+                    setTimeout(() => {
+                        console.log('🤖 Initialisation section automatisation...');
+                        loadEmailAutomationData();
+                    }, 100);
                 }
                 
                 // Ajouter animation d'apparition

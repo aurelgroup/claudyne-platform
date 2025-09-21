@@ -2312,6 +2312,55 @@
         }
 
         /* === END EMAIL AUTOMATION STYLES === */
+
+        /* === DATA MANAGEMENT STYLES === */
+        .data-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .data-status-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+
+        .data-status-item h4 {
+            color: #FFD700;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .data-status-item p {
+            margin: 4px 0;
+            font-size: 13px;
+        }
+
+        .data-status-item small {
+            opacity: 0.7;
+            font-size: 11px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .button-grid button {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button-grid button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        /* === END DATA MANAGEMENT STYLES === */
+
     </style>
 </head>
 <body>
@@ -2569,6 +2618,12 @@
                         <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('pricing-plans')">
                             <span class="nav-icon">💰</span>
                             Plans tarifaires
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('data-management')">
+                            <span class="nav-icon">🔧</span>
+                            Gestion Données
                         </a>
                     </li>
                     <li class="nav-item">
@@ -3945,6 +4000,84 @@
             </div>
 
             <!-- Settings Section -->
+            <!-- Section Gestion des Données -->
+            <div id="data-management-section" class="section hidden">
+                <div class="section-header">
+                    <h1 class="page-title">🔧 Gestion des Données Dynamiques</h1>
+                    <p class="page-description">Contrôle et réinitialisation des données Claudyne</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- État des données -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>📊 État des Données</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="dataStatusInfo" class="data-status-grid">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions rapides -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>⚡ Actions Rapides</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="button-grid">
+                                <button class="btn-danger" onclick="resetAllDataAdmin()" style="background: linear-gradient(45deg, #FF4757, #FF3838); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    🔄 Reset Complet
+                                </button>
+                                <button class="btn-warning" onclick="resetCategoryAdmin('EMAIL_TEMPLATES')" style="background: linear-gradient(45deg, #FFA502, #FF7675); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📧 Reset Templates
+                                </button>
+                                <button class="btn-warning" onclick="resetCategoryAdmin('EMAIL_AUTOMATIONS')" style="background: linear-gradient(45deg, #FFA502, #FF7675); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    🤖 Reset Automations
+                                </button>
+                                <button class="btn-warning" onclick="resetCategoryAdmin('DASHBOARD_STATS')" style="background: linear-gradient(45deg, #FFA502, #FF7675); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📊 Reset Stats
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sauvegarde/Restauration -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>💾 Sauvegarde & Restauration</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="button-grid">
+                                <button class="btn-success" onclick="exportDataAdmin()" style="background: linear-gradient(45deg, #2ED573, #1ABC9C); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📥 Exporter Données
+                                </button>
+                                <button class="btn-success" onclick="document.getElementById('importFileAdmin').click()" style="background: linear-gradient(45deg, #2ED573, #1ABC9C); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📤 Importer Données
+                                </button>
+                                <input type="file" id="importFileAdmin" accept=".json" style="display: none;" onchange="importDataAdmin(this.files[0])">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Journal des actions -->
+                    <div class="dashboard-card" style="grid-column: 1 / -1;">
+                        <div class="card-header">
+                            <h3>📜 Journal des Actions</h3>
+                            <button onclick="clearDataLog()" style="background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                                🗑️ Vider
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div id="dataActionLog" style="background: #000; color: #00FF00; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; height: 200px; overflow-y: auto;">
+                                Gestion des données initialisée...<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="settings-section" class="section hidden">
                 <div class="page-header">
                     <div>
@@ -10125,6 +10258,159 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
 
         // === END EMAIL AUTOMATION SYSTEM ===
 
+        // === FONCTIONS GESTION DES DONNÉES ===
+        let dataLogElement = null;
+
+        function dataLog(message) {
+            if (!dataLogElement) {
+                dataLogElement = document.getElementById('dataActionLog');
+            }
+            if (dataLogElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                dataLogElement.innerHTML += `[${timestamp}] ${message}<br>`;
+                dataLogElement.scrollTop = dataLogElement.scrollHeight;
+            }
+        }
+
+        function updateDataStatusInfo() {
+            const statusEl = document.getElementById('dataStatusInfo');
+            if (!statusEl) return;
+
+            try {
+                const templates = claudyneData.getEmailTemplates();
+                const automations = claudyneData.getEmailAutomations();
+                const stats = claudyneData.getDashboardStats();
+
+                statusEl.innerHTML = `
+                    <div class="data-status-item">
+                        <h4>📧 Templates Email</h4>
+                        <p>${templates.length} template(s)</p>
+                        <small>Dernière modification: ${templates[0]?.lastModified ? new Date(templates[0].lastModified).toLocaleString() : 'N/A'}</small>
+                    </div>
+                    <div class="data-status-item">
+                        <h4>🤖 Automations</h4>
+                        <p>${automations.length} automation(s)</p>
+                        <p>${automations.filter(a => a.active).length} active(s)</p>
+                    </div>
+                    <div class="data-status-item">
+                        <h4>📊 Statistiques</h4>
+                        <p>Utilisateurs: ${stats.users?.total || 0}</p>
+                        <small>Dernière MAJ: ${stats.lastUpdate ? new Date(stats.lastUpdate).toLocaleString() : 'N/A'}</small>
+                    </div>
+                    <div class="data-status-item">
+                        <h4>💾 Stockage</h4>
+                        <p>Données: ${getClaudyneStorageSize()} KB</p>
+                        <p>Total: ${getStorageSize()} KB</p>
+                    </div>
+                `;
+            } catch (error) {
+                statusEl.innerHTML = `<div class="data-status-item"><h4>❌ Erreur</h4><p>Impossible de charger</p></div>`;
+                dataLog(`❌ Erreur mise à jour statut: ${error.message}`);
+            }
+        }
+
+        function getStorageSize() {
+            let total = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    total += localStorage[key].length;
+                }
+            }
+            return Math.round(total / 1024);
+        }
+
+        function getClaudyneStorageSize() {
+            let total = 0;
+            if (window.claudyneData && window.claudyneData.manager) {
+                Object.values(claudyneData.manager.dataKeys).forEach(key => {
+                    const data = localStorage.getItem(key);
+                    if (data) total += data.length;
+                });
+            }
+            return Math.round(total / 1024);
+        }
+
+        function resetAllDataAdmin() {
+            if (confirm('⚠️ ATTENTION: Cette action va supprimer TOUTES les données et les remettre aux valeurs par défaut.\n\nContinuer ?')) {
+                try {
+                    claudyneData.resetAll();
+                    dataLog('🔄 RESET COMPLET effectué');
+                    showNotification('✅ Toutes les données ont été réinitialisées', 'success');
+                    updateDataStatusInfo();
+                } catch (error) {
+                    dataLog(`❌ Erreur reset complet: ${error.message}`);
+                    showNotification('❌ Erreur lors du reset complet', 'error');
+                }
+            }
+        }
+
+        function resetCategoryAdmin(category) {
+            const categoryNames = {
+                'EMAIL_TEMPLATES': 'Templates Email',
+                'EMAIL_AUTOMATIONS': 'Automations Email',
+                'DASHBOARD_STATS': 'Statistiques'
+            };
+
+            const categoryName = categoryNames[category] || category;
+
+            if (confirm(`Réinitialiser ${categoryName} ?`)) {
+                try {
+                    claudyneData.resetCategory(category);
+                    dataLog(`🔄 ${categoryName} réinitialisés`);
+                    showNotification(`✅ ${categoryName} réinitialisés`, 'success');
+                    updateDataStatusInfo();
+                } catch (error) {
+                    dataLog(`❌ Erreur reset ${categoryName}: ${error.message}`);
+                    showNotification(`❌ Erreur reset ${categoryName}`, 'error');
+                }
+            }
+        }
+
+        function exportDataAdmin() {
+            try {
+                claudyneData.exportData();
+                dataLog('📥 Données exportées avec succès');
+                showNotification('✅ Données exportées', 'success');
+            } catch (error) {
+                dataLog(`❌ Erreur export: ${error.message}`);
+                showNotification('❌ Erreur export', 'error');
+            }
+        }
+
+        function importDataAdmin(file) {
+            if (!file) return;
+
+            claudyneData.importData(file)
+                .then(() => {
+                    dataLog(`📤 Données importées depuis: ${file.name}`);
+                    showNotification('✅ Données importées avec succès', 'success');
+                    updateDataStatusInfo();
+                })
+                .catch(error => {
+                    dataLog(`❌ Erreur import: ${error.message}`);
+                    showNotification('❌ Erreur lors de l\'import', 'error');
+                });
+        }
+
+        function clearDataLog() {
+            if (dataLogElement) {
+                dataLogElement.innerHTML = 'Journal vidé...<br>';
+            }
+        }
+
+        // Mise à jour de showSection pour inclure la gestion des données
+        const originalShowSection = showSection;
+        showSection = function(sectionName) {
+            originalShowSection(sectionName);
+
+            if (sectionName === 'data-management') {
+                setTimeout(() => {
+                    dataLog('🔧 Section gestion des données ouverte');
+                    updateDataStatusInfo();
+                }, 100);
+            }
+        };
+
         // Chargement initial
         window.addEventListener('load', function() {
             loadDashboardData();
@@ -10133,5 +10419,6 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
     
     <!-- Script d'optimisation réseau pour 2G/3G -->
     <script src="js/network-optimization.js"></script>
+    <script src="js/dynamic-data-manager.js"></script>
 </body>
 </html>

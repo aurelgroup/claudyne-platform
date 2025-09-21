@@ -16,6 +16,7 @@ const prixClaudineRoutes = require('./prix-claudine');
 const paymentRoutes = require('./payments');
 const mentorRoutes = require('./mentor');
 const adminRoutes = require('./admin');
+const monitoringRoutes = require('./monitoring');
 const progressRoutes = require('./progress');
 const notificationRoutes = require('./notifications');
 
@@ -118,6 +119,9 @@ router.use('/notifications', notificationRoutes);
 
 // Routes administrateur (nécessite rôle ADMIN ou MODERATOR)
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), adminRoutes);
+
+// Routes de monitoring système (utilise authentication token admin)
+router.use('/monitoring', monitoringRoutes);
 
 // Route de test pour vérifier l'authentification
 router.get('/me', async (req, res) => {

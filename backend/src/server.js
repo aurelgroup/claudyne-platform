@@ -143,8 +143,12 @@ app.get('/admin-secure-k7m9x4n2p8w5z1c6', (req, res) => {
   res.sendFile(path.join(__dirname, '../../admin-interface.html'));
 });
 
+// Admin token validation moved to routes/admin.js
+
 // Routes principales de l'API
 app.use('/api', routes);
+
+// Admin endpoints have been moved to routes/admin.js
 
 // Documentation API (à implémenter avec Swagger)
 app.get('/api/docs', (req, res) => {

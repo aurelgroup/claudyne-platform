@@ -10327,11 +10327,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 resultDiv.style.color = '#374151';
                 resultDiv.textContent = '⏳ Test de la connexion SMTP...';
 
-                const response = await fetch(`${API_BASE}/api/admin/email-test-smtp`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                const response = await apiRequest(`${API_BASE}/api/admin/email-test-smtp`, {
+                    method: 'POST'
                 });
 
                 const result = await response.json();
@@ -10373,11 +10370,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 resultDiv.style.color = '#374151';
                 resultDiv.textContent = `⏳ Envoi email test vers ${emailUser}...`;
 
-                const response = await fetch(`${API_BASE}/api/admin/email-test-welcome`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/email-test-welcome`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         testEmail: emailUser
                     })
@@ -10406,7 +10400,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Redémarrer le service email
         async function restartEmailService() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/email-restart`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/email-restart`, {
                     method: 'POST'
                 });
                 const result = await response.json();
@@ -10419,7 +10413,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Charger la configuration email existante
         async function loadEmailConfiguration() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/email-config`);
+                const response = await apiRequest(`${API_BASE}/api/admin/email-config`);
                 const result = await response.json();
 
                 if (result.success && result.data) {
@@ -10833,11 +10827,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/api-config`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/api-config`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(apiConfig)
                 });
 
@@ -10871,11 +10862,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/team-members`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/team-members`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(teamMember)
                 });
 
@@ -10912,11 +10900,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/quick-message`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/quick-message`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(message)
                 });
 
@@ -10944,11 +10929,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/generate-report`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/generate-report`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(reportConfig)
                 });
 
@@ -10982,11 +10964,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/schedule-report`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/schedule-report`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(reportSchedule)
                 });
 
@@ -11007,7 +10986,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             if (!confirm('Forcer une sauvegarde immédiate ?')) return;
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/force-backup`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/force-backup`, {
                     method: 'POST'
                 });
 
@@ -11026,7 +11005,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Actualiser logs
         async function refreshLogs() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/logs/recent`);
+                const response = await apiRequest(`${API_BASE}/api/admin/logs/recent`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -11059,11 +11038,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/automation-config`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/automation-config`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(automationConfig)
                 });
 

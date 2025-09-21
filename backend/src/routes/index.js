@@ -64,6 +64,44 @@ router.get('/health', async (req, res) => {
   }
 });
 
+// Exception pour l'endpoint de génération de token admin (AVANT authentification)
+router.post('/admin/generate-token', (req, res) => {
+    try {
+        const { adminKey } = req.body;
+
+        // Clé admin simple pour accès interface
+        if (adminKey === 'claudyne-admin-2024') {
+            const adminToken = 'admin-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+            // Stocker le token (en production, utiliser Redis ou base de données)
+            global.adminTokens = global.adminTokens || [];
+            global.adminTokens.push({
+                token: adminToken,
+                created: Date.now(),
+                expires: Date.now() + (24 * 60 * 60 * 1000) // 24h
+            });
+
+            console.log('🔑 Token admin généré:', adminToken.substring(0, 15) + '...');
+
+            res.json({
+                success: true,
+                token: adminToken,
+                message: 'Token admin généré avec succès'
+            });
+        } else {
+            res.status(401).json({
+                success: false,
+                message: 'Clé admin invalide'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
 // Middleware d'authentification pour toutes les autres routes
 router.use(authenticate);
 

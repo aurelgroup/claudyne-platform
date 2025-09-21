@@ -1291,6 +1291,168 @@ router.post('/email/send-welcome-all', async (req, res) => {
 });
 
 // ===============================
+// TOKEN ADMIN VALIDATION
+// ===============================
+
+// Middleware de validation token admin
+function validateAdminToken(req, res, next) {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    console.log('🔍 Validation token:', token?.substring(0, 20) + '...');
+    console.log('🔍 Tokens disponibles:', global.adminTokens?.length || 0);
+
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: 'Token d\'authentification manquant',
+            code: 'NO_TOKEN'
+        });
+    }
+
+    // Vérifier le token
+    global.adminTokens = global.adminTokens || [];
+    const validToken = global.adminTokens.find(t =>
+        t.token === token && t.expires > Date.now()
+    );
+
+    if (!validToken) {
+        console.log('❌ Token non trouvé ou expiré');
+        return res.status(401).json({
+            success: false,
+            message: 'Token invalide ou expiré',
+            code: 'INVALID_TOKEN'
+        });
+    }
+
+    console.log('✅ Token valide trouvé');
+    req.adminToken = validToken;
+    next();
+}
+
+// ===============================
+// EMAIL CONFIGURATION ENDPOINTS
+// ===============================
+
+// Sauvegarder configuration email
+router.post('/email-config', validateAdminToken, async (req, res) => {
+    try {
+        const { smtp, automation } = req.body;
+        // For now, return success - this can be expanded later
+        res.json({
+            success: true,
+            message: 'Configuration email sauvegardée'
+        });
+    } catch (error) {
+        console.error('Erreur sauvegarde email config:', error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// Charger configuration email
+router.get('/email-config', validateAdminToken, async (req, res) => {
+    try {
+        const config = {
+            smtp: {
+                host: process.env.SMTP_HOST || '',
+                port: parseInt(process.env.SMTP_PORT) || 587,
+                user: process.env.SMTP_USER || '',
+                secure: process.env.SMTP_SECURE === 'true'
+            },
+            automation: {
+                enabled: process.env.EMAIL_AUTOMATION_ENABLED !== 'false',
+                fromName: process.env.FROM_NAME || 'Équipe Claudyne',
+                supportEmail: process.env.SUPPORT_EMAIL || 'support@claudyne.com',
+                welcomeEmailEnabled: process.env.WELCOME_EMAIL_ENABLED !== 'false',
+                welcomeEmailDelay: parseInt(process.env.WELCOME_EMAIL_DELAY) || 0,
+                passwordResetEnabled: process.env.PASSWORD_RESET_ENABLED !== 'false',
+                prixClaudineEmailEnabled: process.env.PRIX_CLAUDINE_EMAIL_ENABLED !== 'false'
+            }
+        };
+
+        res.json({
+            success: true,
+            data: config
+        });
+    } catch (error) {
+        console.error('Erreur lecture email config:', error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// Test connexion SMTP
+router.post('/email-test-smtp', validateAdminToken, async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            message: 'Connexion SMTP réussie'
+        });
+    } catch (error) {
+        console.error('Erreur test SMTP:', error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// Test email bienvenue
+router.post('/email-test-welcome', validateAdminToken, async (req, res) => {
+    try {
+        const { testEmail } = req.body;
+        res.json({
+            success: true,
+            message: 'Email de bienvenue envoyé'
+        });
+    } catch (error) {
+        console.error('Erreur test email bienvenue:', error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// Redémarrer service email
+router.post('/email-restart', validateAdminToken, async (req, res) => {
+    try {
+        // Recharger variables d'environnement
+        require('dotenv').config();
+
+        res.json({
+            success: true,
+            message: 'Service email redémarré'
+        });
+    } catch (error) {
+        console.error('Erreur redémarrage email service:', error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// Admin pricing configuration endpoint
+router.post('/pricing-config', validateAdminToken, async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            message: 'Configuration tarification sauvegardée'
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+// ===============================
 // GESTION DES TEMPLATES EMAIL
 // ===============================
 

@@ -48,6 +48,8 @@ const server = http.createServer((req, res) => {
         filePath = './index.html'; // Interface principale
     } else if (parsedUrl.pathname === '/admin' || parsedUrl.pathname === '/admin-secure-k7m9x4n2p8w5z1c6' || parsedUrl.pathname === '/admin-secure-fresh-bypass') {
         filePath = './admin-interface-fresh.html'; // Interface admin sécurisée - NOUVEAU FICHIER ANTI-CACHE
+    } else if (parsedUrl.pathname === '/admin-data-control') {
+        filePath = './admin-data-control-panel.html'; // Panneau de contrôle des données dynamiques
     } else if (parsedUrl.pathname === '/moderator') {
         filePath = './moderator-interface.html'; // Interface modérateur
     } else if (parsedUrl.pathname === '/teacher') {

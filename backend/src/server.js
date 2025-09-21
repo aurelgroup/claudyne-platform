@@ -39,7 +39,11 @@ const io = socketIo(server, {
 });
 
 // Configuration CORS
-const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000'];
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
+  'http://localhost:3000',
+  'https://claudyne.com',
+  'http://claudyne.com'
+];
 
 const corsOptions = {
   origin: (origin, callback) => {

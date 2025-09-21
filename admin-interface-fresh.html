@@ -3916,6 +3916,106 @@
                     </div>
                 </div>
 
+                <!-- Security Status -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">Statut de sécurité</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="refreshSecurityStatus()">🔄 Actualiser</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="stats-grid" style="margin-bottom: 1rem;">
+                            <div class="stat-card glass-stat-card primary">
+                                <div class="stat-header">
+                                    <span class="stat-title">Fail2ban</span>
+                                    <span class="stat-icon" id="fail2ban-status">🛡️</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="banned-ips">-</div>
+                                <div class="stat-change">IPs bannies</div>
+                            </div>
+                            <div class="stat-card glass-stat-card warning">
+                                <div class="stat-header">
+                                    <span class="stat-title">SSH Attacks</span>
+                                    <span class="stat-icon">🚫</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="ssh-attacks">-</div>
+                                <div class="stat-change">dernières 24h</div>
+                            </div>
+                            <div class="stat-card glass-stat-card secondary">
+                                <div class="stat-header">
+                                    <span class="stat-title">SSL Status</span>
+                                    <span class="stat-icon">🔐</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="ssl-expiry">-</div>
+                                <div class="stat-change">jours restants</div>
+                            </div>
+                            <div class="stat-card glass-stat-card success">
+                                <div class="stat-header">
+                                    <span class="stat-title">Firewall</span>
+                                    <span class="stat-icon" id="firewall-status">🔥</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="firewall-rules">-</div>
+                                <div class="stat-change">règles actives</div>
+                            </div>
+                        </div>
+                        <div id="security-details" style="background: #1F2937; color: #F3F4F6; padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.875rem;">
+                            <div class="loading" style="color: #F3F4F6;"></div> Chargement statut sécurité...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">Métriques de performance</h2>
+                        <div class="filter-group">
+                            <select id="metricsTimeRange" onchange="refreshPerformanceMetrics()">
+                                <option value="1h">Dernière heure</option>
+                                <option value="24h" selected>Dernières 24h</option>
+                                <option value="7d">7 derniers jours</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="stats-grid" style="margin-bottom: 1rem;">
+                            <div class="stat-card glass-stat-card info">
+                                <div class="stat-header">
+                                    <span class="stat-title">Requêtes Web</span>
+                                    <span class="stat-icon">🌐</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="web-requests">-</div>
+                                <div class="stat-change">total</div>
+                            </div>
+                            <div class="stat-card glass-stat-card primary">
+                                <div class="stat-header">
+                                    <span class="stat-title">Visiteurs uniques</span>
+                                    <span class="stat-icon">👥</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="unique-visitors">-</div>
+                                <div class="stat-change">IPs distinctes</div>
+                            </div>
+                            <div class="stat-card glass-stat-card secondary">
+                                <div class="stat-header">
+                                    <span class="stat-title">Temps réponse moy.</span>
+                                    <span class="stat-icon">⏱️</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="avg-response-time">-</div>
+                                <div class="stat-change">secondes</div>
+                            </div>
+                            <div class="stat-card glass-stat-card warning">
+                                <div class="stat-header">
+                                    <span class="stat-title">Erreurs HTTP</span>
+                                    <span class="stat-icon">❌</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="http-errors">-</div>
+                                <div class="stat-change">4xx/5xx</div>
+                            </div>
+                        </div>
+                        <div id="performance-chart" style="background: #1F2937; color: #F3F4F6; padding: 1rem; border-radius: 6px; min-height: 200px;">
+                            <div class="loading" style="color: #F3F4F6;"></div> Chargement métriques...
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Backup Status -->
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
@@ -6445,7 +6545,7 @@
         async function loadSystemMonitoringData() {
             try {
                 // Load system health
-                const healthResponse = await fetch(`${API_BASE}/api/admin/system/health`);
+                const healthResponse = await apiRequest(`${API_BASE}/api/admin/system/health`);
                 const healthData = await healthResponse.json();
 
                 if (healthData.success) {
@@ -6454,7 +6554,7 @@
                     document.getElementById('cpu-usage').textContent = health.cpu;
                     document.getElementById('memory-usage').textContent = health.memory;
                     document.getElementById('error-count').textContent = health.errors;
-                    
+
                     // Update server status indicator
                     const statusIcon = document.getElementById('server-status');
                     if (health.status === 'healthy') {
@@ -6465,6 +6565,12 @@
                         statusIcon.textContent = '🔴';
                     }
                 }
+
+                // Load security status
+                await loadSecurityStatus();
+
+                // Load performance metrics
+                await loadPerformanceMetrics();
 
                 // Load system logs
                 const logsResponse = await fetch(`${API_BASE}/api/admin/system/logs`);
@@ -6590,6 +6696,120 @@
 
         function downloadBackup(backupId) {
             alert(`Téléchargement de la sauvegarde ${backupId} - Fonctionnalité à implémenter`);
+        }
+
+        // Security Status Functions
+        async function loadSecurityStatus() {
+            try {
+                const securityResponse = await apiRequest(`${API_BASE}/api/admin/system/security`);
+                const securityData = await securityResponse.json();
+
+                if (securityData.success) {
+                    const security = securityData.data;
+
+                    // Update security stats
+                    document.getElementById('banned-ips').textContent = security.bannedIPs || 0;
+                    document.getElementById('ssh-attacks').textContent = security.sshAttacks || 0;
+                    document.getElementById('ssl-expiry').textContent = security.sslDaysLeft || 0;
+                    document.getElementById('firewall-rules').textContent = security.firewallRules || 0;
+
+                    // Update status indicators
+                    const fail2banStatus = document.getElementById('fail2ban-status');
+                    fail2banStatus.textContent = security.fail2banActive ? '🟢' : '🔴';
+
+                    const firewallStatus = document.getElementById('firewall-status');
+                    firewallStatus.textContent = security.firewallActive ? '🟢' : '🔴';
+
+                    // Update security details
+                    const securityDetails = document.getElementById('security-details');
+                    securityDetails.innerHTML = `
+                        <div style="margin-bottom: 0.5rem;"><strong>🛡️ FAIL2BAN STATUS:</strong></div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Active jails: ${security.fail2banJails || 0}</div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Banned IPs: ${security.bannedIPs || 0}</div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🔐 SSL CERTIFICATE:</strong></div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Expires in: ${security.sslDaysLeft || 0} days</div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Issuer: ${security.sslIssuer || 'Let\'s Encrypt'}</div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🔥 FIREWALL STATUS:</strong></div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">UFW Status: ${security.firewallActive ? 'Active' : 'Inactive'}</div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Active rules: ${security.firewallRules || 0}</div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🚨 RECENT THREATS:</strong></div>
+                        ${security.recentThreats ? security.recentThreats.map(threat =>
+                            `<div style="margin-left: 1rem; margin-bottom: 0.25rem; color: #EF4444;">${threat}</div>`
+                        ).join('') : '<div style="margin-left: 1rem; color: #10B981;">No recent threats detected</div>'}
+                    `;
+                }
+            } catch (error) {
+                console.error('Erreur chargement sécurité:', error);
+                document.getElementById('security-details').innerHTML = '<div style="color: #EF4444;">❌ Erreur de chargement du statut sécurité</div>';
+            }
+        }
+
+        async function refreshSecurityStatus() {
+            document.getElementById('security-details').innerHTML = '<div class="loading" style="color: #F3F4F6;"></div> Actualisation du statut sécurité...';
+            await loadSecurityStatus();
+        }
+
+        // Performance Metrics Functions
+        async function loadPerformanceMetrics() {
+            try {
+                const timeRange = document.getElementById('metricsTimeRange')?.value || '24h';
+                const metricsResponse = await apiRequest(`${API_BASE}/api/admin/system/metrics?range=${timeRange}`);
+                const metricsData = await metricsResponse.json();
+
+                if (metricsData.success) {
+                    const metrics = metricsData.data;
+
+                    // Update performance stats
+                    document.getElementById('web-requests').textContent = metrics.totalRequests || 0;
+                    document.getElementById('unique-visitors').textContent = metrics.uniqueVisitors || 0;
+                    document.getElementById('avg-response-time').textContent = (metrics.avgResponseTime || 0).toFixed(3);
+                    document.getElementById('http-errors').textContent = metrics.httpErrors || 0;
+
+                    // Update performance chart
+                    const chartData = metrics.chartData || [];
+                    const chartHtml = `
+                        <div style="margin-bottom: 1rem;"><strong>📊 TRAFIC LAST ${timeRange.toUpperCase()}:</strong></div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                            ${chartData.slice(0, 12).map(data => `
+                                <div style="text-align: center; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #9CA3AF;">${data.time}</div>
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #10B981;">${data.requests}</div>
+                                    <div style="font-size: 0.75rem; color: #6B7280;">req</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🔍 TOP PAGES:</strong></div>
+                        ${metrics.topPages ? metrics.topPages.map(page =>
+                            `<div style="margin-left: 1rem; margin-bottom: 0.25rem; display: flex; justify-content: space-between;">
+                                <span>${page.path}</span>
+                                <span style="color: #10B981; font-weight: bold;">${page.hits} hits</span>
+                            </div>`
+                        ).join('') : '<div style="margin-left: 1rem; color: #6B7280;">No data available</div>'}
+
+                        <div style="margin-top: 1rem; margin-bottom: 0.5rem;"><strong>🌍 TOP IPS:</strong></div>
+                        ${metrics.topIPs ? metrics.topIPs.map(ip =>
+                            `<div style="margin-left: 1rem; margin-bottom: 0.25rem; display: flex; justify-content: space-between;">
+                                <span>${ip.address}</span>
+                                <span style="color: #3B82F6; font-weight: bold;">${ip.requests} req</span>
+                            </div>`
+                        ).join('') : '<div style="margin-left: 1rem; color: #6B7280;">No data available</div>'}
+                    `;
+
+                    document.getElementById('performance-chart').innerHTML = chartHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement métriques:', error);
+                document.getElementById('performance-chart').innerHTML = '<div style="color: #EF4444;">❌ Erreur de chargement des métriques</div>';
+            }
+        }
+
+        async function refreshPerformanceMetrics() {
+            document.getElementById('performance-chart').innerHTML = '<div class="loading" style="color: #F3F4F6;"></div> Actualisation des métriques...';
+            await loadPerformanceMetrics();
         }
 
         // Roles Management Data

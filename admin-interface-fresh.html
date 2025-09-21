@@ -3190,6 +3190,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Ajouter un membre de l'équipe</h2>
+                        <button class="btn btn-success btn-sm" onclick="addTeamMember()">➕ Ajouter membre</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
@@ -3319,6 +3320,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Message rapide</h2>
+                        <button class="btn btn-primary btn-sm" onclick="sendQuickMessage()">📩 Envoyer message</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
@@ -3739,7 +3741,11 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">🎯 Déclencheurs d'Emails</h2>
-                        <button class="btn btn-secondary btn-sm" onclick="testAllTriggers()">🧪 Tester Tous</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary btn-sm" onclick="openAutomationModal()">➕ Nouveau Déclencheur</button>
+                            <button class="btn btn-success btn-sm" onclick="saveAutomationConfiguration()">💾 Sauvegarder Config</button>
+                            <button class="btn btn-secondary btn-sm" onclick="testAllTriggers()">🧪 Tester Tous</button>
+                        </div>
                     </div>
                     <div class="section-content">
                         <div id="triggersGrid" class="triggers-grid">
@@ -3797,6 +3803,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Générateur de rapports</h2>
+                        <button class="btn btn-primary btn-sm" onclick="generateReport()">📊 Générer rapport</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
@@ -4162,7 +4169,10 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Configuration des API</h2>
-                        <span class="badge badge-warning">Sensible - Accès restreint</span>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <span class="badge badge-warning">Sensible - Accès restreint</span>
+                            <button class="btn btn-primary btn-sm" onclick="saveAPIConfiguration()">💾 Sauvegarder APIs</button>
+                        </div>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; gap: 1.5rem;">
@@ -4386,6 +4396,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Configuration tarifaire</h2>
+                        <button class="btn btn-primary btn-sm" onclick="savePricingConfiguration()">💾 Sauvegarder tarifs</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
@@ -10687,6 +10698,314 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         window.addEventListener('load', function() {
             loadDashboardData();
         });
+
+        // ======================================
+        // NOUVELLES FONCTIONS DE SAUVEGARDE
+        // ======================================
+
+        // Sauvegarder configuration tarifaire
+        async function savePricingConfiguration() {
+            const pricingConfig = {
+                basicPrice: parseInt(document.getElementById('basicPrice').value),
+                premiumPrice: parseInt(document.getElementById('premiumPrice').value),
+                familyPrice: parseInt(document.getElementById('familyPrice').value),
+                trialDays: parseInt(document.getElementById('trialDays').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/pricing-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(pricingConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Configuration tarifaire sauvegardée avec succès!');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde tarifs:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Sauvegarder configuration des API
+        async function saveAPIConfiguration() {
+            const apiConfig = {
+                claude: {
+                    apiKey: document.getElementById('claudeApiKey')?.value || '',
+                    model: document.getElementById('claudeModel')?.value || ''
+                },
+                openai: {
+                    apiKey: document.getElementById('openaiApiKey')?.value || '',
+                    model: document.getElementById('openaiModel')?.value || '',
+                    temperature: parseFloat(document.getElementById('openaiTemperature')?.value || 0.7),
+                    maxTokens: parseInt(document.getElementById('openaiMaxTokens')?.value || 2000),
+                    systemPrompt: document.getElementById('openaiSystemPrompt')?.value || '',
+                    enabled: document.getElementById('openaiEnabled')?.checked || false
+                },
+                sms: {
+                    ltmApiKey: document.getElementById('ltmApiKey')?.value || '',
+                    ltmApiUrl: document.getElementById('ltmApiUrl')?.value || ''
+                },
+                future: {
+                    flutterwaveKey: document.getElementById('flutterwaveKey')?.value || '',
+                    googleAnalyticsId: document.getElementById('googleAnalyticsId')?.value || '',
+                    pushNotificationKey: document.getElementById('pushNotificationKey')?.value || '',
+                    customApiKey: document.getElementById('customApiKey')?.value || ''
+                }
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/api-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(apiConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Configuration des API sauvegardée avec succès!');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde API config:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Ajouter membre de l'équipe
+        async function addTeamMember() {
+            const teamMember = {
+                firstName: document.getElementById('staffFirstName')?.value || '',
+                lastName: document.getElementById('staffLastName')?.value || '',
+                email: document.getElementById('staffEmail')?.value || '',
+                phone: document.getElementById('staffPhone')?.value || '',
+                role: document.getElementById('staffRole')?.value || '',
+                region: document.getElementById('staffRegion')?.value || '',
+                speciality: document.getElementById('staffSpeciality')?.value || ''
+            };
+
+            if (!teamMember.firstName || !teamMember.lastName || !teamMember.email) {
+                alert('⚠️ Veuillez remplir au minimum le prénom, nom et email');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/team-members`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(teamMember)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Membre ${teamMember.firstName} ${teamMember.lastName} ajouté avec succès!`);
+                    // Reset form
+                    document.getElementById('staffFirstName').value = '';
+                    document.getElementById('staffLastName').value = '';
+                    document.getElementById('staffEmail').value = '';
+                    document.getElementById('staffPhone').value = '';
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur ajout membre équipe:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Envoyer message rapide
+        async function sendQuickMessage() {
+            const message = {
+                recipients: document.getElementById('messageRecipients')?.value || '',
+                channel: document.getElementById('messageChannel')?.value || '',
+                type: document.getElementById('messageType')?.value || '',
+                subject: document.getElementById('messageSubject')?.value || '',
+                content: document.getElementById('messageContent')?.value || ''
+            };
+
+            if (!message.subject || !message.content) {
+                alert('⚠️ Veuillez remplir le sujet et le contenu du message');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/quick-message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(message)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Message envoyé avec succès vers ${message.recipients}!`);
+                    // Reset form
+                    if (document.getElementById('messageSubject')) document.getElementById('messageSubject').value = '';
+                    if (document.getElementById('messageContent')) document.getElementById('messageContent').value = '';
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur envoi message:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Générer rapport
+        async function generateReport() {
+            const reportConfig = {
+                type: document.getElementById('reportType')?.value || 'users',
+                period: document.getElementById('reportPeriod')?.value || 'month',
+                format: document.getElementById('reportFormat')?.value || 'pdf'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/generate-report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reportConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Rapport ${reportConfig.type} généré avec succès!\nTéléchargement en cours...`);
+                    if (result.downloadUrl) {
+                        window.open(result.downloadUrl, '_blank');
+                    }
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur génération rapport:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Programmer nouveau rapport
+        async function scheduleNewReport() {
+            const reportSchedule = {
+                type: prompt('Type de rapport:', 'users'),
+                frequency: prompt('Fréquence (daily, weekly, monthly):', 'weekly'),
+                format: prompt('Format (pdf, excel, csv):', 'pdf'),
+                recipients: prompt('Emails destinataires (séparés par virgule):', 'admin@claudyne.com')
+            };
+
+            if (!reportSchedule.type || !reportSchedule.frequency) {
+                alert('⚠️ Informations incomplètes');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/schedule-report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reportSchedule)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Rapport ${reportSchedule.type} programmé avec succès!`);
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur programmation rapport:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Forcer sauvegarde
+        async function triggerBackup() {
+            if (!confirm('Forcer une sauvegarde immédiate ?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/force-backup`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Sauvegarde forcée avec succès!');
+                } else {
+                    alert(`❌ Erreur sauvegarde: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde forcée:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Actualiser logs
+        async function refreshLogs() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/logs/recent`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const logsContainer = document.getElementById('system-logs');
+                    if (logsContainer) {
+                        logsContainer.innerHTML = result.logs.map(log =>
+                            `<div class="log-entry">${log.timestamp} - ${log.level}: ${log.message}</div>`
+                        ).join('');
+                    }
+                    alert('✅ Logs actualisés');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur actualisation logs:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Sauvegarder configuration automation emails
+        async function saveAutomationConfiguration() {
+            const automationConfig = {
+                triggers: Array.from(document.querySelectorAll('.trigger-item')).map(item => ({
+                    id: item.dataset.id,
+                    enabled: item.querySelector('.trigger-enabled')?.checked || false,
+                    event: item.querySelector('.trigger-event')?.value || '',
+                    template: item.querySelector('.trigger-template')?.value || '',
+                    delay: parseInt(item.querySelector('.trigger-delay')?.value || 0)
+                }))
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/automation-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(automationConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Configuration automation sauvegardée avec succès!');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde automation:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
     </script>
     
     <!-- Script d'optimisation réseau pour 2G/3G -->

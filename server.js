@@ -91,7 +91,7 @@ const server = http.createServer((req, res) => {
     }
 
     // Headers anti-cache pour l'interface admin pour forcer rechargement
-    if (filePath.includes('admin-interface.html')) {
+    if (filePath.includes('admin-interface')) {
         securityHeaders['Cache-Control'] = 'no-cache, no-store, must-revalidate';
         securityHeaders['Pragma'] = 'no-cache';
         securityHeaders['Expires'] = '0';

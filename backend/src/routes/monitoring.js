@@ -3,37 +3,9 @@ const fs = require('fs').promises;
 const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
+const { validateAdminToken } = require('../middleware/adminTokenAuth');
 
 const router = express.Router();
-
-// Middleware de validation du token admin
-function validateAdminToken(req, res, next) {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: 'Token d\'authentification manquant',
-            code: 'NO_TOKEN'
-        });
-    }
-
-    if (!global.adminTokens) {
-        global.adminTokens = [];
-    }
-
-    const validToken = global.adminTokens.find(t => t.token === token && t.expires > Date.now());
-
-    if (!validToken) {
-        return res.status(401).json({
-            success: false,
-            message: 'Token invalide ou expiré',
-            code: 'INVALID_TOKEN'
-        });
-    }
-
-    next();
-}
 
 // =============================================================================
 // SYSTEM HEALTH ENDPOINT

@@ -8,6 +8,7 @@ const router = express.Router();
 const { Op } = require('sequelize');
 const logger = require('../utils/logger');
 const bcrypt = require('bcryptjs');
+const { validateAdminToken } = require('../middleware/adminTokenAuth');
 
 // Import des modèles (seront disponibles via database.initializeModels())
 let models = {};
@@ -1293,41 +1294,7 @@ router.post('/email/send-welcome-all', async (req, res) => {
 // ===============================
 // TOKEN ADMIN VALIDATION
 // ===============================
-
-// Middleware de validation token admin
-function validateAdminToken(req, res, next) {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-
-    console.log('🔍 Validation token:', token?.substring(0, 20) + '...');
-    console.log('🔍 Tokens disponibles:', global.adminTokens?.length || 0);
-
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: 'Token d\'authentification manquant',
-            code: 'NO_TOKEN'
-        });
-    }
-
-    // Vérifier le token
-    global.adminTokens = global.adminTokens || [];
-    const validToken = global.adminTokens.find(t =>
-        t.token === token && t.expires > Date.now()
-    );
-
-    if (!validToken) {
-        console.log('❌ Token non trouvé ou expiré');
-        return res.status(401).json({
-            success: false,
-            message: 'Token invalide ou expiré',
-            code: 'INVALID_TOKEN'
-        });
-    }
-
-    console.log('✅ Token valide trouvé');
-    req.adminToken = validToken;
-    next();
-}
+// Middleware moved to ../middleware/adminTokenAuth.js
 
 // ===============================
 // EMAIL CONFIGURATION ENDPOINTS
@@ -1889,35 +1856,7 @@ const { exec } = require('child_process');
 const util = require('util');
 const execAsync = util.promisify(exec);
 
-// Helper function for admin token validation (should be defined earlier in the file)
-function validateAdminToken(req, res, next) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Token d\'authentification manquant',
-      code: 'NO_TOKEN'
-    });
-  }
-
-  // Vérifier le token
-  global.adminTokens = global.adminTokens || [];
-  const validToken = global.adminTokens.find(t =>
-    t.token === token && t.expires > Date.now()
-  );
-
-  if (!validToken) {
-    return res.status(401).json({
-      success: false,
-      message: 'Token invalide ou expiré',
-      code: 'INVALID_TOKEN'
-    });
-  }
-
-  req.adminToken = validToken;
-  next();
-}
+// Using centralized middleware for token validation
 
 // System Health Endpoint
 router.get('/system/health', validateAdminToken, async (req, res) => {

@@ -66,29 +66,28 @@ router.get('/health', async (req, res) => {
 });
 
 // Exception pour l'endpoint de génération de token admin (AVANT authentification)
-router.post('/admin/generate-token', (req, res) => {
+router.post('/admin/generate-token', async (req, res) => {
     try {
         const { adminKey } = req.body;
 
         // Clé admin simple pour accès interface
         if (adminKey === 'claudyne-admin-2024') {
-            const adminToken = 'admin-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            const tokenService = require('../services/tokenService');
+            const result = await tokenService.generateToken();
 
-            // Stocker le token (en production, utiliser Redis ou base de données)
-            global.adminTokens = global.adminTokens || [];
-            global.adminTokens.push({
-                token: adminToken,
-                created: Date.now(),
-                expires: Date.now() + (24 * 60 * 60 * 1000) // 24h
-            });
-
-            console.log('🔑 Token admin généré:', adminToken.substring(0, 15) + '...');
-
-            res.json({
-                success: true,
-                token: adminToken,
-                message: 'Token admin généré avec succès'
-            });
+            if (result.success) {
+                res.json({
+                    success: true,
+                    token: result.token,
+                    message: 'Token admin généré avec succès',
+                    expiresAt: result.expiresAt
+                });
+            } else {
+                res.status(500).json({
+                    success: false,
+                    message: 'Erreur lors de la génération du token'
+                });
+            }
         } else {
             res.status(401).json({
                 success: false,
@@ -96,6 +95,7 @@ router.post('/admin/generate-token', (req, res) => {
             });
         }
     } catch (error) {
+        console.error('Erreur génération token:', error);
         res.status(500).json({
             success: false,
             message: error.message

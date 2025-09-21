@@ -10287,11 +10287,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 resultDiv.style.color = '#374151';
                 resultDiv.textContent = '⏳ Sauvegarde de la configuration email...';
 
-                const response = await fetch(`${API_BASE}/api/admin/email-config`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/email-config`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(emailConfig)
                 });
 
@@ -10694,8 +10691,86 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
         };
 
+        // ======================================
+        // ADMIN TOKEN AUTHENTICATION SYSTEM
+        // ======================================
+
+        let adminToken = localStorage.getItem('claudyne-admin-token');
+
+        // Générer token admin automatiquement
+        async function generateAdminToken() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/generate-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        adminKey: 'claudyne-admin-2024'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    adminToken = result.token;
+                    localStorage.setItem('claudyne-admin-token', adminToken);
+                    console.log('🔑 Token admin généré avec succès');
+                    return true;
+                } else {
+                    console.error('❌ Erreur génération token:', result.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Erreur connexion pour token:', error);
+                return false;
+            }
+        }
+
+        // Fonction pour faire des requêtes API avec authentification
+        async function apiRequest(url, options = {}) {
+            // S'assurer qu'on a un token
+            if (!adminToken) {
+                const tokenGenerated = await generateAdminToken();
+                if (!tokenGenerated) {
+                    throw new Error('Impossible de générer le token admin');
+                }
+            }
+
+            // Ajouter le token aux headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`,
+                ...options.headers
+            };
+
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+
+            // Si token expiré, en générer un nouveau
+            if (response.status === 401) {
+                console.log('🔄 Token expiré, génération d\'un nouveau...');
+                const tokenGenerated = await generateAdminToken();
+                if (tokenGenerated) {
+                    // Retry avec le nouveau token
+                    headers['Authorization'] = `Bearer ${adminToken}`;
+                    return fetch(url, {
+                        ...options,
+                        headers
+                    });
+                }
+            }
+
+            return response;
+        }
+
         // Chargement initial
-        window.addEventListener('load', function() {
+        window.addEventListener('load', async function() {
+            // Générer token si nécessaire
+            if (!adminToken) {
+                await generateAdminToken();
+            }
             loadDashboardData();
         });
 
@@ -10713,11 +10788,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/pricing-config`, {
+                const response = await apiRequest(`${API_BASE}/api/admin/pricing-config`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(pricingConfig)
                 });
 

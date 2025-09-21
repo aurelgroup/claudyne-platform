@@ -58,6 +58,11 @@ const server = http.createServer((req, res) => {
         filePath = './parent-interface/index.html'; // Interface parent
     } else if (parsedUrl.pathname === '/offline') {
         filePath = './offline.html'; // Page offline
+    } else if (parsedUrl.pathname.startsWith('/api')) {
+        // Proxy vers le backend pour les routes API
+        res.writeHead(302, { 'Location': `http://localhost:3001${parsedUrl.pathname}${parsedUrl.search || ''}` });
+        res.end();
+        return;
     }
     
     // Si pas d'extension et pas un dossier existant, essayer .html

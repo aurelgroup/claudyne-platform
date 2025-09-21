@@ -4214,10 +4214,12 @@
                                 </div>
                             </div>
 
-                            <!-- Email SMTP Configuration -->
+                            <!-- Email SMTP Configuration & Automation -->
                             <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 1.5rem;">
-                                <h3 style="margin-bottom: 1rem; color: #1F2937; font-size: 1.1rem;">📬 Configuration SMTP Email</h3>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <h3 style="margin-bottom: 1rem; color: #1F2937; font-size: 1.1rem;">📬 Configuration SMTP Email & Automation</h3>
+
+                                <!-- SMTP Server Configuration -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                                     <div>
                                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Serveur SMTP</label>
                                         <input type="text" id="smtpHost" placeholder="smtp.gmail.com" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
@@ -4232,16 +4234,87 @@
                                     </div>
                                     <div>
                                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Mot de passe SMTP</label>
-                                        <input type="password" id="smtpPassword" placeholder="********" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        <input type="password" id="smtpPassword" placeholder="App Password Gmail" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
                                     </div>
                                 </div>
-                                <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+
+                                <!-- Email Automation Settings -->
+                                <div style="border-top: 1px solid #E5E7EB; padding-top: 1.5rem; margin-bottom: 1.5rem;">
+                                    <h4 style="margin-bottom: 1rem; color: #374151; font-size: 1rem;">🤖 Paramètres Automation Email</h4>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Nom expéditeur</label>
+                                            <input type="text" id="emailFromName" placeholder="Équipe Claudyne" value="Équipe Claudyne" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email support</label>
+                                            <input type="email" id="emailSupport" placeholder="support@claudyne.com" value="support@claudyne.com" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Délai bienvenue (ms)</label>
+                                            <input type="number" id="welcomeEmailDelay" placeholder="0" value="0" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Email Automation Toggles -->
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="emailAutomationEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🚀 Automation activée</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Déclencher emails automatiques</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="welcomeEmailEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🎉 Email bienvenue</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Envoi automatique inscription</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="passwordResetEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🔐 Reset password</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Réinitialisation mot de passe</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="prixClaudineEmailEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🏆 Prix Claudine</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Notifications concours</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                                     <label style="display: flex; align-items: center; cursor: pointer;">
                                         <input type="checkbox" id="smtpTls" checked style="margin-right: 0.5rem;">
                                         Utiliser TLS/STARTTLS
                                     </label>
-                                    <button class="btn btn-secondary btn-sm" onclick="testEmailSMTP()">📬 Envoyer email test</button>
+                                    <div style="flex: 1;"></div>
+                                    <button class="btn btn-secondary btn-sm" onclick="testEmailSMTP()" style="background: #6B7280; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                        📬 Test SMTP
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="saveEmailConfiguration()" style="background: #10B981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                        💾 Sauvegarder config
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="sendTestWelcomeEmail()" style="background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                        🧪 Test bienvenue
+                                    </button>
                                 </div>
+                                <div id="emailConfigResult" style="margin-top: 1rem; font-weight: 500; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                             </div>
 
                             <!-- ChatGPT OpenAI Configuration -->
@@ -5327,6 +5400,7 @@
                         break;
                     case 'settings':
                         await loadSettingsData();
+                        await loadEmailConfiguration();
                         break;
                     case 'email-templates':
                         await loadEmailTemplatesData();
@@ -10167,6 +10241,204 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             console.log('🔄 Actualisation de la queue d\'emails...');
             loadEmailQueue();
             loadEmailAutomationStats();
+        }
+
+        // ======================================
+        // EMAIL CONFIGURATION FUNCTIONS
+        // ======================================
+
+        // Sauvegarder la configuration email
+        async function saveEmailConfiguration() {
+            const resultDiv = document.getElementById('emailConfigResult');
+
+            const emailConfig = {
+                smtp: {
+                    host: document.getElementById('smtpHost').value,
+                    port: parseInt(document.getElementById('smtpPort').value),
+                    user: document.getElementById('smtpUser').value,
+                    password: document.getElementById('smtpPassword').value,
+                    secure: document.getElementById('smtpTls').checked
+                },
+                automation: {
+                    enabled: document.getElementById('emailAutomationEnabled').checked,
+                    fromName: document.getElementById('emailFromName').value,
+                    supportEmail: document.getElementById('emailSupport').value,
+                    welcomeEmailEnabled: document.getElementById('welcomeEmailEnabled').checked,
+                    welcomeEmailDelay: parseInt(document.getElementById('welcomeEmailDelay').value),
+                    passwordResetEnabled: document.getElementById('passwordResetEnabled').checked,
+                    prixClaudineEmailEnabled: document.getElementById('prixClaudineEmailEnabled').checked
+                }
+            };
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#F3F4F6';
+                resultDiv.style.color = '#374151';
+                resultDiv.textContent = '⏳ Sauvegarde de la configuration email...';
+
+                const response = await fetch(`${API_BASE}/api/admin/email-config`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(emailConfig)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.style.background = '#D1FAE5';
+                    resultDiv.style.color = '#065F46';
+                    resultDiv.textContent = '✅ Configuration email sauvegardée avec succès!';
+
+                    // Redémarrer le service email
+                    setTimeout(() => {
+                        restartEmailService();
+                    }, 1000);
+                } else {
+                    resultDiv.style.background = '#FEE2E2';
+                    resultDiv.style.color = '#991B1B';
+                    resultDiv.textContent = `❌ Erreur: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde email config:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEE2E2';
+                resultDiv.style.color = '#991B1B';
+                resultDiv.textContent = '❌ Erreur de connexion au serveur';
+            }
+        }
+
+        // Tester la connexion SMTP
+        async function testEmailSMTP() {
+            const resultDiv = document.getElementById('emailConfigResult');
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#F3F4F6';
+                resultDiv.style.color = '#374151';
+                resultDiv.textContent = '⏳ Test de la connexion SMTP...';
+
+                const response = await fetch(`${API_BASE}/api/admin/email-test-smtp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.style.background = '#D1FAE5';
+                    resultDiv.style.color = '#065F46';
+                    resultDiv.textContent = '✅ Connexion SMTP réussie!';
+                } else {
+                    resultDiv.style.background = '#FEE2E2';
+                    resultDiv.style.color = '#991B1B';
+                    resultDiv.textContent = `❌ Échec SMTP: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur test SMTP:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEE2E2';
+                resultDiv.style.color = '#991B1B';
+                resultDiv.textContent = '❌ Erreur test SMTP';
+            }
+        }
+
+        // Envoyer un email de bienvenue de test
+        async function sendTestWelcomeEmail() {
+            const resultDiv = document.getElementById('emailConfigResult');
+            const emailUser = document.getElementById('smtpUser').value;
+
+            if (!emailUser) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEF3C7';
+                resultDiv.style.color = '#92400E';
+                resultDiv.textContent = '⚠️ Veuillez configurer l\'email SMTP d\'abord';
+                return;
+            }
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#F3F4F6';
+                resultDiv.style.color = '#374151';
+                resultDiv.textContent = `⏳ Envoi email test vers ${emailUser}...`;
+
+                const response = await fetch(`${API_BASE}/api/admin/email-test-welcome`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        testEmail: emailUser
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.style.background = '#D1FAE5';
+                    resultDiv.style.color = '#065F46';
+                    resultDiv.textContent = `✅ Email de bienvenue envoyé vers ${emailUser}!`;
+                } else {
+                    resultDiv.style.background = '#FEE2E2';
+                    resultDiv.style.color = '#991B1B';
+                    resultDiv.textContent = `❌ Échec envoi: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur test email bienvenue:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEE2E2';
+                resultDiv.style.color = '#991B1B';
+                resultDiv.textContent = '❌ Erreur envoi test';
+            }
+        }
+
+        // Redémarrer le service email
+        async function restartEmailService() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/email-restart`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                console.log('🔄 Service email redémarré:', result.success);
+            } catch (error) {
+                console.error('Erreur redémarrage service email:', error);
+            }
+        }
+
+        // Charger la configuration email existante
+        async function loadEmailConfiguration() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/email-config`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const config = result.data;
+
+                    // SMTP Configuration
+                    if (config.smtp) {
+                        document.getElementById('smtpHost').value = config.smtp.host || '';
+                        document.getElementById('smtpPort').value = config.smtp.port || 587;
+                        document.getElementById('smtpUser').value = config.smtp.user || '';
+                        document.getElementById('smtpTls').checked = config.smtp.secure !== false;
+                    }
+
+                    // Automation Configuration
+                    if (config.automation) {
+                        document.getElementById('emailAutomationEnabled').checked = config.automation.enabled !== false;
+                        document.getElementById('emailFromName').value = config.automation.fromName || 'Équipe Claudyne';
+                        document.getElementById('emailSupport').value = config.automation.supportEmail || 'support@claudyne.com';
+                        document.getElementById('welcomeEmailEnabled').checked = config.automation.welcomeEmailEnabled !== false;
+                        document.getElementById('welcomeEmailDelay').value = config.automation.welcomeEmailDelay || 0;
+                        document.getElementById('passwordResetEnabled').checked = config.automation.passwordResetEnabled !== false;
+                        document.getElementById('prixClaudineEmailEnabled').checked = config.automation.prixClaudineEmailEnabled !== false;
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur chargement configuration email:', error);
+            }
         }
 
         // Fonctions utilitaires manquantes pour l'interface

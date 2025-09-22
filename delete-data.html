@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Suppression de Données — Claudyne</title>
+  <meta name="description" content="Demande de suppression de données Claudyne — plateforme éducative camerounaise. Contrôle granulaire de vos informations." />
+  <link rel="canonical" href="https://claudyne.com/delete-data" />
+  <style>
+    :root {
+      --bg:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --accent:#00853F;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --info:#3b82f6;
+      --container:1000px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+    body {background:var(--bg);color:var(--text);margin:0;padding:2rem;line-height:1.6}
+    .wrap {max-width:var(--container);margin:0 auto;padding:2rem}
+    header h1 {margin:0 0 .5rem;font-size:2rem;color:var(--info);text-align:center}
+    header p {margin:0 0 2rem;color:var(--muted);text-align:center;font-size:1.125rem}
+    h2 {color:var(--accent);margin-top:2rem;font-size:1.5rem}
+    h3 {margin-top:1.5rem;color:var(--text)}
+    .info-box {background:#eff6ff;border:2px solid var(--info);border-radius:8px;padding:1.5rem;margin:2rem 0}
+    .info-box h3 {color:var(--info);margin:0 0 1rem;display:flex;align-items:center}
+    .warning-box {background:#fef3c7;border:2px solid var(--warning);border-radius:8px;padding:1.5rem;margin:2rem 0}
+    .warning-box h3 {color:var(--warning);margin:0 0 1rem;display:flex;align-items:center}
+    .data-categories {display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin:2rem 0}
+    .category-card {background:white;border:1px solid #e2e8f0;border-radius:8px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+    .category-header {display:flex;align-items:center;margin-bottom:1rem}
+    .category-icon {font-size:1.5rem;margin-right:0.75rem}
+    .category-title {font-weight:600;color:var(--text);margin:0}
+    .category-desc {color:var(--muted);font-size:0.875rem;margin:0 0 1rem}
+    .data-items {list-style:none;padding:0;margin:0}
+    .data-items li {padding:0.5rem 0;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center}
+    .data-items li:last-child {border-bottom:none}
+    .delete-option {color:var(--danger);font-size:0.75rem;font-weight:600;cursor:pointer}
+    .keep-option {color:var(--accent);font-size:0.75rem;font-weight:600}
+    .process-steps {background:#f8fafc;border-radius:8px;padding:2rem;margin:2rem 0}
+    .step {display:flex;margin-bottom:1.5rem;align-items:start}
+    .step:last-child {margin-bottom:0}
+    .step-number {background:var(--info);color:white;border-radius:50%;width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:1rem;flex-shrink:0}
+    .step-content h4 {margin:0 0 0.5rem;color:var(--text)}
+    .step-content p {margin:0;color:var(--muted);font-size:0.875rem}
+    .contact-form {background:white;border:1px solid #e2e8f0;border-radius:8px;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+    .form-group {margin-bottom:1.5rem}
+    .form-group label {display:block;font-weight:600;margin-bottom:0.5rem;color:var(--text)}
+    .form-group input, .form-group select, .form-group textarea {width:100%;padding:0.75rem;border:1px solid #d1d5db;border-radius:6px;font-size:0.875rem}
+    .form-group textarea {height:120px;resize:vertical}
+    .checkbox-group {display:flex;align-items:start;margin-bottom:1rem}
+    .checkbox-group input[type="checkbox"] {margin-right:0.75rem;margin-top:0.25rem}
+    .checkbox-section {background:#f8fafc;border-radius:6px;padding:1rem;margin:1rem 0}
+    .checkbox-section h4 {margin:0 0 0.75rem;color:var(--text);font-size:0.875rem}
+    .submit-btn {background:var(--info);color:white;border:none;padding:0.75rem 2rem;border-radius:6px;font-weight:600;cursor:pointer;font-size:1rem}
+    .submit-btn:hover {background:#2563eb}
+    .contact-info {background:#f8fafc;border-radius:8px;padding:1.5rem;margin:2rem 0}
+    footer {border-top:1px solid #e6eef2;padding-top:1rem;margin-top:3rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .links a {color:var(--muted);text-decoration:none;margin-right:1rem}
+    .brand {font-weight:600;color:var(--text)}
+    @media(max-width:768px){body{padding:1rem}.wrap{padding:1rem}.data-categories{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🧹 Suppression de Données</h1>
+      <p>Contrôlez précisément quelles données vous souhaitez supprimer</p>
+    </header>
+
+    <div class="info-box">
+      <h3>ℹ️ Suppression Sélective</h3>
+      <p><strong>Contrôle granulaire :</strong> Cette page vous permet de demander la suppression de certaines de vos données sans supprimer votre compte Claudyne. Vous gardez le contrôle total sur vos informations.</p>
+      <p>Contrairement à la suppression de compte, cette action vous permet de conserver votre accès à la plateforme tout en effaçant les données de votre choix.</p>
+    </div>
+
+    <section>
+      <h2>📋 Informations Générales</h2>
+      <p><strong>Développeur :</strong> Claudyne — Plateforme éducative camerounaise</p>
+      <p><strong>Application :</strong> Claudyne (iOS et Android)</p>
+      <p><strong>Responsable :</strong> Équipe Claudyne, République du Cameroun 🇨🇲</p>
+      <p><strong>Contact DPO :</strong> dpo@claudyne.com</p>
+    </section>
+
+    <section>
+      <h2>🎯 Catégories de Données Disponibles</h2>
+      <div class="data-categories">
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-icon">📚</div>
+            <h3 class="category-title">Données d'Apprentissage</h3>
+          </div>
+          <p class="category-desc">Vos progrès et performances éducatives</p>
+          <ul class="data-items">
+            <li>
+              <span>Leçons terminées</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Scores et notes</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Temps d'étude</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Certificats obtenus</span>
+              <span class="keep-option">Conservé</span>
+            </li>
+            <li>
+              <span>Badges et récompenses</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-icon">⚔️</div>
+            <h3 class="category-title">Battle Royale</h3>
+          </div>
+          <p class="category-desc">Historique de vos compétitions éducatives</p>
+          <ul class="data-items">
+            <li>
+              <span>Historique des battles</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Classements personnels</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Statistiques de performance</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Participations en équipe</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Trophées et prix</span>
+              <span class="keep-option">Conservé</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-icon">🤖</div>
+            <h3 class="category-title">Mentor IA</h3>
+          </div>
+          <p class="category-desc">Interactions avec votre assistant intelligent</p>
+          <ul class="data-items">
+            <li>
+              <span>Historique des conversations</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Préférences d'apprentissage</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Recommandations reçues</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Profil d'apprentissage</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Questions fréquentes</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-icon">👨‍👩‍👧‍👦</div>
+            <h3 class="category-title">Données Familiales</h3>
+          </div>
+          <p class="category-desc">Informations de gestion familiale</p>
+          <ul class="data-items">
+            <li>
+              <span>Liens familiaux</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Paramètres parentaux</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Communications famille</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Rapports de progrès</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Autorisations parentales</span>
+              <span class="keep-option">Conservé</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-icon">📱</div>
+            <h3 class="category-title">Données Techniques</h3>
+          </div>
+          <p class="category-desc">Informations techniques et d'usage</p>
+          <ul class="data-items">
+            <li>
+              <span>Logs de connexion</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Préférences d'interface</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Paramètres de notification</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Données d'analyse d'usage</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Logs de sécurité</span>
+              <span class="keep-option">Conservé</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="category-card">
+          <div class="category-header">
+            <div class="category-icon">🎨</div>
+            <h3 class="category-title">Contenus Personnels</h3>
+          </div>
+          <p class="category-desc">Vos créations et personnalisations</p>
+          <ul class="data-items">
+            <li>
+              <span>Photos de profil</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Notes personnelles</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Créations artistiques</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Projets sauvegardés</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+            <li>
+              <span>Thèmes personnalisés</span>
+              <span class="delete-option">Supprimable</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>📝 Procédure de Suppression de Données</h2>
+      <div class="process-steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Sélection des Données</h4>
+            <p>Choisissez précisément quelles catégories de données supprimer</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Remplir le Formulaire</h4>
+            <p>Complétez le formulaire avec vos choix et motivations</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Vérification d'Identité</h4>
+            <p>Nous vérifierons votre identité par email dans les 24h</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Traitement de la Demande</h4>
+            <p>Suppression sélective des données choisies sous 15 jours</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h4>Confirmation</h4>
+            <p>Vous recevrez un rapport détaillé des suppressions effectuées</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="warning-box">
+      <h3>⚠️ Points Importants</h3>
+      <ul>
+        <li><strong>Délai de traitement :</strong> 15 jours ouvrés maximum</li>
+        <li><strong>Données conservées :</strong> Certaines données sont conservées pour des raisons légales ou de sécurité</li>
+        <li><strong>Impact fonctionnel :</strong> La suppression de certaines données peut affecter votre expérience utilisateur</li>
+        <li><strong>Récupération :</strong> Les données supprimées ne peuvent pas être récupérées</li>
+      </ul>
+    </div>
+
+    <section>
+      <h2>📧 Formulaire de Demande de Suppression de Données</h2>
+      <div class="contact-form">
+        <form action="mailto:dpo@claudyne.com" method="post" enctype="text/plain">
+          <div class="form-group">
+            <label for="full-name">Nom et Prénom complets *</label>
+            <input type="text" id="full-name" name="full-name" required placeholder="Votre nom complet tel qu'enregistré sur Claudyne">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Adresse Email du Compte *</label>
+            <input type="email" id="email" name="email" required placeholder="email@exemple.com">
+          </div>
+
+          <div class="form-group">
+            <label for="user-type">Type d'Utilisateur *</label>
+            <select id="user-type" name="user-type" required>
+              <option value="">-- Sélectionnez --</option>
+              <option value="student">Étudiant</option>
+              <option value="parent">Parent</option>
+              <option value="teacher">Enseignant</option>
+              <option value="admin">Administrateur</option>
+            </select>
+          </div>
+
+          <div class="checkbox-section">
+            <h4>📚 Données d'Apprentissage</h4>
+            <div class="checkbox-group">
+              <input type="checkbox" id="learning-progress" name="data-to-delete" value="learning-progress">
+              <label for="learning-progress">Leçons terminées et progrès</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="scores-grades" name="data-to-delete" value="scores-grades">
+              <label for="scores-grades">Scores et notes</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="study-time" name="data-to-delete" value="study-time">
+              <label for="study-time">Temps d'étude et statistiques</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="badges-rewards" name="data-to-delete" value="badges-rewards">
+              <label for="badges-rewards">Badges et récompenses</label>
+            </div>
+          </div>
+
+          <div class="checkbox-section">
+            <h4>⚔️ Battle Royale</h4>
+            <div class="checkbox-group">
+              <input type="checkbox" id="battle-history" name="data-to-delete" value="battle-history">
+              <label for="battle-history">Historique des battles</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="rankings" name="data-to-delete" value="rankings">
+              <label for="rankings">Classements personnels</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="battle-stats" name="data-to-delete" value="battle-stats">
+              <label for="battle-stats">Statistiques de performance</label>
+            </div>
+          </div>
+
+          <div class="checkbox-section">
+            <h4>🤖 Mentor IA</h4>
+            <div class="checkbox-group">
+              <input type="checkbox" id="ai-conversations" name="data-to-delete" value="ai-conversations">
+              <label for="ai-conversations">Historique des conversations</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="learning-preferences" name="data-to-delete" value="learning-preferences">
+              <label for="learning-preferences">Préférences d'apprentissage</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="ai-recommendations" name="data-to-delete" value="ai-recommendations">
+              <label for="ai-recommendations">Recommandations reçues</label>
+            </div>
+          </div>
+
+          <div class="checkbox-section">
+            <h4>👨‍👩‍👧‍👦 Données Familiales</h4>
+            <div class="checkbox-group">
+              <input type="checkbox" id="family-links" name="data-to-delete" value="family-links">
+              <label for="family-links">Liens familiaux</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="parental-settings" name="data-to-delete" value="parental-settings">
+              <label for="parental-settings">Paramètres parentaux</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="progress-reports" name="data-to-delete" value="progress-reports">
+              <label for="progress-reports">Rapports de progrès</label>
+            </div>
+          </div>
+
+          <div class="checkbox-section">
+            <h4>🎨 Contenus Personnels</h4>
+            <div class="checkbox-group">
+              <input type="checkbox" id="profile-pictures" name="data-to-delete" value="profile-pictures">
+              <label for="profile-pictures">Photos de profil</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="personal-notes" name="data-to-delete" value="personal-notes">
+              <label for="personal-notes">Notes personnelles</label>
+            </div>
+            <div class="checkbox-group">
+              <input type="checkbox" id="created-content" name="data-to-delete" value="created-content">
+              <label for="created-content">Créations et projets</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reason">Motif de la Suppression (optionnel)</label>
+            <textarea id="reason" name="reason" placeholder="Expliquez pourquoi vous souhaitez supprimer ces données spécifiques. Cela nous aide à améliorer nos services."></textarea>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="confirm-identity" name="confirm-identity" required>
+            <label for="confirm-identity">Je confirme être le propriétaire légitime de ce compte Claudyne</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="understand-consequences" name="understand-consequences" required>
+            <label for="understand-consequences">Je comprends que la suppression de ces données peut affecter mon expérience utilisateur</label>
+          </div>
+
+          <div class="checkbox-group">
+            <input type="checkbox" id="consent-processing" name="consent-processing" required>
+            <label for="consent-processing">J'autorise Claudyne à traiter cette demande conformément à la réglementation RGPD</label>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            🧹 Demander la Suppression de ces Données
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section>
+      <div class="contact-info">
+        <h2>📞 Support et Questions</h2>
+        <p>Pour toute question sur la suppression sélective de vos données :</p>
+        <ul>
+          <li>📧 <strong>Protection des données :</strong> dpo@claudyne.com</li>
+          <li>🆘 <strong>Support technique :</strong> support@claudyne.com</li>
+          <li>⚖️ <strong>Questions légales :</strong> legal@claudyne.com</li>
+          <li>📞 <strong>Téléphone d'urgence :</strong> +237 694835844</li>
+        </ul>
+        <p><strong>Délai de réponse :</strong> 48 heures maximum pour toute demande de suppression de données.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>🇨🇲 Engagement Claudyne</h2>
+      <p><strong>🇨🇲 Honneur à Ma'a Meffo TCHANDJIO Claudine — Votre contrôle, notre priorité !</strong></p>
+      <p>Claudyne vous offre un contrôle granulaire sur vos données. Nous croyons que vous devez pouvoir décider précisément quelles informations conserver ou supprimer, tout en maintenant une expérience éducative optimale.</p>
+    </section>
+
+    <footer>
+      <div class="brand">© 2024 Claudyne — Contrôle Total de vos Données</div>
+      <div class="links">
+        <a href="https://claudyne.com">Accueil</a>
+        <a href="mailto:dpo@claudyne.com">Contact DPO</a>
+        <a href="https://claudyne.com/privacy">Confidentialité</a>
+        <a href="https://claudyne.com/delete-account">Suppression Compte</a>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

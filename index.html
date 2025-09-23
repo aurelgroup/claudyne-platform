@@ -7,7 +7,7 @@
     
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700;900&display=swap" as="style">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700;900&display=swap">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     
     <meta name="description" content="Claudyne - Plateforme éducative innovante pour l'excellence académique au Cameroun. IA, gamification et suivi personnalisé.">
     <meta name="keywords" content="éducation Cameroun, plateforme éducative, IA éducation, gamification apprentissage, Claudine TCHANDJIO, excellence académique">
@@ -746,12 +746,12 @@
             transform: translateY(-2px);
         }
 
-        .bottom-nav-item .material-icons {
+        .bottom-nav-item .material-icons-outlined {
             font-size: 1.4rem;
             margin-bottom: 0.25rem;
         }
 
-        .bottom-nav-item span:not(.material-icons) {
+        .bottom-nav-item span:not(.material-icons-outlined) {
             font-size: 0.65rem;
             font-weight: 500;
             text-align: center;
@@ -985,13 +985,13 @@
 
     <!-- Contrôle audio -->
     <div class="audio-control" onclick="toggleAudio()" role="button" aria-label="Contrôle audio" tabindex="0">
-        <span class="material-icons">volume_up</span>
+        <span class="material-icons-outlined">volume_up</span>
     </div>
 
 
     <!-- Bouton retour en haut -->
     <button class="back-to-top" id="backToTop" aria-label="Retour en haut" onclick="scrollToTop()">
-        <span class="material-icons">keyboard_arrow_up</span>
+        <span class="material-icons-outlined">keyboard_arrow_up</span>
     </button>
 
     <canvas id="starfieldCanvas" aria-hidden="true"></canvas>
@@ -1015,19 +1015,19 @@
             <p style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">Claudyne transforme l'apprentissage au Cameroun avec une approche innovante alliant IA, gamification et excellence pédagogique adaptée aux réalités africaines.</p>
             <div class="btn-group">
                 <a href="javascript:void(0)" onclick="showLoginModal('student')" class="glass-btn glass-btn-primary">
-                    <span class="material-icons">school</span>
+                    <span class="material-icons-outlined">school</span>
                     Étudiant
                 </a>
                 <a href="javascript:void(0)" onclick="showLoginModal('teacher')" class="glass-btn glass-btn-success">
-                    <span class="material-icons">person</span>
+                    <span class="material-icons-outlined">person</span>
                     Enseignant
                 </a>
                 <a href="javascript:void(0)" onclick="showLoginModal('parent')" class="glass-btn glass-btn-warning">
-                    <span class="material-icons">groups</span>
+                    <span class="material-icons-outlined">family_restroom</span>
                     Parent
                 </a>
                 <a href="javascript:void(0)" onclick="showDemoModal()" class="glass-btn">
-                    <span class="material-icons">rocket</span>
+                    <span class="material-icons-outlined">rocket_launch</span>
                     Essai Gratuit
                 </a>
             </div>
@@ -1039,32 +1039,32 @@
         <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-2), var(--color-accent-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Innovation au Service de l'Excellence</h2>
         <div class="features-grid">
             <div class="glass-card animate-on-scroll" data-node="node-1">
-                <span class="material-icons feature-icon">groups</span>
+                <span class="material-icons-outlined feature-icon">family_restroom</span>
                 <h3>Écosystème Familial</h3>
                 <p>Une plateforme unifiée permettant aux parents de suivre en temps réel les progrès de leurs enfants avec des tableaux de bord intuitifs et des alertes personnalisées.</p>
             </div>
             <div class="glass-card animate-on-scroll" data-node="node-2">
-                <span class="material-icons feature-icon">emoji_events</span>
+                <span class="material-icons-outlined feature-icon">emoji_events</span>
                 <h3>Prix Claudine</h3>
                 <p>Système de gamification révolutionnaire avec badges, classements et récompenses pour motiver l'excellence académique et célébrer chaque progrès.</p>
             </div>
             <div class="glass-card animate-on-scroll" data-node="node-3">
-                <span class="material-icons feature-icon">book</span>
+                <span class="material-icons-outlined feature-icon">auto_stories</span>
                 <h3>Contenu Adapté</h3>
                 <p>Cours développés spécifiquement pour le système éducatif camerounais, avec des références culturelles locales et des méthodes pédagogiques innovantes.</p>
             </div>
             <div class="glass-card animate-on-scroll" data-node="node-4">
-                <span class="material-icons feature-icon">payment</span>
+                <span class="material-icons-outlined feature-icon">payment</span>
                 <h3>Paiements Simplifiés</h3>
                 <p>Intégration complète avec MTN Mobile Money, Orange Money, Cartes VISA/MasterCard pour des transactions sécurisées et accessibles à tous.</p>
             </div>
             <div class="glass-card animate-on-scroll" data-node="node-5">
-                <span class="material-icons feature-icon">analytics</span>
+                <span class="material-icons-outlined feature-icon">analytics</span>
                 <h3>Intelligence Éducative</h3>
                 <p>Analyses avancées avec IA pour identifier les points forts, recommander des améliorations et personnaliser l'apprentissage de chaque élève en fonction de ses difficultés.</p>
             </div>
             <div class="glass-card animate-on-scroll" data-node="node-6">
-                <span class="material-icons feature-icon">signal_cellular_4_bar</span>
+                <span class="material-icons-outlined feature-icon">signal_cellular_alt</span>
                 <h3>Optimisé 2G/3G</h3>
                 <p>Interface ultra-légère conçue pour fonctionner parfaitement même avec des connexions Internet limitées, garantissant l'accès pour tous.</p>
             </div>
@@ -1079,7 +1079,7 @@
             <!-- Formule Découverte -->
             <div class="glass-card animate-on-scroll" style="position: relative;">
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <span class="material-icons" style="font-size: 3rem; color: var(--color-accent-1); margin-bottom: 1rem; display: block;">school</span>
+                    <span class="material-icons-outlined" style="font-size: 3rem; color: var(--color-accent-1); margin-bottom: 1rem; display: block;">school</span>
                     <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-accent-1);">Découverte</h3>
                     <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-1); margin-bottom: 0.5rem;">GRATUIT</div>
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">7 jours d'essai</p>
@@ -1087,25 +1087,25 @@
                 
                 <div style="margin-bottom: 2rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Accès à 3 matières</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Exercices de base</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Suivi basique des progrès</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Support email</span>
                     </div>
                 </div>
                 
                 <button onclick="showDemoModal()" class="glass-btn glass-btn-primary" style="width: 100%;">
-                    <span class="material-icons">science</span>
+                    <span class="material-icons-outlined">science</span>
                     Essayer gratuitement
                 </button>
             </div>
@@ -1113,7 +1113,7 @@
             <!-- Formule Individuelle -->
             <div class="glass-card animate-on-scroll" style="position: relative;">
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <span class="material-icons" style="font-size: 3rem; color: var(--color-accent-1); margin-bottom: 1rem; display: block;">person</span>
+                    <span class="material-icons-outlined" style="font-size: 3rem; color: var(--color-accent-1); margin-bottom: 1rem; display: block;">person</span>
                     <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-accent-1);">Individuelle</h3>
                     <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-1); margin-bottom: 0.5rem;">8,000 FCFA</div>
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">par mois / élève</p>
@@ -1121,29 +1121,29 @@
                 
                 <div style="margin-bottom: 2rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Accès illimité toutes matières</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>1 élève uniquement</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Suivi personnalisé avec IA</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Prix Claudine (badges)</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
                         <span>Support email</span>
                     </div>
                 </div>
                 
                 <button onclick="showLoginModal('student')" class="glass-btn glass-btn-primary" style="width: 100%;">
-                    <span class="material-icons">person</span>
+                    <span class="material-icons-outlined">person</span>
                     Choisir Individuelle
                 </button>
             </div>
@@ -1153,7 +1153,7 @@
                 <div class="popular-badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: linear-gradient(45deg, var(--color-accent-2), #ffd700); color: var(--color-dark-bg); padding: 0.6rem 2rem; border-radius: 25px; font-weight: 700; font-size: 0.85rem; white-space: nowrap; z-index: 100; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); animation: blink 2s infinite;">✨ POPULAIRE ✨</div>
                 
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <span class="material-icons" style="font-size: 3.5rem; color: var(--color-accent-2); margin-bottom: 1rem; display: block; animation: pulse 2s ease-in-out infinite;">groups</span>
+                    <span class="material-icons-outlined" style="font-size: 3.5rem; color: var(--color-accent-2); margin-bottom: 1rem; display: block; animation: pulse 2s ease-in-out infinite;">family_restroom</span>
                     <h3 style="font-size: 1.7rem; margin-bottom: 0.5rem; color: var(--color-accent-2); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">💝 Familiale 💝</h3>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 1.5rem; color: rgba(255, 255, 255, 0.6); text-decoration: line-through; margin-right: 1rem;">24,000 FCFA</span>
@@ -1165,33 +1165,33 @@
                 
                 <div style="margin-bottom: 2rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
                         <span>Accès illimité toutes matières</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
                         <span>Jusqu'à 3 enfants</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
                         <span>Suivi personnalisé avec IA</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
                         <span>Tableau de bord parents</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
                         <span>Prix Claudine (badges/récompenses)</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
                         <span>Support prioritaire</span>
                     </div>
                 </div>
                 
                 <button onclick="showLoginModal()" class="glass-btn glass-btn-success" style="width: 100%; background: linear-gradient(45deg, var(--color-accent-2), #ffd700); font-weight: 700; font-size: 1.1rem; padding: 1rem 2rem; animation: pulse 2s ease-in-out infinite; border: 2px solid #ffd700; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);">
-                    <span class="material-icons">star</span>
+                    <span class="material-icons-outlined">star</span>
                     🚀 CHOISIR FAMILIALE 🚀
                 </button>
             </div>
@@ -1199,7 +1199,7 @@
             <!-- Formule École -->
             <div class="glass-card animate-on-scroll" style="position: relative;">
                 <div style="text-align: center; margin-bottom: 2rem;">
-                    <span class="material-icons" style="font-size: 3rem; color: var(--color-accent-3); margin-bottom: 1rem; display: block;">domain</span>
+                    <span class="material-icons-outlined" style="font-size: 3rem; color: var(--color-accent-3); margin-bottom: 1rem; display: block;">domain</span>
                     <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-accent-3);">École</h3>
                     <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-3); margin-bottom: 0.5rem;">SUR DEVIS</div>
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">selon effectifs</p>
@@ -1207,33 +1207,33 @@
                 
                 <div style="margin-bottom: 2rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
                         <span>Solution complète école</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
                         <span>Élèves illimités</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
                         <span>Interface enseignants</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
                         <span>Analytics avancés</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
                         <span>Formation équipe</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
                         <span>Support dédié 24/7</span>
                     </div>
                 </div>
                 
                 <button onclick="contactSchool()" class="glass-btn glass-btn-warning" style="width: 100%;">
-                    <span class="material-icons">contact_mail</span>
+                    <span class="material-icons-outlined">contact_mail</span>
                     Demander un devis
                 </button>
             </div>
@@ -1277,7 +1277,7 @@
         
         <div class="glass-card animate-on-scroll">
             <div style="text-align: center; margin-bottom: 2rem;">
-                <span class="material-icons" style="font-size: 4rem; color: var(--color-accent-3); margin-bottom: 1rem; display: block;">favorite</span>
+                <span class="material-icons-outlined" style="font-size: 4rem; color: var(--color-accent-3); margin-bottom: 1rem; display: block;">favorite</span>
                 <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-accent-1);">Ensemble, démocratisons l'éducation</h3>
                 <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; color: var(--color-light-text);">
                     Votre générosité permet à Claudyne d'offrir une éducation de qualité aux familles les plus démunies. 
@@ -1287,17 +1287,17 @@
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
                 <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center;">
-                    <span class="material-icons" style="color: var(--color-accent-1); font-size: 2.5rem; margin-bottom: 1rem; display: block;">school</span>
+                    <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 2.5rem; margin-bottom: 1rem; display: block;">school</span>
                     <h4 style="color: var(--color-accent-1); margin-bottom: 0.5rem;">50€</h4>
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Offre 1 mois d'accès gratuit à une famille</p>
                 </div>
                 <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center;">
-                    <span class="material-icons" style="color: var(--color-accent-2); font-size: 2.5rem; margin-bottom: 1rem; display: block;">groups</span>
+                    <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 2.5rem; margin-bottom: 1rem; display: block;">groups</span>
                     <h4 style="color: var(--color-accent-2); margin-bottom: 0.5rem;">150€</h4>
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Permet à 5 familles d'accéder à la plateforme</p>
                 </div>
                 <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center;">
-                    <span class="material-icons" style="color: var(--color-accent-3); font-size: 2.5rem; margin-bottom: 1rem; display: block;">public</span>
+                    <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 2.5rem; margin-bottom: 1rem; display: block;">public</span>
                     <h4 style="color: var(--color-accent-3); margin-bottom: 0.5rem;">500€</h4>
                     <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Finance un programme complet ou le Prix Claudine pour une école</p>
                 </div>
@@ -1307,19 +1307,19 @@
                 <h4 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-1);">💳 Moyens de don privilégiés</h4>
                 <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3);">smartphone</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3);">smartphone</span>
                         <span>Mobile Money (MTN, Orange, Express Union)</span>
                     </span>
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-1);">credit_card</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1);">credit_card</span>
                         <span>Cartes VISA/MasterCard</span>
                     </span>
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-2);">account_balance</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2);">account_balance</span>
                         <span>Virements bancaires</span>
                     </span>
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span class="material-icons" style="color: var(--color-accent-3);">receipt</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3);">receipt</span>
                         <span>Chèques</span>
                     </span>
                 </div>
@@ -1328,19 +1328,19 @@
             <div style="text-align: center;">
                 <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                     <button onclick="makeDonation(50)" class="glass-btn glass-btn-primary">
-                        <span class="material-icons">volunteer_activism</span>
+                        <span class="material-icons-outlined">volunteer_activism</span>
                         Donner 50€
                     </button>
                     <button onclick="makeDonation(150)" class="glass-btn glass-btn-success">
-                        <span class="material-icons">volunteer_activism</span>
+                        <span class="material-icons-outlined">volunteer_activism</span>
                         Donner 150€
                     </button>
                     <button onclick="makeDonation(500)" class="glass-btn glass-btn-warning">
-                        <span class="material-icons">volunteer_activism</span>
+                        <span class="material-icons-outlined">volunteer_activism</span>
                         Donner 500€
                     </button>
                     <button onclick="showCustomDonation()" class="glass-btn">
-                        <span class="material-icons">edit</span>
+                        <span class="material-icons-outlined">edit</span>
                         Montant libre
                     </button>
                 </div>
@@ -1378,7 +1378,7 @@
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFAQ(this)">
                     Comment Claudyne s'adapte-t-elle au système éducatif camerounais ?
-                    <span class="material-icons">expand_more</span>
+                    <span class="material-icons-outlined">expand_more</span>
                 </button>
                 <div class="faq-answer">
                     <p>Claudyne suit rigoureusement les programmes officiels du Ministère de l'Éducation Nationale du Cameroun, avec des contenus adaptés aux spécificités culturelles et linguistiques locales.</p>
@@ -1388,7 +1388,7 @@
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFAQ(this)">
                     Quels moyens de paiement sont acceptés ?
-                    <span class="material-icons">expand_more</span>
+                    <span class="material-icons-outlined">expand_more</span>
                 </button>
                 <div class="faq-answer">
                     <p>Nous acceptons MTN Mobile Money, Orange Money, ainsi que les virements bancaires. Des plans de paiement flexibles sont disponibles pour s'adapter à tous les budgets familiaux.</p>
@@ -1398,7 +1398,7 @@
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFAQ(this)">
                     La plateforme fonctionne-t-elle hors ligne ?
-                    <span class="material-icons">expand_more</span>
+                    <span class="material-icons-outlined">expand_more</span>
                 </button>
                 <div class="faq-answer">
                     <p>Oui ! Claudyne permet de télécharger les cours pour un accès hors ligne, et synchronise automatiquement vos progrès dès que la connexion est rétablie.</p>
@@ -1408,7 +1408,7 @@
             <div class="faq-item">
                 <button class="faq-question" onclick="toggleFAQ(this)">
                     Comment les enseignants peuvent-ils rejoindre la plateforme ?
-                    <span class="material-icons">expand_more</span>
+                    <span class="material-icons-outlined">expand_more</span>
                 </button>
                 <div class="faq-answer">
                     <p>Les enseignants peuvent s'inscrire via notre interface dédiée. Nous proposons des formations gratuites pour maîtriser tous les outils pédagogiques de la plateforme.</p>
@@ -1444,17 +1444,17 @@
                 
                 <div class="features-grid" style="margin-bottom: 2rem;">
                     <div>
-                        <span class="material-icons" style="color: var(--color-accent-1); font-size: 2rem;">location_on</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 2rem;">location_on</span>
                         <h4>Nos Bureaux</h4>
                         <p>Douala, Cameroun<br>Yaoundé, Cameroun</p>
                     </div>
                     <div>
-                        <span class="material-icons" style="color: var(--color-accent-2); font-size: 2rem;">phone</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 2rem;">phone</span>
                         <h4>Appelez-nous</h4>
                         <p>+237 694 83 58 44<br>WhatsApp +237 694 835 844</p>
                     </div>
                     <div>
-                        <span class="material-icons" style="color: var(--color-accent-3); font-size: 2rem;">email</span>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 2rem;">email</span>
                         <h4>Écrivez-nous</h4>
                         <p>contact@claudyne.com<br>support@claudyne.com</p>
                     </div>
@@ -1462,11 +1462,11 @@
                 
                 <div class="btn-group">
                     <a href="javascript:void(0)" onclick="showLoginModal()" class="glass-btn glass-btn-primary">
-                        <span class="material-icons">play_arrow</span>
+                        <span class="material-icons-outlined">play_arrow</span>
                         Commencer maintenant
                     </a>
                     <a href="javascript:void(0)" onclick="showDemoModal()" class="glass-btn glass-btn-success">
-                        <span class="material-icons">science</span>
+                        <span class="material-icons-outlined">science</span>
                         Tester gratuitement
                     </a>
                 </div>
@@ -2403,7 +2403,7 @@
         let audioEnabled = false;
         function toggleAudio() {
             const audio = document.getElementById('backgroundAudio');
-            const icon = document.querySelector('.audio-control .material-icons');
+            const icon = document.querySelector('.audio-control .material-icons-outlined');
             
             if (!audioEnabled) {
                 // Initialiser le contexte audio pour les effets magnétiques
@@ -2440,7 +2440,7 @@
         // Gestion de la FAQ
         function toggleFAQ(button) {
             const answer = button.nextElementSibling;
-            const icon = button.querySelector('.material-icons');
+            const icon = button.querySelector('.material-icons-outlined');
             
             answer.classList.toggle('active');
             icon.textContent = answer.classList.contains('active') ? 'expand_less' : 'expand_more';
@@ -2992,27 +2992,27 @@
     <nav class="bottom-nav">
         <div class="bottom-nav-container">
             <a href="#hero" class="bottom-nav-item active" data-section="hero">
-                <span class="material-icons">home</span>
+                <span class="material-icons-outlined">home</span>
                 <span>Accueil</span>
             </a>
             <a href="#features" class="bottom-nav-item" data-section="features">
-                <span class="material-icons">auto_awesome</span>
+                <span class="material-icons-outlined">auto_awesome</span>
                 <span>Features</span>
             </a>
             <a href="#pricing" class="bottom-nav-item" data-section="pricing">
-                <span class="material-icons">monetization_on</span>
+                <span class="material-icons-outlined">monetization_on</span>
                 <span>Tarifs</span>
             </a>
             <a href="#testimonials" class="bottom-nav-item" data-section="testimonials">
-                <span class="material-icons">star</span>
+                <span class="material-icons-outlined">star</span>
                 <span>Avis</span>
             </a>
             <a href="#donation" class="bottom-nav-item" data-section="donation">
-                <span class="material-icons">volunteer_activism</span>
+                <span class="material-icons-outlined">volunteer_activism</span>
                 <span>Don</span>
             </a>
             <a href="javascript:void(0)" class="bottom-nav-item" onclick="showLoginModal()">
-                <span class="material-icons">account_circle</span>
+                <span class="material-icons-outlined">account_circle</span>
                 <span>Connexion</span>
             </a>
         </div>

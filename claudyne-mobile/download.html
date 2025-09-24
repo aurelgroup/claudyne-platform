@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télécharger Claudyne - Application Mobile</title>
+    <meta name="description" content="Téléchargez l'application mobile Claudyne pour Android. Guide d'installation et QR code inclus.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .qr-code {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .qr-code img {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .guide {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .guide h2 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guide ol {
+            counter-reset: step-counter;
+            list-style: none;
+        }
+
+        .guide li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-left: 40px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .guide li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning p {
+            color: #856404;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .info h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info p {
+            color: #0c5460;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .qr-code img {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Claudyne</h1>
+            <p>Téléchargez l'application mobile</p>
+        </div>
+
+        <div class="content">
+            <div class="download-section">
+                <div class="qr-code">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://claudyne.com/download/claudyne.apk" alt="QR Code pour télécharger Claudyne" />
+                </div>
+                <p><strong>Scannez le QR code</strong> ou cliquez sur le bouton ci-dessous</p>
+                <a href="claudyne.apk" class="download-btn" download>
+                    📥 Télécharger Claudyne.apk
+                </a>
+                <p><small>Taille : ~93 MB • Version Android</small></p>
+            </div>
+
+            <div class="guide">
+                <h2>📋 Guide d'Installation</h2>
+
+                <div class="warning">
+                    <h3>⚠️ Important</h3>
+                    <p>Cette application n'est pas disponible sur Google Play Store. Vous devez autoriser l'installation depuis des sources inconnues.</p>
+                </div>
+
+                <ol>
+                    <li>Téléchargez le fichier <strong>claudyne.apk</strong> en cliquant sur le bouton ci-dessus</li>
+                    <li>Ouvrez les <strong>Paramètres</strong> de votre téléphone Android</li>
+                    <li>Allez dans <strong>Sécurité</strong> ou <strong>Applications</strong></li>
+                    <li>Activez <strong>"Sources inconnues"</strong> ou <strong>"Installer des applications inconnues"</strong></li>
+                    <li>Localisez le fichier téléchargé dans vos <strong>Téléchargements</strong></li>
+                    <li>Appuyez sur le fichier <strong>claudyne.apk</strong></li>
+                    <li>Confirmez l'installation en appuyant sur <strong>"Installer"</strong></li>
+                    <li>Une fois installée, ouvrez l'application <strong>Claudyne</strong></li>
+                </ol>
+
+                <div class="info">
+                    <h3>💡 Aide</h3>
+                    <p>Si vous rencontrez des difficultés, vérifiez que votre version Android est 5.0 ou supérieure. Pour toute question, contactez le support technique.</p>
+                </div>
+
+                <div class="warning">
+                    <h3>🔒 Sécurité</h3>
+                    <p>N'oubliez pas de désactiver "Sources inconnues" après l'installation pour maintenir la sécurité de votre appareil.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

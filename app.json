@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Claudyne Mobile",
+    "slug": "claudyne-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#007A3D"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aurelgroup.claudyne"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#007A3D"
+      },
+      "package": "com.aurelgroup.claudyne"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "owner": "aurelgroup"
+  }
+}

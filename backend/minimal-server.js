@@ -2659,8 +2659,8 @@ const server = http.createServer((req, res) => {
   });
 });
 
-// Démarrage du serveur
-server.listen(PORT, () => {
+// Démarrage du serveur sur toutes les interfaces
+server.listen(PORT, '0.0.0.0', () => {
   console.log('');
   console.log('🎓 ============================================');
   console.log('   CLAUDYNE - La force du savoir en héritage');

@@ -1,23 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)",
-      "Bash(npm install)",
-      "Bash(taskkill:*)",
-      "Bash(powershell:*)",
-      "Bash(start admin-interface.html)",
-      "Bash(node:*)",
-      "Bash(start http://localhost:3007)",
-      "Bash(npm start)",
-      "Bash(scp:*)",
-      "Bash(ssh:*)",
-      "Bash(git add:*)",
-      "Bash(curl:*)",
-      "Bash(start http://localhost:3000)",
-      "Bash(start http://localhost:3000/student)",
-      "Bash(start http://localhost:3000/admin)",
-      "Bash(start http://localhost:3001/admin-secure-k7m9x4n2p8w5z1c6)",
-      "Bash(DB_TYPE=sqlite DB_STORAGE=database/claudyne_clean.sqlite NODE_ENV=development node -e \"\nconst { Sequelize } = require(''sequelize'');\nconst bcrypt = require(''bcryptjs'');\n\nconst sequelize = new Sequelize({\n  dialect: ''sqlite'',\n  storage: ''database/claudyne_clean.sqlite'',\n  logging: false\n});\n\nasync function testLogin() {\n  try {\n    const [results] = await sequelize.query(''SELECT email, password FROM Users WHERE email = ?'', {\n      replacements: [''admin@claudyne.com'']\n    });\n    \n    if (results.length > 0) {\n      const user = results[0];\n      console.log(''✅ User found:'', user.email);\n      const passwordMatch = bcrypt.compareSync(''admin123'', user.password);\n      console.log(''🔑 Password test:'', passwordMatch ? ''SUCCESS'' : ''FAILED'');\n    } else {\n      console.log(''❌ User not found'');\n    }\n  } catch (error) {\n    console.error(''Error:'', error.message);\n  } finally {\n    await sequelize.close();\n  }\n}\n\ntestLogin();\n\" \")"
+      "Read(//c/Users/fa_nono/Documents/CADD/**)"
     ],
     "deny": [],
     "ask": []

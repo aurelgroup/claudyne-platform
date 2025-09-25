@@ -25,16 +25,13 @@ export default function App() {
     try {
       setIsLoading(true);
 
-      // Vérifier si un token est stocké
       const token = await AsyncStorage.getItem(STORAGE_KEYS.USER_TOKEN);
 
       if (token) {
-        // Vérifier la validité du token auprès du serveur
         const isValid = await ApiService.checkStoredToken();
         setIsAuthenticated(isValid);
 
         if (!isValid) {
-          // Token invalide, le nettoyer
           await AsyncStorage.multiRemove([
             STORAGE_KEYS.USER_TOKEN,
             STORAGE_KEYS.USER_DATA,
@@ -69,7 +66,6 @@ export default function App() {
       <View style={styles.loadingContainer}>
         <StatusBar style="light" backgroundColor={THEME_CONSTANTS.COLORS.PRIMARY} />
 
-        {/* Logo et branding */}
         <View style={styles.brandingContainer}>
           <Text style={styles.emoji}>🇨🇲</Text>
           <Text style={styles.title}>Claudyne</Text>
@@ -77,7 +73,6 @@ export default function App() {
           <Text style={styles.tagline}>La Symbiose Quantique de l'Excellence</Text>
         </View>
 
-        {/* Indicateur de chargement */}
         <View style={styles.loadingSection}>
           <ActivityIndicator
             size="large"
@@ -86,7 +81,6 @@ export default function App() {
           <Text style={styles.loadingText}>Initialisation...</Text>
         </View>
 
-        {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
             Hommage à Ma'a Meffo TCHANDJIO Claudine{'\n'}

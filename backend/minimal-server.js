@@ -7,7 +7,7 @@ const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Fonction utilitaire pour les headers CORS
 function setCorsHeaders(res) {
@@ -86,6 +86,21 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // API Health check
+  if (pathname === '/api/health' && method === 'GET') {
+    sendJSON(res, 200, {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      message: 'Claudyne API fonctionne correctement ! 💚',
+      services: {
+        api: 'operational',
+        database: 'mock',
+        cache: 'mock'
+      }
+    });
+    return;
+  }
+
   // API base
   if (pathname === '/api' && method === 'GET') {
     sendJSON(res, 200, {
@@ -114,26 +129,57 @@ const server = http.createServer((req, res) => {
         return;
       }
 
-      const { credential, password } = body;
+      const { credential, password, email } = body;
 
-      if (credential && password) {
+      // Support pour email, nom ou téléphone
+      const loginCredential = credential || email;
+
+      if (!loginCredential || !password) {
+        sendJSON(res, 400, { success: false, message: 'Identifiants requis' });
+        return;
+      }
+
+      // Base d'utilisateurs réels
+      const users = {
+        // Parents
+        'parent@claudyne.com': {
+          password: 'parent123',
+          user: { id: 'p1', firstName: 'Marie', lastName: 'Nguema', email: 'parent@claudyne.com', phone: '+237694123456', role: 'PARENT', userType: 'MANAGER' },
+          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
+        },
+        'marie.nguema': {
+          password: 'parent123',
+          user: { id: 'p1', firstName: 'Marie', lastName: 'Nguema', email: 'parent@claudyne.com', phone: '+237694123456', role: 'PARENT', userType: 'MANAGER' },
+          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
+        },
+        '+237694123456': {
+          password: 'parent123',
+          user: { id: 'p1', firstName: 'Marie', lastName: 'Nguema', email: 'parent@claudyne.com', phone: '+237694123456', role: 'PARENT', userType: 'MANAGER' },
+          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
+        },
+        // Étudiants
+        'etudiant@claudyne.com': {
+          password: 'etudiant123',
+          user: { id: 's1', firstName: 'Jean', lastName: 'Nguema', email: 'etudiant@claudyne.com', phone: '+237695123456', role: 'STUDENT', userType: 'STUDENT' },
+          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
+        },
+        // Professeurs
+        'prof@claudyne.com': {
+          password: 'prof123',
+          user: { id: 't1', firstName: 'Paul', lastName: 'Mbarga', email: 'prof@claudyne.com', phone: '+237696123456', role: 'TEACHER', userType: 'TEACHER' },
+          family: null
+        }
+      };
+
+      const userAccount = users[loginCredential.toLowerCase()];
+
+      if (userAccount && userAccount.password === password) {
         sendJSON(res, 200, {
           success: true,
-          message: 'Connexion test réussie ! 🎉',
+          message: `Connexion réussie ! Bienvenue ${userAccount.user.firstName} 🎉`,
           data: {
-            user: {
-              id: '1',
-              firstName: 'Test',
-              lastName: 'Utilisateur',
-              email: credential.includes('@') ? credential : null,
-              phone: !credential.includes('@') ? credential : null,
-              role: 'PARENT',
-              userType: 'MANAGER'
-            },
-            family: {
-              id: '1',
-              name: 'Famille Test',
-              displayName: 'Famille Test',
+            user: userAccount.user,
+            family: userAccount.family || {
               status: 'TRIAL',
               subscriptionType: 'TRIAL',
               walletBalance: 12500,

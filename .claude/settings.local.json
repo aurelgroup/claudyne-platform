@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/fa_nono/Documents/CADD/**)"
+      "Read(//c/Users/fa_nono/Documents/CADD/**)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

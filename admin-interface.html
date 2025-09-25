@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interface Admin - Claudyne</title>
-    <!-- Cache buster v1.2.8 timestamp: 2025-09-20-22:20 FORCE REFRESH AUTOMATISATION -->
+    <!-- Cache buster v1.3.0 FRESH FILE - NOUVEAU FICHIER ANTI-CACHE timestamp: 2025-09-20-23:30 -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -2312,6 +2312,55 @@
         }
 
         /* === END EMAIL AUTOMATION STYLES === */
+
+        /* === DATA MANAGEMENT STYLES === */
+        .data-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .data-status-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+
+        .data-status-item h4 {
+            color: #FFD700;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .data-status-item p {
+            margin: 4px 0;
+            font-size: 13px;
+        }
+
+        .data-status-item small {
+            opacity: 0.7;
+            font-size: 11px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .button-grid button {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .button-grid button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        /* === END DATA MANAGEMENT STYLES === */
+
     </style>
 </head>
 <body>
@@ -2569,6 +2618,12 @@
                         <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('pricing-plans')">
                             <span class="nav-icon">💰</span>
                             Plans tarifaires
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('data-management')">
+                            <span class="nav-icon">🔧</span>
+                            Gestion Données
                         </a>
                     </li>
                     <li class="nav-item">
@@ -3135,6 +3190,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Ajouter un membre de l'équipe</h2>
+                        <button class="btn btn-success btn-sm" onclick="addTeamMember()">➕ Ajouter membre</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
@@ -3264,6 +3320,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Message rapide</h2>
+                        <button class="btn btn-primary btn-sm" onclick="sendQuickMessage()">📩 Envoyer message</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
@@ -3684,7 +3741,11 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">🎯 Déclencheurs d'Emails</h2>
-                        <button class="btn btn-secondary btn-sm" onclick="testAllTriggers()">🧪 Tester Tous</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-primary btn-sm" onclick="openAutomationModal()">➕ Nouveau Déclencheur</button>
+                            <button class="btn btn-success btn-sm" onclick="saveAutomationConfiguration()">💾 Sauvegarder Config</button>
+                            <button class="btn btn-secondary btn-sm" onclick="testAllTriggers()">🧪 Tester Tous</button>
+                        </div>
                     </div>
                     <div class="section-content">
                         <div id="triggersGrid" class="triggers-grid">
@@ -3742,6 +3803,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Générateur de rapports</h2>
+                        <button class="btn btn-primary btn-sm" onclick="generateReport()">📊 Générer rapport</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
@@ -3854,6 +3916,106 @@
                     </div>
                 </div>
 
+                <!-- Security Status -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">Statut de sécurité</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="refreshSecurityStatus()">🔄 Actualiser</button>
+                    </div>
+                    <div class="section-content">
+                        <div class="stats-grid" style="margin-bottom: 1rem;">
+                            <div class="stat-card glass-stat-card primary">
+                                <div class="stat-header">
+                                    <span class="stat-title">Fail2ban</span>
+                                    <span class="stat-icon" id="fail2ban-status">🛡️</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="banned-ips">-</div>
+                                <div class="stat-change">IPs bannies</div>
+                            </div>
+                            <div class="stat-card glass-stat-card warning">
+                                <div class="stat-header">
+                                    <span class="stat-title">SSH Attacks</span>
+                                    <span class="stat-icon">🚫</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="ssh-attacks">-</div>
+                                <div class="stat-change">dernières 24h</div>
+                            </div>
+                            <div class="stat-card glass-stat-card secondary">
+                                <div class="stat-header">
+                                    <span class="stat-title">SSL Status</span>
+                                    <span class="stat-icon">🔐</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="ssl-expiry">-</div>
+                                <div class="stat-change">jours restants</div>
+                            </div>
+                            <div class="stat-card glass-stat-card success">
+                                <div class="stat-header">
+                                    <span class="stat-title">Firewall</span>
+                                    <span class="stat-icon" id="firewall-status">🔥</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="firewall-rules">-</div>
+                                <div class="stat-change">règles actives</div>
+                            </div>
+                        </div>
+                        <div id="security-details" style="background: #1F2937; color: #F3F4F6; padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.875rem;">
+                            <div class="loading" style="color: #F3F4F6;"></div> Chargement statut sécurité...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">Métriques de performance</h2>
+                        <div class="filter-group">
+                            <select id="metricsTimeRange" onchange="refreshPerformanceMetrics()">
+                                <option value="1h">Dernière heure</option>
+                                <option value="24h" selected>Dernières 24h</option>
+                                <option value="7d">7 derniers jours</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="stats-grid" style="margin-bottom: 1rem;">
+                            <div class="stat-card glass-stat-card info">
+                                <div class="stat-header">
+                                    <span class="stat-title">Requêtes Web</span>
+                                    <span class="stat-icon">🌐</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="web-requests">-</div>
+                                <div class="stat-change">total</div>
+                            </div>
+                            <div class="stat-card glass-stat-card primary">
+                                <div class="stat-header">
+                                    <span class="stat-title">Visiteurs uniques</span>
+                                    <span class="stat-icon">👥</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="unique-visitors">-</div>
+                                <div class="stat-change">IPs distinctes</div>
+                            </div>
+                            <div class="stat-card glass-stat-card secondary">
+                                <div class="stat-header">
+                                    <span class="stat-title">Temps réponse moy.</span>
+                                    <span class="stat-icon">⏱️</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="avg-response-time">-</div>
+                                <div class="stat-change">secondes</div>
+                            </div>
+                            <div class="stat-card glass-stat-card warning">
+                                <div class="stat-header">
+                                    <span class="stat-title">Erreurs HTTP</span>
+                                    <span class="stat-icon">❌</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="http-errors">-</div>
+                                <div class="stat-change">4xx/5xx</div>
+                            </div>
+                        </div>
+                        <div id="performance-chart" style="background: #1F2937; color: #F3F4F6; padding: 1rem; border-radius: 6px; min-height: 200px;">
+                            <div class="loading" style="color: #F3F4F6;"></div> Chargement métriques...
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Backup Status -->
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
@@ -3945,6 +4107,84 @@
             </div>
 
             <!-- Settings Section -->
+            <!-- Section Gestion des Données -->
+            <div id="data-management-section" class="section hidden">
+                <div class="section-header">
+                    <h1 class="page-title">🔧 Gestion des Données Dynamiques</h1>
+                    <p class="page-description">Contrôle et réinitialisation des données Claudyne</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- État des données -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>📊 État des Données</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="dataStatusInfo" class="data-status-grid">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions rapides -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>⚡ Actions Rapides</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="button-grid">
+                                <button class="btn-danger" onclick="resetAllDataAdmin()" style="background: linear-gradient(45deg, #FF4757, #FF3838); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    🔄 Reset Complet
+                                </button>
+                                <button class="btn-warning" onclick="resetCategoryAdmin('EMAIL_TEMPLATES')" style="background: linear-gradient(45deg, #FFA502, #FF7675); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📧 Reset Templates
+                                </button>
+                                <button class="btn-warning" onclick="resetCategoryAdmin('EMAIL_AUTOMATIONS')" style="background: linear-gradient(45deg, #FFA502, #FF7675); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    🤖 Reset Automations
+                                </button>
+                                <button class="btn-warning" onclick="resetCategoryAdmin('DASHBOARD_STATS')" style="background: linear-gradient(45deg, #FFA502, #FF7675); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📊 Reset Stats
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sauvegarde/Restauration -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>💾 Sauvegarde & Restauration</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="button-grid">
+                                <button class="btn-success" onclick="exportDataAdmin()" style="background: linear-gradient(45deg, #2ED573, #1ABC9C); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📥 Exporter Données
+                                </button>
+                                <button class="btn-success" onclick="document.getElementById('importFileAdmin').click()" style="background: linear-gradient(45deg, #2ED573, #1ABC9C); color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; margin: 5px;">
+                                    📤 Importer Données
+                                </button>
+                                <input type="file" id="importFileAdmin" accept=".json" style="display: none;" onchange="importDataAdmin(this.files[0])">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Journal des actions -->
+                    <div class="dashboard-card" style="grid-column: 1 / -1;">
+                        <div class="card-header">
+                            <h3>📜 Journal des Actions</h3>
+                            <button onclick="clearDataLog()" style="background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                                🗑️ Vider
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div id="dataActionLog" style="background: #000; color: #00FF00; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; height: 200px; overflow-y: auto;">
+                                Gestion des données initialisée...<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="settings-section" class="section hidden">
                 <div class="page-header">
                     <div>
@@ -4029,7 +4269,10 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Configuration des API</h2>
-                        <span class="badge badge-warning">Sensible - Accès restreint</span>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <span class="badge badge-warning">Sensible - Accès restreint</span>
+                            <button class="btn btn-primary btn-sm" onclick="saveAPIConfiguration()">💾 Sauvegarder APIs</button>
+                        </div>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; gap: 1.5rem;">
@@ -4081,10 +4324,12 @@
                                 </div>
                             </div>
 
-                            <!-- Email SMTP Configuration -->
+                            <!-- Email SMTP Configuration & Automation -->
                             <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 1.5rem;">
-                                <h3 style="margin-bottom: 1rem; color: #1F2937; font-size: 1.1rem;">📬 Configuration SMTP Email</h3>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <h3 style="margin-bottom: 1rem; color: #1F2937; font-size: 1.1rem;">📬 Configuration SMTP Email & Automation</h3>
+
+                                <!-- SMTP Server Configuration -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                                     <div>
                                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Serveur SMTP</label>
                                         <input type="text" id="smtpHost" placeholder="smtp.gmail.com" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
@@ -4099,16 +4344,87 @@
                                     </div>
                                     <div>
                                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Mot de passe SMTP</label>
-                                        <input type="password" id="smtpPassword" placeholder="********" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        <input type="password" id="smtpPassword" placeholder="App Password Gmail" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
                                     </div>
                                 </div>
-                                <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+
+                                <!-- Email Automation Settings -->
+                                <div style="border-top: 1px solid #E5E7EB; padding-top: 1.5rem; margin-bottom: 1.5rem;">
+                                    <h4 style="margin-bottom: 1rem; color: #374151; font-size: 1rem;">🤖 Paramètres Automation Email</h4>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Nom expéditeur</label>
+                                            <input type="text" id="emailFromName" placeholder="Équipe Claudyne" value="Équipe Claudyne" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Email support</label>
+                                            <input type="email" id="emailSupport" placeholder="support@claudyne.com" value="support@claudyne.com" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Délai bienvenue (ms)</label>
+                                            <input type="number" id="welcomeEmailDelay" placeholder="0" value="0" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Email Automation Toggles -->
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="emailAutomationEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🚀 Automation activée</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Déclencher emails automatiques</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="welcomeEmailEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🎉 Email bienvenue</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Envoi automatique inscription</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="passwordResetEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🔐 Reset password</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Réinitialisation mot de passe</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border: 1px solid #E5E7EB; border-radius: 6px; background: #F9FAFB; transition: all 0.2s;">
+                                                <input type="checkbox" id="prixClaudineEmailEnabled" checked style="margin-right: 0.75rem; transform: scale(1.2);">
+                                                <div>
+                                                    <div style="font-weight: 500; color: #1F2937;">🏆 Prix Claudine</div>
+                                                    <div style="font-size: 0.875rem; color: #6B7280;">Notifications concours</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                                     <label style="display: flex; align-items: center; cursor: pointer;">
                                         <input type="checkbox" id="smtpTls" checked style="margin-right: 0.5rem;">
                                         Utiliser TLS/STARTTLS
                                     </label>
-                                    <button class="btn btn-secondary btn-sm" onclick="testEmailSMTP()">📬 Envoyer email test</button>
+                                    <div style="flex: 1;"></div>
+                                    <button class="btn btn-secondary btn-sm" onclick="testEmailSMTP()" style="background: #6B7280; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                        📬 Test SMTP
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="saveEmailConfiguration()" style="background: #10B981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                        💾 Sauvegarder config
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="sendTestWelcomeEmail()" style="background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                        🧪 Test bienvenue
+                                    </button>
                                 </div>
+                                <div id="emailConfigResult" style="margin-top: 1rem; font-weight: 500; padding: 0.75rem; border-radius: 6px; display: none;"></div>
                             </div>
 
                             <!-- ChatGPT OpenAI Configuration -->
@@ -4180,6 +4496,7 @@
                 <div class="content-section glass-card animate-fadeInUp">
                     <div class="section-header">
                         <h2 class="section-title">Configuration tarifaire</h2>
+                        <button class="btn btn-primary btn-sm" onclick="savePricingConfiguration()">💾 Sauvegarder tarifs</button>
                     </div>
                     <div class="section-content">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
@@ -5076,7 +5393,7 @@
             return false;
         };
 
-        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3002' : 'https://claudyne.com';
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://claudyne.com';
         let USE_MOCK_DATA = false; // VRAI BACKEND ACTIVÉ - Données réelles depuis l'API
         
         // Backend réel activé - données authentiques
@@ -5194,6 +5511,7 @@
                         break;
                     case 'settings':
                         await loadSettingsData();
+                        await loadEmailConfiguration();
                         break;
                     case 'email-templates':
                         await loadEmailTemplatesData();
@@ -6227,7 +6545,7 @@
         async function loadSystemMonitoringData() {
             try {
                 // Load system health
-                const healthResponse = await fetch(`${API_BASE}/api/admin/system/health`);
+                const healthResponse = await apiRequest(`${API_BASE}/api/admin/system/health`);
                 const healthData = await healthResponse.json();
 
                 if (healthData.success) {
@@ -6236,7 +6554,7 @@
                     document.getElementById('cpu-usage').textContent = health.cpu;
                     document.getElementById('memory-usage').textContent = health.memory;
                     document.getElementById('error-count').textContent = health.errors;
-                    
+
                     // Update server status indicator
                     const statusIcon = document.getElementById('server-status');
                     if (health.status === 'healthy') {
@@ -6247,6 +6565,12 @@
                         statusIcon.textContent = '🔴';
                     }
                 }
+
+                // Load security status
+                await loadSecurityStatus();
+
+                // Load performance metrics
+                await loadPerformanceMetrics();
 
                 // Load system logs
                 const logsResponse = await fetch(`${API_BASE}/api/admin/system/logs`);
@@ -6372,6 +6696,120 @@
 
         function downloadBackup(backupId) {
             alert(`Téléchargement de la sauvegarde ${backupId} - Fonctionnalité à implémenter`);
+        }
+
+        // Security Status Functions
+        async function loadSecurityStatus() {
+            try {
+                const securityResponse = await apiRequest(`${API_BASE}/api/admin/system/security`);
+                const securityData = await securityResponse.json();
+
+                if (securityData.success) {
+                    const security = securityData.data;
+
+                    // Update security stats
+                    document.getElementById('banned-ips').textContent = security.bannedIPs || 0;
+                    document.getElementById('ssh-attacks').textContent = security.sshAttacks || 0;
+                    document.getElementById('ssl-expiry').textContent = security.sslDaysLeft || 0;
+                    document.getElementById('firewall-rules').textContent = security.firewallRules || 0;
+
+                    // Update status indicators
+                    const fail2banStatus = document.getElementById('fail2ban-status');
+                    fail2banStatus.textContent = security.fail2banActive ? '🟢' : '🔴';
+
+                    const firewallStatus = document.getElementById('firewall-status');
+                    firewallStatus.textContent = security.firewallActive ? '🟢' : '🔴';
+
+                    // Update security details
+                    const securityDetails = document.getElementById('security-details');
+                    securityDetails.innerHTML = `
+                        <div style="margin-bottom: 0.5rem;"><strong>🛡️ FAIL2BAN STATUS:</strong></div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Active jails: ${security.fail2banJails || 0}</div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Banned IPs: ${security.bannedIPs || 0}</div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🔐 SSL CERTIFICATE:</strong></div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Expires in: ${security.sslDaysLeft || 0} days</div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Issuer: ${security.sslIssuer || 'Let\'s Encrypt'}</div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🔥 FIREWALL STATUS:</strong></div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">UFW Status: ${security.firewallActive ? 'Active' : 'Inactive'}</div>
+                        <div style="margin-left: 1rem; margin-bottom: 0.5rem;">Active rules: ${security.firewallRules || 0}</div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🚨 RECENT THREATS:</strong></div>
+                        ${security.recentThreats ? security.recentThreats.map(threat =>
+                            `<div style="margin-left: 1rem; margin-bottom: 0.25rem; color: #EF4444;">${threat}</div>`
+                        ).join('') : '<div style="margin-left: 1rem; color: #10B981;">No recent threats detected</div>'}
+                    `;
+                }
+            } catch (error) {
+                console.error('Erreur chargement sécurité:', error);
+                document.getElementById('security-details').innerHTML = '<div style="color: #EF4444;">❌ Erreur de chargement du statut sécurité</div>';
+            }
+        }
+
+        async function refreshSecurityStatus() {
+            document.getElementById('security-details').innerHTML = '<div class="loading" style="color: #F3F4F6;"></div> Actualisation du statut sécurité...';
+            await loadSecurityStatus();
+        }
+
+        // Performance Metrics Functions
+        async function loadPerformanceMetrics() {
+            try {
+                const timeRange = document.getElementById('metricsTimeRange')?.value || '24h';
+                const metricsResponse = await apiRequest(`${API_BASE}/api/admin/system/metrics?range=${timeRange}`);
+                const metricsData = await metricsResponse.json();
+
+                if (metricsData.success) {
+                    const metrics = metricsData.data;
+
+                    // Update performance stats
+                    document.getElementById('web-requests').textContent = metrics.totalRequests || 0;
+                    document.getElementById('unique-visitors').textContent = metrics.uniqueVisitors || 0;
+                    document.getElementById('avg-response-time').textContent = (metrics.avgResponseTime || 0).toFixed(3);
+                    document.getElementById('http-errors').textContent = metrics.httpErrors || 0;
+
+                    // Update performance chart
+                    const chartData = metrics.chartData || [];
+                    const chartHtml = `
+                        <div style="margin-bottom: 1rem;"><strong>📊 TRAFIC LAST ${timeRange.toUpperCase()}:</strong></div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; margin-bottom: 1rem;">
+                            ${chartData.slice(0, 12).map(data => `
+                                <div style="text-align: center; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #9CA3AF;">${data.time}</div>
+                                    <div style="font-size: 1.2rem; font-weight: bold; color: #10B981;">${data.requests}</div>
+                                    <div style="font-size: 0.75rem; color: #6B7280;">req</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div style="margin-bottom: 0.5rem;"><strong>🔍 TOP PAGES:</strong></div>
+                        ${metrics.topPages ? metrics.topPages.map(page =>
+                            `<div style="margin-left: 1rem; margin-bottom: 0.25rem; display: flex; justify-content: space-between;">
+                                <span>${page.path}</span>
+                                <span style="color: #10B981; font-weight: bold;">${page.hits} hits</span>
+                            </div>`
+                        ).join('') : '<div style="margin-left: 1rem; color: #6B7280;">No data available</div>'}
+
+                        <div style="margin-top: 1rem; margin-bottom: 0.5rem;"><strong>🌍 TOP IPS:</strong></div>
+                        ${metrics.topIPs ? metrics.topIPs.map(ip =>
+                            `<div style="margin-left: 1rem; margin-bottom: 0.25rem; display: flex; justify-content: space-between;">
+                                <span>${ip.address}</span>
+                                <span style="color: #3B82F6; font-weight: bold;">${ip.requests} req</span>
+                            </div>`
+                        ).join('') : '<div style="margin-left: 1rem; color: #6B7280;">No data available</div>'}
+                    `;
+
+                    document.getElementById('performance-chart').innerHTML = chartHtml;
+                }
+            } catch (error) {
+                console.error('Erreur chargement métriques:', error);
+                document.getElementById('performance-chart').innerHTML = '<div style="color: #EF4444;">❌ Erreur de chargement des métriques</div>';
+            }
+        }
+
+        async function refreshPerformanceMetrics() {
+            document.getElementById('performance-chart').innerHTML = '<div class="loading" style="color: #F3F4F6;"></div> Actualisation des métriques...';
+            await loadPerformanceMetrics();
         }
 
         // Roles Management Data
@@ -10036,6 +10474,195 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             loadEmailAutomationStats();
         }
 
+        // ======================================
+        // EMAIL CONFIGURATION FUNCTIONS
+        // ======================================
+
+        // Sauvegarder la configuration email
+        async function saveEmailConfiguration() {
+            const resultDiv = document.getElementById('emailConfigResult');
+
+            const emailConfig = {
+                smtp: {
+                    host: document.getElementById('smtpHost').value,
+                    port: parseInt(document.getElementById('smtpPort').value),
+                    user: document.getElementById('smtpUser').value,
+                    password: document.getElementById('smtpPassword').value,
+                    secure: document.getElementById('smtpTls').checked
+                },
+                automation: {
+                    enabled: document.getElementById('emailAutomationEnabled').checked,
+                    fromName: document.getElementById('emailFromName').value,
+                    supportEmail: document.getElementById('emailSupport').value,
+                    welcomeEmailEnabled: document.getElementById('welcomeEmailEnabled').checked,
+                    welcomeEmailDelay: parseInt(document.getElementById('welcomeEmailDelay').value),
+                    passwordResetEnabled: document.getElementById('passwordResetEnabled').checked,
+                    prixClaudineEmailEnabled: document.getElementById('prixClaudineEmailEnabled').checked
+                }
+            };
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#F3F4F6';
+                resultDiv.style.color = '#374151';
+                resultDiv.textContent = '⏳ Sauvegarde de la configuration email...';
+
+                const response = await apiRequest(`${API_BASE}/api/admin/email-config`, {
+                    method: 'POST',
+                    body: JSON.stringify(emailConfig)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.style.background = '#D1FAE5';
+                    resultDiv.style.color = '#065F46';
+                    resultDiv.textContent = '✅ Configuration email sauvegardée avec succès!';
+
+                    // Redémarrer le service email
+                    setTimeout(() => {
+                        restartEmailService();
+                    }, 1000);
+                } else {
+                    resultDiv.style.background = '#FEE2E2';
+                    resultDiv.style.color = '#991B1B';
+                    resultDiv.textContent = `❌ Erreur: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde email config:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEE2E2';
+                resultDiv.style.color = '#991B1B';
+                resultDiv.textContent = '❌ Erreur de connexion au serveur';
+            }
+        }
+
+        // Tester la connexion SMTP
+        async function testEmailSMTP() {
+            const resultDiv = document.getElementById('emailConfigResult');
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#F3F4F6';
+                resultDiv.style.color = '#374151';
+                resultDiv.textContent = '⏳ Test de la connexion SMTP...';
+
+                const response = await apiRequest(`${API_BASE}/api/admin/email-test-smtp`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.style.background = '#D1FAE5';
+                    resultDiv.style.color = '#065F46';
+                    resultDiv.textContent = '✅ Connexion SMTP réussie!';
+                } else {
+                    resultDiv.style.background = '#FEE2E2';
+                    resultDiv.style.color = '#991B1B';
+                    resultDiv.textContent = `❌ Échec SMTP: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur test SMTP:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEE2E2';
+                resultDiv.style.color = '#991B1B';
+                resultDiv.textContent = '❌ Erreur test SMTP';
+            }
+        }
+
+        // Envoyer un email de bienvenue de test
+        async function sendTestWelcomeEmail() {
+            const resultDiv = document.getElementById('emailConfigResult');
+            const emailUser = document.getElementById('smtpUser').value;
+
+            if (!emailUser) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEF3C7';
+                resultDiv.style.color = '#92400E';
+                resultDiv.textContent = '⚠️ Veuillez configurer l\'email SMTP d\'abord';
+                return;
+            }
+
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#F3F4F6';
+                resultDiv.style.color = '#374151';
+                resultDiv.textContent = `⏳ Envoi email test vers ${emailUser}...`;
+
+                const response = await apiRequest(`${API_BASE}/api/admin/email-test-welcome`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        testEmail: emailUser
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.style.background = '#D1FAE5';
+                    resultDiv.style.color = '#065F46';
+                    resultDiv.textContent = `✅ Email de bienvenue envoyé vers ${emailUser}!`;
+                } else {
+                    resultDiv.style.background = '#FEE2E2';
+                    resultDiv.style.color = '#991B1B';
+                    resultDiv.textContent = `❌ Échec envoi: ${result.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur test email bienvenue:', error);
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = '#FEE2E2';
+                resultDiv.style.color = '#991B1B';
+                resultDiv.textContent = '❌ Erreur envoi test';
+            }
+        }
+
+        // Redémarrer le service email
+        async function restartEmailService() {
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/email-restart`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                console.log('🔄 Service email redémarré:', result.success);
+            } catch (error) {
+                console.error('Erreur redémarrage service email:', error);
+            }
+        }
+
+        // Charger la configuration email existante
+        async function loadEmailConfiguration() {
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/email-config`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const config = result.data;
+
+                    // SMTP Configuration
+                    if (config.smtp) {
+                        document.getElementById('smtpHost').value = config.smtp.host || '';
+                        document.getElementById('smtpPort').value = config.smtp.port || 587;
+                        document.getElementById('smtpUser').value = config.smtp.user || '';
+                        document.getElementById('smtpTls').checked = config.smtp.secure !== false;
+                    }
+
+                    // Automation Configuration
+                    if (config.automation) {
+                        document.getElementById('emailAutomationEnabled').checked = config.automation.enabled !== false;
+                        document.getElementById('emailFromName').value = config.automation.fromName || 'Équipe Claudyne';
+                        document.getElementById('emailSupport').value = config.automation.supportEmail || 'support@claudyne.com';
+                        document.getElementById('welcomeEmailEnabled').checked = config.automation.welcomeEmailEnabled !== false;
+                        document.getElementById('welcomeEmailDelay').value = config.automation.welcomeEmailDelay || 0;
+                        document.getElementById('passwordResetEnabled').checked = config.automation.passwordResetEnabled !== false;
+                        document.getElementById('prixClaudineEmailEnabled').checked = config.automation.prixClaudineEmailEnabled !== false;
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur chargement configuration email:', error);
+            }
+        }
+
         // Fonctions utilitaires manquantes pour l'interface
         function testAllTriggers() {
             alert('Test de tous les triggers\n\nEnvoi d\'emails de test pour tous les déclencheurs actifs.');
@@ -10125,13 +10752,532 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
 
         // === END EMAIL AUTOMATION SYSTEM ===
 
+        // === FONCTIONS GESTION DES DONNÉES ===
+        let dataLogElement = null;
+
+        function dataLog(message) {
+            if (!dataLogElement) {
+                dataLogElement = document.getElementById('dataActionLog');
+            }
+            if (dataLogElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                dataLogElement.innerHTML += `[${timestamp}] ${message}<br>`;
+                dataLogElement.scrollTop = dataLogElement.scrollHeight;
+            }
+        }
+
+        function updateDataStatusInfo() {
+            const statusEl = document.getElementById('dataStatusInfo');
+            if (!statusEl) return;
+
+            try {
+                const templates = claudyneData.getEmailTemplates();
+                const automations = claudyneData.getEmailAutomations();
+                const stats = claudyneData.getDashboardStats();
+
+                statusEl.innerHTML = `
+                    <div class="data-status-item">
+                        <h4>📧 Templates Email</h4>
+                        <p>${templates.length} template(s)</p>
+                        <small>Dernière modification: ${templates[0]?.lastModified ? new Date(templates[0].lastModified).toLocaleString() : 'N/A'}</small>
+                    </div>
+                    <div class="data-status-item">
+                        <h4>🤖 Automations</h4>
+                        <p>${automations.length} automation(s)</p>
+                        <p>${automations.filter(a => a.active).length} active(s)</p>
+                    </div>
+                    <div class="data-status-item">
+                        <h4>📊 Statistiques</h4>
+                        <p>Utilisateurs: ${stats.users?.total || 0}</p>
+                        <small>Dernière MAJ: ${stats.lastUpdate ? new Date(stats.lastUpdate).toLocaleString() : 'N/A'}</small>
+                    </div>
+                    <div class="data-status-item">
+                        <h4>💾 Stockage</h4>
+                        <p>Données: ${getClaudyneStorageSize()} KB</p>
+                        <p>Total: ${getStorageSize()} KB</p>
+                    </div>
+                `;
+            } catch (error) {
+                statusEl.innerHTML = `<div class="data-status-item"><h4>❌ Erreur</h4><p>Impossible de charger</p></div>`;
+                dataLog(`❌ Erreur mise à jour statut: ${error.message}`);
+            }
+        }
+
+        function getStorageSize() {
+            let total = 0;
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    total += localStorage[key].length;
+                }
+            }
+            return Math.round(total / 1024);
+        }
+
+        function getClaudyneStorageSize() {
+            let total = 0;
+            if (window.claudyneData && window.claudyneData.manager) {
+                Object.values(claudyneData.manager.dataKeys).forEach(key => {
+                    const data = localStorage.getItem(key);
+                    if (data) total += data.length;
+                });
+            }
+            return Math.round(total / 1024);
+        }
+
+        function resetAllDataAdmin() {
+            if (confirm('⚠️ ATTENTION: Cette action va supprimer TOUTES les données et les remettre aux valeurs par défaut.\n\nContinuer ?')) {
+                try {
+                    claudyneData.resetAll();
+                    dataLog('🔄 RESET COMPLET effectué');
+                    showNotification('✅ Toutes les données ont été réinitialisées', 'success');
+                    updateDataStatusInfo();
+                } catch (error) {
+                    dataLog(`❌ Erreur reset complet: ${error.message}`);
+                    showNotification('❌ Erreur lors du reset complet', 'error');
+                }
+            }
+        }
+
+        function resetCategoryAdmin(category) {
+            const categoryNames = {
+                'EMAIL_TEMPLATES': 'Templates Email',
+                'EMAIL_AUTOMATIONS': 'Automations Email',
+                'DASHBOARD_STATS': 'Statistiques'
+            };
+
+            const categoryName = categoryNames[category] || category;
+
+            if (confirm(`Réinitialiser ${categoryName} ?`)) {
+                try {
+                    claudyneData.resetCategory(category);
+                    dataLog(`🔄 ${categoryName} réinitialisés`);
+                    showNotification(`✅ ${categoryName} réinitialisés`, 'success');
+                    updateDataStatusInfo();
+                } catch (error) {
+                    dataLog(`❌ Erreur reset ${categoryName}: ${error.message}`);
+                    showNotification(`❌ Erreur reset ${categoryName}`, 'error');
+                }
+            }
+        }
+
+        function exportDataAdmin() {
+            try {
+                claudyneData.exportData();
+                dataLog('📥 Données exportées avec succès');
+                showNotification('✅ Données exportées', 'success');
+            } catch (error) {
+                dataLog(`❌ Erreur export: ${error.message}`);
+                showNotification('❌ Erreur export', 'error');
+            }
+        }
+
+        function importDataAdmin(file) {
+            if (!file) return;
+
+            claudyneData.importData(file)
+                .then(() => {
+                    dataLog(`📤 Données importées depuis: ${file.name}`);
+                    showNotification('✅ Données importées avec succès', 'success');
+                    updateDataStatusInfo();
+                })
+                .catch(error => {
+                    dataLog(`❌ Erreur import: ${error.message}`);
+                    showNotification('❌ Erreur lors de l\'import', 'error');
+                });
+        }
+
+        function clearDataLog() {
+            if (dataLogElement) {
+                dataLogElement.innerHTML = 'Journal vidé...<br>';
+            }
+        }
+
+        // Mise à jour de showSection pour inclure la gestion des données
+        const originalShowSection = showSection;
+        showSection = function(sectionName) {
+            originalShowSection(sectionName);
+
+            if (sectionName === 'data-management') {
+                setTimeout(() => {
+                    dataLog('🔧 Section gestion des données ouverte');
+                    updateDataStatusInfo();
+                }, 100);
+            }
+        };
+
+        // ======================================
+        // ADMIN TOKEN AUTHENTICATION SYSTEM
+        // ======================================
+
+        let adminToken = localStorage.getItem('claudyne-admin-token');
+
+        // Générer token admin automatiquement
+        async function generateAdminToken() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/generate-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        adminKey: 'claudyne-admin-2024'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    adminToken = result.token;
+                    localStorage.setItem('claudyne-admin-token', adminToken);
+                    console.log('🔑 Token admin généré avec succès');
+                    return true;
+                } else {
+                    console.error('❌ Erreur génération token:', result.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Erreur connexion pour token:', error);
+                return false;
+            }
+        }
+
+        // Fonction pour faire des requêtes API avec authentification
+        async function apiRequest(url, options = {}) {
+            // S'assurer qu'on a un token
+            if (!adminToken) {
+                const tokenGenerated = await generateAdminToken();
+                if (!tokenGenerated) {
+                    throw new Error('Impossible de générer le token admin');
+                }
+            }
+
+            // Ajouter le token aux headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`,
+                ...options.headers
+            };
+
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+
+            // Si token expiré, en générer un nouveau
+            if (response.status === 401) {
+                console.log('🔄 Token expiré, génération d\'un nouveau...');
+                const tokenGenerated = await generateAdminToken();
+                if (tokenGenerated) {
+                    // Retry avec le nouveau token
+                    headers['Authorization'] = `Bearer ${adminToken}`;
+                    return fetch(url, {
+                        ...options,
+                        headers
+                    });
+                }
+            }
+
+            return response;
+        }
+
         // Chargement initial
-        window.addEventListener('load', function() {
+        window.addEventListener('load', async function() {
+            // Générer token si nécessaire
+            if (!adminToken) {
+                await generateAdminToken();
+            }
             loadDashboardData();
         });
+
+        // ======================================
+        // NOUVELLES FONCTIONS DE SAUVEGARDE
+        // ======================================
+
+        // Sauvegarder configuration tarifaire
+        async function savePricingConfiguration() {
+            const pricingConfig = {
+                basicPrice: parseInt(document.getElementById('basicPrice').value),
+                premiumPrice: parseInt(document.getElementById('premiumPrice').value),
+                familyPrice: parseInt(document.getElementById('familyPrice').value),
+                trialDays: parseInt(document.getElementById('trialDays').value)
+            };
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/pricing-config`, {
+                    method: 'POST',
+                    body: JSON.stringify(pricingConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Configuration tarifaire sauvegardée avec succès!');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde tarifs:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Sauvegarder configuration des API
+        async function saveAPIConfiguration() {
+            const apiConfig = {
+                claude: {
+                    apiKey: document.getElementById('claudeApiKey')?.value || '',
+                    model: document.getElementById('claudeModel')?.value || ''
+                },
+                openai: {
+                    apiKey: document.getElementById('openaiApiKey')?.value || '',
+                    model: document.getElementById('openaiModel')?.value || '',
+                    temperature: parseFloat(document.getElementById('openaiTemperature')?.value || 0.7),
+                    maxTokens: parseInt(document.getElementById('openaiMaxTokens')?.value || 2000),
+                    systemPrompt: document.getElementById('openaiSystemPrompt')?.value || '',
+                    enabled: document.getElementById('openaiEnabled')?.checked || false
+                },
+                sms: {
+                    ltmApiKey: document.getElementById('ltmApiKey')?.value || '',
+                    ltmApiUrl: document.getElementById('ltmApiUrl')?.value || ''
+                },
+                future: {
+                    flutterwaveKey: document.getElementById('flutterwaveKey')?.value || '',
+                    googleAnalyticsId: document.getElementById('googleAnalyticsId')?.value || '',
+                    pushNotificationKey: document.getElementById('pushNotificationKey')?.value || '',
+                    customApiKey: document.getElementById('customApiKey')?.value || ''
+                }
+            };
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/api-config`, {
+                    method: 'POST',
+                    body: JSON.stringify(apiConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Configuration des API sauvegardée avec succès!');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde API config:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Ajouter membre de l'équipe
+        async function addTeamMember() {
+            const teamMember = {
+                firstName: document.getElementById('staffFirstName')?.value || '',
+                lastName: document.getElementById('staffLastName')?.value || '',
+                email: document.getElementById('staffEmail')?.value || '',
+                phone: document.getElementById('staffPhone')?.value || '',
+                role: document.getElementById('staffRole')?.value || '',
+                region: document.getElementById('staffRegion')?.value || '',
+                speciality: document.getElementById('staffSpeciality')?.value || ''
+            };
+
+            if (!teamMember.firstName || !teamMember.lastName || !teamMember.email) {
+                alert('⚠️ Veuillez remplir au minimum le prénom, nom et email');
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/team-members`, {
+                    method: 'POST',
+                    body: JSON.stringify(teamMember)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Membre ${teamMember.firstName} ${teamMember.lastName} ajouté avec succès!`);
+                    // Reset form
+                    document.getElementById('staffFirstName').value = '';
+                    document.getElementById('staffLastName').value = '';
+                    document.getElementById('staffEmail').value = '';
+                    document.getElementById('staffPhone').value = '';
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur ajout membre équipe:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Envoyer message rapide
+        async function sendQuickMessage() {
+            const message = {
+                recipients: document.getElementById('messageRecipients')?.value || '',
+                channel: document.getElementById('messageChannel')?.value || '',
+                type: document.getElementById('messageType')?.value || '',
+                subject: document.getElementById('messageSubject')?.value || '',
+                content: document.getElementById('messageContent')?.value || ''
+            };
+
+            if (!message.subject || !message.content) {
+                alert('⚠️ Veuillez remplir le sujet et le contenu du message');
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/quick-message`, {
+                    method: 'POST',
+                    body: JSON.stringify(message)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Message envoyé avec succès vers ${message.recipients}!`);
+                    // Reset form
+                    if (document.getElementById('messageSubject')) document.getElementById('messageSubject').value = '';
+                    if (document.getElementById('messageContent')) document.getElementById('messageContent').value = '';
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur envoi message:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Générer rapport
+        async function generateReport() {
+            const reportConfig = {
+                type: document.getElementById('reportType')?.value || 'users',
+                period: document.getElementById('reportPeriod')?.value || 'month',
+                format: document.getElementById('reportFormat')?.value || 'pdf'
+            };
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/generate-report`, {
+                    method: 'POST',
+                    body: JSON.stringify(reportConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Rapport ${reportConfig.type} généré avec succès!\nTéléchargement en cours...`);
+                    if (result.downloadUrl) {
+                        window.open(result.downloadUrl, '_blank');
+                    }
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur génération rapport:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Programmer nouveau rapport
+        async function scheduleNewReport() {
+            const reportSchedule = {
+                type: prompt('Type de rapport:', 'users'),
+                frequency: prompt('Fréquence (daily, weekly, monthly):', 'weekly'),
+                format: prompt('Format (pdf, excel, csv):', 'pdf'),
+                recipients: prompt('Emails destinataires (séparés par virgule):', 'admin@claudyne.com')
+            };
+
+            if (!reportSchedule.type || !reportSchedule.frequency) {
+                alert('⚠️ Informations incomplètes');
+                return;
+            }
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/schedule-report`, {
+                    method: 'POST',
+                    body: JSON.stringify(reportSchedule)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(`✅ Rapport ${reportSchedule.type} programmé avec succès!`);
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur programmation rapport:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Forcer sauvegarde
+        async function triggerBackup() {
+            if (!confirm('Forcer une sauvegarde immédiate ?')) return;
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/force-backup`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Sauvegarde forcée avec succès!');
+                } else {
+                    alert(`❌ Erreur sauvegarde: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde forcée:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Actualiser logs
+        async function refreshLogs() {
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/logs/recent`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const logsContainer = document.getElementById('system-logs');
+                    if (logsContainer) {
+                        logsContainer.innerHTML = result.logs.map(log =>
+                            `<div class="log-entry">${log.timestamp} - ${log.level}: ${log.message}</div>`
+                        ).join('');
+                    }
+                    alert('✅ Logs actualisés');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur actualisation logs:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
+
+        // Sauvegarder configuration automation emails
+        async function saveAutomationConfiguration() {
+            const automationConfig = {
+                triggers: Array.from(document.querySelectorAll('.trigger-item')).map(item => ({
+                    id: item.dataset.id,
+                    enabled: item.querySelector('.trigger-enabled')?.checked || false,
+                    event: item.querySelector('.trigger-event')?.value || '',
+                    template: item.querySelector('.trigger-template')?.value || '',
+                    delay: parseInt(item.querySelector('.trigger-delay')?.value || 0)
+                }))
+            };
+
+            try {
+                const response = await apiRequest(`${API_BASE}/api/admin/automation-config`, {
+                    method: 'POST',
+                    body: JSON.stringify(automationConfig)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Configuration automation sauvegardée avec succès!');
+                } else {
+                    alert(`❌ Erreur: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Erreur sauvegarde automation:', error);
+                alert('❌ Erreur de connexion au serveur');
+            }
+        }
     </script>
     
     <!-- Script d'optimisation réseau pour 2G/3G -->
     <script src="js/network-optimization.js"></script>
+    <script src="js/dynamic-data-manager.js"></script>
 </body>
 </html>

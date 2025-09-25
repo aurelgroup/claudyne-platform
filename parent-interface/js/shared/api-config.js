@@ -9,7 +9,7 @@ class APIConfig {
     constructor() {
         this.isDevelopment = window.location.hostname === 'localhost' ||
                            window.location.hostname === '127.0.0.1' ||
-                           window.location.port !== '';
+                           (window.location.port !== '' && window.location.port !== '443' && window.location.port !== '80');
 
         this.baseURL = this.isDevelopment
             ? `http://${window.location.hostname}:3001/api`

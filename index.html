@@ -980,7 +980,8 @@
 
     <!-- Audio -->
     <audio id="backgroundAudio" loop>
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-futuristic-technology-and-data-572.mp3" type="audio/mpeg">
+        <!-- Audio temporairement désactivé pour éviter les erreurs 403 -->
+        <!-- <source src="https://assets.mixkit.co/sfx/preview/mixkit-futuristic-technology-and-data-572.mp3" type="audio/mpeg"> -->
     </audio>
 
     <!-- Contrôle audio -->
@@ -1779,9 +1780,11 @@
         function hidePreloader() {
             const preloader = document.getElementById('preloader');
             const body = document.body;
-            
+
             // Ajouter la classe loaded au body pour déclencher l'animation
-            body.classList.add('loaded');
+            if (body && body.classList) {
+                body.classList.add('loaded');
+            }
             
             // Masquer le preloader avec une transition
             preloader.classList.add('hidden');
@@ -2466,12 +2469,17 @@
 
         // Initialisation
         window.addEventListener('load', () => {
-            loadingIndicator.style.transform = 'scaleX(1)';
-            setTimeout(() => {
-                loadingIndicator.style.opacity = '0';
+            if (loadingIndicator) {
+                loadingIndicator.style.transform = 'scaleX(1)';
+                setTimeout(() => {
+                    loadingIndicator.style.opacity = '0';
+                    resizeCanvas();
+                    setTimeout(addNodes, 500);
+                }, 800);
+            } else {
                 resizeCanvas();
                 setTimeout(addNodes, 500);
-            }, 800);
+            }
         });
 
         function animate() {
@@ -2648,11 +2656,22 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Stockage des tokens
-                    localStorage.setItem('claudyne_token', data.data.tokens.accessToken);
-                    localStorage.setItem('claudyne_refresh_token', data.data.tokens.refreshToken);
-                    localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
-                    localStorage.setItem('claudyne_family', JSON.stringify(data.data.family));
+                    // Stockage des tokens - adapter à la structure de réponse du backend
+                    const tokens = data.tokens || data.data?.tokens || {};
+                    const user = data.user || data.data?.user || {};
+                    const family = data.family || data.data?.family || {};
+
+                    if (data.token) {
+                        // Structure simple du backend mobile
+                        localStorage.setItem('claudyne_token', data.token);
+                        localStorage.setItem('claudyne_user', JSON.stringify(user));
+                    } else if (tokens.accessToken) {
+                        // Structure complète
+                        localStorage.setItem('claudyne_token', tokens.accessToken);
+                        localStorage.setItem('claudyne_refresh_token', tokens.refreshToken);
+                        localStorage.setItem('claudyne_user', JSON.stringify(user));
+                        localStorage.setItem('claudyne_family', JSON.stringify(family));
+                    }
 
                     // Redirection selon le type de compte utilisateur
                     const userType = data.data.user.userType;
@@ -2728,7 +2747,7 @@
                         window.location.href = '/student';
                         break;
                     case 'parent':
-                        window.location.href = '/parent-interface.html';
+                        window.location.href = '/parent';
                         break;
                     case 'teacher':
                         window.location.href = '/teacher-interface.html';
@@ -2777,7 +2796,7 @@
                         window.location.href = '/student?trial=true';
                         break;
                     case 'parent':
-                        window.location.href = '/parent-interface.html?trial=true';
+                        window.location.href = '/parent?trial=true';
                         break;
                     case 'teacher':
                         window.location.href = '/teacher-interface.html?trial=true';

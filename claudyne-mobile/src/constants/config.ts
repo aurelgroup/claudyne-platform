@@ -17,12 +17,15 @@ export const API_CONFIG = {
 
 export const THEME_CONSTANTS = {
   COLORS: {
-    // Glassmorphism Dark Theme - Claudyne Web
+    // Glassmorphism Dark Theme - Claudyne Web + SDK 54 Enhancements
     PRIMARY: '#020205',                 // Dark background
     SECONDARY: '#00FFC2',               // Accent 1 - Cyan
     ACCENT: '#FF57E3',                  // Accent 2 - Magenta
     BACKGROUND: '#020205',              // Dark background
     SURFACE: 'rgba(255, 255, 255, 0.02)', // Glass surface
+
+    // SDK 54 Edge-to-Edge optimized colors
+    EDGE_TO_EDGE_BG: 'rgba(2, 2, 5, 0.95)', // Edge-to-edge background
     ERROR: '#FF4444',                   // Rouge
     WARNING: '#FFC947',                 // Accent 3 - Yellow
     INFO: '#00FFC2',                    // Cyan

@@ -38,7 +38,7 @@ try {
             pool = null;
             useDatabase = false;
         } else {
-            console.log('✅ Connexion PostgreSQL établie (claudyne_prod)');
+            console.log(`✅ Connexion PostgreSQL établie (${dbConfig.database})`);
             useDatabase = true;
             release();
         }

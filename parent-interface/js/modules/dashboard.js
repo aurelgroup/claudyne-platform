@@ -8,6 +8,7 @@ import { AnalyticsEngine } from '../shared/analytics.js';
 import { ExportManager } from '../shared/export.js';
 import { mockData, getMockData } from '../shared/mock-data.js';
 import apiService, { getData } from '../shared/api-service.js';
+import { userManager } from '../shared/user-manager.js';
 
 export default class Dashboard {
     constructor() {
@@ -202,7 +203,7 @@ export default class Dashboard {
                 <div class="header-content">
                     <div class="welcome-section">
                         <h1 class="dashboard-title">
-                            👋 Bonjour Samuel !
+                            👋 Bonjour ${userManager.getUserFirstName()} !
                             <div class="title-badge">AI-Powered</div>
                         </h1>
                         <p class="dashboard-subtitle">

@@ -13,11 +13,11 @@ class APIConfig {
 
         this.baseURL = this.isDevelopment
             ? `http://${window.location.hostname}:3001/api`
-            : 'https://api.claudyne.com';
+            : 'https://claudyne.com/api';
 
         this.websocketURL = this.isDevelopment
             ? `ws://${window.location.hostname}:3001/ws`
-            : 'wss://api.claudyne.com';
+            : 'wss://claudyne.com/ws';
     }
 
     // Parent API endpoints

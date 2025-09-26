@@ -3,6 +3,8 @@
  * Communication familiale en temps réel avec WebSocket
  */
 
+import { userManager } from '../shared/user-manager.js';
+
 export class MessagesModule {
     constructor(options = {}) {
         this.options = {
@@ -635,7 +637,7 @@ export class MessagesModule {
         const mockConversations = [
             {
                 id: 'conv1',
-                name: 'Famille Samuel',
+                name: userManager.getFamilyName(),
                 participants: [
                     { id: 'parent', name: 'Papa', avatar: null, status: 'online' },
                     { id: 'richy', name: 'Richy', avatar: null, status: 'online' },

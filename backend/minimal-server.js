@@ -6,6 +6,7 @@
 const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
+const { db } = require('./database.js');
 
 const PORT = process.env.PORT || 3001;
 
@@ -139,65 +140,60 @@ const server = http.createServer((req, res) => {
         return;
       }
 
-      // Base d'utilisateurs réels
-      const users = {
-        // Parents
-        'parent@claudyne.com': {
-          password: 'parent123',
-          user: { id: 'p1', firstName: 'Marie', lastName: 'Nguema', email: 'parent@claudyne.com', phone: '+237694123456', role: 'PARENT', userType: 'MANAGER' },
-          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
-        },
-        'marie.nguema': {
-          password: 'parent123',
-          user: { id: 'p1', firstName: 'Marie', lastName: 'Nguema', email: 'parent@claudyne.com', phone: '+237694123456', role: 'PARENT', userType: 'MANAGER' },
-          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
-        },
-        '+237694123456': {
-          password: 'parent123',
-          user: { id: 'p1', firstName: 'Marie', lastName: 'Nguema', email: 'parent@claudyne.com', phone: '+237694123456', role: 'PARENT', userType: 'MANAGER' },
-          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
-        },
-        // Étudiants
-        'etudiant@claudyne.com': {
-          password: 'etudiant123',
-          user: { id: 's1', firstName: 'Jean', lastName: 'Nguema', email: 'etudiant@claudyne.com', phone: '+237695123456', role: 'STUDENT', userType: 'STUDENT' },
-          family: { id: 'f1', name: 'Famille Nguema', displayName: 'Famille Nguema', status: 'ACTIVE', subscriptionType: 'PREMIUM', walletBalance: 45000, totalClaudinePoints: 234 }
-        },
-        // Professeurs
-        'prof@claudyne.com': {
-          password: 'prof123',
-          user: { id: 't1', firstName: 'Paul', lastName: 'Mbarga', email: 'prof@claudyne.com', phone: '+237696123456', role: 'TEACHER', userType: 'TEACHER' },
-          family: null
-        }
-      };
+      // Authentification via PostgreSQL
+      db.authenticateUser(loginCredential, password)
+        .then(user => {
+          if (user) {
+            // Mettre à jour la dernière connexion
+            db.updateLastLogin(user.id);
 
-      const userAccount = users[loginCredential.toLowerCase()];
+            // Créer une famille par défaut basée sur le nom
+            const familyName = `Famille ${user.lastname || user.firstname}`;
+            const family = {
+              id: `f_${user.id}`,
+              name: familyName,
+              displayName: familyName,
+              status: 'ACTIVE',
+              subscriptionType: 'PREMIUM',
+              walletBalance: 50000,
+              totalClaudinePoints: 200
+            };
 
-      if (userAccount && userAccount.password === password) {
-        sendJSON(res, 200, {
-          success: true,
-          message: `Connexion réussie ! Bienvenue ${userAccount.user.firstName} 🎉`,
-          data: {
-            user: userAccount.user,
-            family: userAccount.family || {
-              status: 'TRIAL',
-              subscriptionType: 'TRIAL',
-              walletBalance: 12500,
-              totalClaudinePoints: 87
-            },
-            tokens: {
-              accessToken: 'test-token-' + Date.now(),
-              refreshToken: 'refresh-token-' + Date.now(),
-              expiresIn: '7d'
-            }
+            sendJSON(res, 200, {
+              success: true,
+              message: `Connexion réussie ! Bienvenue ${user.firstname} 🎉`,
+              data: {
+                user: {
+                  id: user.id,
+                  firstName: user.firstname,
+                  lastName: user.lastname,
+                  email: user.email,
+                  phone: user.phone || '+237600000000',
+                  role: user.role,
+                  userType: user.usertype
+                },
+                family: family,
+                tokens: {
+                  accessToken: 'token-' + Date.now(),
+                  refreshToken: 'refresh-' + Date.now(),
+                  expiresIn: '7d'
+                }
+              }
+            });
+          } else {
+            sendJSON(res, 401, {
+              success: false,
+              message: 'Email ou mot de passe incorrect'
+            });
           }
+        })
+        .catch(error => {
+          console.error('❌ Erreur authentification:', error);
+          sendJSON(res, 500, {
+            success: false,
+            message: 'Erreur serveur lors de l\'authentification'
+          });
         });
-      } else {
-        sendJSON(res, 400, {
-          success: false,
-          message: 'Identifiants requis'
-        });
-      }
     });
     return;
   }
@@ -212,44 +208,89 @@ const server = http.createServer((req, res) => {
 
       const { firstName, lastName, familyName, email, phone, password } = body;
 
-      if (firstName && lastName && familyName && (email || phone) && password) {
-        sendJSON(res, 201, {
-          success: true,
-          message: `Bienvenue dans Claudyne, ${firstName} ! 🎉`,
-          data: {
-            user: {
-              id: '2',
-              firstName,
-              lastName,
-              email,
-              phone,
-              role: 'PARENT',
-              userType: 'MANAGER'
-            },
-            family: {
-              id: '2',
-              name: familyName,
-              displayName: `Famille ${familyName}`,
-              status: 'TRIAL',
-              subscriptionType: 'TRIAL',
-              walletBalance: 0,
-              totalClaudinePoints: 0
-            },
-            tokens: {
-              accessToken: 'test-token-' + Date.now(),
-              refreshToken: 'refresh-token-' + Date.now(),
-              expiresIn: '7d'
-            },
-            trial: {
-              daysLeft: 7,
-              features: ['basic_subjects', 'mentor_chat', 'progress_tracking']
+      if (firstName && lastName && email && password) {
+        // Vérifier si l'utilisateur existe déjà
+        db.findUserByEmail(email)
+          .then(existingUser => {
+            if (existingUser) {
+              sendJSON(res, 409, {
+                success: false,
+                message: 'Un compte avec cet email existe déjà'
+              });
+              return;
             }
-          }
-        });
+
+            // Créer le nouvel utilisateur
+            const userData = {
+              email,
+              password, // Dans un vrai système, on hasherait avec bcrypt
+              firstname: firstName,
+              lastname: lastName,
+              phone: phone,
+              role: 'PARENT',
+              usertype: 'MANAGER'
+            };
+
+            return db.createUser(userData);
+          })
+          .then(newUser => {
+            if (!newUser) return; // Déjà géré l'erreur ci-dessus
+
+            const familyDisplayName = familyName || `Famille ${newUser.lastname}`;
+
+            sendJSON(res, 201, {
+              success: true,
+              message: `Bienvenue dans Claudyne, ${newUser.firstname} ! 🎉`,
+              data: {
+                user: {
+                  id: newUser.id,
+                  firstName: newUser.firstname,
+                  lastName: newUser.lastname,
+                  email: newUser.email,
+                  phone: newUser.phone,
+                  role: newUser.role,
+                  userType: newUser.usertype
+                },
+                family: {
+                  id: `f_${newUser.id}`,
+                  name: familyDisplayName,
+                  displayName: familyDisplayName,
+                  status: 'ACTIVE',
+                  subscriptionType: 'TRIAL',
+                  walletBalance: 10000,
+                  totalClaudinePoints: 50
+                },
+                tokens: {
+                  accessToken: 'token-' + Date.now(),
+                  refreshToken: 'refresh-' + Date.now(),
+                  expiresIn: '7d'
+                },
+                trial: {
+                  daysLeft: 30,
+                  features: ['basic_subjects', 'mentor_chat', 'progress_tracking']
+                }
+              }
+            });
+          })
+          .catch(error => {
+            console.error('❌ Erreur création utilisateur:', error);
+
+            if (error.code === '23505') { // Violation unique constraint PostgreSQL
+              sendJSON(res, 409, {
+                success: false,
+                message: 'Un compte avec cet email existe déjà'
+              });
+            } else {
+              sendJSON(res, 500, {
+                success: false,
+                message: 'Erreur serveur lors de la création du compte'
+              });
+            }
+          });
       } else {
         sendJSON(res, 400, {
           success: false,
-          message: 'Données d\'inscription incomplètes'
+          message: 'Données d\'inscription incomplètes (prénom, nom, email et mot de passe requis)'
         });
       }
     });
@@ -2697,11 +2738,218 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // ============================================
+  // ENDPOINTS INTERFACE PARENT
+  // ============================================
+
+  // Parent children profiles
+  if (pathname === '/api/parent/children/profiles' && method === 'GET') {
+    const mockChildren = [
+      {
+        id: 'c1',
+        firstName: 'David',
+        lastName: 'Nguema',
+        age: 8,
+        grade: 'CE2',
+        avatar: '/images/avatars/david.jpg',
+        averageScore: 85,
+        subjectScores: {
+          mathematics: 88,
+          french: 82,
+          sciences: 87,
+          history: 83,
+          geography: 85
+        },
+        weeklyStats: {
+          studyHours: 12,
+          exercisesCompleted: 45,
+          lessonsWatched: 8
+        },
+        lastActivity: new Date().toISOString(),
+        strengths: ['Mathématiques', 'Sciences'],
+        weaknesses: ['Français', 'Histoire'],
+        status: 'ACTIVE'
+      },
+      {
+        id: 'c2',
+        firstName: 'Sarah',
+        lastName: 'Nguema',
+        age: 11,
+        grade: 'CM2',
+        avatar: '/images/avatars/sarah.jpg',
+        averageScore: 92,
+        subjectScores: {
+          mathematics: 95,
+          french: 90,
+          sciences: 94,
+          history: 88,
+          geography: 91
+        },
+        weeklyStats: {
+          studyHours: 15,
+          exercisesCompleted: 58,
+          lessonsWatched: 12
+        },
+        lastActivity: new Date().toISOString(),
+        strengths: ['Mathématiques', 'Sciences', 'Géographie'],
+        weaknesses: ['Histoire'],
+        status: 'ACTIVE'
+      }
+    ];
+
+    sendJSON(res, 200, {
+      success: true,
+      data: mockChildren,
+      message: `${mockChildren.length} enfants trouvés pour Marie Nguema`
+    });
+    return;
+  }
+
+  // Parent children list (simplified)
+  if (pathname === '/api/parent/children' && method === 'GET') {
+    sendJSON(res, 200, {
+      success: true,
+      data: [
+        { id: 'c1', firstName: 'David', lastName: 'Nguema', grade: 'CE2' },
+        { id: 'c2', firstName: 'Sarah', lastName: 'Nguema', grade: 'CM2' }
+      ]
+    });
+    return;
+  }
+
+  // Child analytics
+  if (pathname.startsWith('/api/parent/children/') && pathname.includes('/analytics') && method === 'GET') {
+    const childId = pathname.split('/')[4];
+    const mockAnalytics = {
+      childId: childId,
+      averageScore: childId === 'c1' ? 85 : 92,
+      subjectScores: childId === 'c1' ? {
+        mathematics: 88, french: 82, sciences: 87, history: 83, geography: 85
+      } : {
+        mathematics: 95, french: 90, sciences: 94, history: 88, geography: 91
+      },
+      progressRate: 5.2,
+      studyTime: childId === 'c1' ? 720 : 900, // minutes
+      completionRate: childId === 'c1' ? 89 : 96,
+      engagementLevel: childId === 'c1' ? 82 : 94,
+      concentrationSpan: childId === 'c1' ? 45 : 55,
+      learningPeaks: ['09:00-10:00', '14:00-15:00'],
+      difficultyAreas: childId === 'c1' ? ['français', 'histoire'] : ['histoire'],
+      motivationTrends: childId === 'c1' ? [85, 87, 82, 90, 88] : [92, 94, 91, 95, 93],
+      weeklyProgress: [
+        { date: '2025-09-19', score: childId === 'c1' ? 85 : 92, studyTime: childId === 'c1' ? 120 : 150 },
+        { date: '2025-09-20', score: childId === 'c1' ? 87 : 94, studyTime: childId === 'c1' ? 105 : 130 },
+        { date: '2025-09-21', score: childId === 'c1' ? 83 : 90, studyTime: childId === 'c1' ? 90 : 120 },
+        { date: '2025-09-22', score: childId === 'c1' ? 88 : 95, studyTime: childId === 'c1' ? 110 : 140 },
+        { date: '2025-09-23', score: childId === 'c1' ? 86 : 93, studyTime: childId === 'c1' ? 125 : 155 }
+      ]
+    };
+
+    sendJSON(res, 200, {
+      success: true,
+      data: mockAnalytics,
+      message: `Analytiques pour ${childId === 'c1' ? 'David' : 'Sarah'}`
+    });
+    return;
+  }
+
+  // Historical progress
+  if (pathname === '/api/parent/progress/historical' && method === 'GET') {
+    const historicalData = {
+      daily: Array.from({ length: 30 }, (_, i) => ({
+        date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        score: 70 + Math.random() * 25,
+        studyTime: 30 + Math.random() * 120,
+        completedExercises: Math.floor(Math.random() * 10)
+      })),
+      weekly: Array.from({ length: 12 }, (_, i) => ({
+        week: `2025-W${38 + i}`,
+        averageScore: 75 + Math.random() * 20,
+        totalStudyTime: 300 + Math.random() * 400,
+        lessonsCompleted: 5 + Math.floor(Math.random() * 8)
+      })),
+      monthly: [
+        { month: '2025-07', averageScore: 82, totalStudyTime: 1200, lessonsCompleted: 25 },
+        { month: '2025-08', averageScore: 85, totalStudyTime: 1350, lessonsCompleted: 28 },
+        { month: '2025-09', averageScore: 88, totalStudyTime: 1100, lessonsCompleted: 22 }
+      ]
+    };
+
+    sendJSON(res, 200, {
+      success: true,
+      data: historicalData,
+      message: 'Données historiques pour la famille Nguema'
+    });
+    return;
+  }
+
+  // Parent messages
+  if (pathname === '/api/parent/messages' && method === 'GET') {
+    const mockMessages = [
+      {
+        id: 'm1',
+        from: 'Système Claudyne',
+        subject: 'Rapport hebdomadaire - David',
+        content: 'David a terminé 45 exercices cette semaine avec une moyenne de 85%. Félicitations !',
+        date: new Date().toISOString(),
+        read: false,
+        type: 'report'
+      },
+      {
+        id: 'm2',
+        from: 'IA Claudyne',
+        subject: 'Recommandation personnalisée',
+        content: 'Sarah excelle en mathématiques. Nous recommandons des exercices plus avancés.',
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        read: true,
+        type: 'recommendation'
+      }
+    ];
+
+    sendJSON(res, 200, {
+      success: true,
+      data: mockMessages,
+      unreadCount: mockMessages.filter(m => !m.read).length
+    });
+    return;
+  }
+
+  // Parent notifications
+  if (pathname === '/api/parent/notifications' && method === 'GET') {
+    const mockNotifications = [
+      {
+        id: 'n1',
+        title: 'Nouveau niveau débloqué !',
+        message: 'Sarah a débloqué le niveau "Expert" en mathématiques',
+        type: 'achievement',
+        date: new Date().toISOString(),
+        read: false,
+        childId: 'c2'
+      },
+      {
+        id: 'n2',
+        title: 'Rappel de session',
+        message: 'David n\'a pas fait ses exercices aujourd\'hui',
+        type: 'reminder',
+        date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        read: false,
+        childId: 'c1'
+      }
+    ];
+
+    sendJSON(res, 200, {
+      success: true,
+      data: mockNotifications,
+      unreadCount: mockNotifications.filter(n => !n.read).length
+    });
+    return;
+  }
+
   // 404 pour toutes les autres routes
   sendJSON(res, 404, {
     success: false,
     message: `Route non trouvée: ${method} ${pathname}`,
-    availableRoutes: ['/', '/health', '/api', '/api/auth/login', '/api/auth/register']
+    availableRoutes: ['/', '/health', '/api', '/api/auth/login', '/api/auth/register', '/api/parent/children', '/api/parent/children/profiles', '/api/parent/messages', '/api/parent/notifications']
   });
 });
 

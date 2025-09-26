@@ -1092,12 +1092,12 @@
             <!-- Header -->
             <header class="header animate-in">
                 <div class="welcome">
-                    <h1>Bonjour Samuel !</h1>
+                    <h1 id="welcome-title">Bonjour Utilisateur !</h1>
                     <p>Dernière connexion: Aujourd'hui à 14:30 • 2 nouvelles notifications</p>
                 </div>
                 <div class="user-info">
                     <img src="/assets/images/user-placeholder.svg" alt="Avatar" class="user-avatar">
-                    <div style="font-weight: 600;">Samuel Kouotou</div>
+                    <div id="user-full-name" style="font-weight: 600;">Utilisateur</div>
                     <div style="font-size: 0.8rem; opacity: 0.7;">Niveau 5 - Parent Engagé</div>
                     <div class="user-status">
                         <div class="status-dot"></div>
@@ -1978,7 +1978,7 @@
                                         <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--secondary); border: 2px solid white; border-radius: 50%;"></div>
                                     </div>
                                     <div style="flex: 1;">
-                                        <div style="font-weight: 600;">Famille Samuel</div>
+                                        <div id="family-name-display" style="font-weight: 600;">Ma Famille</div>
                                         <div style="font-size: 0.8rem; opacity: 0.7;">Papa, j'ai fini mes devoirs!</div>
                                     </div>
                                     <div style="text-align: right;">
@@ -2009,7 +2009,7 @@
                     <div class="card animate-in">
                         <div class="card-header">
                             <i class="fas fa-comments" style="color: var(--primary);"></i>
-                            <h3>Groupe Famille Samuel</h3>
+                            <h3 id="group-family-name">Groupe Ma Famille</h3>
                             <div style="margin-left: auto; display: flex; align-items: center; gap: 1rem;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <div style="width: 8px; height: 8px; background: var(--secondary); border-radius: 50%;"></div>
@@ -2697,7 +2697,7 @@
                                 <form>
                                     <div class="form-group">
                                         <label class="form-label">Nom complet</label>
-                                        <input type="text" class="form-input" value="Samuel Kouotou">
+                                        <input type="text" id="settings-full-name" class="form-input" value="Utilisateur">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Email</label>
@@ -3562,6 +3562,55 @@
             }
         }
 
+        // Fonction pour mettre à jour l'interface avec les données utilisateur
+        function updateUIWithUserData() {
+            try {
+                const userStr = localStorage.getItem('claudyne_user');
+                const familyStr = localStorage.getItem('claudyne_family');
+
+                if (userStr) {
+                    const user = JSON.parse(userStr);
+                    const firstName = user.firstName || 'Utilisateur';
+                    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Utilisateur';
+
+                    // Mettre à jour les éléments d'interface
+                    const welcomeTitle = document.getElementById('welcome-title');
+                    if (welcomeTitle) {
+                        welcomeTitle.textContent = `Bonjour ${firstName} !`;
+                    }
+
+                    const userFullName = document.getElementById('user-full-name');
+                    if (userFullName) {
+                        userFullName.textContent = fullName;
+                    }
+
+                    const settingsFullName = document.getElementById('settings-full-name');
+                    if (settingsFullName) {
+                        settingsFullName.value = fullName;
+                    }
+                }
+
+                if (familyStr) {
+                    const family = JSON.parse(familyStr);
+                    const familyName = family.displayName || family.name || 'Ma Famille';
+
+                    const familyNameDisplay = document.getElementById('family-name-display');
+                    if (familyNameDisplay) {
+                        familyNameDisplay.textContent = familyName;
+                    }
+
+                    const groupFamilyName = document.getElementById('group-family-name');
+                    if (groupFamilyName) {
+                        groupFamilyName.textContent = `Groupe ${familyName}`;
+                    }
+                }
+
+                console.log('✅ Interface mise à jour avec les données utilisateur');
+            } catch (error) {
+                console.warn('❌ Erreur lors de la mise à jour de l\'interface:', error);
+            }
+        }
+
         // Fonction de déconnexion parent
         function parentLogout() {
             if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
@@ -3576,6 +3625,14 @@
                 console.log('🚪 Déconnexion parent effectuée');
             }
         }
+
+        // Mettre à jour l'interface au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUIWithUserData();
+        });
+
+        // Exposer la fonction globalement pour que d'autres modules puissent l'utiliser
+        window.updateUIWithUserData = updateUIWithUserData;
     </script>
 </body>
 </html>

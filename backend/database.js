@@ -12,11 +12,11 @@ const usersFile = path.join(__dirname, 'users.json');
 
 // Configuration de la base de données
 const dbConfig = {
-    host: 'localhost',
-    port: 5432,
-    database: 'claudyne_prod',
-    user: 'postgres',
-    password: '',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'claudyne_prod',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '',
     ssl: false,
     max: 20,
     idleTimeoutMillis: 30000,

@@ -14,7 +14,7 @@ const usersFile = path.join(__dirname, 'users.json');
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
-    database: process.env.DB_NAME || 'claudyne_prod',
+    database: process.env.DB_NAME || 'claudyne_production',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || '',
     ssl: false,
@@ -82,7 +82,7 @@ class DatabaseAuth {
     // Vérifier si un utilisateur existe par email
     async findUserByEmail(email) {
         if (useDatabase && pool) {
-            const query = 'SELECT id, email, password, firstname, lastname, phone, role, usertype, isactive FROM users WHERE email = $1 AND isactive = true';
+            const query = 'SELECT id, email, password, "firstName", "lastName", phone, role, "userType", "isActive" FROM users WHERE email = $1 AND "isActive" = true';
             try {
                 const result = await pool.query(query, [email]);
                 return result.rows[0] || null;
@@ -146,10 +146,10 @@ class DatabaseAuth {
         if (useDatabase && pool) {
             // Supporter email, username, ou téléphone
             let query = `
-                SELECT id, email, password, firstname, lastname, phone, role, usertype, isactive
+                SELECT id, email, password, "firstName", "lastName", phone, role, "userType", "isActive"
                 FROM users
-                WHERE (email = $1 OR firstname = $1 OR lastname = $1 OR phone = $1)
-                AND isactive = true
+                WHERE (email = $1 OR "firstName" = $1 OR "lastName" = $1 OR phone = $1)
+                AND "isActive" = true
             `;
 
             try {
@@ -214,7 +214,7 @@ class DatabaseAuth {
         }
 
         // Mode PostgreSQL
-        const query = 'UPDATE users SET updatedat = NOW() WHERE id = $1';
+        const query = 'UPDATE users SET "updatedAt" = NOW(), "lastLoginAt" = NOW() WHERE id = $1';
         try {
             await pool.query(query, [userId]);
         } catch (error) {

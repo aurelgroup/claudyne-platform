@@ -473,6 +473,7 @@
         .glass-btn-primary { background: var(--color-accent-1); color: var(--color-dark-bg); }
         .glass-btn-success { background: var(--color-accent-2); color: var(--color-dark-bg); }
         .glass-btn-warning { background: var(--color-accent-3); color: var(--color-dark-bg); }
+        .glass-btn-danger { background: #ff4757; color: white; }
 
         .features-grid { 
             display: grid; 
@@ -1539,13 +1540,27 @@
                     </label>
                     <input type="password" id="loginPassword" placeholder="Votre mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
                 </div>
-                
+
+                <!-- Mot de passe oublié -->
+                <div style="text-align: center; margin: 1rem 0;">
+                    <button type="button" onclick="showForgotPassword()" style="background: none; border: none; color: var(--color-accent-1); text-decoration: underline; cursor: pointer; font-size: 0.9rem;">
+                        🔑 Mot de passe oublié ?
+                    </button>
+                </div>
+
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
                     <button type="button" class="glass-btn" onclick="showAuthChoice()">
                         ← Retour
                     </button>
                     <button type="submit" class="glass-btn glass-btn-primary">
                         🚀 Se connecter
+                    </button>
+                </div>
+
+                <!-- Accès Admin Sécurisé -->
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <button type="button" onclick="window.open('/admin-secure-k7m9x4n2p8w5z1c6', '_blank')" style="background: none; border: none; color: var(--color-accent-2); text-decoration: none; cursor: pointer; font-size: 0.8rem; opacity: 0.7;">
+                        ⚙️ Accès Administrateur
                     </button>
                 </div>
             </form>
@@ -1640,6 +1655,31 @@
                     </button>
                     <button type="submit" class="glass-btn glass-btn-success">
                         ✨ S'inscrire
+                    </button>
+                </div>
+            </form>
+
+            <!-- Formulaire Mot de passe oublié -->
+            <form id="forgotPasswordForm" style="display: none; flex-direction: column; gap: 1.5rem;">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-1);">🔑 Récupération de mot de passe</h3>
+
+                <p style="text-align: center; margin-bottom: 1.5rem; color: var(--color-light-text); font-size: 0.9rem;">
+                    Entrez votre adresse email pour recevoir un lien de réinitialisation.
+                </p>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Adresse email
+                    </label>
+                    <input type="email" id="forgotEmail" placeholder="votre.email@example.com" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" class="glass-btn" onclick="showLoginForm()">
+                        ← Retour à la connexion
+                    </button>
+                    <button type="submit" class="glass-btn glass-btn-primary">
+                        📧 Envoyer le lien
                     </button>
                 </div>
             </form>
@@ -2552,13 +2592,15 @@
             document.getElementById('authChoice').style.display = 'flex';
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
         }
 
         function showLoginForm() {
             document.getElementById('authChoice').style.display = 'none';
             document.getElementById('loginForm').style.display = 'flex';
             document.getElementById('registerForm').style.display = 'none';
-            
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+
             // Appliquer le type de compte présélectionné s'il existe
             if (window.preselectedAccountType) {
                 document.getElementById('loginAccountType').value = window.preselectedAccountType;
@@ -2569,13 +2611,22 @@
             document.getElementById('authChoice').style.display = 'none';
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('registerForm').style.display = 'flex';
-            
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+
             // Appliquer le type de compte présélectionné s'il existe
             if (window.preselectedAccountType) {
                 document.getElementById('registerAccountType').value = window.preselectedAccountType;
                 // Déclencher la fonction de sélection de classe si nécessaire
                 showClassSelection();
             }
+        }
+
+        // 🔑 FONCTION MOT DE PASSE OUBLIÉ
+        function showForgotPassword() {
+            document.getElementById('authChoice').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'flex';
         }
 
         // Gestion de la sélection de classe pour l'inscription
@@ -2757,6 +2808,52 @@
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }, 2000);
+        });
+
+        // 🔑 GESTION DU FORMULAIRE MOT DE PASSE OUBLIÉ
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('forgotEmail').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+
+            // Animation de chargement
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ Envoi en cours...';
+            submitBtn.disabled = true;
+
+            // Simuler l'envoi (à remplacer par vraie API)
+            setTimeout(() => {
+                // Afficher message de succès
+                const successMessage = document.createElement('div');
+                successMessage.style.cssText = `
+                    background: rgba(0, 255, 194, 0.1);
+                    border: 1px solid rgba(0, 255, 194, 0.3);
+                    padding: 1rem;
+                    border-radius: 8px;
+                    margin-top: 1rem;
+                    text-align: center;
+                    color: var(--color-accent-1);
+                `;
+                successMessage.innerHTML = `
+                    ✅ Lien de réinitialisation envoyé !<br>
+                    <small>Vérifiez votre boîte email : ${email}</small>
+                `;
+
+                e.target.appendChild(successMessage);
+
+                // Réinitialiser le bouton
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Retour à la connexion après 3 secondes
+                setTimeout(() => {
+                    showLoginForm();
+                    successMessage.remove();
+                    e.target.reset();
+                }, 3000);
+
+            }, 1500);
         });
 
         // Gestion du formulaire d'essai gratuit

@@ -60,8 +60,11 @@ class ProductionMiddleware {
                 const suspiciousAgents = ['curl', 'wget', 'python', 'bot'];
 
                 if (suspiciousAgents.some(agent => userAgent.toLowerCase().includes(agent))) {
-                    // Permettre curl en développement
-                    if (process.env.NODE_ENV !== 'production' || req.path.includes('/health')) {
+                    // Permettre curl en développement et API endpoints pour frontend
+                    if (process.env.NODE_ENV !== 'production' ||
+                        req.path.includes('/health') ||
+                        req.path.includes('/api/families/profile') ||
+                        req.path.includes('/api/families/dashboard')) {
                         return next();
                     }
                     return res.status(403).json({

@@ -64,11 +64,11 @@
 
     <!-- Preload Critical Resources -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" as="script">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/4.4.0/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 
     <!-- Service Worker -->
     <script>
@@ -1093,7 +1093,7 @@
             <header class="header animate-in">
                 <div class="welcome">
                     <h1 id="welcome-title">Bonjour <span id="user-name">Utilisateur</span> !</h1>
-                    <p>Dernière connexion: Aujourd'hui à 14:30 • 2 nouvelles notifications</p>
+                    <p id="last-connection-info">Dernière connexion: Aujourd'hui • Bienvenue !</p>
                 </div>
                 <div class="user-info">
                     <img src="/assets/images/user-placeholder.svg" alt="Avatar" class="user-avatar">
@@ -1438,7 +1438,7 @@
                         <!-- Richy's Card -->
                         <div class="card animate-in">
                             <div class="card-body" style="text-align: center;">
-                                <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" alt="Richy" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; margin-bottom: 1rem;">
+                                <img src="images/Richy-Nono.png" alt="Richy" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; margin-bottom: 1rem;">
                                 <h3 style="margin-bottom: 0.5rem;">Richy Nono</h3>
                                 <div style="margin-bottom: 1rem;">
                                     <span class="badge badge-primary">Terminale C</span>
@@ -1490,7 +1490,7 @@
                         <!-- Blandine's Card -->
                         <div class="card animate-in">
                             <div class="card-body" style="text-align: center;">
-                                <img src="https://i.ibb.co/qC6zC9J/orange-money.png" alt="Blandine" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--secondary); object-fit: cover; margin-bottom: 1rem;">
+                                <img src="images/orange-money.png" alt="Blandine" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--secondary); object-fit: cover; margin-bottom: 1rem;">
                                 <h3 style="margin-bottom: 0.5rem;">Blandine Mbarga</h3>
                                 <div style="margin-bottom: 1rem;">
                                     <span class="badge badge-secondary">Seconde A</span>
@@ -1991,7 +1991,7 @@
                             <div class="conversation-item" style="padding: 1rem; border-bottom: 1px solid var(--border-light); cursor: pointer;">
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <div style="position: relative;">
-                                        <img src="https://i.ibb.co/qC6zC9J/orange-money.png" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                        <img src="images/orange-money.png" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
                                         <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--secondary); border: 2px solid white; border-radius: 50%;"></div>
                                     </div>
                                     <div style="flex: 1;">
@@ -2025,7 +2025,7 @@
                             <div class="chat" id="chat">
                                 <div class="message received">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                        <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <img src="images/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
                                         <strong>Richy</strong>
                                     </div>
                                     Papa, j'ai une interro de maths demain 😰 Je suis un peu stressé pour la géométrie
@@ -2037,7 +2037,7 @@
                                 </div>
                                 <div class="message received">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                        <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <img src="images/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
                                         <strong>Richy</strong>
                                     </div>
                                     Oui j'ai fait les exercices que l'IA m'a proposés. Mais j'ai encore du mal avec les calculs de distances...
@@ -2045,7 +2045,7 @@
                                 </div>
                                 <div class="message received">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                        <img src="https://i.ibb.co/qC6zC9J/orange-money.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <img src="images/orange-money.png" style="width: 24px; height: 24px; border-radius: 50%;">
                                         <strong>Blandine</strong>
                                     </div>
                                     Courage grand frère! Moi j'ai fini ma dissertation de français 🎉 J'ai eu 18/20 au dernier devoir!
@@ -2057,7 +2057,7 @@
                                 </div>
                                 <div class="message received">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                        <img src="https://i.ibb.co/L5w2R3M/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
+                                        <img src="images/Richy-Nono.png" style="width: 24px; height: 24px; border-radius: 50%;">
                                         <strong>Richy</strong>
                                     </div>
                                     Oui papa ce serait super! Et merci Blandine pour tes encouragements 😊
@@ -3562,6 +3562,78 @@
             }
         }
 
+        // Fonction pour récupérer les données utilisateur depuis l'API
+        async function fetchUserData() {
+            try {
+                // Récupérer le token d'authentification
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.warn('Pas de token d\'authentification trouvé');
+                    return false;
+                }
+
+                // Récupérer les données famille de l'utilisateur authentifié
+                const response = await fetch('/api/families/profile', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        const familyData = data.data;
+
+                        // Créer un objet utilisateur basé sur les données famille
+                        const userData = {
+                            firstName: familyData.name ? familyData.name.split(' ')[0] : 'Parent',
+                            lastName: familyData.name ? familyData.name.split(' ').slice(1).join(' ') : 'Claudyne',
+                            email: familyData.email || 'parent@claudyne.com',
+                            id: familyData.id || 'demo'
+                        };
+
+                        const familyDisplayData = {
+                            id: familyData.id || 'demo',
+                            name: familyData.name || 'Famille Demo',
+                            displayName: familyData.name || 'Famille Demo',
+                            region: familyData.region || 'Centre',
+                            studentCount: familyData.student_count || familyData.total_children || 0
+                        };
+
+                        // Sauvegarder dans localStorage
+                        localStorage.setItem('claudyne_user', JSON.stringify(userData));
+                        localStorage.setItem('claudyne_family', JSON.stringify(familyDisplayData));
+
+                        console.log('✅ Données utilisateur récupérées depuis l\'API:', userData);
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.warn('❌ Erreur lors de la récupération des données API:', error);
+            }
+
+            // Fallback avec des données par défaut améliorées
+            const defaultUser = {
+                firstName: 'Parent',
+                lastName: 'Claudyne',
+                email: 'parent@claudyne.com',
+                id: 'demo'
+            };
+
+            const defaultFamily = {
+                id: 'demo',
+                name: 'Famille Demo',
+                displayName: 'Famille Demo',
+                region: 'Centre',
+                studentCount: 2
+            };
+
+            localStorage.setItem('claudyne_user', JSON.stringify(defaultUser));
+            localStorage.setItem('claudyne_family', JSON.stringify(defaultFamily));
+            console.log('📋 Utilisation des données par défaut');
+            return false;
+        }
+
         // Fonction pour mettre à jour l'interface avec les données utilisateur
         function updateUIWithUserData() {
             try {
@@ -3587,6 +3659,14 @@
                     const settingsFullName = document.getElementById('settings-full-name');
                     if (settingsFullName) {
                         settingsFullName.value = fullName;
+                    }
+
+                    // Mettre à jour les informations de connexion
+                    const lastConnectionInfo = document.getElementById('last-connection-info');
+                    if (lastConnectionInfo) {
+                        const now = new Date();
+                        const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        lastConnectionInfo.textContent = `Dernière connexion: Aujourd'hui à ${timeStr} • Connexion active`;
                     }
                 }
 
@@ -3627,7 +3707,8 @@
         }
 
         // Mettre à jour l'interface au chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await fetchUserData();
             updateUIWithUserData();
         });
 

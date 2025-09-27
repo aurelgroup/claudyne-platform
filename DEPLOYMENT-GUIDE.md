@@ -1,151 +1,154 @@
-# 🚀 Guide de Déploiement Claudyne Production
+# 🚀 CLAUDYNE PRODUCTION DEPLOYMENT GUIDE
 
-## VPS Contabo - Configuration Complète
+## Expert DevOps Deployment pour VPS Contabo
 
-### 📋 Prérequis
-
-#### VPS Recommandé
-- **CPU**: 4 vCores minimum
-- **RAM**: 8 GB minimum
-- **Stockage**: 200 GB SSD
-- **Bande passante**: Illimitée
-- **OS**: Ubuntu 22.04 LTS
-
-#### Domaine
-- Domaine acheté et configuré (ex: claudyne.com)
-- DNS pointant vers l'IP du VPS
-- Sous-domaine www configuré
+**Version:** 2.0.0
+**Date:** 2025-09-27
+**Target:** Production Zero-Downtime
+**Platform:** Ubuntu/Debian VPS
 
 ---
 
-## 🔧 Installation Rapide
+## 📋 INFORMATIONS DE DÉPLOIEMENT
 
-### 1. Connexion au VPS
+### 🖥️ Infrastructure
+- **VPS IP:** 89.117.58.53
+- **Provider:** Contabo VPS
+- **Domain:** claudyne.com
+- **OS:** Ubuntu/Debian
+- **Access:** SSH Root
+
+### 🔑 Authentification
+- **SSH:** Key-based authentication
+- **GitHub:** Token access
+- **Repository:** https://github.com/aurelgroup/claudyne-platform
+- **Token:** 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
+
+### 🎯 URLs Finales
+- **Frontend:** https://claudyne.com
+- **API:** https://claudyne.com/api
+- **Mobile API:** https://claudyne.com/mobile-api
+- **Health Check:** https://claudyne.com/health
+- **Admin Panel:** https://claudyne.com/admin-secure-k7m9x4n2p8w5z1c6
+
+---
+
+## 🚀 DÉPLOIEMENT RAPIDE (RECOMMANDÉ)
+
+### Option 1: Déploiement Automatique Complet
 
 ```bash
-# Connexion SSH à votre VPS Contabo
-ssh root@VOTRE_IP_VPS
+# 1. Rendre les scripts exécutables
+chmod +x deploy-commands.sh
 
-# Mise à jour du système
-apt update && apt upgrade -y
-
-# Installation des dépendances de base
-apt install -y curl git ufw fail2ban htop
+# 2. Exécuter le déploiement automatique
+./deploy-commands.sh auto
 ```
 
-### 2. Configuration Utilisateur
+### Option 2: Déploiement Interactif
 
 ```bash
-# Créer un utilisateur pour Claudyne (plus sécurisé que root)
-adduser claudyne
-usermod -aG sudo claudyne
+# Lancer le menu interactif
+./deploy-commands.sh
 
-# Basculer vers l'utilisateur claudyne
-su - claudyne
-
-# Générer une clé SSH (optionnel)
-ssh-keygen -t rsa -b 4096 -C "admin@claudyne.com"
-```
-
-### 3. Cloner le Projet
-
-```bash
-# Cloner Claudyne depuis votre repository
-git clone https://github.com/votre-compte/claudyne.git
-cd claudyne
-
-# Ou télécharger l'archive si pas de Git
-# wget https://claudyne.com/releases/claudyne-production.tar.gz
-# tar -xzf claudyne-production.tar.gz && cd claudyne
-```
-
-### 4. Configuration Environnement
-
-```bash
-# Copier le fichier d'environnement
-cp .env.production .env
-
-# IMPORTANT: Éditer le fichier avec vos vraies valeurs
-nano .env
-```
-
-#### Variables Critiques à Modifier
-
-```bash
-# Sécurité (CHANGEZ OBLIGATOIREMENT)
-JWT_SECRET=VOTRE_CLE_JWT_TRES_SECRETE_PRODUCTION_2024
-POSTGRES_PASSWORD=VOTRE_MOT_DE_PASSE_POSTGRES_SECURISE
-REDIS_PASSWORD=VOTRE_MOT_DE_PASSE_REDIS_SECURISE
-
-# Domaine
-DOMAIN=claudyne.com
-CERTBOT_EMAIL=admin@claudyne.com
-
-# MAVIANCE (Production)
-MAVIANCE_API_KEY=VOTRE_VRAIE_CLE_MAVIANCE
-MAVIANCE_SECRET_KEY=VOTRE_VRAIE_CLE_SECRETE_MAVIANCE
-MAVIANCE_MERCHANT_ID=VOTRE_VRAI_ID_MARCHAND
-
-# Monitoring (optionnel)
-SENTRY_DSN=VOTRE_CLE_SENTRY_POUR_MONITORING_ERREURS
-```
-
-### 5. Déploiement Automatique
-
-```bash
-# Lancer le script de déploiement automatique
-./deploy.sh
-```
-
-Le script va automatiquement :
-- ✅ Installer Docker et Docker Compose
-- ✅ Configurer le firewall UFW
-- ✅ Obtenir les certificats SSL Let's Encrypt
-- ✅ Optimiser le système pour les réseaux Cameroun
-- ✅ Démarrer tous les services
-- ✅ Configurer les sauvegardes automatiques
-
-### 6. Optimisations Cameroun
-
-```bash
-# Appliquer les optimisations spécifiques réseaux 2G/3G
-./optimize-cameroon.sh
+# Sélectionner l'option 9 pour déploiement complet
 ```
 
 ---
 
-## 🔒 Sécurisation Production
+## 📚 DÉPLOIEMENT ÉTAPE PAR ÉTAPE
 
-### Firewall UFW
-
-```bash
-# Le script configure déjà UFW, mais voici les règles :
-sudo ufw status
-
-# Règles actives :
-# 22/tcp (SSH)
-# 80/tcp (HTTP)
-# 443/tcp (HTTPS)
-```
-
-### Fail2Ban
+### Étape 1: Préparation Locale
 
 ```bash
-# Configuration anti-brute force
-sudo systemctl enable fail2ban
-sudo systemctl start fail2ban
+# Vérifier les fichiers requis
+ls -la deploy-*.sh
+ls -la package.json server.js
 
-# Vérifier le statut
-sudo fail2ban-client status
+# Tester la connectivité VPS
+./deploy-commands.sh test
 ```
 
-### Mots de Passe Forts
+### Étape 2: Validation Pré-déploiement
 
 ```bash
-# Générer des mots de passe sécurisés
-openssl rand -base64 32  # Pour JWT_SECRET
-openssl rand -base64 24  # Pour passwords DB
+# Exécuter les validations
+./deploy-commands.sh
+# Sélectionner option 5: Run Pre-deployment Checks
 ```
+
+### Étape 3: Déploiement Principal
+
+```bash
+# Déploiement expert avec rollback
+./deploy-commands.sh
+# Sélectionner option 6: Run Main Deployment
+```
+
+### Étape 4: Vérification
+
+```bash
+# Vérifier le déploiement
+./deploy-commands.sh health
+
+# Statut des services
+./deploy-commands.sh status
+```
+
+---
+
+## 🔧 ARCHITECTURE DÉPLOYÉE
+
+### Services Principaux
+- **Nginx:** Reverse proxy + SSL/TLS
+- **Node.js 18.x:** Application runtime
+- **PostgreSQL 15:** Base de données production
+- **PM2:** Process manager en cluster
+- **Let's Encrypt:** Certificats SSL automatiques
+
+### Ports Utilisés
+- **80:** HTTP (redirect vers HTTPS)
+- **443:** HTTPS (Nginx)
+- **3001:** API Backend (PM2)
+- **3002:** Mobile API (PM2)
+- **5432:** PostgreSQL
+
+### Structure Déployée
+```
+/opt/claudyne/
+├── current/          # Application active
+├── backups/          # Sauvegardes automatiques
+├── rollback/         # Points de rollback
+└── monitoring/       # Scripts de monitoring
+
+/var/log/claudyne/    # Logs centralisés
+├── deploy.log
+├── pm2-main.log
+├── pm2-mobile.log
+└── health-*.json
+```
+
+---
+
+## 🛡️ SÉCURITÉ IMPLÉMENTÉE
+
+### Protection Nginx
+- **Rate Limiting:** API (10 req/s), Mobile (20 req/s)
+- **Headers sécurisés:** HSTS, CSP, X-Frame-Options
+- **SSL Grade A+:** TLS 1.2/1.3, OCSP Stapling
+- **DDoS Protection:** Fail2ban intégré
+
+### Base de Données
+- **Utilisateur dédié:** claudyne_user
+- **Mot de passe sécurisé:** Généré automatiquement
+- **Connexions limitées:** Pool de connexions optimisé
+- **Sauvegarde automatique:** Incluse dans rollback
+
+### Système
+- **Firewall UFW:** Ports essentiels seulement
+- **SSH Protection:** Fail2ban + rate limiting
+- **Process isolation:** Utilisateur claudyne dédié
+- **Monitoring:** Health checks en temps réel
 
 ---
 

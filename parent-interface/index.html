@@ -1092,7 +1092,7 @@
             <!-- Header -->
             <header class="header animate-in">
                 <div class="welcome">
-                    <h1 id="welcome-title">Bonjour Utilisateur !</h1>
+                    <h1 id="welcome-title">Bonjour <span id="user-name">Utilisateur</span> !</h1>
                     <p>Dernière connexion: Aujourd'hui à 14:30 • 2 nouvelles notifications</p>
                 </div>
                 <div class="user-info">
@@ -3574,9 +3574,9 @@
                     const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Utilisateur';
 
                     // Mettre à jour les éléments d'interface
-                    const welcomeTitle = document.getElementById('welcome-title');
-                    if (welcomeTitle) {
-                        welcomeTitle.textContent = `Bonjour ${firstName} !`;
+                    const userNameSpan = document.getElementById('user-name');
+                    if (userNameSpan) {
+                        userNameSpan.textContent = firstName;
                     }
 
                     const userFullName = document.getElementById('user-full-name');

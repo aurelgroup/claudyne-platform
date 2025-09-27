@@ -5,15 +5,29 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "API_URL": "http://localhost:3001"
+      }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "https://claudyne.com/api"
       }
     },
-    "production": {}
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "https://claudyne.com/api",
+        "NODE_ENV": "production"
+      }
+    }
   },
   "submit": {
     "production": {}

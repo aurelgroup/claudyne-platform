@@ -32,7 +32,7 @@ export default function App() {
     Alert.alert('🧪 Test Parent Login', 'Test du compte parent en cours...');
 
     try {
-      const response = await fetch('http://89.117.58.53:3001/api/auth/login', {
+      const response = await fetch('https://claudyne.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -115,7 +115,7 @@ export default function App() {
   const validateTestAccount = async (account) => {
     // Simulation validation compte test avec API réelle
     try {
-      const response = await fetch('http://89.117.58.53:3001/api/auth/login', {
+      const response = await fetch('https://claudyne.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -146,7 +146,7 @@ export default function App() {
   const checkBackendConnection = async () => {
     try {
       // Test connexion API directement VPS (le plus fiable)
-      const vpsTest = await testApiEndpoint('http://89.117.58.53:3001/api');
+      const vpsTest = await testApiEndpoint('https://claudyne.com/api');
       if (vpsTest.success) return { connected: true, message: 'VPS API Online ✅' };
 
       // Fallback localhost dev

@@ -57,8 +57,8 @@ apt install -y postgresql postgresql-contrib
 log "🔧 Configuration PostgreSQL..."
 sudo -u postgres psql << EOF
 CREATE USER claudyne_user WITH ENCRYPTED PASSWORD 'ClAuDyNe2024!SecurePass';
-CREATE DATABASE claudyne_prod OWNER claudyne_user;
-GRANT ALL PRIVILEGES ON DATABASE claudyne_prod TO claudyne_user;
+CREATE DATABASE claudyne_production OWNER claudyne_user;
+GRANT ALL PRIVILEGES ON DATABASE claudyne_production TO claudyne_user;
 ALTER USER claudyne_user CREATEDB;
 \q
 EOF
@@ -99,7 +99,7 @@ log "✅ Configuration serveur terminée!"
 log "📋 Résumé de l'installation:"
 echo "   - Node.js: $NODE_VERSION"
 echo "   - NPM: $NPM_VERSION"
-echo "   - PostgreSQL: Installé avec base 'claudyne_prod'"
+echo "   - PostgreSQL: Installé avec base 'claudyne_production'"
 echo "   - Redis: Actif"
 echo "   - Nginx: Actif"
 echo "   - Utilisateur: claudyne créé"

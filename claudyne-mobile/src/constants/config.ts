@@ -9,7 +9,7 @@ declare const __DEV__: boolean;
 export const API_CONFIG = {
   BASE_URL: __DEV__
     ? 'http://localhost:3001'           // API unifiée locale
-    : 'https://api.claudyne.com',       // API unifiée production
+    : 'https://claudyne.com/api',       // API unifiée production
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
   MOBILE_CLIENT_TYPE: 'mobile',

@@ -59,8 +59,8 @@ sudo -u postgres psql
 ```sql
 -- Dans psql, créer la base de données
 CREATE USER claudyne_user WITH ENCRYPTED PASSWORD 'ClAuDyNe2024!SecurePass';
-CREATE DATABASE claudyne_prod OWNER claudyne_user;
-GRANT ALL PRIVILEGES ON DATABASE claudyne_prod TO claudyne_user;
+CREATE DATABASE claudyne_production OWNER claudyne_user;
+GRANT ALL PRIVILEGES ON DATABASE claudyne_production TO claudyne_user;
 \q
 ```
 
@@ -144,7 +144,7 @@ API_PORT=3001
 # Base de données PostgreSQL
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=claudyne_prod
+DB_NAME=claudyne_production
 DB_USER=claudyne_user
 DB_PASSWORD=ClAuDyNe2024!SecurePass
 
@@ -620,7 +620,7 @@ DATE=$(date +%Y%m%d_%H%M%S)
 mkdir -p $BACKUP_DIR
 
 # Sauvegarde de la base de données
-sudo -u postgres pg_dump claudyne_prod > $BACKUP_DIR/db_$DATE.sql
+sudo -u postgres pg_dump claudyne_production > $BACKUP_DIR/db_$DATE.sql
 
 # Sauvegarde des fichiers uploadés (si applicable)
 tar -czf $BACKUP_DIR/files_$DATE.tar.gz /var/www/claudyne/claudyne-platform/uploads/ 2>/dev/null || true

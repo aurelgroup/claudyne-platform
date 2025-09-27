@@ -59,7 +59,7 @@ API_PORT=3001
 # Base de données PostgreSQL
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=claudyne_prod
+DB_NAME=claudyne_production
 DB_USER=claudyne_user
 DB_PASSWORD=ClAuDyNe2024!SecurePass
 

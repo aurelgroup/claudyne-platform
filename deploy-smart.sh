@@ -88,9 +88,9 @@ PORT=3001
 DB_TYPE=postgres
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=claudyne_prod
+DB_NAME=claudyne_production
 DB_USER=claudyne_user
-DB_PASSWORD=claudyne_secure_prod_2024
+DB_PASSWORD=aujourdhui18D@
 
 # JWT Configuration
 JWT_SECRET=claudyne_jwt_meffo_tchandjio_production_2024

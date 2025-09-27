@@ -90,7 +90,7 @@ backup_current_version() {
     
     # Sauvegarde de la base de données
     print_colored "  📊 Sauvegarde base de données..." $CYAN
-    sudo -u postgres pg_dump claudyne_prod > $BACKUP_DIR/db_backup_$DATE.sql
+    sudo -u postgres pg_dump claudyne_production > $BACKUP_DIR/db_backup_$DATE.sql
     
     # Sauvegarde des fichiers (si uploads existe)
     if [ -d "$PROJECT_DIR/uploads" ]; then

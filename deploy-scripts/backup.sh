@@ -36,7 +36,7 @@ log "📁 Création du répertoire de sauvegarde..."
 mkdir -p $BACKUP_DIR
 
 log "🗄️ Sauvegarde de la base de données PostgreSQL..."
-sudo -u postgres pg_dump claudyne_prod > $BACKUP_DIR/db_$DATE.sql
+sudo -u postgres pg_dump claudyne_production > $BACKUP_DIR/db_$DATE.sql
 if [ $? -eq 0 ]; then
     log "✅ Base de données sauvegardée: db_$DATE.sql"
 else

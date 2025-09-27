@@ -145,7 +145,7 @@ claudyne_backup() {
     mkdir -p $backup_dir
     
     # Database backup
-    sudo -u postgres pg_dump claudyne_prod > $backup_dir/db_backup_$date.sql
+    sudo -u postgres pg_dump claudyne_production > $backup_dir/db_backup_$date.sql
     
     # Files backup (if uploads exist)
     if [ -d "$PROJECT_DIR/uploads" ]; then
@@ -246,7 +246,7 @@ claudyne_db() {
     case $action in
         "status")
             print_colored "🗃️  Statut base de données:" $BLUE
-            sudo -u postgres psql -d claudyne_prod -c "
+            sudo -u postgres psql -d claudyne_production -c "
                 SELECT 
                     schemaname,
                     tablename,
@@ -263,12 +263,12 @@ claudyne_db() {
             ;;
         "size")
             print_colored "📊 Taille de la base de données:" $BLUE
-            sudo -u postgres psql -d claudyne_prod -c "
+            sudo -u postgres psql -d claudyne_production -c "
                 SELECT 
                     pg_database.datname,
                     pg_size_pretty(pg_database_size(pg_database.datname)) AS size
                 FROM pg_database 
-                WHERE datname = 'claudyne_prod';
+                WHERE datname = 'claudyne_production';
             "
             ;;
         *)

@@ -7,6 +7,7 @@ const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
 const { db } = require('./database.js');
+const productionEndpoints = require('./production-endpoints.js');
 
 const PORT = process.env.PORT || 3001;
 
@@ -80,8 +81,8 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: 'mock',
-        cache: 'mock'
+        database: db.isConnected() ? 'operational' : 'offline',
+        sync: 'active'
       }
     });
     return;
@@ -95,8 +96,8 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: 'mock',
-        cache: 'mock'
+        database: db.isConnected() ? 'operational' : 'offline',
+        sync: 'active'
       }
     });
     return;
@@ -105,7 +106,7 @@ const server = http.createServer((req, res) => {
   // API base
   if (pathname === '/api' && method === 'GET') {
     sendJSON(res, 200, {
-      message: 'API Claudyne - Version Test',
+      message: 'API Claudyne - Version Production',
       routes: {
         auth: '/api/auth',
         me: '/api/me',
@@ -117,7 +118,7 @@ const server = http.createServer((req, res) => {
         'prix-claudine': '/api/prix-claudine',
         battles: '/api/battles'
       },
-      note: 'Serveur de test - Données mockées'
+      note: 'Serveur de production - Données réelles'
     });
     return;
   }

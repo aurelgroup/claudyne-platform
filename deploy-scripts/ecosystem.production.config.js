@@ -75,7 +75,7 @@ module.exports = {
         // Base de données
         DB_HOST: 'localhost',
         DB_PORT: 5432,
-        DB_NAME: 'claudyne_prod',
+        DB_NAME: 'claudyne_production',
         DB_USER: 'claudyne_user',
         
         // Redis

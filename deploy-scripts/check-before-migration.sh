@@ -77,19 +77,19 @@ echo -e "${BLUE}=== SERVICES SYSTÈME ===${NC}"
 if systemctl is-active --quiet postgresql; then
     log "PostgreSQL actif"
     
-    # Vérifier la base claudyne_prod
-    if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw claudyne_prod; then
-        log "Base de données 'claudyne_prod' trouvée"
+    # Vérifier la base claudyne_production
+    if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw claudyne_production; then
+        log "Base de données 'claudyne_production' trouvée"
         
         # Compter les tables
-        TABLE_COUNT=$(sudo -u postgres psql -d claudyne_prod -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null | tr -d ' ')
+        TABLE_COUNT=$(sudo -u postgres psql -d claudyne_production -t -c "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null | tr -d ' ')
         if [ "$TABLE_COUNT" -gt 0 ]; then
             log "Base contient $TABLE_COUNT tables"
         else
             warning "Base de données vide"
         fi
     else
-        warning "Base de données 'claudyne_prod' non trouvée"
+        warning "Base de données 'claudyne_production' non trouvée"
     fi
 else
     warning "PostgreSQL inactif"

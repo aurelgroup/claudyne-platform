@@ -273,7 +273,7 @@ log_info "Attente de la base de données..."
 sleep 30
 
 # Vérifier la connexion à la DB
-until docker-compose -f $COMPOSE_FILE exec -T postgres pg_isready -U claudyne_user -d claudyne_prod; do
+until docker-compose -f $COMPOSE_FILE exec -T postgres pg_isready -U claudyne_user -d claudyne_production; do
     log_info "Attente de PostgreSQL..."
     sleep 5
 done

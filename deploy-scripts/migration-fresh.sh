@@ -79,7 +79,7 @@ sleep 2
 if systemctl is-active --quiet postgresql; then
     log "🗄️ Sauvegarde de la base de données PostgreSQL..."
     sudo -u postgres pg_dumpall > $BACKUP_DIR/postgresql-full-backup.sql
-    sudo -u postgres pg_dump claudyne_prod > $BACKUP_DIR/claudyne_prod-backup.sql 2>/dev/null || true
+    sudo -u postgres pg_dump claudyne_production > $BACKUP_DIR/claudyne_production-backup.sql 2>/dev/null || true
     log "✅ Base de données sauvegardée"
 else
     warning "PostgreSQL n'est pas actif, pas de sauvegarde DB"
@@ -122,7 +122,7 @@ cat > $BACKUP_DIR/RAPPORT_SAUVEGARDE.md << EOF
 **Utilisateur**: $(whoami)
 
 ## Contenu sauvegardé:
-- ✅ Base de données PostgreSQL (complète + claudyne_prod)
+- ✅ Base de données PostgreSQL (complète + claudyne_production)
 - ✅ Application /var/www/claudyne
 - ✅ Configuration Nginx
 - ✅ Certificats SSL Let's Encrypt

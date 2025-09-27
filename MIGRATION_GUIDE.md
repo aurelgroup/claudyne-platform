@@ -143,7 +143,7 @@ curl https://claudyne.com/student
 
 # Contenu :
 ├── postgresql-full-backup.sql      # Base complète PostgreSQL
-├── claudyne_prod-backup.sql        # Base claudyne_prod seule
+├── claudyne_production-backup.sql        # Base claudyne_production seule
 ├── claudyne-app-backup.tar.gz      # Application complète
 ├── nginx-config-backup.tar.gz      # Configuration Nginx
 ├── ssl-certificates-backup.tar.gz  # Certificats SSL

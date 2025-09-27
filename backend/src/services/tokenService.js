@@ -14,7 +14,7 @@ class TokenService {
             this.pool = new Pool({
                 user: process.env.POSTGRES_USER || 'claudyne_user',
                 host: process.env.POSTGRES_HOST || 'localhost',
-                database: process.env.POSTGRES_DB || 'claudyne_prod',
+                database: process.env.POSTGRES_DB || 'claudyne_production',
                 password: process.env.POSTGRES_PASSWORD || 'claudyne_secure_2024',
                 port: process.env.POSTGRES_PORT || 5432,
             });

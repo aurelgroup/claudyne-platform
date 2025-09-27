@@ -40,8 +40,8 @@ ssh $VPS_USER@$VPS_IP << 'EOF'
 
     # 4. COMPTER TABLES POSTGRESQL
     echo "📊 Tables PostgreSQL actuelles:"
-    sudo -u postgres psql -d claudyne_prod -c "\dt" | wc -l | xargs echo "Nombre de tables:"
-    sudo -u postgres psql -d claudyne_prod -c "\dt" | head -10
+    sudo -u postgres psql -d claudyne_production -c "\dt" | wc -l | xargs echo "Nombre de tables:"
+    sudo -u postgres psql -d claudyne_production -c "\dt" | head -10
     echo ""
 
     # 5. VÉRIFIER LOGS BACKEND RÉCENTS

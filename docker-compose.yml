@@ -12,7 +12,7 @@ services:
     environment:
       POSTGRES_DB: claudyne_dev
       POSTGRES_USER: claudyne_user
-      POSTGRES_PASSWORD: claudyne_secure_password
+      POSTGRES_PASSWORD: ClAuDyNe_DB_2024_${RANDOM_SUFFIX:-dev}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=fr_CM.UTF-8 --lc-ctype=fr_CM.UTF-8"
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -32,7 +32,7 @@ services:
     image: redis:7-alpine
     container_name: claudyne-redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass claudyne_redis_password
+    command: redis-server --appendonly yes --requirepass ClAuDyNe_ReDiS_2024_${RANDOM_SUFFIX:-dev}
     volumes:
       - redis_data:/data
     ports:
@@ -62,17 +62,17 @@ services:
       DB_PORT: 5432
       DB_NAME: claudyne_dev
       DB_USER: claudyne_user
-      DB_PASSWORD: claudyne_secure_password
+      DB_PASSWORD: ClAuDyNe_DB_2024_${RANDOM_SUFFIX:-dev}
       
       # Redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: claudyne_redis_password
+      REDIS_PASSWORD: ClAuDyNe_ReDiS_2024_${RANDOM_SUFFIX:-dev}
       
       # JWT
-      JWT_SECRET: claudyne_development_secret_key_change_in_production
+      JWT_SECRET: f243ae9b929f07665df6edb023879312cc0406986314fa52c891c77d6570534f
       JWT_EXPIRE: 7d
-      JWT_REFRESH_SECRET: claudyne_refresh_secret_development
+      JWT_REFRESH_SECRET: cb1e7a9e1255e2b8f571ead817a359393fc0752ff93062ec47fb0a28837b2d45
       JWT_REFRESH_EXPIRE: 30d
       
       # Services externes
@@ -232,12 +232,12 @@ services:
       DB_PORT: 5432
       DB_NAME: claudyne_dev
       DB_USER: claudyne_user
-      DB_PASSWORD: claudyne_secure_password
+      DB_PASSWORD: ClAuDyNe_DB_2024_${RANDOM_SUFFIX:-dev}
       
       # Redis
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      REDIS_PASSWORD: claudyne_redis_password
+      REDIS_PASSWORD: ClAuDyNe_ReDiS_2024_${RANDOM_SUFFIX:-dev}
       
     volumes:
       - ./backend:/app

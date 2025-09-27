@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/fa_nono/Documents/CADD/**)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(ssh root@89.117.58.53 \"cd /opt/claudyne && ls -la && ps aux | grep node | grep -v grep\")"
     ],
     "deny": [],
     "ask": []

@@ -6,6 +6,7 @@
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
+const secureLogger = require('../utils/secureLogger');
 
 async function initializeAdmin() {
   try {
@@ -56,7 +57,7 @@ async function initializeAdmin() {
         console.log('✅ Mot de passe admin réinitialisé!');
         console.log('\n🔐 NOUVEAUX IDENTIFIANTS (TEMPORAIRES):');
         console.log(`📧 Email: ${existingAdmin.email}`);
-        console.log(`🔑 Mot de passe temporaire: ${tempPassword}`);
+        const sessionId = secureLogger.logTemporaryPassword(existingAdmin.email, tempPassword, 'admin-reset');
         console.log('\n⚠️  IMPORTANT: Changez ce mot de passe lors de la première connexion!');
         console.log('🌐 Interface Admin: http://localhost:3000/admin-interface.html');
       } else {
@@ -108,7 +109,7 @@ async function initializeAdmin() {
     console.log('✅ Administrateur système créé avec succès!\n');
     console.log('🔐 IDENTIFIANTS ADMINISTRATEUR (TEMPORAIRES):');
     console.log(`📧 Email: ${adminEmail}`);
-    console.log(`🔑 Mot de passe temporaire: ${tempPassword}`);
+    secureLogger.logTemporaryPassword(adminEmail, tempPassword, 'admin-creation');
     console.log('\n⚠️  SÉCURITÉ IMPORTANTE:');
     console.log('1. Changez ce mot de passe lors de la première connexion');
     console.log('2. Activez l\'authentification à deux facteurs');

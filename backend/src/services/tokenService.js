@@ -22,7 +22,7 @@ class TokenService {
         } else {
             // En développement, simuler PostgreSQL avec SQLite
             this.pool = null;
-            console.log('🔧 Mode développement: Token service utilise SQLite (simulation)');
+            // Mode développement: Token service utilise SQLite (simulation)
         }
     }
 
@@ -77,7 +77,7 @@ class TokenService {
                 });
             }
 
-            console.log('🔑 Token admin généré:', token.substring(0, 15) + '...');
+            // Token admin généré avec succès
             return {
                 success: true,
                 token,
@@ -113,7 +113,7 @@ class TokenService {
                 }
 
                 const tokenData = result.rows[0];
-                console.log('✅ Token validé:', token.substring(0, 15) + '...');
+                // Token validé avec succès
 
                 return {
                     valid: true,
@@ -135,7 +135,7 @@ class TokenService {
                     return { valid: false, reason: 'INVALID_OR_EXPIRED' };
                 }
 
-                console.log('✅ Token validé:', token.substring(0, 15) + '...');
+                // Token validé avec succès
                 return {
                     valid: true,
                     tokenData: validToken
@@ -174,7 +174,7 @@ class TokenService {
                 [token]
             );
 
-            console.log('🔒 Token révoqué:', token.substring(0, 15) + '...');
+            // Token révoqué avec succès
             return result.rowCount > 0;
         } catch (error) {
             console.error('❌ Erreur révocation token:', error);

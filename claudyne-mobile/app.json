@@ -30,6 +30,9 @@
         "projectId": "5522402b-87e8-4f92-9dff-380bc8850fd5"
       }
     },
-    "owner": "aurelgroup"
+    "owner": "aurelgroup",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

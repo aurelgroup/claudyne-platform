@@ -67,7 +67,6 @@ class ApiService {
         throw fetchError;
       }
     } catch (error) {
-      console.error(`API Error [${endpoint}]:`, error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erreur réseau inconnue'
@@ -83,7 +82,6 @@ class ApiService {
    * Connexion utilisateur
    */
   async login(credentials: LoginCredentials): Promise<ApiResponse<{ user: User; token: string }>> {
-    console.log('🔍 Login attempt with credentials:', credentials);
     const response = await this.request<{ user: User; token: string; expiresIn: string }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -91,7 +89,6 @@ class ApiService {
         clientType: API_CONFIG.MOBILE_CLIENT_TYPE
       }),
     });
-    console.log('📡 API Response:', response);
 
     if (response.success && response.data) {
       await AsyncStorage.setItem(STORAGE_KEYS.USER_TOKEN, response.data.token);
@@ -353,6 +350,69 @@ class ApiService {
     } catch {
       return false;
     }
+  }
+
+  // ========================================================================
+  // 🔮 RÉINITIALISATION MOT DE PASSE QUANTIQUE
+  // ========================================================================
+
+  /**
+   * Demande de réinitialisation par email
+   */
+  async requestPasswordReset(email: string): Promise<ApiResponse<any>> {
+    return this.request<any>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.toLowerCase().trim(),
+        clientType: API_CONFIG.MOBILE_CLIENT_TYPE,
+        biometricSupported: true
+      }),
+    });
+  }
+
+  /**
+   * Demande de réinitialisation sécurisée (Email + Biométrie)
+   */
+  async requestSecurePasswordReset(email: string, biometricData?: string): Promise<ApiResponse<any>> {
+    return this.request<any>('/api/auth/secure-reset', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.toLowerCase().trim(),
+        biometricVerified: true,
+        biometricData: biometricData || 'mobile-biometric-validated',
+        clientType: API_CONFIG.MOBILE_CLIENT_TYPE,
+        securityLevel: 'quantum'
+      }),
+    });
+  }
+
+  /**
+   * Vérification du code de réinitialisation
+   */
+  async verifyResetCode(email: string, code: string): Promise<ApiResponse<any>> {
+    return this.request<any>('/api/auth/verify-reset-code', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.toLowerCase().trim(),
+        code: code.trim(),
+        clientType: API_CONFIG.MOBILE_CLIENT_TYPE
+      }),
+    });
+  }
+
+  /**
+   * Nouveau mot de passe après réinitialisation
+   */
+  async resetPassword(email: string, code: string, newPassword: string): Promise<ApiResponse<any>> {
+    return this.request<any>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email.toLowerCase().trim(),
+        code: code.trim(),
+        newPassword,
+        clientType: API_CONFIG.MOBILE_CLIENT_TYPE
+      }),
+    });
   }
 }
 

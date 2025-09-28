@@ -9,6 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
 
 // Types
 import type { RootStackParamList, MainTabParamList } from '../types';
@@ -60,7 +61,7 @@ function MainTabNavigator({ onLogout }: MainTabNavigatorProps) {
         options={{
           title: 'Accueil',
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size }}>🏠</Text>
+            <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -70,7 +71,7 @@ function MainTabNavigator({ onLogout }: MainTabNavigatorProps) {
         options={{
           title: 'Leçons',
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size }}>📚</Text>
+            <Ionicons name="book" size={size} color={color} />
           ),
         }}
       />
@@ -80,7 +81,7 @@ function MainTabNavigator({ onLogout }: MainTabNavigatorProps) {
         options={{
           title: 'Battles',
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size }}>⚔️</Text>
+            <Ionicons name="flash" size={size} color={color} />
           ),
         }}
       />
@@ -90,7 +91,7 @@ function MainTabNavigator({ onLogout }: MainTabNavigatorProps) {
         options={{
           title: 'Mentor IA',
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size }}>🤖</Text>
+            <Ionicons name="chatbubbles" size={size} color={color} />
           ),
         }}
       />
@@ -99,7 +100,7 @@ function MainTabNavigator({ onLogout }: MainTabNavigatorProps) {
         options={{
           title: 'Profil',
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ color, fontSize: size }}>👤</Text>
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       >

@@ -36,9 +36,9 @@ class DataService {
         timestamp: Date.now()
       }));
       this.lastSyncTimes[cacheKey] = Date.now();
-      console.log(`💾 Données mises en cache: ${cacheKey}`);
+      // Données mises en cache
     } catch (error) {
-      console.error(`❌ Erreur cache ${cacheKey}:`, error);
+      // Erreur cache
     }
   }
 

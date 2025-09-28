@@ -36,7 +36,7 @@ class WebSocketService {
     try {
       const token = await AsyncStorage.getItem(STORAGE_KEYS.USER_TOKEN);
       if (!token) {
-        console.error('No authentication token available for WebSocket connection');
+        // No authentication token available for WebSocket connection
         return false;
       }
 
@@ -53,14 +53,14 @@ class WebSocketService {
 
       return new Promise((resolve) => {
         this.socket!.on('connect', () => {
-          console.log('WebSocket connected successfully');
+          // WebSocket connected successfully
           this.isConnected = true;
           this.reconnectAttempts = 0;
           resolve(true);
         });
 
         this.socket!.on('connect_error', (error) => {
-          console.error('WebSocket connection error:', error);
+          // WebSocket connection error
           this.isConnected = false;
           resolve(false);
         });
@@ -68,13 +68,13 @@ class WebSocketService {
         // Timeout après 10 secondes
         setTimeout(() => {
           if (!this.isConnected) {
-            console.error('WebSocket connection timeout');
+            // WebSocket connection timeout
             resolve(false);
           }
         }, 10000);
       });
     } catch (error) {
-      console.error('Error establishing WebSocket connection:', error);
+      // Error establishing WebSocket connection
       return false;
     }
   }
@@ -86,13 +86,13 @@ class WebSocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('WebSocket connected');
+      // WebSocket connected
       this.isConnected = true;
       this.reconnectAttempts = 0;
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('WebSocket disconnected:', reason);
+      // WebSocket disconnected
       this.isConnected = false;
       this.emit('disconnect', reason);
 
@@ -106,7 +106,7 @@ class WebSocketService {
     });
 
     this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+      // WebSocket connection error
       this.isConnected = false;
       this.emit('connection:error', error);
       this.attemptReconnect();
@@ -129,14 +129,14 @@ class WebSocketService {
    */
   private attemptReconnect(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached');
+      // Max reconnection attempts reached
       return;
     }
 
     this.reconnectAttempts++;
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
 
-    console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+    // Attempting to reconnect
 
     setTimeout(() => {
       if (!this.isConnected) {
@@ -162,7 +162,7 @@ class WebSocketService {
    */
   joinBattle(battleId: string): void {
     if (!this.isConnected || !this.socket) {
-      console.error('WebSocket not connected');
+      // WebSocket not connected
       return;
     }
 
@@ -174,7 +174,7 @@ class WebSocketService {
    */
   leaveBattle(battleId: string): void {
     if (!this.isConnected || !this.socket) {
-      console.error('WebSocket not connected');
+      // WebSocket not connected
       return;
     }
 
@@ -186,7 +186,7 @@ class WebSocketService {
    */
   submitAnswer(battleId: string, questionId: string, answer: any): void {
     if (!this.isConnected || !this.socket) {
-      console.error('WebSocket not connected');
+      // WebSocket not connected
       return;
     }
 
@@ -228,7 +228,7 @@ class WebSocketService {
         try {
           (callback as any)(data);
         } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
+          // Error in event listener
         }
       });
     }

@@ -25,6 +25,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { THEME_CONSTANTS, STORAGE_KEYS } from '../../constants/config';
 import ApiService from '../../services/apiService';
+import SecurityUtils from '../../utils/security';
 import type { LoginCredentials } from '../../types';
 
 interface Props {
@@ -133,23 +134,33 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Pr
   };
 
   const validateForm = (): boolean => {
-    if (!formData.credential.trim()) {
-      Alert.alert('Erreur', 'Veuillez saisir votre email');
+    // Validation email ultra-sécurisée
+    const emailValidation = SecurityUtils.validateEmail(formData.credential);
+    if (!emailValidation.isValid) {
+      Alert.alert('🔒 Erreur Email', emailValidation.error || 'Email invalide');
       return false;
     }
 
-    if (!formData.credential.includes('@')) {
-      Alert.alert('Erreur', 'Veuillez saisir un email valide');
+    // Vérification rate limiting
+    const lockStatus = SecurityUtils.isUserLocked(formData.credential.toLowerCase());
+    if (lockStatus.isLocked) {
+      const minutes = Math.ceil((lockStatus.timeRemaining || 0) / 60);
+      Alert.alert(
+        '🛡️ Compte Temporairement Bloqué',
+        `Trop de tentatives de connexion.\n\nRéessayez dans ${minutes} minute(s).`,
+        [{ text: 'OK' }]
+      );
       return false;
     }
 
     if (!formData.password.trim()) {
-      Alert.alert('Erreur', 'Veuillez saisir votre mot de passe');
+      Alert.alert('🔒 Erreur', 'Veuillez saisir votre mot de passe');
       return false;
     }
 
+    // Validation basique du mot de passe (pas trop stricte pour la connexion)
     if (formData.password.length < 6) {
-      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères');
+      Alert.alert('🔒 Erreur', 'Mot de passe trop court');
       return false;
     }
 
@@ -160,27 +171,37 @@ export default function LoginScreen({ onLoginSuccess, onNavigateToRegister }: Pr
     if (!validateForm()) return;
 
     setIsLoading(true);
+    const userIdentifier = formData.credential.toLowerCase();
 
     try {
       const response = await ApiService.login(formData);
 
       if (response.success && response.data) {
+        // Enregistrer succès de connexion
+        SecurityUtils.recordLoginAttempt(userIdentifier, true);
+
         Alert.alert(
-          'Connexion réussie',
-          `Bienvenue ${response.data.user.firstName} !`,
+          '🚀 Connexion Réussie',
+          `Bienvenue ${response.data.user.firstName} !\n\nAccès sécurisé activé.`,
           [{ text: 'Continuer', onPress: onLoginSuccess }]
         );
       } else {
+        // Enregistrer échec de connexion
+        SecurityUtils.recordLoginAttempt(userIdentifier, false);
+
         Alert.alert(
-          'Erreur de connexion',
-          response.error || 'Email ou mot de passe incorrect'
+          '🔒 Erreur de Connexion',
+          response.error || 'Email ou mot de passe incorrect.\n\nVérifiez vos identifiants.'
         );
       }
     } catch (error) {
-      console.error('Login error:', error);
+      // Enregistrer échec de connexion (erreur réseau)
+      SecurityUtils.recordLoginAttempt(userIdentifier, false);
+
+      console.error('Login error:', SecurityUtils.sanitizeForLogging(error));
       Alert.alert(
-        'Erreur',
-        'Impossible de se connecter. Vérifiez votre connexion internet.'
+        '🌐 Erreur Réseau',
+        'Impossible de se connecter.\n\nVérifiez votre connexion internet et réessayez.'
       );
     } finally {
       setIsLoading(false);

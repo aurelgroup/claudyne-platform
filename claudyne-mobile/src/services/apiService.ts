@@ -5,6 +5,8 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG, STORAGE_KEYS } from '../constants/config';
+import SecureStorage from './secureStorage';
+import { globalRateLimiter } from '../utils/rateLimiter';
 import type {
   ApiResponse,
   LoginCredentials,
@@ -33,13 +35,14 @@ class ApiService {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const token = await AsyncStorage.getItem(STORAGE_KEYS.USER_TOKEN);
+      const token = await SecureStorage.getAuthToken();
 
       const config: RequestInit = {
         ...options,
         headers: {
           'Content-Type': 'application/json',
-          'X-Client-Type': API_CONFIG.MOBILE_CLIENT_TYPE,
+          'Cache-Control': API_CONFIG.CACHE_CONTROL,
+          ...API_CONFIG.SECURITY_HEADERS,
           ...(token && { Authorization: `Bearer ${token}` }),
           ...options.headers,
         },
@@ -50,20 +53,62 @@ class ApiService {
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
       try {
+        // 🔒 Validation HTTPS obligatoire
+        if (!this.baseUrl.startsWith('https://') && API_CONFIG.VALIDATE_SSL) {
+          throw new Error('HTTPS requis pour les communications sécurisées');
+        }
+
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           ...config,
           signal: controller.signal,
         });
         clearTimeout(timeoutId);
 
+        // 🛡️ Vérifications sécurité supplémentaires
         if (!response.ok) {
+          // Log sécurisé des erreurs HTTP
+          console.error(`❌ HTTP Error ${response.status}:`, {
+            url: `${this.baseUrl}${endpoint}`,
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries())
+          });
+
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
+        // 🔍 Validation du Content-Type
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          console.warn('⚠️ Réponse non-JSON détectée:', contentType);
+        }
+
         const data = await response.json();
+
+        // 🔒 Validation structure réponse
+        if (typeof data !== 'object' || data === null) {
+          throw new Error('Format de réponse invalide');
+        }
+
         return data;
       } catch (fetchError) {
         clearTimeout(timeoutId);
+
+        // 🔍 Gestion d'erreurs sécurisée
+        if (fetchError instanceof Error) {
+          if (fetchError.name === 'AbortError') {
+            throw new Error('Timeout de connexion - Vérifiez votre réseau');
+          }
+
+          // Sanitiser les erreurs avant logging
+          console.error('❌ API Request Error:', SecurityUtils.sanitizeForLogging({
+            message: fetchError.message,
+            name: fetchError.name,
+            endpoint: endpoint,
+            timestamp: new Date().toISOString()
+          }));
+        }
+
         throw fetchError;
       }
     } catch (error) {
@@ -82,6 +127,21 @@ class ApiService {
    * Connexion utilisateur
    */
   async login(credentials: LoginCredentials): Promise<ApiResponse<{ user: User; token: string }>> {
+    // 🛡️ Vérification rate limiting ultra-stricte
+    const rateLimitCheck = globalRateLimiter.isAllowed(credentials.credential.toLowerCase(), 'login');
+
+    if (!rateLimitCheck.allowed) {
+      const timeRemaining = rateLimitCheck.blockTime || 0;
+      const timeText = timeRemaining > 0 ?
+        `Réessayez dans ${Math.ceil(timeRemaining / 60000)} minute(s).` :
+        'Trop de tentatives récentes.';
+
+      return {
+        success: false,
+        error: `🛡️ Limite de tentatives atteinte.\n\n${timeText}`
+      };
+    }
+
     const response = await this.request<{ user: User; token: string; expiresIn: string }>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -91,8 +151,8 @@ class ApiService {
     });
 
     if (response.success && response.data) {
-      await AsyncStorage.setItem(STORAGE_KEYS.USER_TOKEN, response.data.token);
-      await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.data.user));
+      await SecureStorage.setAuthToken(response.data.token);
+      await SecureStorage.setUserData(response.data.user);
     }
 
     return response;
@@ -108,8 +168,8 @@ class ApiService {
     });
 
     if (response.success && response.data) {
-      await AsyncStorage.setItem(STORAGE_KEYS.USER_TOKEN, response.data.tokens.accessToken);
-      await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.data.user));
+      await SecureStorage.setAuthToken(response.data.tokens.accessToken);
+      await SecureStorage.setUserData(response.data.user);
     }
 
     return response;
@@ -119,10 +179,7 @@ class ApiService {
    * Déconnexion
    */
   async logout(): Promise<void> {
-    await AsyncStorage.multiRemove([
-      STORAGE_KEYS.USER_TOKEN,
-      STORAGE_KEYS.USER_DATA,
-    ]);
+    await SecureStorage.clearAllSecureData();
   }
 
   /**
@@ -342,7 +399,7 @@ class ApiService {
    */
   async checkStoredToken(): Promise<boolean> {
     try {
-      const token = await AsyncStorage.getItem(STORAGE_KEYS.USER_TOKEN);
+      const token = await SecureStorage.getAuthToken();
       if (!token) return false;
 
       const response = await this.getProfile();
@@ -360,6 +417,21 @@ class ApiService {
    * Demande de réinitialisation par email
    */
   async requestPasswordReset(email: string): Promise<ApiResponse<any>> {
+    // 🛡️ Rate limiting ultra-strict pour récupération mot de passe
+    const rateLimitCheck = globalRateLimiter.isAllowed(email.toLowerCase(), 'passwordReset');
+
+    if (!rateLimitCheck.allowed) {
+      const timeRemaining = rateLimitCheck.blockTime || 0;
+      const timeText = timeRemaining > 0 ?
+        `Réessayez dans ${Math.ceil(timeRemaining / 60000)} minute(s).` :
+        'Trop de tentatives récentes.';
+
+      return {
+        success: false,
+        error: `🔒 Limite de récupération atteinte.\n\n${timeText}\n\nSécurité renforcée active.`
+      };
+    }
+
     return this.request<any>('/api/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({

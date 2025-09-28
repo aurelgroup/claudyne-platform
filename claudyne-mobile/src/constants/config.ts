@@ -8,11 +8,27 @@ declare const __DEV__: boolean;
 
 export const API_CONFIG = {
   BASE_URL: __DEV__
-    ? 'http://localhost:3001'           // API unifiée locale
-    : 'https://api.claudyne.com',       // API unifiée production
-  TIMEOUT: 10000,
+    ? 'https://api-dev.claudyne.com'    // ✅ HTTPS FORCÉ même en dev
+    : 'https://api.claudyne.com',       // ✅ API unifiée production
+  TIMEOUT: 8000,                        // ✅ Timeout optimisé
   RETRY_ATTEMPTS: 3,
   MOBILE_CLIENT_TYPE: 'mobile',
+
+  // 🔒 Configuration sécurité avancée
+  SECURITY_HEADERS: {
+    'X-Client-Type': 'mobile',
+    'X-Client-Version': '1.0.0',
+    'X-Platform': 'react-native',
+    'X-Security-Level': 'high',
+  },
+
+  // 🛡️ Protection CSRF et injection
+  CSRF_PROTECTION: true,
+  VALIDATE_SSL: !__DEV__, // Validation SSL stricte en production
+
+  // ⚡ Optimisations performance
+  CACHE_CONTROL: 'no-cache, no-store, must-revalidate',
+  CONNECTION_TIMEOUT: 5000,
 };
 
 export const THEME_CONSTANTS = {

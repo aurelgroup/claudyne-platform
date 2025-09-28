@@ -6,6 +6,7 @@
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG, STORAGE_KEYS } from '../constants/config';
+import SecurityUtils from '../utils/security';
 import type { Battle, BattleParticipant, BattleQuestion } from '../types';
 
 export interface BattleEvents {
@@ -36,7 +37,7 @@ class WebSocketService {
     try {
       const token = await AsyncStorage.getItem(STORAGE_KEYS.USER_TOKEN);
       if (!token) {
-        // No authentication token available for WebSocket connection
+        // 🔒 Token auth requis pour WebSocket
         return false;
       }
 
@@ -45,8 +46,15 @@ class WebSocketService {
           token: token
         },
         transports: ['websocket', 'polling'],
-        timeout: 10000,
-        forceNew: true
+        timeout: API_CONFIG.CONNECTION_TIMEOUT,
+        forceNew: true,
+        // 🔒 Sécurité WebSocket renforcée
+        rememberUpgrade: false,
+        autoConnect: false,
+        randomizationFactor: 0.5,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        maxReconnectionAttempts: this.maxReconnectAttempts,
       });
 
       this.setupEventHandlers();
@@ -65,13 +73,13 @@ class WebSocketService {
           resolve(false);
         });
 
-        // Timeout après 10 secondes
+        // Timeout optimisé
         setTimeout(() => {
           if (!this.isConnected) {
-            // WebSocket connection timeout
+            // ⏱️ Timeout WebSocket
             resolve(false);
           }
-        }, 10000);
+        }, API_CONFIG.CONNECTION_TIMEOUT);
       });
     } catch (error) {
       // Error establishing WebSocket connection
@@ -228,7 +236,7 @@ class WebSocketService {
         try {
           (callback as any)(data);
         } catch (error) {
-          // Error in event listener
+          console.error('❌ Erreur listener WebSocket:', SecurityUtils.sanitizeForLogging(error));
         }
       });
     }

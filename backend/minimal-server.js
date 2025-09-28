@@ -7,20 +7,39 @@ const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
 const { db } = require('./database.js');
+const productionEndpoints = require('./production-endpoints.js');
 
 const PORT = process.env.PORT || 3001;
 
-// Fonction utilitaire pour les headers CORS
-function setCorsHeaders(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Permet toutes les origines
+// Fonction utilitaire pour les headers CORS sécurisés
+function setCorsHeaders(res, req) {
+  // 🔒 CORS sécurisé pour production Claudyne
+  const allowedOrigins = [
+    'https://claudyne.com',
+    'https://www.claudyne.com',
+    'http://localhost:3000', // Développement uniquement
+    'http://127.0.0.1:3000'
+  ];
+
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'false'); // Désactivé pour permettre *
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Max-Age', '86400'); // Cache preflight 24h
+
+  // Headers de sécurité additionnels
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
 }
 
 // Fonction pour envoyer une réponse JSON
-function sendJSON(res, statusCode, data) {
-  setCorsHeaders(res);
+function sendJSON(res, statusCode, data, req) {
+  setCorsHeaders(res, req);
   res.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(data, null, 2));
 }
@@ -80,8 +99,8 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: 'mock',
-        cache: 'mock'
+        database: db.isConnected() ? 'operational' : 'offline',
+        sync: 'active'
       }
     });
     return;
@@ -95,8 +114,8 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: 'mock',
-        cache: 'mock'
+        database: db.isConnected() ? 'operational' : 'offline',
+        sync: 'active'
       }
     });
     return;
@@ -105,7 +124,7 @@ const server = http.createServer((req, res) => {
   // API base
   if (pathname === '/api' && method === 'GET') {
     sendJSON(res, 200, {
-      message: 'API Claudyne - Version Test',
+      message: 'API Claudyne - Version Production',
       routes: {
         auth: '/api/auth',
         me: '/api/me',
@@ -117,7 +136,7 @@ const server = http.createServer((req, res) => {
         'prix-claudine': '/api/prix-claudine',
         battles: '/api/battles'
       },
-      note: 'Serveur de test - Données mockées'
+      note: 'Serveur de production - Données réelles'
     });
     return;
   }

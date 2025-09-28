@@ -57,7 +57,7 @@ fi
 # Backup PostgreSQL (si configuré)
 if systemctl is-active --quiet postgresql; then
     echo "📦 Sauvegarde PostgreSQL..." | tee -a $BACKUP_DIR/logs/backup.log
-    sudo -u postgres pg_dump claudyne_prod > "$DAILY_DIR/claudyne_postgres_$TIMESTAMP.sql" 2>/dev/null || echo "⚠️ PostgreSQL backup skipped" | tee -a $BACKUP_DIR/logs/backup.log
+    sudo -u postgres pg_dump claudyne_production > "$DAILY_DIR/claudyne_postgres_$TIMESTAMP.sql" 2>/dev/null || echo "⚠️ PostgreSQL backup skipped" | tee -a $BACKUP_DIR/logs/backup.log
 fi
 
 # Compression backup

@@ -457,7 +457,7 @@ lighthouse http://localhost:3000 --view
 # Sauvegarde automatique PostgreSQL
 #!/bin/bash
 DATE=$(date +%Y%m%d_%H%M%S)
-pg_dump claudyne_prod > /backups/claudyne_$DATE.sql
+pg_dump claudyne_production > /backups/claudyne_$DATE.sql
 aws s3 cp /backups/claudyne_$DATE.sql s3://claudyne-backups/
 ```
 

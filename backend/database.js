@@ -6,6 +6,7 @@
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
+const ClaudyneDatabaseSync = require('./sync-database');
 
 // Fichier de stockage des utilisateurs temporaire
 const usersFile = path.join(__dirname, 'users.json');
@@ -93,7 +94,7 @@ class DatabaseAuth {
         } else {
             // Mode fichier JSON
             const users = this.loadUsersFromFile();
-            return users.find(user => user.email === email && user.isactive) || null;
+            return users.find(user => user.email === email && user.isActive) || null;
         }
     }
 
@@ -177,8 +178,8 @@ class DatabaseAuth {
             // Mode fichier JSON
             const users = this.loadUsersFromFile();
             const user = users.find(u =>
-                (u.email === identifier || u.firstname === identifier || u.lastname === identifier || u.phone === identifier)
-                && u.isactive
+                (u.email === identifier || u.firstName === identifier || u.lastName === identifier || u.phone === identifier)
+                && u.isActive
             );
 
             if (!user) {
@@ -236,7 +237,16 @@ class DatabaseAuth {
 }
 
 // Export du pool et de la classe d'authentification
+// Initialiser synchronisation automatique
+const syncEngine = new ClaudyneDatabaseSync();
+
+// Démarrer sync automatique en production
+if (process.env.NODE_ENV === 'production') {
+    syncEngine.startAutoSync(3); // Toutes les 3 minutes
+}
+
 module.exports = {
     pool,
-    db: new DatabaseAuth()
+    db: new DatabaseAuth(),
+    syncEngine
 };

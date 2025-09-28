@@ -37,7 +37,7 @@ chmod +x contabo-setup.sh
 
 **✅ Ce script installe automatiquement:**
 - Node.js 18.x + NPM
-- PostgreSQL 15 avec base `claudyne_prod`  
+- PostgreSQL 15 avec base `claudyne_production`  
 - Redis Server
 - Nginx + Certbot
 - Firewall UFW configuré

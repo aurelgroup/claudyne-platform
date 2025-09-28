@@ -53,8 +53,8 @@ ssh $VPS_USER@$VPS_IP << 'EOF'
     echo ""
 
     # 5. VÉRIFIER STRUCTURE DES TABLES
-    echo "📊 Tables existantes dans claudyne_prod:"
-    sudo -u postgres psql -d claudyne_prod -c "\dt" 2>/dev/null | head -20 || echo "❌ Base claudyne_prod inaccessible ou vide"
+    echo "📊 Tables existantes dans claudyne_production:"
+    sudo -u postgres psql -d claudyne_production -c "\dt" 2>/dev/null | head -20 || echo "❌ Base claudyne_production inaccessible ou vide"
     echo ""
 
     # 6. COMPTER LES DONNÉES EXISTANTES
@@ -63,7 +63,7 @@ ssh $VPS_USER@$VPS_IP << 'EOF'
     tables=("users" "families" "students" "email_templates" "subjects" "lessons")
 
     for table in "${tables[@]}"; do
-        count=$(sudo -u postgres psql -d claudyne_prod -t -c "SELECT COUNT(*) FROM $table;" 2>/dev/null | xargs)
+        count=$(sudo -u postgres psql -d claudyne_production -t -c "SELECT COUNT(*) FROM $table;" 2>/dev/null | xargs)
         if [ -n "$count" ] && [ "$count" != "" ]; then
             echo "  📋 $table: $count enregistrement(s)"
         else
@@ -88,7 +88,7 @@ ssh $VPS_USER@$VPS_IP << 'EOF'
         ls /var/www/claudyne/backend/src/migrations/*.js | wc -l | xargs echo "  Fichiers migration disponibles:"
 
         # Vérifier table SequelizeMeta
-        meta_count=$(sudo -u postgres psql -d claudyne_prod -t -c "SELECT COUNT(*) FROM \"SequelizeMeta\";" 2>/dev/null | xargs)
+        meta_count=$(sudo -u postgres psql -d claudyne_production -t -c "SELECT COUNT(*) FROM \"SequelizeMeta\";" 2>/dev/null | xargs)
         if [ -n "$meta_count" ]; then
             echo "  Migrations appliquées: $meta_count"
         else
@@ -104,7 +104,7 @@ ssh $VPS_USER@$VPS_IP << 'EOF'
     echo "=================="
 
     # Check si données existent
-    user_count=$(sudo -u postgres psql -d claudyne_prod -t -c "SELECT COUNT(*) FROM users;" 2>/dev/null | xargs)
+    user_count=$(sudo -u postgres psql -d claudyne_production -t -c "SELECT COUNT(*) FROM users;" 2>/dev/null | xargs)
 
     if [ "$user_count" = "0" ] || [ -z "$user_count" ]; then
         echo "  🟡 Base vide - Seed data nécessaire"

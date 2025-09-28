@@ -111,7 +111,7 @@ BACKUPEOF
 echo "🔄 Sync SQLite → PostgreSQL"
 
 # Configuration
-PG_DB="claudyne_prod"
+PG_DB="claudyne_production"
 PG_USER="claudyne_user"
 SQLITE_DB=$(find /var/www/claudyne/backend -name "*.sqlite" -type f | head -1)
 

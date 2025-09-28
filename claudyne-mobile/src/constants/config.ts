@@ -9,7 +9,7 @@ declare const __DEV__: boolean;
 export const API_CONFIG = {
   BASE_URL: __DEV__
     ? 'https://api-dev.claudyne.com'    // ✅ HTTPS FORCÉ même en dev
-    : 'https://api.claudyne.com',       // ✅ API unifiée production
+    : 'https://claudyne.com/api',       // ✅ API unifiée production
   TIMEOUT: 8000,                        // ✅ Timeout optimisé
   RETRY_ATTEMPTS: 3,
   MOBILE_CLIENT_TYPE: 'mobile',

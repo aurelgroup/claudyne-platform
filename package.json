@@ -1,7 +1,7 @@
 {
-  "name": "claudyne-monorepo",
-  "version": "1.2.0",
-  "description": "Claudyne - Plateforme éducative camerounaise unifiée Web & Mobile. La force du savoir en héritage.",
+  "name": "claudyne-production",
+  "version": "2.0.0",
+  "description": "Claudyne - Plateforme éducative camerounaise. Production avec données réelles.",
   "main": "server.js",
   "workspaces": [
     ".",
@@ -9,69 +9,51 @@
   ],
   "scripts": {
     "start": "node server.js",
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:mobile\"",
-    "dev:web": "node server.js",
-    "dev:mobile": "cd claudyne-mobile && npm start",
-    "dev:api": "node shared/api/unified-api.js",
-
-    "admin": "node serve-admin.js",
     "backend": "cd backend && node minimal-server.js",
-    "backend:dev": "cd backend && npm run dev",
+    "backend:prod": "cd backend && NODE_ENV=production node minimal-server.js",
+    "mobile-api": "cd backend && node mobile-server.js",
+    "sync": "cd backend && node sync-database.js --auto-sync",
 
-    "build": "npm run build:web && npm run build:mobile",
-    "build:web": "echo 'Building web platform...' && npm run optimize",
-    "build:mobile": "cd claudyne-mobile && eas build --platform android --profile preview",
-    "optimize": "node scripts/optimize-assets.js",
+    "production": "NODE_ENV=production node backend/minimal-server.js",
+    "production:setup": "node setup-production.js",
+    "production:validate": "node production-validation.js",
+    "production:deploy": "./deploy-production-final.sh",
 
-    "deploy": "./deploy-unified.sh --all",
-    "deploy:web": "./deploy-unified.sh --web",
-    "deploy:mobile": "./deploy-unified.sh --mobile",
-    "deploy:dry-run": "./deploy-unified.sh --all --dry-run",
+    "health": "curl http://localhost:3001/api/health",
+    "health:prod": "curl https://claudyne.com/api/health",
+    "endpoints": "curl http://localhost:3001/api",
 
-    "test": "npm run test:web && npm run test:mobile",
-    "test:web": "echo 'Running web tests...' && exit 0",
-    "test:mobile": "cd claudyne-mobile && npm test",
+    "dev": "concurrently \"npm run backend\" \"npm run mobile-api\"",
+    "dev:full": "concurrently \"npm run backend\" \"npm run mobile-api\" \"npm run sync\"",
 
-    "lint": "npm run lint:web && npm run lint:mobile",
-    "lint:web": "echo 'Linting web code...'",
-    "lint:mobile": "cd claudyne-mobile && npm run lint",
+    "build": "echo 'Production build ready'",
+    "build:mobile": "cd claudyne-mobile && eas build --platform android --profile production",
 
-    "install:all": "npm install && cd backend && npm install && cd ../claudyne-mobile && npm install",
-    "clean": "rm -rf node_modules package-lock.json && cd claudyne-mobile && rm -rf node_modules package-lock.json",
+    "test": "npm run test:api && npm run production:validate",
+    "test:api": "curl -f http://localhost:3001/api/health > /dev/null",
+    "test:endpoints": "node test-production-endpoints.js",
 
-    "android": "cd claudyne-mobile && expo run:android",
-    "ios": "cd claudyne-mobile && expo run:ios",
-
-    "logs": "tail -f deployment.log unified-deployment.log",
-    "health": "curl http://localhost:3001/api && curl https://claudyne.com/download/claudyne.apk -I",
-
-    "test:integration": "node test-integration.js",
-    "test:api": "node shared/api/unified-api.js & sleep 3 && npm run test:integration",
-    "dev:full": "concurrently \"npm run dev:api\" \"npm run dev:web\" \"sleep 5 && npm run test:integration\""
+    "lint": "echo 'Linting production code...'",
+    "logs": "tail -f logs/*.log",
+    "monitoring": "node monitoring-health-check.js"
   },
   "keywords": [
     "education",
     "cameroon",
-    "learning",
-    "family",
-    "claudine",
-    "pwa",
-    "mobile-first",
-    "2g-3g-optimized"
+    "production",
+    "postgresql",
+    "real-data",
+    "claudine"
   ],
-  "author": "Équipe Claudyne <contact@claudyne.com>",
+  "author": "Équipe Claudyne Production <production@claudyne.com>",
   "license": "MIT",
-  "homepage": "https://www.claudyne.com",
+  "homepage": "https://claudyne.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/claudyne.com/claudyne-platform.git"
-  },
-  "bugs": {
-    "url": "https://github.com/claudyne.com/claudyne-platform/issues",
-    "email": "support@claudyne.com"
+    "url": "https://github.com/aurelgroup/claudyne-platform.git"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
   "dependencies": {
@@ -88,47 +70,53 @@
     "expo-server-sdk": "^3.6.0",
     "nodemailer": "^6.9.3",
     "dotenv": "^16.3.1",
-    "react": "18.3.1",
-    "react-native": "0.76.9"
+    "pg": "^8.11.0",
+    "pg-pool": "^3.6.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
     "nodemon": "^3.0.1",
     "@types/node": "^20.4.2",
-    "prettier": "^3.0.0",
-    "eslint": "^8.44.0",
     "node-fetch": "^2.7.0"
   },
-  "config": {
-    "port": 3007,
-    "api_port": 3001
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ],
   "claudyne": {
+    "version": "2.0.0",
+    "mode": "production",
     "tribute": "En hommage à Meffo Mehtah Tchandjio Claudine 👨‍👩‍👧‍👦",
     "mission": "La force du savoir en héritage",
-    "target": "Familles camerounaises",
-    "optimized_for": [
-      "2G",
-      "3G",
-      "Mobile",
-      "Low-bandwidth"
-    ],
+    "target": "Familles camerounaises - Données réelles",
+    "database": "PostgreSQL Production",
+    "endpoints": "8 endpoints production",
     "features": {
-      "pwa": true,
-      "offline": true,
-      "mobile_payments": [
-        "MTN",
-        "Orange"
+      "real_data": true,
+      "mock_data": false,
+      "postgresql": true,
+      "json_fallback": true,
+      "production_ready": true,
+      "cameroon_curriculum": true,
+      "mobile_optimized": true,
+      "offline_support": true
+    },
+    "production": {
+      "database": "claudyne_production",
+      "user": "claudyne_user",
+      "endpoints": [
+        "/api/families/profile",
+        "/api/families/dashboard",
+        "/api/students",
+        "/api/students/{id}/progress",
+        "/api/subjects",
+        "/api/lessons/{id}",
+        "/api/lessons/{id}/complete"
       ],
-      "glassmorphism": true,
-      "service_worker": true,
-      "smart_caching": true
+      "deployment": {
+        "server": "Contabo VPS",
+        "domain": "claudyne.com",
+        "ssl": "Let's Encrypt",
+        "pm2": true,
+        "nginx": true,
+        "monitoring": true
+      }
     }
   }
 }

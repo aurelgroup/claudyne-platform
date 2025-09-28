@@ -88,13 +88,8 @@ class ApiService {
                 data: this.transformDashboardData(response.data)
             };
         } catch (error) {
-            // Fallback to mock data if API fails
-            const { mockData } = await import('./mock-data.js');
-            return {
-                success: false,
-                data: mockData.dashboard,
-                fallback: true
-            };
+            console.error('Failed to fetch dashboard data from API:', error);
+            throw new Error('API unavailable - please check your connection or contact support');
         }
     }
 
@@ -237,29 +232,20 @@ class ApiService {
 const apiService = new ApiService();
 
 // Configuration flag to switch between API and mock data
-export const USE_REAL_API = true; // Set to false to use mock data
+export const USE_REAL_API = true; // Production: always use real API
 
 /**
- * Smart data fetcher that uses real API or falls back to mock data
+ * Production data fetcher - only uses real API
  */
-export async function getData(endpoint, fallbackMockData = null) {
-    if (!USE_REAL_API) {
-        const { mockData } = await import('./mock-data.js');
-        return {
-            success: true,
-            data: fallbackMockData || mockData,
-            source: 'mock'
-        };
-    }
-
+export async function getData(endpoint) {
     try {
         // Check if backend is available
         const isOnline = await apiService.checkConnection();
         if (!isOnline) {
-            throw new Error('Backend not available');
+            throw new Error('Backend not available - please check your connection');
         }
 
-        // Try to get real data
+        // Get real data from API
         const response = await apiService.request(endpoint);
         return {
             success: true,
@@ -267,16 +253,8 @@ export async function getData(endpoint, fallbackMockData = null) {
             source: 'api'
         };
     } catch (error) {
-        console.warn(`API call failed for ${endpoint}, falling back to mock data:`, error);
-
-        // Fallback to mock data
-        const { mockData } = await import('./mock-data.js');
-        return {
-            success: false,
-            data: fallbackMockData || mockData,
-            source: 'mock',
-            error: error.message
-        };
+        console.error(`API call failed for ${endpoint}:`, error);
+        throw new Error(`Failed to fetch data from ${endpoint}: ${error.message}`);
     }
 }
 

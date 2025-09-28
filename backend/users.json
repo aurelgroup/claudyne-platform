@@ -3,14 +3,38 @@
     "id": 1758891436006,
     "email": "f.nono@projexts.ca",
     "password": "123456",
-    "firstname": "Fran�ois",
-    "lastname": "Nono",
+    "firstName": "François",
+    "lastName": "Nono",
     "phone": "+237695123456",
+    "role": "PARENT",
+    "userType": "MANAGER",
+    "isActive": true,
+    "isVerified": false,
+    "createdAt": "2025-09-26T12:57:16.006Z",
+    "lastLogin": "2025-09-26T14:43:56.529Z"
+  },
+  {
+    "id": 1758953118033,
+    "email": "test@example.com",
+    "password": "password123",
+    "firstname": "Test",
+    "lastname": "User",
     "role": "PARENT",
     "usertype": "MANAGER",
     "isactive": true,
     "isverified": false,
-    "createdat": "2025-09-26T12:57:16.006Z",
-    "lastlogin": "2025-09-26T14:43:56.529Z"
+    "createdat": "2025-09-27T06:05:18.033Z"
+  },
+  {
+    "id": 1758954603111,
+    "email": "production@claudyne.com",
+    "password": "claudyne2024",
+    "firstname": "Expertise",
+    "lastname": "Production",
+    "role": "PARENT",
+    "usertype": "MANAGER",
+    "isactive": true,
+    "isverified": false,
+    "createdat": "2025-09-27T06:30:03.111Z"
   }
 ]

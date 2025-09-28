@@ -239,7 +239,7 @@ openssl x509 -in nginx/ssl/claudyne.com/fullchain.pem -text -noout | grep "Not A
 
 ```bash
 # Sauvegarder la base de données
-docker-compose exec postgres pg_dump -U claudyne_user claudyne_prod > backup-$(date +%Y%m%d).sql
+docker-compose exec postgres pg_dump -U claudyne_user claudyne_production > backup-$(date +%Y%m%d).sql
 
 # Sauvegarder les uploads
 tar -czf uploads-backup-$(date +%Y%m%d).tar.gz uploads/
@@ -252,7 +252,7 @@ tar -czf config-backup-$(date +%Y%m%d).tar.gz .env nginx/ docker-compose.product
 
 ```bash
 # Restaurer la base de données
-docker-compose exec -T postgres psql -U claudyne_user claudyne_prod < backup-20241216.sql
+docker-compose exec -T postgres psql -U claudyne_user claudyne_production < backup-20241216.sql
 
 # Restaurer les uploads
 tar -xzf uploads-backup-20241216.tar.gz
@@ -285,7 +285,7 @@ docker run --rm -v "$(pwd)/nginx/ssl:/etc/letsencrypt" certbot/certbot certonly 
 docker-compose logs postgres
 
 # Se connecter manuellement
-docker-compose exec postgres psql -U claudyne_user claudyne_prod
+docker-compose exec postgres psql -U claudyne_user claudyne_production
 
 # Vérifier l'espace disque
 df -h

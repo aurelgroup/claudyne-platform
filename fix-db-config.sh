@@ -33,9 +33,9 @@ PORT=3001
 DB_DIALECT=postgres
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=claudyne_prod
+DB_NAME=claudyne_production
 DB_USER=claudyne_user
-DB_PASSWORD=claudyne_secure_prod_2024
+DB_PASSWORD=aujourdhui18D@
 DB_SSL=false
 
 # Test Database (SQLite fallback)
@@ -121,7 +121,7 @@ ENVEOF
     # 5. VÉRIFIER TABLES CRÉÉES
     echo ""
     echo "📊 Vérification tables créées:"
-    sudo -u postgres psql -d claudyne_prod -c "\dt" | head -15
+    sudo -u postgres psql -d claudyne_production -c "\dt" | head -15
 
     # 6. REDÉMARRER BACKEND AVEC NOUVELLE CONFIG
     echo ""
@@ -144,7 +144,7 @@ ENVEOF
     echo "✅ Backend: Redémarré"
 
     # Compter tables
-    table_count=$(sudo -u postgres psql -d claudyne_prod -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';" | xargs)
+    table_count=$(sudo -u postgres psql -d claudyne_production -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';" | xargs)
     echo "📋 Tables PostgreSQL: $table_count"
 
 EOF

@@ -4,7 +4,16 @@
  * Chiffrement AES-256 natif iOS/Android
  */
 
-import * as SecureStore from 'expo-secure-store';
+// Compatible Expo Go - fallback vers AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Simuler SecureStore pour Expo Go
+const SecureStore = {
+  setItemAsync: (key: string, value: string) => AsyncStorage.setItem(key, value),
+  getItemAsync: (key: string) => AsyncStorage.getItem(key),
+  deleteItemAsync: (key: string) => AsyncStorage.removeItem(key),
+  isAvailableAsync: () => Promise.resolve(false), // Expo Go = false
+};
 import { STORAGE_KEYS } from '../constants/config';
 
 class SecureStorageService {

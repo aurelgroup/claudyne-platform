@@ -20,7 +20,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2E7D32"
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "claudyne"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,8 +46,8 @@
     },
     "owner": "aurelgroup",
     "plugins": [
-      "expo-font",
-      "expo-secure-store"
-    ]
+      "expo-font"
+    ],
+    "sdkVersion": "54.0.0"
   }
 }

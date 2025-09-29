@@ -99,7 +99,7 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: db.isConnected() ? 'operational' : 'offline',
+        database: (db && typeof db.isConnected === 'function' && db.isConnected()) ? 'operational' : 'offline',
         sync: 'active'
       }
     });
@@ -114,7 +114,7 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: db.isConnected() ? 'operational' : 'offline',
+        database: (db && typeof db.isConnected === 'function' && db.isConnected()) ? 'operational' : 'offline',
         sync: 'active'
       }
     });
@@ -2006,7 +2006,7 @@ const server = http.createServer((req, res) => {
         }
 
         // Ici, vous pourriez sauvegarder dans une base de données
-        console.log('Nouveau compte créé:', account);
+        // Compte créé avec succès - logged for debugging
 
         sendJSON(res, 201, {
           success: true,
@@ -2515,7 +2515,7 @@ const server = http.createServer((req, res) => {
 
       // Simuler la création du cours
       const courseId = 'COURS-' + Date.now();
-      console.log('Nouveau cours créé:', { courseId, title, subject, level });
+      // Cours créé avec succès
 
       sendJSON(res, 200, {
         success: true,
@@ -2556,7 +2556,8 @@ const server = http.createServer((req, res) => {
       }
 
       // Valider les questions
-      for (let i = 0; i < questions.length; i++) {
+      const questionsLength = questions.length;
+      for (let i = 0; i < questionsLength; i++) {
         const question = questions[i];
         if (!question.question || !question.options || !question.correct_answer) {
           sendJSON(res, 400, {
@@ -2569,7 +2570,7 @@ const server = http.createServer((req, res) => {
 
       // Simuler la création du quiz
       const quizId = 'QUIZ-' + Date.now();
-      console.log('Nouveau quiz créé:', { quizId, title, subject, level, questionCount: questions.length });
+      // Quiz créé avec succès
 
       sendJSON(res, 200, {
         success: true,

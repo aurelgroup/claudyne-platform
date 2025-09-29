@@ -1,6 +1,5 @@
 
 import { registerRootComponent } from 'expo';
-import App from './App';
+import App from './App.tsx';
 
-// This is the native entry point for Expo Go
 registerRootComponent(App);

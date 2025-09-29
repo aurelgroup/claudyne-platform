@@ -13,26 +13,20 @@
     "backend:prod": "cd backend && NODE_ENV=production node minimal-server.js",
     "mobile-api": "cd backend && node mobile-server.js",
     "sync": "cd backend && node sync-database.js --auto-sync",
-
     "production": "NODE_ENV=production node backend/minimal-server.js",
     "production:setup": "node setup-production.js",
     "production:validate": "node production-validation.js",
     "production:deploy": "./deploy-production-final.sh",
-
     "health": "curl http://localhost:3001/api/health",
     "health:prod": "curl https://claudyne.com/api/health",
     "endpoints": "curl http://localhost:3001/api",
-
     "dev": "concurrently \"npm run backend\" \"npm run mobile-api\"",
     "dev:full": "concurrently \"npm run backend\" \"npm run mobile-api\" \"npm run sync\"",
-
     "build": "echo 'Production build ready'",
     "build:mobile": "cd claudyne-mobile && eas build --platform android --profile production",
-
     "test": "npm run test:api && npm run production:validate",
     "test:api": "curl -f http://localhost:3001/api/health > /dev/null",
     "test:endpoints": "node test-production-endpoints.js",
-
     "lint": "echo 'Linting production code...'",
     "logs": "tail -f logs/*.log",
     "monitoring": "node monitoring-health-check.js"
@@ -57,27 +51,28 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0",
-    "express-rate-limit": "^6.8.1",
-    "jsonwebtoken": "^9.0.1",
-    "bcrypt": "^5.1.0",
-    "ws": "^8.13.0",
-    "socket.io": "^4.7.2",
-    "expo-server-sdk": "^3.6.0",
-    "nodemailer": "^6.9.3",
     "dotenv": "^16.3.1",
+    "expo-server-sdk": "^3.6.0",
+    "express-rate-limit": "^6.8.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.1",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.3",
     "pg": "^8.11.0",
     "pg-pool": "^3.6.1"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0",
-    "nodemon": "^3.0.1",
     "@types/node": "^20.4.2",
-    "node-fetch": "^2.7.0"
+    "chokidar": "^4.0.3",
+    "concurrently": "^8.2.0",
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0",
+    "nodemon": "^3.0.1",
+    "socket.io": "^4.8.1",
+    "ws": "^8.18.3"
   },
   "claudyne": {
     "version": "2.0.0",

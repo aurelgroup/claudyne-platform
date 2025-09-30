@@ -232,6 +232,41 @@ app.post('/api/payments/webhook/:provider', (req, res) => {
 });
 
 // ====================================================================
+// 🔐 PROTECTION INTERFACE ADMIN
+// ====================================================================
+
+app.get('/admin-secure-k7m9x4n2p8w5z1c6', (req, res) => {
+  // PROTECTION CRITIQUE : Vérifier authentification admin
+  const adminToken = req.headers.authorization?.replace('Bearer ', '') || req.query.token;
+
+  if (!adminToken || adminToken !== 'admin-secure-token-claudyne-2025') {
+    return res.status(401).json({
+      success: false,
+      message: "🚨 ACCÈS REFUSÉ - Authentification admin requise",
+      error: "UNAUTHORIZED_ADMIN_ACCESS",
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Si authentifié, servir l'interface admin
+  const fs = require('fs');
+  const path = require('path');
+  const adminPath = path.join(__dirname, 'admin-interface.html');
+
+  try {
+    const adminHtml = fs.readFileSync(adminPath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.send(adminHtml);
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: "Interface admin indisponible",
+      error: error.message
+    });
+  }
+});
+
+// ====================================================================
 // 🔐 AUTHENTIFICATION
 // ====================================================================
 

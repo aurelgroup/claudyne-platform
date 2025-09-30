@@ -149,6 +149,82 @@ app.get('/admin-secure-k7m9x4n2p8w5z1c6', (req, res) => {
 
 // Admin token validation moved to routes/admin.js
 
+// Routes d'interfaces utilisateur (AVANT les routes API pour éviter conflicts)
+app.get('/student', (req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(__dirname, '../../student-interface-modern.html');
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        message: "Interface étudiant indisponible",
+        error: "STUDENT_INTERFACE_NOT_FOUND"
+      });
+    }
+
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.send(html);
+
+    logger.info(`Interface étudiant servie - IP: ${req.ip}`);
+  } catch (error) {
+    logger.error(`Erreur interface étudiant:`, error);
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur - Interface étudiant",
+      error: "STUDENT_INTERFACE_ERROR"
+    });
+  }
+});
+
+app.get('/teacher', (req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(__dirname, '../../teacher-interface.html');
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        message: "Interface enseignant indisponible"
+      });
+    }
+
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur - Interface enseignant"
+    });
+  }
+});
+
+app.get('/moderator', (req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(__dirname, '../../moderator-interface.html');
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        message: "Interface modérateur indisponible"
+      });
+    }
+
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur - Interface modérateur"
+    });
+  }
+});
+
 // Routes principales de l'API
 app.use('/api', routes);
 

@@ -21,7 +21,7 @@ function setCorsHeaders(res, req) {
     'http://127.0.0.1:3000'
   ];
 
-  const origin = req.headers.origin;
+  const origin = req && req.headers ? req.headers.origin : null;
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -99,7 +99,7 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: (db && typeof db.isConnected === 'function' && db.isConnected()) ? 'operational' : 'offline',
+        database: db && db.isConnected ? 'operational' : 'offline',
         sync: 'active'
       }
     });
@@ -114,7 +114,7 @@ const server = http.createServer((req, res) => {
       message: 'Claudyne API fonctionne correctement ! 💚',
       services: {
         api: 'operational',
-        database: (db && typeof db.isConnected === 'function' && db.isConnected()) ? 'operational' : 'offline',
+        database: db && db.isConnected ? 'operational' : 'offline',
         sync: 'active'
       }
     });

@@ -105,10 +105,26 @@ router.post('/register', registerLimiter, [
     // Vérification des erreurs de validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // Log détaillé des erreurs de validation pour debugging
+      logger.error('Erreurs validation login:', {
+        errors: errors.array(),
+        credential: req.body.credential,
+        ip: req.ip
+      });
+
       return res.status(400).json({
         success: false,
-        message: 'Données invalides',
-        errors: errors.array()
+        message: 'Email, téléphone, prénom ou nom requis - Vérifiez le format',
+        errors: errors.array(),
+        debug: process.env.NODE_ENV === 'development' ? {
+          receivedCredential: req.body.credential,
+          expectedFormats: [
+            'Email: exemple@domain.com',
+            'Téléphone: +237XXXXXXXX ou 237XXXXXXXX',
+            'Prénom: Jean',
+            'Nom: Dupont'
+          ]
+        } : undefined
       });
     }
     
@@ -264,6 +280,86 @@ router.post('/register', registerLimiter, [
       success: false,
       message: 'Erreur lors de la création du compte',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+/**
+ * POST /api/auth/quick-login
+ * Connexion rapide pour test et développement
+ */
+router.post('/quick-login', [
+  body('email').isEmail().withMessage('Email valide requis'),
+  body('password').notEmpty().withMessage('Mot de passe requis')
+], async (req, res) => {
+  try {
+    initializeModels();
+
+    const { email, password } = req.body;
+
+    // Validation simple
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email et mot de passe requis'
+      });
+    }
+
+    // Recherche utilisateur par email uniquement (plus simple)
+    const user = await User.findOne({
+      where: { email: email.toLowerCase() },
+      include: [{
+        model: Family,
+        as: 'family',
+        include: ['students']
+      }]
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Utilisateur non trouvé avec cet email',
+        debug: process.env.NODE_ENV === 'development' ? { searchedEmail: email } : undefined
+      });
+    }
+
+    // Vérification mot de passe
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Mot de passe incorrect'
+      });
+    }
+
+    // Génération tokens
+    const accessToken = generateToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // Succès
+    res.json({
+      success: true,
+      message: `Connexion rapide réussie ! Bienvenue ${user.firstName} 👋`,
+      data: {
+        user: user.toSafeJSON(),
+        family: user.family ? {
+          id: user.family.id,
+          name: user.family.name,
+          status: user.family.status
+        } : null,
+        tokens: {
+          accessToken,
+          refreshToken,
+          expiresIn: process.env.JWT_EXPIRE || '7d'
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur quick-login:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la connexion'
     });
   }
 });

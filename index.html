@@ -2842,7 +2842,7 @@
         });
 
         // 🔑 GESTION DU FORMULAIRE MOT DE PASSE OUBLIÉ
-        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const email = document.getElementById('forgotEmail').value;
@@ -2853,38 +2853,86 @@
             submitBtn.innerHTML = '⏳ Envoi en cours...';
             submitBtn.disabled = true;
 
-            // Simuler l'envoi (à remplacer par vraie API)
-            setTimeout(() => {
-                // Afficher message de succès
-                const successMessage = document.createElement('div');
-                successMessage.style.cssText = `
-                    background: rgba(0, 255, 194, 0.1);
-                    border: 1px solid rgba(0, 255, 194, 0.3);
+            try {
+                // Appel API backend pour récupération mot de passe
+                const response = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Afficher message de succès
+                    const successMessage = document.createElement('div');
+                    successMessage.style.cssText = `
+                        background: rgba(0, 255, 194, 0.1);
+                        border: 1px solid rgba(0, 255, 194, 0.3);
+                        padding: 1rem;
+                        border-radius: 8px;
+                        margin-top: 1rem;
+                        text-align: center;
+                        color: var(--color-accent-1);
+                    `;
+
+                    // En développement, afficher le lien direct
+                    const devLink = data.resetLink ? `<br><br><a href="${data.resetLink}" style="color: var(--color-accent-1); text-decoration: underline;">🔗 Lien de test (dev)</a>` : '';
+
+                    successMessage.innerHTML = `
+                        ✅ ${data.message}<br>
+                        <small>Vérifiez votre boîte email : ${email}</small>
+                        ${devLink}
+                    `;
+
+                    e.target.appendChild(successMessage);
+
+                    // Réinitialiser le bouton
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    // Retour à la connexion après 5 secondes
+                    setTimeout(() => {
+                        showLoginForm();
+                        successMessage.remove();
+                        e.target.reset();
+                    }, 5000);
+                } else {
+                    throw new Error(data.message || 'Erreur lors de l\'envoi');
+                }
+
+            } catch (error) {
+                console.error('Erreur forgot password:', error);
+
+                // Afficher message d'erreur
+                const errorMessage = document.createElement('div');
+                errorMessage.style.cssText = `
+                    background: rgba(255, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 0, 0, 0.3);
                     padding: 1rem;
                     border-radius: 8px;
                     margin-top: 1rem;
                     text-align: center;
-                    color: var(--color-accent-1);
+                    color: #ff6b6b;
                 `;
-                successMessage.innerHTML = `
-                    ✅ Lien de réinitialisation envoyé !<br>
-                    <small>Vérifiez votre boîte email : ${email}</small>
+                errorMessage.innerHTML = `
+                    ❌ Erreur lors de l'envoi<br>
+                    <small>${error.message}</small>
                 `;
 
-                e.target.appendChild(successMessage);
+                e.target.appendChild(errorMessage);
 
                 // Réinitialiser le bouton
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
 
-                // Retour à la connexion après 3 secondes
+                // Supprimer le message d'erreur après 5 secondes
                 setTimeout(() => {
-                    showLoginForm();
-                    successMessage.remove();
-                    e.target.reset();
-                }, 3000);
-
-            }, 1500);
+                    errorMessage.remove();
+                }, 5000);
+            }
         });
 
         // Gestion du formulaire d'essai gratuit

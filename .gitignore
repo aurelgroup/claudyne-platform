@@ -89,4 +89,4 @@ backup-*.tar.gz
 *.backup
 
 # Claude files that might be generated
-.claude/
+.claude/nul

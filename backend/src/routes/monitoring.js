@@ -203,7 +203,7 @@ async function getSecurityStatus() {
 
             if (security.fail2banActive) {
                 // Get jail count
-                const { stdout: jailList } = await execAsync("fail2ban-client status 2>/dev/null | grep 'Jail list' | cut -d: -f2 | tr ',' '\\n' | wc -l");
+                const { stdout: jailList } = await execAsync("fail2ban-client status 2>/dev/null | grep 'Jail list' | cut -d: -f2 | tr ',' '\n' | wc -l");
                 security.fail2banJails = parseInt(jailList.trim()) || 0;
 
                 // Get banned IPs count

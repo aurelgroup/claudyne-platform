@@ -1,0 +1,42 @@
+{
+  // Extensions recommandées pour le projet Claudyne
+  "recommendations": [
+    // ESLint - Indispensable pour le linting
+    "dbaeumer.vscode-eslint",
+
+    // Prettier (optionnel, mais utile)
+    "esbenp.prettier-vscode",
+
+    // GitLens - Meilleure intégration Git
+    "eamodio.gitlens",
+
+    // JavaScript et Node.js
+    "christian-kohler.npm-intellisense",
+    "eg2.vscode-npm-script",
+
+    // Path Intellisense
+    "christian-kohler.path-intellisense",
+
+    // EditorConfig
+    "editorconfig.editorconfig",
+
+    // Markdown
+    "yzhang.markdown-all-in-one",
+
+    // REST Client (pour tester les API)
+    "humao.rest-client",
+
+    // Thunder Client (alternative à Postman)
+    "rangav.vscode-thunder-client",
+
+    // SQL
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+
+    // Docker (si utilisé)
+    "ms-azuretools.vscode-docker",
+
+    // Better Comments
+    "aaron-bond.better-comments"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  // ==========================================
+  // Configuration ESLint pour VSCode
+  // ==========================================
+
+  // Activer ESLint
+  "eslint.enable": true,
+
+  // Valider ces types de fichiers
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // Lancer ESLint lors de la sauvegarde
+  "eslint.run": "onSave",
+
+  // Format automatique avec ESLint lors de la sauvegarde
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Ne pas formater avec d'autres outils si ESLint est actif
+  "editor.formatOnSave": false,
+
+  // ESLint comme formateur par défaut pour JS
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+
+  // ==========================================
+  // Configuration Générale Éditeur
+  // ==========================================
+
+  // Indentation (2 espaces comme dans ESLint config)
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+
+  // Afficher les erreurs ESLint
+  "problems.showCurrentInStatus": true,
+
+  // Fichiers à exclure de la recherche
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.expo": true,
+    "**/coverage": true,
+    "**/*.log": true
+  },
+
+  // Exclure de la surveillance (performance)
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.expo/**": true,
+    "**/coverage/**": true
+  },
+
+  // ==========================================
+  // Configuration JavaScript
+  // ==========================================
+
+  // Validation JavaScript
+  "javascript.validate.enable": true,
+  "javascript.suggestionActions.enabled": true,
+
+  // Imports automatiques
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+
+  // ==========================================
+  // Configuration Suggestions
+  // ==========================================
+
+  // Suggestions pour les erreurs courantes
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+
+  "editor.suggestSelection": "first",
+  "editor.suggest.insertMode": "replace",
+
+  // ==========================================
+  // Configuration Terminal
+  // ==========================================
+
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "terminal.integrated.env.windows": {},
+
+  // ==========================================
+  // Configuration Spécifique Claudyne
+  // ==========================================
+
+  "npm.packageManager": "npm",
+  "npm.enableRunFromFolder": true,
+
+  // Chemins de travail
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.expo": true,
+    "**/coverage": true,
+    "**/.git": true
+  }
+}

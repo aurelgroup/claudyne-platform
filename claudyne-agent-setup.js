@@ -246,7 +246,7 @@ class ClaudyneCodeAgent {
   }
 
   async start() {
-    console.log('🤖 Démarrage de l\\'agent Claudyne...');
+    console.log('🤖 Démarrage de l\'agent Claudyne...');
 
     try {
       await this.initializeWatcher();
@@ -309,7 +309,7 @@ class ClaudyneCodeAgent {
       file: filePath,
       action: action,
       size: content.length,
-      lines: content.split('\\n').length,
+      lines: content.split('\n').length,
       issues: []
     };
 
@@ -586,7 +586,7 @@ agent.start().catch(console.error);
 
 // Gestion propre de l'arrêt
 process.on('SIGINT', () => {
-  console.log('\\n🛑 Arrêt de l\\'agent Claudyne...');
+  console.log('\n🛑 Arrêt de l\'agent Claudyne...');
   process.exit(0);
 });
 `;

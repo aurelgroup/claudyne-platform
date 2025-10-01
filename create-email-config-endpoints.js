@@ -60,7 +60,7 @@ app.post('/api/admin/email-config', async (req, res) => {
             if (regex.test(newEnvContent)) {
                 newEnvContent = newEnvContent.replace(regex, \`\${key}=\${value}\`);
             } else {
-                newEnvContent += \`\\n\${key}=\${value}\`;
+                newEnvContent += \`\n\${key}=\${value}\`;
             }
         });
 

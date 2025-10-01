@@ -45,7 +45,7 @@ const authLimiter = rateLimit({
 // Rate limiting plus strict pour la création de compte
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
-  max: process.env.NODE_ENV === 'development' ? 50 : 3, // 50 comptes en dev, 3 en prod
+  max: process.env.NODE_ENV === "development" ? 50 : 10, // 50 comptes en dev, 3 en prod
   message: {
     success: false,
     message: 'Limite de création de comptes atteinte. Contactez le support si nécessaire.',
@@ -216,6 +216,7 @@ router.post('/register', registerLimiter, [
       
       // Commit de la transaction
       await transaction.commit();
+      transaction.finished = true;
       
       // Génération des tokens
       const accessToken = generateToken(user);
@@ -260,7 +261,14 @@ router.post('/register', registerLimiter, [
       });
       
     } catch (error) {
-      await transaction.rollback();
+      // Rollback sécurisé
+      if (transaction && !transaction.finished) {
+        try {
+          await transaction.rollback();
+        } catch (rbErr) {
+          // Ignore rollback errors
+        }
+      }
       throw error;
     }
     

@@ -99,8 +99,8 @@ const speedLimiter = slowDown({
   maxDelayMs: 20000 // Délai maximum de 20 secondes
 });
 
-app.use('/api', limiter);
-app.use('/api', speedLimiter);
+// app.use('/api', limiter);
+// app.use('/api', speedLimiter);
 
 // Parsers pour les requêtes
 app.use(express.json({ limit: '10mb' }));

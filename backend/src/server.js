@@ -20,6 +20,7 @@ const logger = require('./utils/logger');
 const { sequelize, testConnection } = require('./config/database');
 const cacheService = require('./services/cacheService');
 const routes = require('./routes');
+const interfaceRoutes = require("./routes/interfaces");
 const { configureSocket } = require('./websockets/socketHandler');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandlers');
 const { authenticate } = require('./middleware/auth');
@@ -227,6 +228,8 @@ app.get('/moderator', (req, res) => {
 
 // Routes principales de l'API
 app.use('/api', routes);
+// Routes des interfaces utilisateur
+app.use("/", interfaceRoutes);
 
 // Admin endpoints have been moved to routes/admin.js
 

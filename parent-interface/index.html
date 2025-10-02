@@ -2697,23 +2697,23 @@
                                 <form>
                                     <div class="form-group">
                                         <label class="form-label">Nom complet</label>
-                                        <input type="text" id="settings-full-name" class="form-input" value="Utilisateur">
+                                        <input type="text" id="settings-full-name" class="form-input" value="">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Email</label>
-                                        <input type="email" class="form-input" value="samuel.kouotou@email.com">
+                                        <input type="email" id="settings-email" class="form-input" value="" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Téléphone</label>
-                                        <input type="tel" class="form-input" value="+237 690 123 456">
+                                        <input type="tel" id="settings-phone" class="form-input" value="">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Ville</label>
-                                        <input type="text" class="form-input" value="Yaoundé">
+                                        <input type="text" id="settings-city" class="form-input" value="">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Bio</label>
-                                        <textarea class="form-textarea" placeholder="Parlez-nous de vous...">Père de famille passionné par l'éducation et l'épanouissement de mes enfants. Entrepreneur dans le secteur technologique.</textarea>
+                                        <textarea id="settings-bio" class="form-textarea" placeholder="Parlez-nous de vous..."></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save"></i>
@@ -3632,9 +3632,20 @@
                         userFullName.textContent = fullName;
                     }
 
+                    // Mettre à jour les champs du formulaire de paramètres
                     const settingsFullName = document.getElementById('settings-full-name');
                     if (settingsFullName) {
                         settingsFullName.value = fullName;
+                    }
+
+                    const settingsEmail = document.getElementById('settings-email');
+                    if (settingsEmail) {
+                        settingsEmail.value = user.email || '';
+                    }
+
+                    const settingsPhone = document.getElementById('settings-phone');
+                    if (settingsPhone) {
+                        settingsPhone.value = user.phone || '';
                     }
 
                     // Mettre à jour les informations de connexion
@@ -3658,6 +3669,12 @@
                     const groupFamilyName = document.getElementById('group-family-name');
                     if (groupFamilyName) {
                         groupFamilyName.textContent = `Groupe ${familyName}`;
+                    }
+
+                    // Mettre à jour les champs du formulaire de paramètres
+                    const settingsCity = document.getElementById('settings-city');
+                    if (settingsCity) {
+                        settingsCity.value = family.city || '';
                     }
                 }
 

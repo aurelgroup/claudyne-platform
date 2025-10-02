@@ -156,4 +156,154 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Récupérer un étudiant spécifique
+router.get('/:id', async (req, res) => {
+  try {
+    if (!req.user || !req.user.familyId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { Student } = req.models;
+    const student = await Student.findOne({
+      where: {
+        id: req.params.id,
+        familyId: req.user.familyId,
+        isActive: true
+      }
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        student: student.toJSON()
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de l\'étudiant'
+    });
+  }
+});
+
+// Récupérer la progression d'un étudiant
+router.get('/:id/progress', async (req, res) => {
+  try {
+    if (!req.user || !req.user.familyId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { Student } = req.models;
+    const student = await Student.findOne({
+      where: {
+        id: req.params.id,
+        familyId: req.user.familyId,
+        isActive: true
+      }
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    // Pour l'instant, retourner des données basiques
+    // TODO: Implémenter le vrai système de progression
+    res.json({
+      success: true,
+      data: {
+        studentId: student.id,
+        overallProgress: student.overallProgress || 0,
+        currentAverage: student.currentAverage || 0,
+        currentStreak: student.currentStreak || 0,
+        totalPoints: student.totalPoints || 0,
+        claudinePoints: student.claudinePoints || 0,
+        weeklyStudyTime: 0,
+        weeklyExercises: 0,
+        recentActivities: [],
+        subjects: []
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération progression étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de la progression'
+    });
+  }
+});
+
+// Récupérer les analytics d'un étudiant
+router.get('/:id/analytics', async (req, res) => {
+  try {
+    if (!req.user || !req.user.familyId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { Student } = req.models;
+    const student = await Student.findOne({
+      where: {
+        id: req.params.id,
+        familyId: req.user.familyId,
+        isActive: true
+      }
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    // Pour l'instant, retourner des analytics basiques
+    // TODO: Implémenter le vrai système d'analytics
+    res.json({
+      success: true,
+      data: {
+        studentId: student.id,
+        overallProgress: student.overallProgress || 0,
+        currentScore: student.currentAverage || 0,
+        weeklyProgress: 0,
+        weeklyStudyTime: '0h',
+        weeklyExercises: 0,
+        streakDays: student.currentStreak || 0,
+        strongSubject: 'À déterminer',
+        weakSubject: 'À déterminer',
+        subjectScores: [],
+        performanceTrend: [],
+        studyTimeByDay: []
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération analytics étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des analytics'
+    });
+  }
+});
+
 module.exports = router;

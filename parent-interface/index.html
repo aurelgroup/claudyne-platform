@@ -3318,28 +3318,44 @@
 
         // Initialize charts
         function initializeCharts() {
+            // Charger les étudiants depuis localStorage
+            const studentsStr = localStorage.getItem('claudyne_students');
+            const students = studentsStr ? JSON.parse(studentsStr) : [];
+
+            // Couleurs pour les graphiques
+            const colors = [
+                { border: '#6366f1', bg: 'rgba(99, 102, 241, 0.1)' },  // Bleu
+                { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },  // Vert
+                { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },  // Orange
+                { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' }   // Violet
+            ];
+
             // Progress Chart
             const progressCtx = document.getElementById('progressChart');
             if (progressCtx) {
+                const datasets = students.length > 0
+                    ? students.map((student, index) => ({
+                        label: `${student.firstName || ''} ${student.lastName || ''}`.trim() || `Étudiant ${index + 1}`,
+                        data: [0, 0, 0, 0, 0, 0, student.currentAverage || 0], // Dernière valeur = moyenne actuelle
+                        borderColor: colors[index % colors.length].border,
+                        backgroundColor: colors[index % colors.length].bg,
+                        tension: 0.4,
+                        pointBackgroundColor: colors[index % colors.length].border
+                    }))
+                    : [{
+                        label: 'Aucun étudiant',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        borderColor: '#9ca3af',
+                        backgroundColor: 'rgba(156, 163, 175, 0.1)',
+                        tension: 0.4,
+                        pointBackgroundColor: '#9ca3af'
+                    }];
+
                 new Chart(progressCtx, {
                     type: 'line',
                     data: {
                         labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-                        datasets: [{
-                            label: 'Richy',
-                            data: [65, 67, 68, 66, 70, 72, 70],
-                            borderColor: '#6366f1',
-                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                            tension: 0.4,
-                            pointBackgroundColor: '#6366f1'
-                        }, {
-                            label: 'Blandine',
-                            data: [88, 89, 91, 90, 92, 94, 92],
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            tension: 0.4,
-                            pointBackgroundColor: '#10b981'
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
@@ -3404,23 +3420,27 @@
             // Comparison Chart
             const comparisonCtx = document.getElementById('comparisonChart');
             if (comparisonCtx) {
+                const comparisonDatasets = students.length > 0
+                    ? students.map((student, index) => ({
+                        label: `${student.firstName || ''} ${student.lastName || ''}`.trim() || `Étudiant ${index + 1}`,
+                        data: [0, 0, 0, 0, 0, 0], // Pas de données de matières pour l'instant
+                        borderColor: colors[index % colors.length].border,
+                        backgroundColor: colors[index % colors.length].bg.replace('0.1', '0.2'),
+                        pointBackgroundColor: colors[index % colors.length].border
+                    }))
+                    : [{
+                        label: 'Aucun étudiant',
+                        data: [0, 0, 0, 0, 0, 0],
+                        borderColor: '#9ca3af',
+                        backgroundColor: 'rgba(156, 163, 175, 0.2)',
+                        pointBackgroundColor: '#9ca3af'
+                    }];
+
                 new Chart(comparisonCtx, {
                     type: 'radar',
                     data: {
                         labels: ['Mathématiques', 'Français', 'Physique', 'Histoire', 'SVT', 'Anglais'],
-                        datasets: [{
-                            label: 'Richy',
-                            data: [70, 75, 78, 73, 82, 76],
-                            borderColor: '#6366f1',
-                            backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                            pointBackgroundColor: '#6366f1'
-                        }, {
-                            label: 'Blandine',
-                            data: [76, 92, 85, 89, 87, 91],
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                            pointBackgroundColor: '#10b981'
-                        }]
+                        datasets: comparisonDatasets
                     },
                     options: {
                         responsive: true,

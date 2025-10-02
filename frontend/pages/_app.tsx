@@ -15,22 +15,12 @@ import '../styles/globals.css';
 
 // Stores et contexts
 import { AuthProvider } from '../contexts/AuthContext';
-import { FamilyProvider } from '../contexts/FamilyContext';
-import { SocketProvider } from '../contexts/SocketContext';
-import { NotificationProvider } from '../contexts/NotificationContext';
 
-// Hooks
-import { useServiceWorker } from '../hooks/useServiceWorker';
-import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
 // Components
 import Layout from '../components/Layout';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-import NetworkStatus from '../components/ui/NetworkStatus';
-import OfflineNotice from '../components/ui/OfflineNotice';
 
-// Utils
-import { trackPageView } from '../utils/analytics';
 
 // Configuration React Query optimisée pour les connexions lentes
 const createQueryClient = () => {
@@ -76,10 +66,9 @@ interface ClaudyneAppProps extends AppProps {
 function ClaudyneApp({ Component, pageProps }: ClaudyneAppProps) {
   const [queryClient] = useState(() => createQueryClient());
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Hooks pour PWA et connexion
-  const { isOnline, isSlowConnection } = useNetworkStatus();
-  const { updateAvailable, updateApp } = useServiceWorker();
+  const [isOnline] = useState(true);
+  const [isSlowConnection] = useState(false);
+  const [updateAvailable] = useState(false);
 
   // Initialisation de l'application
   useEffect(() => {
@@ -88,10 +77,8 @@ function ClaudyneApp({ Component, pageProps }: ClaudyneAppProps) {
         // Simule le chargement initial
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Analytics
-        if (typeof window !== 'undefined') {
-          trackPageView(window.location.pathname);
-        }
+        // Ready
+        console.log('Claudyne app initialized');
         
         setIsLoading(false);
       } catch (error) {
@@ -176,19 +163,7 @@ function ClaudyneApp({ Component, pageProps }: ClaudyneAppProps) {
 
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <FamilyProvider>
-            <SocketProvider>
-              <NotificationProvider>
                 <Layout>
-                  {/* Indicateur de statut réseau */}
-                  <NetworkStatus 
-                    isOnline={isOnline} 
-                    isSlowConnection={isSlowConnection}
-                  />
-                  
-                  {/* Notice hors ligne */}
-                  {!isOnline && <OfflineNotice />}
-                  
                   {/* Composant principal */}
                   <Component {...pageProps} />
                   
@@ -207,7 +182,7 @@ function ClaudyneApp({ Component, pageProps }: ClaudyneAppProps) {
                         </p>
                         <div className="flex gap-2">
                           <button
-                            onClick={updateApp}
+                            onClick={() => window.location.reload()}
                             className="btn-claudine text-sm px-3 py-1 flex-1"
                           >
                             Mettre à jour
@@ -220,9 +195,6 @@ function ClaudyneApp({ Component, pageProps }: ClaudyneAppProps) {
                     </div>
                   )}
                 </Layout>
-              </NotificationProvider>
-            </SocketProvider>
-          </FamilyProvider>
         </AuthProvider>
         
         {/* React Query Devtools (développement uniquement) */}

@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 // Charger variables d'environnement
-dotenv.config({ path: path.join(__dirname, '../.env.production') });
+dotenv.config({ path: path.join(__dirname, '../../.env.production') });
 
 const config = {
     // ================================

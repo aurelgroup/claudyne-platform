@@ -3,7 +3,15 @@
  * La force du savoir en héritage
  */
 
-require('dotenv').config();
+// Load environment variables from root
+const dotenv = require('dotenv');
+const path = require('path');
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: path.join(__dirname, '../../.env.production') });
+} else {
+  dotenv.config();
+}
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -13,7 +21,6 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const http = require('http');
 const socketIo = require('socket.io');
-const path = require('path');
 
 // Import des modules internes
 const logger = require('./utils/logger');

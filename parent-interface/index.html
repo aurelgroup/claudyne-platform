@@ -2694,7 +2694,7 @@
                                 <h3>Informations personnelles</h3>
                             </div>
                             <div class="card-body">
-                                <form>
+                                <form onsubmit="saveProfileSettings(event)">
                                     <div class="form-group">
                                         <label class="form-label">Nom complet</label>
                                         <input type="text" id="settings-full-name" class="form-input" value="">
@@ -3681,6 +3681,61 @@
                 console.log('✅ Interface mise à jour avec les données utilisateur');
             } catch (error) {
                 console.warn('❌ Erreur lors de la mise à jour de l\'interface:', error);
+            }
+        }
+
+        // Fonction pour sauvegarder les paramètres du profil
+        function saveProfileSettings(event) {
+            event.preventDefault();
+
+            try {
+                // Récupérer les valeurs du formulaire
+                const fullName = document.getElementById('settings-full-name').value.trim();
+                const phone = document.getElementById('settings-phone').value.trim();
+                const city = document.getElementById('settings-city').value.trim();
+                const bio = document.getElementById('settings-bio').value.trim();
+
+                // Séparer prénom et nom
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+
+                // Récupérer les données actuelles
+                const userStr = localStorage.getItem('claudyne_user');
+                const familyStr = localStorage.getItem('claudyne_family');
+
+                if (!userStr || !familyStr) {
+                    alert('❌ Erreur: Données utilisateur non trouvées');
+                    return;
+                }
+
+                const user = JSON.parse(userStr);
+                const family = JSON.parse(familyStr);
+
+                // Mettre à jour les données localement
+                user.firstName = firstName;
+                user.lastName = lastName;
+                user.phone = phone;
+                user.bio = bio;
+
+                family.city = city;
+
+                // Sauvegarder dans localStorage
+                localStorage.setItem('claudyne_user', JSON.stringify(user));
+                localStorage.setItem('claudyne_family', JSON.stringify(family));
+
+                // Mettre à jour l'interface
+                updateUIWithUserData();
+
+                alert('✅ Paramètres sauvegardés avec succès !');
+                console.log('✅ Paramètres mis à jour dans localStorage');
+
+                // TODO: Appel API pour synchroniser avec le serveur
+                // await fetch('/api/users/profile', { method: 'PUT', body: JSON.stringify(user) });
+
+            } catch (error) {
+                console.error('❌ Erreur sauvegarde paramètres:', error);
+                alert('❌ Erreur lors de la sauvegarde des paramètres');
             }
         }
 

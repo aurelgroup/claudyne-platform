@@ -3562,76 +3562,52 @@
             }
         }
 
-        // Fonction pour récupérer les données utilisateur depuis l'API
+        // Fonction pour récupérer les données utilisateur depuis localStorage
         async function fetchUserData() {
             try {
-                // Récupérer le token d'authentification
+                // Vérifier si les données existent déjà dans localStorage
+                const userStr = localStorage.getItem('claudyne_user');
+                const familyStr = localStorage.getItem('claudyne_family');
                 const token = localStorage.getItem('claudyne_token');
-                if (!token) {
-                    console.warn('Pas de token d\'authentification trouvé');
-                    return false;
-                }
 
-                // Récupérer les données famille de l'utilisateur authentifié
-                const response = await fetch('/api/families/profile', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.data) {
-                        const familyData = data.data;
+                // Si les données sont déjà présentes (par ex. après inscription/connexion), les utiliser
+                if (userStr && familyStr && token) {
+                    const user = JSON.parse(userStr);
+                    const family = JSON.parse(familyStr);
 
-                        // Créer un objet utilisateur basé sur les données famille
-                        const userData = {
-                            firstName: familyData.name ? familyData.name.split(' ')[0] : 'Parent',
-                            lastName: familyData.name ? familyData.name.split(' ').slice(1).join(' ') : 'Claudyne',
-                            email: familyData.email || 'parent@claudyne.com',
-                            id: familyData.id || 'demo'
-                        };
-
-                        const familyDisplayData = {
-                            id: familyData.id || 'demo',
-                            name: familyData.name || 'Famille Demo',
-                            displayName: familyData.name || 'Famille Demo',
-                            region: familyData.region || 'Centre',
-                            studentCount: familyData.student_count || familyData.total_children || 0
-                        };
-
-                        // Sauvegarder dans localStorage
-                        localStorage.setItem('claudyne_user', JSON.stringify(userData));
-                        localStorage.setItem('claudyne_family', JSON.stringify(familyDisplayData));
-
-                        console.log('✅ Données utilisateur récupérées depuis l\'API:', userData);
+                    // Vérifier que ce ne sont pas les données demo
+                    if (user.id !== 'demo' && family.id !== 'demo') {
+                        console.log('✅ Données utilisateur chargées depuis localStorage:', user);
                         return true;
                     }
                 }
+
+                // Si pas de token, rediriger vers la page d'accueil
+                if (!token) {
+                    console.warn('⚠️ Pas de token d\'authentification - Redirection vers accueil');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                    return false;
+                }
+
+                // Si on arrive ici, les données sont manquantes mais le token existe
+                console.error('❌ Token présent mais données utilisateur manquantes');
+                alert('Erreur de session. Veuillez vous reconnecter.');
+                setTimeout(() => {
+                    localStorage.clear();
+                    window.location.href = '/';
+                }, 2000);
+                return false;
             } catch (error) {
-                console.warn('❌ Erreur lors de la récupération des données API:', error);
+                console.error('❌ Erreur lors du chargement des données:', error);
+                alert('Erreur de chargement. Veuillez vous reconnecter.');
+                setTimeout(() => {
+                    localStorage.clear();
+                    window.location.href = '/';
+                }, 2000);
+                return false;
             }
-
-            // Fallback avec des données par défaut améliorées
-            const defaultUser = {
-                firstName: 'Parent',
-                lastName: 'Claudyne',
-                email: 'parent@claudyne.com',
-                id: 'demo'
-            };
-
-            const defaultFamily = {
-                id: 'demo',
-                name: 'Famille Demo',
-                displayName: 'Famille Demo',
-                region: 'Centre',
-                studentCount: 2
-            };
-
-            localStorage.setItem('claudyne_user', JSON.stringify(defaultUser));
-            localStorage.setItem('claudyne_family', JSON.stringify(defaultFamily));
-            console.log('📋 Utilisation des données par défaut');
-            return false;
         }
 
         // Fonction pour mettre à jour l'interface avec les données utilisateur

@@ -465,6 +465,7 @@ router.post('/login', authLimiter, [
       include: [{
         model: Student,
         as: 'students',
+        attributes: ['id', 'firstName', 'lastName', 'isActive', 'createdAt', 'updatedAt'],
         where: { status: 'ACTIVE' },
         required: false
       }]

@@ -3685,8 +3685,11 @@
         }
 
         // Fonction pour sauvegarder les paramètres du profil
-        function saveProfileSettings(event) {
+        async function saveProfileSettings(event) {
             event.preventDefault();
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
 
             try {
                 // Récupérer les valeurs du formulaire
@@ -3700,42 +3703,91 @@
                 const firstName = nameParts[0] || '';
                 const lastName = nameParts.slice(1).join(' ') || '';
 
-                // Récupérer les données actuelles
-                const userStr = localStorage.getItem('claudyne_user');
-                const familyStr = localStorage.getItem('claudyne_family');
-
-                if (!userStr || !familyStr) {
-                    alert('❌ Erreur: Données utilisateur non trouvées');
+                // Récupérer le token
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    alert('❌ Erreur: Session expirée, veuillez vous reconnecter');
+                    window.location.href = '/';
                     return;
                 }
 
-                const user = JSON.parse(userStr);
-                const family = JSON.parse(familyStr);
+                // Désactiver le bouton pendant la sauvegarde
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
 
-                // Mettre à jour les données localement
-                user.firstName = firstName;
-                user.lastName = lastName;
-                user.phone = phone;
-                user.bio = bio;
+                // Appel API pour synchroniser avec le serveur
+                const response = await fetch('/api/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        firstName,
+                        lastName,
+                        phone,
+                        bio,
+                        city
+                    })
+                });
 
-                family.city = city;
+                const data = await response.json();
 
-                // Sauvegarder dans localStorage
-                localStorage.setItem('claudyne_user', JSON.stringify(user));
-                localStorage.setItem('claudyne_family', JSON.stringify(family));
+                if (response.ok && data.success) {
+                    // Mettre à jour localStorage avec les données du serveur
+                    localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
+                    if (data.data.family) {
+                        localStorage.setItem('claudyne_family', JSON.stringify(data.data.family));
+                    }
 
-                // Mettre à jour l'interface
-                updateUIWithUserData();
+                    // Mettre à jour l'interface
+                    updateUIWithUserData();
 
-                alert('✅ Paramètres sauvegardés avec succès !');
-                console.log('✅ Paramètres mis à jour dans localStorage');
-
-                // TODO: Appel API pour synchroniser avec le serveur
-                // await fetch('/api/users/profile', { method: 'PUT', body: JSON.stringify(user) });
+                    alert('✅ Paramètres sauvegardés avec succès !');
+                    console.log('✅ Paramètres synchronisés avec le serveur');
+                } else {
+                    // Afficher les erreurs de validation
+                    let errorMsg = data.message || 'Erreur lors de la sauvegarde';
+                    if (data.errors && data.errors.length > 0) {
+                        errorMsg += '\n\n' + data.errors.map(e => `• ${e.msg}`).join('\n');
+                    }
+                    alert(`❌ ${errorMsg}`);
+                    console.error('Erreur API:', data);
+                }
 
             } catch (error) {
                 console.error('❌ Erreur sauvegarde paramètres:', error);
-                alert('❌ Erreur lors de la sauvegarde des paramètres');
+                alert('❌ Erreur de connexion. Vos modifications ont été sauvegardées localement.');
+
+                // Fallback: sauvegarder localement en cas d'erreur réseau
+                try {
+                    const userStr = localStorage.getItem('claudyne_user');
+                    const familyStr = localStorage.getItem('claudyne_family');
+
+                    if (userStr && familyStr) {
+                        const user = JSON.parse(userStr);
+                        const family = JSON.parse(familyStr);
+
+                        const fullName = document.getElementById('settings-full-name').value.trim();
+                        const nameParts = fullName.split(' ');
+
+                        user.firstName = nameParts[0] || '';
+                        user.lastName = nameParts.slice(1).join(' ') || '';
+                        user.phone = document.getElementById('settings-phone').value.trim();
+                        user.bio = document.getElementById('settings-bio').value.trim();
+                        family.city = document.getElementById('settings-city').value.trim();
+
+                        localStorage.setItem('claudyne_user', JSON.stringify(user));
+                        localStorage.setItem('claudyne_family', JSON.stringify(family));
+                        updateUIWithUserData();
+                    }
+                } catch (fallbackError) {
+                    console.error('Erreur fallback:', fallbackError);
+                }
+            } finally {
+                // Réactiver le bouton
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
             }
         }
 

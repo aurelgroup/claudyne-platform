@@ -5,6 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { body, validationResult } = require('express-validator');
 
 // Import des sous-routeurs
 const authRoutes = require('./auth');
@@ -128,7 +129,7 @@ router.get('/me', async (req, res) => {
   try {
     const user = req.user;
     const family = await user.getFamily();
-    
+
     res.json({
       success: true,
       user: user.toSafeJSON(),
@@ -152,6 +153,112 @@ router.get('/me', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur interne du serveur',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// Route pour mettre à jour le profil utilisateur
+router.put('/me', [
+  body('firstName')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Le prénom doit contenir entre 2 et 50 caractères'),
+  body('lastName')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Le nom doit contenir entre 2 et 50 caractères'),
+  body('phone')
+    .optional()
+    .trim()
+    .matches(/^(\+237|237)?[26]\d{8}$/)
+    .withMessage('Format de téléphone invalide'),
+  body('bio')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('La bio ne peut pas dépasser 500 caractères'),
+  body('city')
+    .optional()
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage('Le nom de la ville ne peut pas dépasser 100 caractères')
+], async (req, res) => {
+  try {
+    // Vérification des erreurs de validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Données invalides',
+        errors: errors.array()
+      });
+    }
+
+    const { User, Family } = require('../config/database').initializeModels();
+    const { firstName, lastName, phone, bio, city } = req.body;
+
+    // Récupérer l'utilisateur
+    const user = await User.findByPk(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Mettre à jour les champs utilisateur fournis
+    if (firstName !== undefined) user.firstName = firstName;
+    if (lastName !== undefined) user.lastName = lastName;
+    if (phone !== undefined) user.phone = phone;
+    if (bio !== undefined) user.bio = bio;
+
+    await user.save();
+
+    // Mettre à jour la ville de la famille si fournie
+    if (city !== undefined && user.familyId) {
+      const family = await Family.findByPk(user.familyId);
+      if (family) {
+        family.city = city;
+        await family.save();
+      }
+    }
+
+    logger.info('Profil utilisateur mis à jour', {
+      userId: user.id,
+      email: user.email,
+      updatedFields: Object.keys(req.body).join(', ')
+    });
+
+    // Récupérer les données actualisées
+    const updatedFamily = await user.getFamily();
+
+    res.json({
+      success: true,
+      message: 'Profil mis à jour avec succès',
+      data: {
+        user: user.toSafeJSON(),
+        family: updatedFamily ? {
+          id: updatedFamily.id,
+          name: updatedFamily.name,
+          displayName: updatedFamily.displayName,
+          city: updatedFamily.city,
+          status: updatedFamily.status,
+          subscriptionType: updatedFamily.subscriptionType,
+          walletBalance: updatedFamily.walletBalance,
+          claudinePoints: updatedFamily.totalClaudinePoints
+        } : null
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour profil utilisateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour du profil',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }

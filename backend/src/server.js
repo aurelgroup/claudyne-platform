@@ -35,6 +35,9 @@ const { authenticate } = require('./middleware/auth');
 const app = express();
 const server = http.createServer(app);
 
+// Configuration du proxy (nécessaire derrière nginx)
+app.set('trust proxy', true);
+
 // Configuration Socket.IO pour Battle Royale
 const io = socketIo(server, {
   cors: {

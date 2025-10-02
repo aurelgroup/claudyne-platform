@@ -3746,6 +3746,7 @@
         // Fonction pour sauvegarder les paramètres du profil
         async function saveProfileSettings(event) {
             event.preventDefault();
+            console.log('🔧 [DEBUG] saveProfileSettings appelée');
 
             const submitBtn = event.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
@@ -3756,6 +3757,8 @@
                 const phone = document.getElementById('settings-phone').value.trim();
                 const city = document.getElementById('settings-city').value.trim();
                 const bio = document.getElementById('settings-bio').value.trim();
+
+                console.log('🔧 [DEBUG] Valeurs formulaire:', { fullName, phone, city, bio });
 
                 // Séparer prénom et nom
                 const nameParts = fullName.split(' ');
@@ -3775,6 +3778,7 @@
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde...';
 
                 // Appel API pour synchroniser avec le serveur
+                console.log('🔧 [DEBUG] Envoi requête PUT /api/me...');
                 const response = await fetch('/api/me', {
                     method: 'PUT',
                     headers: {
@@ -3790,7 +3794,9 @@
                     })
                 });
 
+                console.log('🔧 [DEBUG] Réponse reçue. Status:', response.status);
                 const data = await response.json();
+                console.log('🔧 [DEBUG] Données réponse:', data);
 
                 if (response.ok && data.success) {
                     // Mettre à jour localStorage avec les données du serveur

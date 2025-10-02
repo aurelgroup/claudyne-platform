@@ -1670,14 +1670,27 @@
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
                         Mot de passe
                     </label>
-                    <input type="password" id="registerPassword" placeholder="Choisir un mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    <div style="position: relative;">
+                        <input type="password" id="registerPassword" placeholder="Choisir un mot de passe" required style="width: 100%; padding: 12px 45px 12px 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                        <button type="button" onclick="togglePasswordVisibility('registerPassword', 'toggleRegisterIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: rgba(255, 255, 255, 0.6); padding: 5px;">
+                            <span class="material-icons-outlined" id="toggleRegisterIcon" style="font-size: 20px;">visibility</span>
+                        </button>
+                    </div>
+                    <small style="display: block; margin-top: 0.5rem; color: rgba(255, 255, 255, 0.6); font-size: 0.85rem;">
+                        ⓘ Min. 8 caractères avec majuscule, minuscule et chiffre
+                    </small>
                 </div>
-                
+
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
                         Confirmer le mot de passe
                     </label>
-                    <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    <div style="position: relative;">
+                        <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required style="width: 100%; padding: 12px 45px 12px 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                        <button type="button" onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmIcon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: rgba(255, 255, 255, 0.6); padding: 5px;">
+                            <span class="material-icons-outlined" id="toggleConfirmIcon" style="font-size: 20px;">visibility</span>
+                        </button>
+                    </div>
                 </div>
                 
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
@@ -2598,6 +2611,20 @@
         // Variables globales pour la logique de connexion
         let selectedDemoInterface = null;
 
+        // Fonction pour afficher/masquer les mots de passe
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        }
+
         // Modal de connexion
         function showLoginModal(accountType = null) {
             document.getElementById('loginModal').classList.add('show');
@@ -2803,6 +2830,24 @@
                 return;
             }
 
+            // Validation de la complexité du mot de passe
+            if (password.length < 8) {
+                alert('❌ Le mot de passe doit contenir au moins 8 caractères');
+                return;
+            }
+            if (!/[a-z]/.test(password)) {
+                alert('❌ Le mot de passe doit contenir au moins une minuscule');
+                return;
+            }
+            if (!/[A-Z]/.test(password)) {
+                alert('❌ Le mot de passe doit contenir au moins une majuscule');
+                return;
+            }
+            if (!/[0-9]/.test(password)) {
+                alert('❌ Le mot de passe doit contenir au moins un chiffre');
+                return;
+            }
+
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '⏳ Création du compte...';
@@ -2846,7 +2891,12 @@
                         // Redirection vers interface parent
                         window.location.href = '/parent';
                     } else {
-                        alert(`❌ Erreur: ${data.message || 'Erreur lors de la création du compte'}`);
+                        // Afficher les erreurs de validation si présentes
+                        let errorMsg = data.message || 'Erreur lors de la création du compte';
+                        if (data.errors && data.errors.length > 0) {
+                            errorMsg += '\n\n' + data.errors.map(e => `• ${e.msg}`).join('\n');
+                        }
+                        alert(`❌ ${errorMsg}`);
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                     }

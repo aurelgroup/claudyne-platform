@@ -2760,16 +2760,16 @@
                     const role = data.data.user.role;
 
                     if (role === 'ADMIN') {
-                        window.location.href = '/admin-interface.html';
+                        window.location.href = '/admin-secure-k7m9x4n2p8w5z1c6';
                     } else if (userType === 'MANAGER' || role === 'PARENT') {
-                        window.location.href = '/parent-interface/index.html';
+                        window.location.href = '/parent';
                     } else if (role === 'STUDENT') {
-                        window.location.href = '/student-interface-modern.html';
+                        window.location.href = '/student';
                     } else if (role === 'TEACHER') {
-                        window.location.href = '/teacher-interface.html';
+                        window.location.href = '/teacher';
                     } else {
                         // Par défaut, redirection vers l'interface parent
-                        window.location.href = '/parent-interface/index.html';
+                        window.location.href = '/parent';
                     }
                 } else {
                     // Affichage de l'erreur
@@ -2787,9 +2787,9 @@
         });
 
         // Gestion du formulaire d'inscription
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const accountType = document.getElementById('registerAccountType').value;
             const studentClass = document.getElementById('studentClass').value;
             const name = document.getElementById('registerName').value;
@@ -2803,42 +2803,76 @@
                 return;
             }
 
-            // Simulation d'inscription
-            const userData = {
-                accountType,
-                name,
-                email,
-                password,
-                ...(accountType === 'student' && { studentClass })
-            };
-
-            console.log('Inscription:', userData);
-            
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '⏳ Création du compte...';
             submitBtn.disabled = true;
 
-            setTimeout(() => {
-                alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
-                closeLoginModal();
-                
-                // Redirection automatique
-                switch(accountType) {
-                    case 'student':
-                        window.location.href = '/student';
-                        break;
-                    case 'parent':
+            try {
+                // Appel API pour inscription parent
+                if (accountType === 'parent') {
+                    const [firstName, ...lastNameParts] = name.split(' ');
+                    const lastName = lastNameParts.join(' ') || firstName;
+
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                            firstName: firstName,
+                            lastName: lastName,
+                            familyName: `Famille ${lastName}`,
+                            acceptTerms: true
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Sauvegarder les tokens
+                        localStorage.setItem('claudyne_token', data.data.tokens.accessToken);
+                        localStorage.setItem('claudyne_refresh_token', data.data.tokens.refreshToken);
+
+                        // Sauvegarder les données utilisateur et famille
+                        localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
+                        localStorage.setItem('claudyne_family', JSON.stringify(data.data.family));
+
+                        alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
+                        closeLoginModal();
+
+                        // Redirection vers interface parent
                         window.location.href = '/parent';
-                        break;
-                    case 'teacher':
-                        window.location.href = '/teacher-interface.html';
-                        break;
+                    } else {
+                        alert(`❌ Erreur: ${data.message || 'Erreur lors de la création du compte'}`);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                } else {
+                    // Pour student/teacher, garder la simulation pour l'instant
+                    alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
+                    closeLoginModal();
+
+                    switch(accountType) {
+                        case 'student':
+                            window.location.href = '/student';
+                            break;
+                        case 'teacher':
+                            window.location.href = '/teacher-interface.html';
+                            break;
+                    }
+
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 }
-                
+            } catch (error) {
+                console.error('Erreur inscription:', error);
+                alert('❌ Erreur de connexion. Vérifiez votre connexion internet.');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-            }, 2000);
+            }
         });
 
         // 🔑 GESTION DU FORMULAIRE MOT DE PASSE OUBLIÉ

@@ -90,22 +90,41 @@ module.exports = (sequelize) => {
     
     // Rôle et permissions
     role: {
-      type: DataTypes.ENUM('PARENT', 'STUDENT', 'ADMIN', 'MODERATOR'),
+      type: DataTypes.ENUM('PARENT', 'STUDENT', 'TEACHER', 'ADMIN', 'MODERATOR'),
       allowNull: false,
       defaultValue: 'PARENT'
     },
-    
+
     userType: {
-      type: DataTypes.ENUM('MANAGER', 'LEARNER', 'STUDENT'),
+      type: DataTypes.ENUM('MANAGER', 'LEARNER', 'STUDENT', 'INDIVIDUAL'),
       allowNull: false,
-      defaultValue: 'MANAGER', // MANAGER: gestionnaire famille, LEARNER: parent apprenant, STUDENT: enfant
+      defaultValue: 'MANAGER', // MANAGER: gestionnaire famille, LEARNER: parent apprenant, STUDENT: enfant, INDIVIDUAL: compte individuel
       comment: 'Type d\'utilisateur pour l\'interface'
     },
-    
+
     // Statut du compte
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
+    },
+
+    // Désactivation admin (nouvelle fonctionnalité)
+    disabledBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      comment: 'ID de l\'admin qui a désactivé ce compte'
+    },
+
+    disabledAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: 'Date de désactivation du compte par un admin'
+    },
+
+    disableReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      comment: 'Raison de la désactivation du compte'
     },
     
     isVerified: {
@@ -215,11 +234,72 @@ module.exports = (sequelize) => {
       type: DataTypes.JSONB,
       defaultValue: {}
     },
-    
+
+    // Gestion des abonnements (nouvelle fonctionnalité)
+    subscriptionStatus: {
+      type: DataTypes.ENUM('TRIAL', 'ACTIVE', 'EXPIRED', 'CANCELLED', 'SUSPENDED'),
+      defaultValue: 'TRIAL',
+      comment: 'Statut de l\'abonnement individuel (pour STUDENT, TEACHER)'
+    },
+
+    subscriptionPlan: {
+      type: DataTypes.ENUM('INDIVIDUAL_STUDENT', 'INDIVIDUAL_TEACHER', 'FAMILY_MANAGER', 'NONE'),
+      defaultValue: 'NONE',
+      comment: 'Type d\'abonnement: INDIVIDUAL_STUDENT (8000 FCFA/mois), FAMILY_MANAGER (15000 FCFA/mois via Family)'
+    },
+
+    trialEndsAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: '7 jours d\'essai gratuit pour tous les comptes'
+    },
+
+    subscriptionStartedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: 'Date de début de l\'abonnement payant'
+    },
+
+    subscriptionEndsAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: 'Date de fin de l\'abonnement (renouvellement mensuel)'
+    },
+
+    subscriptionCancelledAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: 'Date d\'annulation de l\'abonnement'
+    },
+
+    monthlyPrice: {
+      type: DataTypes.DECIMAL(10, 2),
+      defaultValue: 0.00,
+      comment: 'Prix mensuel de l\'abonnement en FCFA (8000 pour STUDENT, 15000 pour Family)'
+    },
+
+    lastPaymentDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: 'Date du dernier paiement'
+    },
+
+    nextPaymentDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      comment: 'Date du prochain paiement (renouvellement automatique)'
+    },
+
+    autoRenew: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      comment: 'Renouvellement automatique de l\'abonnement'
+    },
+
     // Relation avec la famille
     familyId: {
       type: DataTypes.UUID,
-      allowNull: true, // Null pour les admins système
+      allowNull: true, // Null pour les admins système et comptes individuels
       references: {
         model: 'Families',
         key: 'id'

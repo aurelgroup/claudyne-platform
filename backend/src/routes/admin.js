@@ -325,6 +325,180 @@ router.put('/users/:userId/trial', async (req, res) => {
   }
 });
 
+// Désactiver un compte utilisateur
+router.put('/users/:userId/disable', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { reason } = req.body;
+    const { User } = req.models;
+
+    // Vérifier que l'admin est authentifié
+    const adminId = req.user?.id || null;
+
+    if (!reason || reason.trim().length < 5) {
+      return res.status(400).json({
+        success: false,
+        message: 'Une raison de désactivation est requise (minimum 5 caractères)'
+      });
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Empêcher la désactivation d'un compte déjà désactivé
+    if (!user.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ce compte est déjà désactivé'
+      });
+    }
+
+    // Désactiver le compte
+    await user.update({
+      isActive: false,
+      disabledBy: adminId,
+      disabledAt: new Date(),
+      disableReason: reason.trim()
+    });
+
+    logger.info(`Compte désactivé par admin: ${user.email} (${user.role})`, {
+      service: 'claudyne-backend',
+      action: 'admin_disable_account',
+      userId: user.id,
+      adminId: adminId,
+      reason: reason
+    });
+
+    res.json({
+      success: true,
+      data: {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        disabledBy: adminId,
+        disabledAt: user.disabledAt,
+        reason: user.disableReason
+      },
+      message: `Compte ${user.role} désactivé avec succès`
+    });
+
+  } catch (error) {
+    logger.error('Erreur désactivation compte:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la désactivation du compte'
+    });
+  }
+});
+
+// Réactiver un compte utilisateur
+router.put('/users/:userId/enable', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { User } = req.models;
+
+    const adminId = req.user?.id || null;
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Empêcher la réactivation d'un compte déjà actif
+    if (user.isActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ce compte est déjà actif'
+      });
+    }
+
+    // Réactiver le compte
+    await user.update({
+      isActive: true,
+      disabledBy: null,
+      disabledAt: null,
+      disableReason: null
+    });
+
+    logger.info(`Compte réactivé par admin: ${user.email} (${user.role})`, {
+      service: 'claudyne-backend',
+      action: 'admin_enable_account',
+      userId: user.id,
+      adminId: adminId
+    });
+
+    res.json({
+      success: true,
+      data: {
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        reactivatedBy: adminId,
+        reactivatedAt: new Date()
+      },
+      message: `Compte ${user.role} réactivé avec succès`
+    });
+
+  } catch (error) {
+    logger.error('Erreur réactivation compte:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la réactivation du compte'
+    });
+  }
+});
+
+// Récupérer tous les comptes désactivés
+router.get('/users/disabled', async (req, res) => {
+  try {
+    const { User } = req.models;
+    const { page = 1, limit = 20 } = req.query;
+
+    const offset = (page - 1) * limit;
+
+    const disabledUsers = await User.findAndCountAll({
+      where: { isActive: false },
+      attributes: [
+        'id', 'email', 'phone', 'firstName', 'lastName', 'role',
+        'userType', 'disabledBy', 'disabledAt', 'disableReason', 'createdAt'
+      ],
+      order: [['disabledAt', 'DESC']],
+      limit: parseInt(limit),
+      offset
+    });
+
+    res.json({
+      success: true,
+      data: {
+        users: disabledUsers.rows,
+        pagination: {
+          total: disabledUsers.count,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(disabledUsers.count / limit)
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération comptes désactivés:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des comptes désactivés'
+    });
+  }
+});
+
 // ===============================
 // GESTION DES CONTENUS
 // ===============================

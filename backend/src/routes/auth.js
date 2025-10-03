@@ -73,9 +73,13 @@ const passwordValidation = body('password')
 
 /**
  * POST /api/auth/register
- * Création d'un compte famille avec gestionnaire
+ * Création de compte (PARENT, STUDENT ou TEACHER)
  */
 router.post('/register', registerLimiter, [
+  body('accountType')
+    .optional()
+    .isIn(['PARENT', 'STUDENT', 'TEACHER'])
+    .withMessage('Type de compte invalide (PARENT, STUDENT ou TEACHER)'),
   emailValidation,
   phoneValidation,
   body('firstName')
@@ -87,6 +91,7 @@ router.post('/register', registerLimiter, [
     .isLength({ min: 2, max: 50 })
     .withMessage('Le nom doit contenir entre 2 et 50 caractères'),
   body('familyName')
+    .optional()
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage('Le nom de famille doit contenir entre 2 et 100 caractères'),
@@ -129,6 +134,7 @@ router.post('/register', registerLimiter, [
     }
     
     const {
+      accountType = 'PARENT', // Par défaut PARENT pour rétro-compatibilité
       email,
       phone,
       password,
@@ -139,7 +145,7 @@ router.post('/register', registerLimiter, [
       region,
       acceptTerms
     } = req.body;
-    
+
     // Vérification qu'au moins email ou téléphone est fourni
     if (!email && !phone) {
       return res.status(400).json({
@@ -147,7 +153,15 @@ router.post('/register', registerLimiter, [
         message: 'Email ou numéro de téléphone requis'
       });
     }
-    
+
+    // Vérification que familyName est fourni pour les comptes PARENT
+    if (accountType === 'PARENT' && !familyName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nom de famille est requis pour la formule familiale (15000 FCFA/mois)'
+      });
+    }
+
     // Vérification que l'utilisateur n'existe pas déjà
     const existingUser = await User.findOne({
       where: {
@@ -157,7 +171,7 @@ router.post('/register', registerLimiter, [
         ].filter(Boolean)
       }
     });
-    
+
     if (existingUser) {
       const field = existingUser.email === email ? 'email' : 'téléphone';
       logger.logSecurity('Duplicate registration attempt', {
@@ -166,7 +180,7 @@ router.post('/register', registerLimiter, [
         existingUserId: existingUser.id,
         ip: req.ip
       });
-      
+
       return res.status(409).json({
         success: false,
         message: `Un compte avec cet ${field} existe déjà`,
@@ -176,88 +190,201 @@ router.post('/register', registerLimiter, [
     
     // Démarrage de transaction
     const transaction = await User.sequelize.transaction();
-    
+
     try {
-      // Création de la famille
-      const family = await Family.create({
-        name: familyName,
-        displayName: `Famille ${familyName}`,
-        city: city || null,
-        region: region || null,
-        status: 'TRIAL',
-        subscriptionType: 'TRIAL',
-        // Configuration financière par défaut
-        walletBalance: 0.00,
-        currency: 'FCFA',
-        totalClaudinePoints: 0,
-        claudineRank: null,
-        // Configuration d'essai par défaut
-        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 jours
-        currentMembersCount: 1,
-        termsAcceptedAt: acceptTerms ? new Date() : null,
-        privacyPolicyAcceptedAt: acceptTerms ? new Date() : null,
-        dataProcessingConsent: acceptTerms
-      }, { transaction });
-      
-      // Création de l'utilisateur gestionnaire
-      const user = await User.create({
-        email,
-        phone,
-        password, // Sera hashé automatiquement par le hook
-        firstName,
-        lastName,
-        role: 'PARENT',
-        userType: 'MANAGER',
-        familyId: family.id,
-        isVerified: false, // Sera vérifié plus tard
-        language: 'fr',
-        timezone: 'Africa/Douala'
-      }, { transaction });
+      let family = null;
+      let user = null;
+
+      // ========================================
+      // CRÉATION SELON LE TYPE DE COMPTE
+      // ========================================
+
+      const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 jours d'essai
+
+      if (accountType === 'PARENT') {
+        // FORMULE FAMILIALE: 15000 FCFA/mois - Jusqu'à 3 enfants
+        // Essai gratuit de 7 jours
+        family = await Family.create({
+          name: familyName,
+          displayName: `Famille ${familyName}`,
+          city: city || null,
+          region: region || null,
+          status: 'TRIAL',
+          subscriptionType: 'TRIAL',
+          walletBalance: 0.00,
+          currency: 'FCFA',
+          totalClaudinePoints: 0,
+          claudineRank: null,
+          trialEndsAt: trialEndsAt,
+          currentMembersCount: 1,
+          termsAcceptedAt: acceptTerms ? new Date() : null,
+          privacyPolicyAcceptedAt: acceptTerms ? new Date() : null,
+          dataProcessingConsent: acceptTerms
+        }, { transaction });
+
+        user = await User.create({
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: 'PARENT',
+          userType: 'MANAGER',
+          familyId: family.id,
+          isVerified: false,
+          language: 'fr',
+          timezone: 'Africa/Douala',
+          // Abonnement géré via la Family
+          subscriptionStatus: 'TRIAL',
+          subscriptionPlan: 'FAMILY_MANAGER',
+          trialEndsAt: trialEndsAt,
+          monthlyPrice: 15000.00 // 15000 FCFA/mois via Family
+        }, { transaction });
+
+      } else if (accountType === 'STUDENT') {
+        // FORMULE INDIVIDUELLE: 8000 FCFA/mois par élève
+        // Essai gratuit de 7 jours
+        user = await User.create({
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: 'STUDENT',
+          userType: 'INDIVIDUAL',
+          familyId: null, // Pas de famille
+          isVerified: false,
+          language: 'fr',
+          timezone: 'Africa/Douala',
+          // Abonnement individuel
+          subscriptionStatus: 'TRIAL',
+          subscriptionPlan: 'INDIVIDUAL_STUDENT',
+          trialEndsAt: trialEndsAt,
+          monthlyPrice: 8000.00, // 8000 FCFA/mois
+          autoRenew: true
+        }, { transaction });
+
+      } else if (accountType === 'TEACHER') {
+        // COMPTE ENSEIGNANT - Gratuit ou pricing spécial
+        user = await User.create({
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: 'TEACHER',
+          userType: 'INDIVIDUAL',
+          familyId: null,
+          isVerified: false,
+          language: 'fr',
+          timezone: 'Africa/Douala',
+          // Abonnement enseignant (gratuit pour l'instant)
+          subscriptionStatus: 'ACTIVE',
+          subscriptionPlan: 'INDIVIDUAL_TEACHER',
+          monthlyPrice: 0.00 // Gratuit pour les enseignants
+        }, { transaction });
+      }
       
       // Commit de la transaction
       await transaction.commit();
       transaction.finished = true;
-      
+
       // Génération des tokens
       const accessToken = generateToken(user);
       const refreshToken = generateRefreshToken(user);
-      
-      // Log de l'événement
-      logger.info('Nouvelle famille créée', {
-        familyId: family.id,
-        userId: user.id,
-        familyName: family.name,
-        city: family.city,
-        userEmail: user.email,
-        userPhone: user.phone
-      });
-      
-      // Réponse de succès (sans données sensibles)
+
+      // Log de l'événement selon le type de compte
+      if (accountType === 'PARENT') {
+        logger.info('Nouvelle famille créée', {
+          accountType,
+          familyId: family.id,
+          userId: user.id,
+          familyName: family.name,
+          city: family.city,
+          userEmail: user.email,
+          userPhone: user.phone
+        });
+      } else {
+        logger.info(`Nouveau compte ${accountType} créé`, {
+          accountType,
+          userId: user.id,
+          userEmail: user.email,
+          userPhone: user.phone,
+          role: user.role
+        });
+      }
+
+      // Messages personnalisés selon le type de compte
+      const messages = {
+        'PARENT': 'Compte famille créé avec succès ! Bienvenue dans Claudyne 🎉 (15000 FCFA/mois - jusqu\'à 3 enfants)',
+        'STUDENT': 'Compte étudiant créé avec succès ! Bienvenue dans Claudyne 🎉 (8000 FCFA/mois)',
+        'TEACHER': 'Compte enseignant créé avec succès ! Bienvenue dans Claudyne 🎉'
+      };
+
+      // Construction de la réponse
+      const responseData = {
+        user: user.toSafeJSON(),
+        tokens: {
+          accessToken,
+          refreshToken,
+          expiresIn: process.env.JWT_EXPIRE || '7d'
+        }
+      };
+
+      // Ajout des données de famille si compte PARENT
+      if (accountType === 'PARENT' && family) {
+        responseData.family = {
+          id: family.id,
+          name: family.name,
+          displayName: family.displayName,
+          status: family.status,
+          subscriptionType: family.subscriptionType,
+          trialEndsAt: family.trialEndsAt,
+          walletBalance: family.walletBalance,
+          totalClaudinePoints: family.totalClaudinePoints
+        };
+      }
+
+      // Ajout des informations d'abonnement
+      responseData.subscription = {
+        status: user.subscriptionStatus,
+        plan: user.subscriptionPlan,
+        monthlyPrice: parseFloat(user.monthlyPrice),
+        currency: 'FCFA',
+        autoRenew: user.autoRenew
+      };
+
+      // Descriptions par type de plan
+      if (accountType === 'PARENT') {
+        responseData.subscription.description = 'Formule Familiale - Jusqu\'à 3 enfants';
+      } else if (accountType === 'STUDENT') {
+        responseData.subscription.description = 'Formule Individuelle Élève';
+      } else if (accountType === 'TEACHER') {
+        responseData.subscription.description = 'Compte Enseignant Gratuit';
+      }
+
+      // Ajout des informations d'essai si PARENT ou STUDENT
+      if (accountType === 'PARENT' || accountType === 'STUDENT') {
+        responseData.trial = {
+          daysLeft: 7,
+          endsAt: user.trialEndsAt,
+          features: ['basic_subjects', 'mentor_chat', 'progress_tracking']
+        };
+
+        if (accountType === 'PARENT') {
+          responseData.trial.features.push('family_dashboard');
+          responseData.trial.pricing = '15000 FCFA/mois après essai';
+          responseData.trial.maxChildren = 3;
+        } else {
+          responseData.trial.pricing = '8000 FCFA/mois après essai';
+        }
+      }
+
+      // Réponse de succès
       res.status(201).json({
         success: true,
-        message: 'Compte famille créé avec succès ! Bienvenue dans Claudyne 🎉',
-        data: {
-          user: user.toSafeJSON(),
-          family: {
-            id: family.id,
-            name: family.name,
-            displayName: family.displayName,
-            status: family.status,
-            subscriptionType: family.subscriptionType,
-            trialEndsAt: family.trialEndsAt,
-            walletBalance: family.walletBalance,
-            totalClaudinePoints: family.totalClaudinePoints
-          },
-          tokens: {
-            accessToken,
-            refreshToken,
-            expiresIn: process.env.JWT_EXPIRE || '7d'
-          },
-          trial: {
-            daysLeft: 7,
-            features: ['basic_subjects', 'mentor_chat', 'progress_tracking', 'family_dashboard']
-          }
-        }
+        message: messages[accountType],
+        data: responseData
       });
       
     } catch (error) {

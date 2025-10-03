@@ -200,8 +200,8 @@ router.put('/me', [
     const { User, Family } = require('../config/database').initializeModels();
     const { firstName, lastName, phone, bio, city } = req.body;
 
-    // Récupérer l'utilisateur
-    const user = await User.findByPk(req.user.userId);
+    // Récupérer l'utilisateur (req.user est déjà l'objet User complet du middleware)
+    const user = await User.findByPk(req.user.id);
 
     if (!user) {
       return res.status(404).json({

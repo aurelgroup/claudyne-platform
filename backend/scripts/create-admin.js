@@ -1,6 +1,12 @@
 /**
  * Script pour créer ou réinitialiser le compte administrateur
  * Usage: node scripts/create-admin.js
+ *
+ * ⚠️ AVERTISSEMENT DE SÉCURITÉ:
+ * - Ce script affiche le mot de passe admin en clair
+ * - À utiliser UNIQUEMENT en environnement sécurisé
+ * - Effacer l'historique console après utilisation
+ * - Changer le mot de passe après la première connexion
  */
 
 const bcrypt = require('bcryptjs');
@@ -16,9 +22,10 @@ async function createAdminAccount() {
     const { User } = models;
 
     // Données du compte admin
+    // ⚠️ CHANGER LE MOT DE PASSE APRÈS LA PREMIÈRE CONNEXION!
     const adminData = {
       email: 'admin@claudyne.com',
-      password: 'AdminClaudyne2024',
+      password: process.env.ADMIN_PASSWORD || 'AdminClaudyne2024', // Préférer variable d'environnement
       firstName: 'Admin',
       lastName: 'Claudyne',
       role: 'ADMIN',
@@ -66,12 +73,14 @@ async function createAdminAccount() {
 
     // Afficher les détails de connexion
     console.log('\n' + '='.repeat(60));
-    console.log('🔐 IDENTIFIANTS DE CONNEXION');
+    console.log('🔐 IDENTIFIANTS DE CONNEXION (⚠️ CONFIDENTIEL)');
     console.log('='.repeat(60));
     console.log(`URL Admin: https://claudyne.com/admin-secure-k7m9x4n2p8w5z1c6`);
     console.log(`Email/Credential: ${adminData.email}`);
     console.log(`Mot de passe: ${adminData.password}`);
     console.log('='.repeat(60));
+    console.log('\n⚠️  IMPORTANT: Effacer l\'historique de cette console!');
+    console.log('⚠️  Changer le mot de passe après la première connexion!');
     console.log('\n✅ Script terminé avec succès!\n');
 
     process.exit(0);

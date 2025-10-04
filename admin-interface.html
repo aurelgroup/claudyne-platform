@@ -2621,6 +2621,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('subscriptions-management')">
+                            <span class="nav-icon">📊</span>
+                            Gestion Abonnements
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('data-management')">
                             <span class="nav-icon">🔧</span>
                             Gestion Données
@@ -4101,6 +4107,212 @@
                                 </div>
                                 <div class="stat-value glass-stat-value" id="popular-plan">-</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscriptions Management Section -->
+            <div id="subscriptions-management-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">📊 Gestion des Abonnements</h1>
+                        <p class="page-description">Suivi et gestion des abonnements utilisateurs</p>
+                    </div>
+                    <button class="btn btn-primary glass-btn glass-btn-primary" onclick="refreshSubscriptionStats()">
+                        🔄 Actualiser
+                    </button>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">📈 Statistiques Globales</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Utilisateurs Total</span>
+                                    <span class="stat-icon">👥</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-total-users" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">Tous comptes</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #10B981, #059669); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Essais Actifs</span>
+                                    <span class="stat-icon">🎯</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-active-trials" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">TRIAL (7 jours)</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Abonnements Actifs</span>
+                                    <span class="stat-icon">✅</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-active-subscriptions" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">ACTIVE (payant)</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Suspendus</span>
+                                    <span class="stat-icon">⏸️</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-suspended" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">En attente paiement</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Expirés</span>
+                                    <span class="stat-icon">❌</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-expired" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">Abonnement terminé</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #06B6D4, #0891B2); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Revenus Actuels</span>
+                                    <span class="stat-icon">💰</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-current-revenue" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">FCFA / mois</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #EC4899, #DB2777); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Revenus Attendus</span>
+                                    <span class="stat-icon">📈</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-expected-revenue" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">FCFA / mois</div>
+                            </div>
+
+                            <div class="stat-card glass-stat-card" style="background: linear-gradient(135deg, #6366F1, #4F46E5); color: white; border: none;">
+                                <div class="stat-header">
+                                    <span class="stat-title" style="color: white;">Expirations Proches</span>
+                                    <span class="stat-icon">⚠️</span>
+                                </div>
+                                <div class="stat-value glass-stat-value" id="sub-expiring-soon" style="color: white;">-</div>
+                                <div class="stat-footer" style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem;">Dans 3 jours</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cron Jobs Management -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">⚙️ Tâches Automatiques (Cron Jobs)</h2>
+                    </div>
+                    <div class="section-content">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                            <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 8px;">
+                                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">🔍 Vérifier Essais Expirés</h3>
+                                <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 1rem;">Suspend les comptes dont l'essai est terminé</p>
+                                <button class="btn btn-sm glass-btn glass-btn-primary" onclick="runCronJob('checkExpiredTrials')" style="width: 100%;">
+                                    Exécuter Maintenant
+                                </button>
+                            </div>
+
+                            <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 8px;">
+                                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">⏰ Vérifier Abonnements Expirés</h3>
+                                <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 1rem;">Désactive les abonnements payants expirés</p>
+                                <button class="btn btn-sm glass-btn glass-btn-primary" onclick="runCronJob('checkExpiredSubscriptions')" style="width: 100%;">
+                                    Exécuter Maintenant
+                                </button>
+                            </div>
+
+                            <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 8px;">
+                                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">🔄 Traiter Renouvellements</h3>
+                                <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 1rem;">Gère les renouvellements automatiques</p>
+                                <button class="btn btn-sm glass-btn glass-btn-primary" onclick="runCronJob('processAutoRenewals')" style="width: 100%;">
+                                    Exécuter Maintenant
+                                </button>
+                            </div>
+
+                            <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 8px;">
+                                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">📧 Envoyer Rappels</h3>
+                                <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 1rem;">Envoie rappels 3 jours avant expiration</p>
+                                <button class="btn btn-sm glass-btn glass-btn-primary" onclick="runCronJob('sendExpirationReminders')" style="width: 100%;">
+                                    Exécuter Maintenant
+                                </button>
+                            </div>
+
+                            <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 8px;">
+                                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">📊 Générer Rapport</h3>
+                                <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 1rem;">Crée un rapport quotidien complet</p>
+                                <button class="btn btn-sm glass-btn glass-btn-primary" onclick="runCronJob('generateDailyReport')" style="width: 100%;">
+                                    Exécuter Maintenant
+                                </button>
+                            </div>
+
+                            <div style="padding: 1rem; border: 1px solid #E5E7EB; border-radius: 8px;">
+                                <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">🚀 Exécuter Tout</h3>
+                                <p style="font-size: 0.875rem; color: #6B7280; margin-bottom: 1rem;">Lance toutes les tâches quotidiennes</p>
+                                <button class="btn btn-sm glass-btn" onclick="runCronJob('runDailyJobs')" style="width: 100%; background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: white;">
+                                    Exécuter Maintenant
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Job Results -->
+                        <div id="cron-job-results" style="margin-top: 1.5rem; padding: 1rem; background: #F9FAFB; border-radius: 8px; display: none;">
+                            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">Résultats</h3>
+                            <pre id="cron-job-output" style="font-family: monospace; font-size: 0.875rem; white-space: pre-wrap; color: #1F2937;"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users by Subscription Status -->
+                <div class="content-section glass-card animate-fadeInUp">
+                    <div class="section-header">
+                        <h2 class="section-title">👥 Utilisateurs par Statut</h2>
+                        <div class="filter-group">
+                            <select id="subStatusFilter" onchange="filterSubscriptionUsers()" style="padding: 0.5rem; border: 1px solid #E5E7EB; border-radius: 6px;">
+                                <option value="">Tous les statuts</option>
+                                <option value="TRIAL">TRIAL (Essai)</option>
+                                <option value="ACTIVE">ACTIVE (Actif)</option>
+                                <option value="SUSPENDED">SUSPENDED (Suspendu)</option>
+                                <option value="EXPIRED">EXPIRED (Expiré)</option>
+                                <option value="CANCELLED">CANCELLED (Annulé)</option>
+                            </select>
+                            <select id="subPlanFilter" onchange="filterSubscriptionUsers()" style="padding: 0.5rem; border: 1px solid #E5E7EB; border-radius: 6px;">
+                                <option value="">Tous les plans</option>
+                                <option value="INDIVIDUAL_STUDENT">Étudiant (8000 FCFA)</option>
+                                <option value="INDIVIDUAL_TEACHER">Enseignant (Gratuit)</option>
+                                <option value="FAMILY_MANAGER">Famille (15000 FCFA)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div id="subscription-users-table" style="overflow-x: auto;">
+                            <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #F3F4F6; border-bottom: 2px solid #E5E7EB;">
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Utilisateur</th>
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Rôle</th>
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Plan</th>
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Statut</th>
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Prix</th>
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Expiration</th>
+                                        <th style="padding: 0.75rem; text-align: left; font-weight: 600;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subscription-users-tbody">
+                                    <tr>
+                                        <td colspan="7" style="padding: 2rem; text-align: center; color: #6B7280;">
+                                            <div class="loading"></div> Chargement des utilisateurs...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -11274,6 +11486,207 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 alert('❌ Erreur de connexion au serveur');
             }
         }
+
+        // ========================================
+        // SUBSCRIPTION MANAGEMENT FUNCTIONS
+        // ========================================
+
+        /**
+         * Refresh subscription statistics
+         */
+        async function refreshSubscriptionStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/subscriptions/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur de chargement des statistiques');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const stats = data.stats;
+
+                    // Update statistics cards
+                    document.getElementById('sub-total-users').textContent = stats.users.total;
+                    document.getElementById('sub-active-trials').textContent = stats.users.activeTrials;
+                    document.getElementById('sub-active-subscriptions').textContent = stats.users.activeSubscriptions;
+                    document.getElementById('sub-suspended').textContent = stats.users.suspended;
+                    document.getElementById('sub-expired').textContent = stats.users.expired;
+                    document.getElementById('sub-current-revenue').textContent = stats.revenue.currentMonthly.toLocaleString() + ' FCFA';
+                    document.getElementById('sub-expected-revenue').textContent = stats.revenue.expectedMonthly.toLocaleString() + ' FCFA';
+                    document.getElementById('sub-expiring-soon').textContent = stats.alerts.expiringTrials + stats.alerts.expiringSubscriptions;
+
+                    // Load users table
+                    await loadSubscriptionUsers();
+                } else {
+                    console.error('Erreur:', data.message);
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des stats:', error);
+                alert('❌ Erreur de chargement des statistiques');
+            }
+        }
+
+        /**
+         * Run a cron job manually
+         */
+        async function runCronJob(jobName) {
+            const resultsDiv = document.getElementById('cron-job-results');
+            const outputPre = document.getElementById('cron-job-output');
+
+            resultsDiv.style.display = 'block';
+            outputPre.textContent = '⏳ Exécution en cours...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/subscriptions/run-job/${jobName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    outputPre.textContent = `✅ ${data.message}\n\n` + JSON.stringify(data.result, null, 2);
+
+                    // Refresh stats after job execution
+                    setTimeout(() => refreshSubscriptionStats(), 1000);
+                } else {
+                    outputPre.textContent = `❌ Erreur: ${data.message}`;
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'exécution du job:', error);
+                outputPre.textContent = `❌ Erreur de connexion: ${error.message}`;
+            }
+        }
+
+        /**
+         * Load subscription users
+         */
+        async function loadSubscriptionUsers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur de chargement des utilisateurs');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.allSubscriptionUsers = data.users || [];
+                    displaySubscriptionUsers(window.allSubscriptionUsers);
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des utilisateurs:', error);
+                const tbody = document.getElementById('subscription-users-tbody');
+                tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: #EF4444;">❌ Erreur de chargement</td></tr>';
+            }
+        }
+
+        /**
+         * Display subscription users in table
+         */
+        function displaySubscriptionUsers(users) {
+            const tbody = document.getElementById('subscription-users-tbody');
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: #6B7280;">Aucun utilisateur trouvé</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const statusColors = {
+                    'TRIAL': '#10B981',
+                    'ACTIVE': '#8B5CF6',
+                    'SUSPENDED': '#F59E0B',
+                    'EXPIRED': '#EF4444',
+                    'CANCELLED': '#6B7280'
+                };
+
+                const statusColor = statusColors[user.subscriptionStatus] || '#6B7280';
+                const expirationDate = user.trialEndsAt || user.subscriptionEndsAt || '-';
+                const formattedDate = expirationDate !== '-' ? new Date(expirationDate).toLocaleDateString('fr-FR') : '-';
+
+                return `
+                    <tr style="border-bottom: 1px solid #E5E7EB;">
+                        <td style="padding: 0.75rem;">
+                            <div style="font-weight: 500;">${user.firstName} ${user.lastName}</div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">${user.email}</div>
+                        </td>
+                        <td style="padding: 0.75rem;">${user.role}</td>
+                        <td style="padding: 0.75rem;">${user.subscriptionPlan || 'NONE'}</td>
+                        <td style="padding: 0.75rem;">
+                            <span style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; background: ${statusColor}20; color: ${statusColor}; font-size: 0.875rem; font-weight: 500;">
+                                ${user.subscriptionStatus || 'NONE'}
+                            </span>
+                        </td>
+                        <td style="padding: 0.75rem;">${user.monthlyPrice ? user.monthlyPrice.toLocaleString() + ' FCFA' : '-'}</td>
+                        <td style="padding: 0.75rem;">${formattedDate}</td>
+                        <td style="padding: 0.75rem;">
+                            <button class="btn btn-sm" onclick="viewUserSubscription('${user.id}')" style="background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+                                Détails
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        /**
+         * Filter subscription users
+         */
+        function filterSubscriptionUsers() {
+            const statusFilter = document.getElementById('subStatusFilter').value;
+            const planFilter = document.getElementById('subPlanFilter').value;
+
+            let filtered = window.allSubscriptionUsers || [];
+
+            if (statusFilter) {
+                filtered = filtered.filter(u => u.subscriptionStatus === statusFilter);
+            }
+
+            if (planFilter) {
+                filtered = filtered.filter(u => u.subscriptionPlan === planFilter);
+            }
+
+            displaySubscriptionUsers(filtered);
+        }
+
+        /**
+         * View user subscription details
+         */
+        function viewUserSubscription(userId) {
+            // For now, just navigate to user details
+            // You can enhance this to show a modal with full subscription details
+            alert(`Détails de l'utilisateur ${userId} - À implémenter`);
+        }
+
+        /**
+         * Initialize subscription management when section is shown
+         */
+        const originalShowSection = showSection;
+        showSection = function(sectionName) {
+            originalShowSection(sectionName);
+
+            // Load subscription data when showing subscriptions management
+            if (sectionName === 'subscriptions-management') {
+                refreshSubscriptionStats();
+            }
+        };
     </script>
     
     <!-- Script d'optimisation réseau pour 2G/3G -->

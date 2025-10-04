@@ -2405,4 +2405,201 @@ async function getBackupStatus() {
   }
 }
 
+// ===============================
+// GESTION DES ABONNEMENTS - CRON JOBS
+// ===============================
+
+/**
+ * Route pour exécuter manuellement un cron job d'abonnement
+ * POST /api/admin/subscriptions/run-job/:jobName
+ *
+ * Jobs disponibles:
+ * - checkExpiredTrials: Vérifier les essais expirés
+ * - checkExpiredSubscriptions: Vérifier les abonnements expirés
+ * - processAutoRenewals: Traiter les renouvellements automatiques
+ * - sendExpirationReminders: Envoyer les rappels d'expiration
+ * - generateDailyReport: Générer le rapport quotidien
+ * - runDailyJobs: Exécuter toutes les tâches quotidiennes
+ */
+router.post('/subscriptions/run-job/:jobName', async (req, res) => {
+  try {
+    const { jobName } = req.params;
+    const adminId = req.user.id;
+
+    logger.info(`🔧 Exécution manuelle du job: ${jobName}`, {
+      adminId,
+      adminEmail: req.user.email,
+      service: 'admin-subscriptions'
+    });
+
+    // Importer le service de subscription
+    const SubscriptionService = require('../services/subscriptionService');
+    const subscriptionService = new SubscriptionService(req.models);
+
+    let result;
+
+    switch (jobName) {
+      case 'checkExpiredTrials':
+        result = await subscriptionService.checkExpiredTrials();
+        break;
+
+      case 'checkExpiredSubscriptions':
+        result = await subscriptionService.checkExpiredSubscriptions();
+        break;
+
+      case 'processAutoRenewals':
+        result = await subscriptionService.processAutoRenewals();
+        break;
+
+      case 'sendExpirationReminders':
+        result = await subscriptionService.sendExpirationReminders();
+        break;
+
+      case 'generateDailyReport':
+        result = await subscriptionService.generateDailyReport();
+        break;
+
+      case 'runDailyJobs':
+        result = await subscriptionService.runDailyJobs();
+        break;
+
+      default:
+        return res.status(400).json({
+          success: false,
+          message: `Job inconnu: ${jobName}`,
+          availableJobs: [
+            'checkExpiredTrials',
+            'checkExpiredSubscriptions',
+            'processAutoRenewals',
+            'sendExpirationReminders',
+            'generateDailyReport',
+            'runDailyJobs'
+          ]
+        });
+    }
+
+    logger.info(`✅ Job ${jobName} terminé avec succès`, {
+      result,
+      adminId
+    });
+
+    res.json({
+      success: true,
+      message: `Job ${jobName} exécuté avec succès`,
+      result
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur lors de l\'exécution du job:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'exécution du job',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Route pour obtenir le statut des abonnements
+ * GET /api/admin/subscriptions/stats
+ */
+router.get('/subscriptions/stats', async (req, res) => {
+  try {
+    const { User } = req.models;
+    const { Op } = require('sequelize');
+
+    const [
+      totalUsers,
+      activeTrials,
+      activeSubscriptions,
+      suspendedAccounts,
+      expiredAccounts,
+      totalRevenue,
+      monthlyRevenue,
+      expiringTrials,
+      expiringSubscriptions
+    ] = await Promise.all([
+      User.count(),
+      User.count({ where: { subscriptionStatus: 'TRIAL', isActive: true } }),
+      User.count({ where: { subscriptionStatus: 'ACTIVE', isActive: true } }),
+      User.count({ where: { subscriptionStatus: 'SUSPENDED' } }),
+      User.count({ where: { subscriptionStatus: 'EXPIRED' } }),
+      User.sum('monthlyPrice', {
+        where: {
+          subscriptionStatus: 'ACTIVE',
+          isActive: true
+        }
+      }),
+      User.sum('monthlyPrice', {
+        where: {
+          subscriptionStatus: {
+            [Op.in]: ['ACTIVE', 'TRIAL']
+          },
+          isActive: true,
+          subscriptionPlan: {
+            [Op.in]: ['INDIVIDUAL_STUDENT', 'FAMILY_MANAGER']
+          }
+        }
+      }),
+      // Essais expirant dans 3 jours
+      User.count({
+        where: {
+          subscriptionStatus: 'TRIAL',
+          trialEndsAt: {
+            [Op.between]: [
+              new Date(),
+              new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+            ]
+          },
+          isActive: true
+        }
+      }),
+      // Abonnements expirant dans 3 jours
+      User.count({
+        where: {
+          subscriptionStatus: 'ACTIVE',
+          subscriptionEndsAt: {
+            [Op.between]: [
+              new Date(),
+              new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+            ]
+          },
+          isActive: true
+        }
+      })
+    ]);
+
+    res.json({
+      success: true,
+      stats: {
+        users: {
+          total: totalUsers,
+          activeTrials,
+          activeSubscriptions,
+          suspended: suspendedAccounts,
+          expired: expiredAccounts
+        },
+        revenue: {
+          currentMonthly: Math.round(totalRevenue || 0),
+          expectedMonthly: Math.round(monthlyRevenue || 0),
+          currency: 'FCFA'
+        },
+        alerts: {
+          expiringTrials,
+          expiringSubscriptions
+        },
+        timestamp: new Date()
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur lors de la récupération des stats:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des statistiques',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

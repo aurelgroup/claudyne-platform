@@ -67,6 +67,39 @@ module.exports = {
       time: true,
       max_memory_restart: '500M',
       restart_delay: 4000
+    },
+    {
+      name: 'claudyne-cron',
+      script: 'backend/src/jobs/subscriptionCron.js',
+      instances: 1,
+      exec_mode: 'fork',
+      cron_restart: '0 0 * * *', // Redémarrer tous les jours à minuit
+      env: {
+        NODE_ENV: 'production',
+        DB_HOST: 'localhost',
+        DB_PORT: '5432',
+        DB_NAME: 'claudyne_production',
+        DB_USER: 'claudyne_user',
+        DB_PASSWORD: 'aujourdhui18D@',
+        TZ: 'Africa/Douala'
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        DB_HOST: 'localhost',
+        DB_PORT: '5432',
+        DB_NAME: 'claudyne_production',
+        DB_USER: 'claudyne_user',
+        DB_PASSWORD: 'aujourdhui18D@',
+        TZ: 'Africa/Douala'
+      },
+      error_file: '/var/log/claudyne/cron-error.log',
+      out_file: '/var/log/claudyne/cron-out.log',
+      log_file: '/var/log/claudyne/cron-combined.log',
+      time: true,
+      max_memory_restart: '200M',
+      restart_delay: 4000,
+      autorestart: true,
+      watch: false
     }
   ]
 };

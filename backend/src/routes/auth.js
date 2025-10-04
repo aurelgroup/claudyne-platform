@@ -36,6 +36,7 @@ const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { trustProxy: false }, // Accepter le proxy derrière Nginx
   // Personnalisation pour les familles camerounaises
   keyGenerator: (req) => {
     return req.ip + ':' + (req.body.credential || req.body.email || req.body.phone || 'anonymous');
@@ -50,7 +51,8 @@ const registerLimiter = rateLimit({
     success: false,
     message: 'Limite de création de comptes atteinte. Contactez le support si nécessaire.',
     code: 'REGISTER_LIMIT_EXCEEDED'
-  }
+  },
+  validate: { trustProxy: false } // Accepter le proxy derrière Nginx
 });
 
 // Validations communes

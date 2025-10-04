@@ -5306,6 +5306,11 @@
         }
 
         function showAdminInterface() {
+            // Nettoyer l'URL des query parameters
+            if (window.location.search) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
             document.getElementById('adminLoginForm').style.display = 'none';
             document.querySelector('.admin-container').classList.add('authenticated');
         }
@@ -5383,9 +5388,10 @@
                 function attemptLocalAuth() {
                     console.log('🔄 Tentative d\'authentification locale...');
 
-                    // Identifiants admin statiques pour les tests
+                    // Identifiants admin statiques pour les tests (mode offline seulement)
                     const validCredentials = [
-                        { email: 'admin@claudyne.com', password: 'admin123' }
+                        { email: 'admin@claudyne.com', password: 'AdminClaudyne2024' },
+                        { email: 'admin@claudyne.com', password: 'admin123' }  // Fallback ancien mot de passe
                     ];
 
                     const isValidLogin = validCredentials.some(cred =>
@@ -11104,7 +11110,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
         }
 
-        // Mise à jour de showSection pour inclure la gestion des données
+        // Mise à jour de showSection pour inclure la gestion des données et des abonnements
         const originalShowSection = showSection;
         showSection = function(sectionName) {
             originalShowSection(sectionName);
@@ -11114,6 +11120,11 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                     dataLog('🔧 Section gestion des données ouverte');
                     updateDataStatusInfo();
                 }, 100);
+            }
+
+            // Load subscription data when showing subscriptions management
+            if (sectionName === 'subscriptions-management') {
+                refreshSubscriptionStats();
             }
         };
 
@@ -11676,17 +11687,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         }
 
         /**
-         * Initialize subscription management when section is shown
+         * Subscription management initialization handled in main showSection wrapper above
          */
-        const originalShowSection = showSection;
-        showSection = function(sectionName) {
-            originalShowSection(sectionName);
-
-            // Load subscription data when showing subscriptions management
-            if (sectionName === 'subscriptions-management') {
-                refreshSubscriptionStats();
-            }
-        };
     </script>
     
     <!-- Script d'optimisation réseau pour 2G/3G -->

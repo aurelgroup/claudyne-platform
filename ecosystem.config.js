@@ -33,33 +33,13 @@ module.exports = {
       exec_mode: 'cluster',
       env: {
         NODE_ENV: 'production',
-        PORT: 3001,
-        DB_HOST: process.env.DB_HOST || 'localhost',
-        DB_PORT: process.env.DB_PORT || '5432',
-        DB_NAME: process.env.DB_NAME || 'claudyne_production',
-        DB_USER: process.env.DB_USER || 'claudyne_user',
-        DB_PASSWORD: process.env.DB_PASSWORD, // ⚠️ MUST be set in system env
-        JWT_SECRET: process.env.JWT_SECRET, // ⚠️ MUST be set in system env
-        JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
-        JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET, // ⚠️ MUST be set in system env
-        JWT_REFRESH_EXPIRE: process.env.JWT_REFRESH_EXPIRE || '30d',
-        FRONTEND_URL: process.env.FRONTEND_URL || 'https://claudyne.com',
-        CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://claudyne.com'
+        PORT: 3001
+        // Secrets loaded from .env.production via dotenv in server.js
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3001,
-        DB_HOST: process.env.DB_HOST || 'localhost',
-        DB_PORT: process.env.DB_PORT || '5432',
-        DB_NAME: process.env.DB_NAME || 'claudyne_production',
-        DB_USER: process.env.DB_USER || 'claudyne_user',
-        DB_PASSWORD: process.env.DB_PASSWORD, // ⚠️ MUST be set in system env
-        JWT_SECRET: process.env.JWT_SECRET, // ⚠️ MUST be set in system env
-        JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
-        JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET, // ⚠️ MUST be set in system env
-        JWT_REFRESH_EXPIRE: process.env.JWT_REFRESH_EXPIRE || '30d',
-        FRONTEND_URL: process.env.FRONTEND_URL || 'https://claudyne.com',
-        CORS_ORIGIN: process.env.CORS_ORIGIN || 'https://claudyne.com'
+        PORT: 3001
+        // Secrets loaded from .env.production via dotenv in server.js
       },
       error_file: '/var/log/claudyne/backend-error.log',
       out_file: '/var/log/claudyne/backend-out.log',
@@ -76,21 +56,13 @@ module.exports = {
       cron_restart: '0 0 * * *', // Redémarrer tous les jours à minuit
       env: {
         NODE_ENV: 'production',
-        DB_HOST: process.env.DB_HOST || 'localhost',
-        DB_PORT: process.env.DB_PORT || '5432',
-        DB_NAME: process.env.DB_NAME || 'claudyne_production',
-        DB_USER: process.env.DB_USER || 'claudyne_user',
-        DB_PASSWORD: process.env.DB_PASSWORD, // ⚠️ MUST be set in system env
         TZ: 'Africa/Douala'
+        // DB secrets loaded from .env.production via dotenv in subscriptionCron.js
       },
       env_production: {
         NODE_ENV: 'production',
-        DB_HOST: process.env.DB_HOST || 'localhost',
-        DB_PORT: process.env.DB_PORT || '5432',
-        DB_NAME: process.env.DB_NAME || 'claudyne_production',
-        DB_USER: process.env.DB_USER || 'claudyne_user',
-        DB_PASSWORD: process.env.DB_PASSWORD, // ⚠️ MUST be set in system env
         TZ: 'Africa/Douala'
+        // DB secrets loaded from .env.production via dotenv in subscriptionCron.js
       },
       error_file: '/var/log/claudyne/cron-error.log',
       out_file: '/var/log/claudyne/cron-out.log',

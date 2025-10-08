@@ -870,7 +870,7 @@ router.get('/settings', async (req, res) => {
 // CRÉATION DE COMPTES ADMIN
 // ===============================
 
-router.post('/accounts/create', async (req, res) => {
+router.post('/accounts/create', validateAdminToken, async (req, res) => {
   try {
     const { subscriberId, accountType, formData } = req.body;
     const { User, Family, Student } = req.models;
@@ -2597,6 +2597,209 @@ router.get('/subscriptions/stats', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des statistiques',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Route pour obtenir les rôles et permissions
+ * GET /api/admin/roles
+ */
+router.get('/roles', async (req, res) => {
+  try {
+    const { User } = req.models;
+
+    // Comptage par rôle
+    const roleCounts = await User.findAll({
+      attributes: [
+        'role',
+        [require('sequelize').fn('COUNT', require('sequelize').col('role')), 'count']
+      ],
+      group: ['role']
+    });
+
+    const roles = [
+      {
+        id: 'STUDENT',
+        name: 'Étudiant',
+        description: 'Accès aux cours et quiz',
+        userCount: roleCounts.find(r => r.role === 'STUDENT')?.dataValues.count || 0,
+        permissions: ['view_courses', 'take_quizzes', 'view_progress'],
+        color: '#3B82F6'
+      },
+      {
+        id: 'PARENT',
+        name: 'Parent',
+        description: 'Suivi des enfants',
+        userCount: roleCounts.find(r => r.role === 'PARENT')?.dataValues.count || 0,
+        permissions: ['view_children', 'view_reports', 'manage_account'],
+        color: '#10B981'
+      },
+      {
+        id: 'TEACHER',
+        name: 'Enseignant',
+        description: 'Gestion du contenu pédagogique',
+        userCount: roleCounts.find(r => r.role === 'TEACHER')?.dataValues.count || 0,
+        permissions: ['create_content', 'grade_quizzes', 'view_analytics'],
+        color: '#F59E0B'
+      },
+      {
+        id: 'MODERATOR',
+        name: 'Modérateur',
+        description: 'Modération et support',
+        userCount: roleCounts.find(r => r.role === 'MODERATOR')?.dataValues.count || 0,
+        permissions: ['moderate_content', 'manage_users', 'view_reports'],
+        color: '#8B5CF6'
+      },
+      {
+        id: 'ADMIN',
+        name: 'Administrateur',
+        description: 'Accès complet',
+        userCount: roleCounts.find(r => r.role === 'ADMIN')?.dataValues.count || 0,
+        permissions: ['all'],
+        color: '#EF4444'
+      }
+    ];
+
+    res.json({
+      success: true,
+      data: {
+        roles,
+        totalRoles: roles.length
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur lors de la récupération des rôles:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des rôles',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Route pour obtenir le personnel
+ * GET /api/admin/staff
+ */
+router.get('/staff', async (req, res) => {
+  try {
+    const { User } = req.models;
+
+    // Récupérer le personnel (TEACHER, MODERATOR, ADMIN)
+    const staff = await User.findAll({
+      where: {
+        role: {
+          [Op.in]: ['TEACHER', 'MODERATOR', 'ADMIN']
+        }
+      },
+      attributes: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'role',
+        'isActive',
+        'lastLoginAt',
+        'createdAt'
+      ],
+      order: [['createdAt', 'DESC']],
+      limit: 100
+    });
+
+    res.json({
+      success: true,
+      data: {
+        staff: staff.map(s => ({
+          id: s.id,
+          name: `${s.firstName} ${s.lastName}`,
+          email: s.email,
+          role: s.role,
+          status: s.isActive ? 'active' : 'inactive',
+          lastLogin: s.lastLoginAt,
+          joinedAt: s.createdAt
+        })),
+        totalStaff: staff.length,
+        byRole: {
+          teachers: staff.filter(s => s.role === 'TEACHER').length,
+          moderators: staff.filter(s => s.role === 'MODERATOR').length,
+          admins: staff.filter(s => s.role === 'ADMIN').length
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur lors de la récupération du personnel:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du personnel',
+      error: error.message
+    });
+  }
+});
+
+/**
+ * Route pour obtenir les liens familiaux
+ * GET /api/admin/families
+ */
+router.get('/families', async (req, res) => {
+  try {
+    const { User, Family } = req.models;
+
+    // Récupérer les familles
+    const families = await User.findAll({
+      where: {
+        userType: 'FAMILY_MANAGER'
+      },
+      attributes: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'familyId',
+        'subscriptionStatus',
+        'subscriptionPlan',
+        'createdAt'
+      ],
+      include: Family ? [{
+        model: Family,
+        as: 'family',
+        attributes: ['name', 'memberCount']
+      }] : [],
+      order: [['createdAt', 'DESC']],
+      limit: 100
+    });
+
+    res.json({
+      success: true,
+      data: {
+        families: families.map(f => ({
+          id: f.id,
+          familyId: f.familyId || `FAM-${String(f.id).padStart(6, '0')}`,
+          name: f.family?.name || `Famille ${f.lastName}`,
+          manager: `${f.firstName} ${f.lastName}`,
+          email: f.email,
+          memberCount: f.family?.memberCount || 0,
+          subscriptionStatus: f.subscriptionStatus,
+          subscriptionPlan: f.subscriptionPlan,
+          createdAt: f.createdAt
+        })),
+        totalFamilies: families.length,
+        stats: {
+          activeSubscriptions: families.filter(f => f.subscriptionStatus === 'ACTIVE').length,
+          trials: families.filter(f => f.subscriptionStatus === 'TRIAL').length,
+          suspended: families.filter(f => f.subscriptionStatus === 'SUSPENDED').length
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur lors de la récupération des familles:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des liens familiaux',
       error: error.message
     });
   }

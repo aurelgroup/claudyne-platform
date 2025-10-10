@@ -934,12 +934,18 @@ router.post('/accounts/create', validateAdminToken, async (req, res) => {
 
     const family = await Family.create(familyData);
 
+    // Générer un mot de passe temporaire sécurisé
+    const { generateTempPassword } = require('../utils/passwordGenerator');
+    const tempPassword = generateTempPassword();
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
     // Créer l'utilisateur parent/gestionnaire
     const userData = {
       firstName: accountType === 'individual' ? formData.firstName : formData.parentFirstName,
       lastName: accountType === 'individual' ? formData.lastName : formData.parentLastName,
       email: formData.email,
       phone: formData.phone,
+      password: hashedPassword,
       role: 'PARENT',
       userType: 'MANAGER',
       familyId: family.id,
@@ -976,10 +982,11 @@ router.post('/accounts/create', validateAdminToken, async (req, res) => {
           email: formData.email,
           phone: formData.phone,
           familyName: family.name,
+          tempPassword: tempPassword,
           createdAt: new Date(),
           createdBy: req.user.email
         },
-        message: `Compte ${subscriberId} créé avec succès`
+        message: `Compte ${subscriberId} créé avec succès. Mot de passe temporaire: ${tempPassword}`
       }
     });
 

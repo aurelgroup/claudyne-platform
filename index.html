@@ -1865,7 +1865,9 @@
             }
             
             // Masquer le preloader avec une transition
-            preloader.classList.add('hidden');
+            if (preloader && preloader.classList) {
+                preloader.classList.add('hidden');
+            }
             
             // Initialiser le starfield et les effets magnétiques maintenant que la page est visible
             setTimeout(() => {

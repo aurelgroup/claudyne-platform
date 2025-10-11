@@ -6,8 +6,7 @@
 import { WidgetSystem } from '../shared/widget-system.js';
 import { AnalyticsEngine } from '../shared/analytics.js';
 import { ExportManager } from '../shared/export.js';
-import { mockData, getMockData } from '../shared/mock-data.js';
-import apiService, { getData } from '../shared/api-service.js';
+import api from '../shared/api-client.js';
 import { userManager } from '../shared/user-manager.js';
 
 export default class Dashboard {
@@ -65,10 +64,11 @@ export default class Dashboard {
             this.container = document.getElementById('dashboard');
         }
 
-        const metrics = getMockData('dashboard.metrics');
-        const activities = getMockData('dashboard.recentActivities');
-        const aiInsight = getMockData('dashboard.aiInsight');
-        const richyPerf = getMockData('dashboard.subjectPerformance.richy');
+        const mockData = this.getMockDashboardData();
+        const metrics = mockData.metrics;
+        const activities = mockData.activities;
+        const aiInsight = mockData.insights[0] || this.getDefaultInsight();
+        const richyPerf = mockData.children[0]?.subjects || [];
 
         this.container.innerHTML = `
             <div class="page-header animate-in">
@@ -333,22 +333,23 @@ export default class Dashboard {
         try {
             console.log('[Dashboard] Loading data from API...');
 
-            // Try to load real data from API, fallback to mock data
-            const dashboardResponse = await getData('/families/dashboard', mockData.dashboard);
+            // Try to load real data from API
+            const dashboardResponse = await api.getDashboard();
 
-            if (dashboardResponse.source === 'api') {
+            if (dashboardResponse.success && dashboardResponse.data) {
                 console.log('[Dashboard] ✅ Using real API data');
+
+                // Transform the data to match dashboard expectations
+                this.data = {
+                    metrics: dashboardResponse.data.metrics || this.getDefaultMetrics(),
+                    children: dashboardResponse.data.family?.students || [],
+                    activities: dashboardResponse.data.activities || [],
+                    insights: dashboardResponse.data.insights || []
+                };
             } else {
                 console.log('[Dashboard] ⚠️  Using mock data fallback');
+                this.data = this.getMockDashboardData();
             }
-
-            // Transform the data to match dashboard expectations
-            this.data = {
-                metrics: dashboardResponse.data.metrics || getMockData('dashboard.metrics'),
-                children: dashboardResponse.data.children || getMockData('children'),
-                activities: dashboardResponse.data.activities || getMockData('dashboard.recentActivities'),
-                insights: dashboardResponse.data.insights || getMockData('dashboard.aiInsight')
-            };
 
             // Mise à jour des métriques animées
             this.animateMetrics();
@@ -360,7 +361,9 @@ export default class Dashboard {
 
         } catch (error) {
             console.error('[Dashboard] Failed to load initial data:', error);
-            this.showDataError();
+            // En cas d'erreur, utiliser des données mock minimales
+            this.data = this.getMockDashboardData();
+            this.animateMetrics();
         }
     }
 
@@ -980,6 +983,33 @@ export default class Dashboard {
         if (window.parentApp) {
             window.parentApp.showNotification('Affichage de toutes les activités', 'info');
         }
+    }
+
+    // Helper methods for data fallback
+    getDefaultMetrics() {
+        return {
+            totalExercises: { value: 0, label: 'Exercices', change: '0%', type: 'neutral' },
+            averageScore: { value: 0, label: 'Score moyen', change: '0%', type: 'neutral' },
+            studyTime: { value: 0, label: 'Heures d\'étude', change: '0h', type: 'neutral' },
+            achievements: { value: 0, label: 'Badges', change: '0', type: 'neutral' }
+        };
+    }
+
+    getDefaultInsight() {
+        return {
+            title: 'Bienvenue sur Claudyne',
+            message: 'Commencez par ajouter vos enfants pour accéder aux analytics.',
+            actions: []
+        };
+    }
+
+    getMockDashboardData() {
+        return {
+            metrics: this.getDefaultMetrics(),
+            children: [],
+            activities: [],
+            insights: [this.getDefaultInsight()]
+        };
     }
 }
 

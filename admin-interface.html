@@ -5864,9 +5864,21 @@
                                         </td>
                                         <td style="font-weight: 600; color: #F59E0B;">${user.totalClaudinePoints}</td>
                                         <td style="font-size: 0.75rem; color: #6B7280;">${formatDate(user.lastActivity)}</td>
-                                        <td>
-                                            <button class="btn btn-secondary btn-sm" onclick="editSubscriber('${user.id}', '${isFamily ? 'family' : 'individual'}')">Modifier</button>
-                                            <button class="btn btn-warning btn-sm" onclick="manageTrialPeriod('${user.id}')">Essai</button>
+                                        <td style="white-space: nowrap;">
+                                            <button class="btn btn-primary btn-sm" onclick="editUser('${user.id}')" title="Modifier l'utilisateur">
+                                                ✏️ Modifier
+                                            </button>
+                                            ${user.isActive ?
+                                                `<button class="btn btn-warning btn-sm" onclick="disableUser('${user.id}', '${accountName}')" title="Désactiver le compte">
+                                                    ⏸️ Désactiver
+                                                </button>` :
+                                                `<button class="btn btn-success btn-sm" onclick="enableUser('${user.id}', '${accountName}')" title="Réactiver le compte">
+                                                    ▶️ Activer
+                                                </button>`
+                                            }
+                                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}', '${accountName}')" title="Supprimer définitivement">
+                                                🗑️ Supprimer
+                                            </button>
                                         </td>
                                     </tr>
                                     `;
@@ -11685,6 +11697,258 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             // For now, just navigate to user details
             // You can enhance this to show a modal with full subscription details
             alert(`Détails de l'utilisateur ${userId} - À implémenter`);
+        }
+
+        /**
+         * Edit User - Modal avec formulaire complet
+         */
+        async function editUser(userId) {
+            try {
+                // Récupérer les données de l'utilisateur
+                const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des données');
+                }
+
+                const result = await response.json();
+                const user = result.data;
+
+                // Créer le modal
+                const modalHtml = `
+                    <div id="editUserModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                        <div style="background: white; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+                            <h2 style="margin-bottom: 1.5rem; color: #1F2937;">✏️ Modifier l'utilisateur</h2>
+
+                            <form id="editUserForm" onsubmit="saveUserChanges(event, '${userId}')">
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Email</label>
+                                    <input type="email" id="edit_email" value="${user.email || ''}"
+                                           style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 1rem;">
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Téléphone</label>
+                                    <input type="tel" id="edit_phone" value="${user.phone || ''}"
+                                           style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 1rem;">
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Prénom</label>
+                                        <input type="text" id="edit_firstName" value="${user.firstName || ''}" required
+                                               style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 1rem;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Nom</label>
+                                        <input type="text" id="edit_lastName" value="${user.lastName || ''}" required
+                                               style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 1rem;">
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Rôle</label>
+                                    <select id="edit_role"
+                                            style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 1rem;">
+                                        <option value="PARENT" ${user.role === 'PARENT' ? 'selected' : ''}>Parent</option>
+                                        <option value="STUDENT" ${user.role === 'STUDENT' ? 'selected' : ''}>Étudiant</option>
+                                        <option value="TEACHER" ${user.role === 'TEACHER' ? 'selected' : ''}>Enseignant</option>
+                                        <option value="ADMIN" ${user.role === 'ADMIN' ? 'selected' : ''}>Administrateur</option>
+                                    </select>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="checkbox" id="edit_isActive" ${user.isActive ? 'checked' : ''}
+                                               style="width: 20px; height: 20px;">
+                                        <span style="color: #374151;">Compte actif</span>
+                                    </label>
+                                </div>
+
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="checkbox" id="edit_isVerified" ${user.isVerified ? 'checked' : ''}
+                                               style="width: 20px; height: 20px;">
+                                        <span style="color: #374151;">Email vérifié</span>
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                    <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem; border: none; background: #3B82F6; color: white; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                                        💾 Enregistrer
+                                    </button>
+                                    <button type="button" onclick="closeEditUserModal()" class="btn btn-secondary" style="flex: 1; padding: 0.75rem; border: 1px solid #D1D5DB; background: white; color: #374151; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                                        ❌ Annuler
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+
+                // Ajouter le modal au DOM
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors du chargement des données utilisateur');
+            }
+        }
+
+        /**
+         * Fermer le modal d'édition
+         */
+        function closeEditUserModal() {
+            const modal = document.getElementById('editUserModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        /**
+         * Sauvegarder les modifications de l'utilisateur
+         */
+        async function saveUserChanges(event, userId) {
+            event.preventDefault();
+
+            const updatedData = {
+                email: document.getElementById('edit_email').value,
+                phone: document.getElementById('edit_phone').value,
+                firstName: document.getElementById('edit_firstName').value,
+                lastName: document.getElementById('edit_lastName').value,
+                role: document.getElementById('edit_role').value,
+                isActive: document.getElementById('edit_isActive').checked,
+                isVerified: document.getElementById('edit_isVerified').checked
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Utilisateur modifié avec succès !');
+                    closeEditUserModal();
+                    loadUsersData(); // Recharger la liste
+                } else {
+                    alert('❌ Erreur: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la sauvegarde');
+            }
+        }
+
+        /**
+         * Supprimer un utilisateur
+         */
+        async function deleteUser(userId, userName) {
+            if (!confirm(`⚠️ ATTENTION !\n\nÊtes-vous sûr de vouloir supprimer définitivement l'utilisateur "${userName}" ?\n\nCette action est IRRÉVERSIBLE et supprimera:\n- Le compte utilisateur\n- Toutes ses données\n- Son historique\n\nTapez "SUPPRIMER" pour confirmer:`)) {
+                return;
+            }
+
+            const confirmation = prompt('Tapez "SUPPRIMER" en majuscules pour confirmer la suppression:');
+
+            if (confirmation !== 'SUPPRIMER') {
+                alert('❌ Suppression annulée');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Utilisateur supprimé avec succès');
+                    loadUsersData(); // Recharger la liste
+                } else {
+                    alert('❌ Erreur: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la suppression');
+            }
+        }
+
+        /**
+         * Désactiver un utilisateur (alternative à la suppression)
+         */
+        async function disableUser(userId, userName) {
+            if (!confirm(`Désactiver le compte de "${userName}" ?\n\nLe compte sera suspendu mais les données seront conservées.`)) {
+                return;
+            }
+
+            const reason = prompt('Raison de la désactivation (optionnel):');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users/${userId}/disable`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Utilisateur désactivé avec succès');
+                    loadUsersData(); // Recharger la liste
+                } else {
+                    alert('❌ Erreur: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la désactivation');
+            }
+        }
+
+        /**
+         * Réactiver un utilisateur
+         */
+        async function enableUser(userId, userName) {
+            if (!confirm(`Réactiver le compte de "${userName}" ?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/users/${userId}/enable`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Utilisateur réactivé avec succès');
+                    loadUsersData(); // Recharger la liste
+                } else {
+                    alert('❌ Erreur: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la réactivation');
+            }
         }
 
         /**

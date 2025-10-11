@@ -6,11 +6,8 @@
 // Load environment variables from root
 const dotenv = require('dotenv');
 const path = require('path');
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: path.join(__dirname, '../../.env.production') });
-} else {
-  dotenv.config();
-}
+// Toujours charger .env à la racine du projet (unifié)
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const express = require('express');
 const cors = require('cors');
@@ -36,7 +33,8 @@ const app = express();
 const server = http.createServer(app);
 
 // Configuration du proxy (nécessaire derrière nginx)
-app.set('trust proxy', true);
+// 1 = fait confiance au premier proxy uniquement (nginx)
+app.set('trust proxy', 1);
 
 // Configuration Socket.IO pour Battle Royale
 const io = socketIo(server, {
@@ -98,7 +96,8 @@ const limiter = rateLimit({
     code: 'RATE_LIMIT_EXCEEDED'
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // Ralentissement progressif
@@ -106,7 +105,8 @@ const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 50, // Commence le ralentissement après 50 requêtes
   delayMs: 500, // Ajoute 500ms de délai par requête excessive
-  maxDelayMs: 20000 // Délai maximum de 20 secondes
+  maxDelayMs: 20000, // Délai maximum de 20 secondes
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // app.use('/api', limiter);

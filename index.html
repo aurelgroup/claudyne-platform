@@ -3262,7 +3262,154 @@
             setTimeout(() => {
                 checkAndFixIcons();
             }, 2000);
+
+            // ========================================
+            // 🔐 RECONNEXION AUTOMATIQUE
+            // ========================================
+            autoReconnectUser();
         });
+
+        /**
+         * Tentative de reconnexion automatique au chargement de la page
+         * Utilise le nouveau client API pour vérifier et rafraîchir le token
+         */
+        async function autoReconnectUser() {
+            const token = localStorage.getItem('claudyne_token');
+
+            if (!token) {
+                console.log('📋 Aucun token trouvé - utilisateur non connecté');
+                return; // Pas de token = pas connecté
+            }
+
+            console.log('🔄 Tentative de reconnexion automatique...');
+
+            try {
+                // Configuration API
+                const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:3001'
+                    : `https://${window.location.hostname}`;
+
+                // 1. Vérifier si le token est encore valide
+                const verifyResponse = await fetch(`${API_BASE}/api/auth/verify`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (verifyResponse.ok) {
+                    // Token valide, récupérer les données utilisateur fraîches
+                    const meResponse = await fetch(`${API_BASE}/api/auth/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (meResponse.ok) {
+                        const userData = await meResponse.json();
+
+                        if (userData.success) {
+                            // Mettre à jour le localStorage avec les données fraîches
+                            localStorage.setItem('claudyne_user', JSON.stringify(userData.data.user));
+
+                            if (userData.data.family) {
+                                localStorage.setItem('claudyne_family', JSON.stringify(userData.data.family));
+                            }
+
+                            console.log(`✅ Reconnexion réussie ! Bienvenue ${userData.data.user.firstName}`);
+
+                            // Rediriger vers l'interface appropriée
+                            redirectToUserInterface(userData.data.user);
+                            return;
+                        }
+                    }
+                }
+
+                // 2. Token invalide, essayer de le rafraîchir
+                console.log('🔄 Token expiré, tentative de rafraîchissement...');
+                const refreshToken = localStorage.getItem('claudyne_refresh_token');
+
+                if (refreshToken) {
+                    const refreshResponse = await fetch(`${API_BASE}/api/auth/refresh`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refreshToken })
+                    });
+
+                    if (refreshResponse.ok) {
+                        const refreshData = await refreshResponse.json();
+
+                        if (refreshData.success && refreshData.data.accessToken) {
+                            // Sauvegarder le nouveau token
+                            localStorage.setItem('claudyne_token', refreshData.data.accessToken);
+
+                            console.log('✅ Token rafraîchi avec succès');
+
+                            // Réessayer de récupérer les données utilisateur
+                            const meResponse = await fetch(`${API_BASE}/api/auth/me`, {
+                                headers: { 'Authorization': `Bearer ${refreshData.data.accessToken}` }
+                            });
+
+                            if (meResponse.ok) {
+                                const userData = await meResponse.json();
+
+                                if (userData.success) {
+                                    localStorage.setItem('claudyne_user', JSON.stringify(userData.data.user));
+
+                                    if (userData.data.family) {
+                                        localStorage.setItem('claudyne_family', JSON.stringify(userData.data.family));
+                                    }
+
+                                    console.log(`✅ Reconnexion réussie ! Bienvenue ${userData.data.user.firstName}`);
+                                    redirectToUserInterface(userData.data.user);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 3. Impossible de se reconnecter, nettoyer le localStorage
+                console.log('❌ Reconnexion impossible, nettoyage de la session');
+                clearAuthData();
+
+            } catch (error) {
+                console.error('❌ Erreur lors de la reconnexion automatique:', error);
+                clearAuthData();
+            }
+        }
+
+        /**
+         * Nettoyer les données d'authentification
+         */
+        function clearAuthData() {
+            localStorage.removeItem('claudyne_token');
+            localStorage.removeItem('claudyne_refresh_token');
+            localStorage.removeItem('claudyne_user');
+            localStorage.removeItem('claudyne_family');
+        }
+
+        /**
+         * Rediriger l'utilisateur vers son interface selon son rôle
+         */
+        function redirectToUserInterface(user) {
+            const role = user.role;
+            const userType = user.userType;
+
+            // Définir l'interface de destination
+            let targetInterface = '/';
+
+            if (role === 'ADMIN') {
+                targetInterface = '/admin-secure-k7m9x4n2p8w5z1c6';
+            } else if (role === 'PARENT' && userType === 'MANAGER') {
+                targetInterface = '/parent-interface';
+            } else if (role === 'STUDENT' || userType === 'STUDENT') {
+                targetInterface = '/student';
+            } else if (role === 'TEACHER') {
+                targetInterface = '/teacher';
+            }
+
+            // Ne rediriger que si on n'est pas déjà sur la bonne page
+            if (targetInterface !== '/' && window.location.pathname !== targetInterface) {
+                console.log(`🔀 Redirection vers ${targetInterface}`);
+                window.location.href = targetInterface;
+            }
+        }
 
         // Fonction pour détecter et corriger les icônes manquantes
         function checkAndFixIcons() {

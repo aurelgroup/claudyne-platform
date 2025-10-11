@@ -36,11 +36,7 @@ const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  validate: { trustProxy: false }, // Accepter le proxy derrière Nginx
-  // Personnalisation pour les familles camerounaises
-  keyGenerator: (req) => {
-    return req.ip + ':' + (req.body.credential || req.body.email || req.body.phone || 'anonymous');
-  }
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // Rate limiting plus strict pour la création de compte
@@ -52,7 +48,7 @@ const registerLimiter = rateLimit({
     message: 'Limite de création de comptes atteinte. Contactez le support si nécessaire.',
     code: 'REGISTER_LIMIT_EXCEEDED'
   },
-  validate: { trustProxy: false } // Accepter le proxy derrière Nginx
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // Validations communes
@@ -939,6 +935,177 @@ router.post('/reset-password', [
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la réinitialisation du mot de passe'
+    });
+  }
+});
+
+/**
+ * GET /api/auth/verify
+ * Vérification de la validité du token
+ * Utilisé par le frontend pour la reconnexion automatique
+ */
+router.get('/verify', async (req, res) => {
+  try {
+    // Récupération du token
+    let token = null;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token manquant',
+        code: 'NO_TOKEN'
+      });
+    }
+
+    // Vérification du token
+    const jwt = require('jsonwebtoken');
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token invalide ou expiré',
+        code: 'INVALID_TOKEN'
+      });
+    }
+
+    // Vérifier que l'utilisateur existe et est actif
+    initializeModels();
+    const user = await User.findByPk(decoded.userId);
+
+    if (!user || !user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token invalide',
+        code: 'INVALID_USER'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Token valide',
+      data: {
+        userId: decoded.userId,
+        email: decoded.email,
+        role: decoded.role,
+        userType: decoded.userType,
+        familyId: decoded.familyId
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur vérification token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
+/**
+ * GET /api/auth/me
+ * Récupération des informations de l'utilisateur connecté
+ * Utilisé pour la reconnexion automatique et le rafraîchissement des données
+ */
+router.get('/me', async (req, res) => {
+  try {
+    // Récupération du token
+    let token = null;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token manquant',
+        code: 'NO_TOKEN'
+      });
+    }
+
+    // Vérification du token
+    const jwt = require('jsonwebtoken');
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token invalide ou expiré',
+        code: 'INVALID_TOKEN'
+      });
+    }
+
+    initializeModels();
+
+    // Récupérer l'utilisateur avec ses relations
+    const user = await User.findByPk(decoded.userId, {
+      include: [
+        {
+          model: Family,
+          as: 'family',
+          include: [{
+            model: Student,
+            as: 'students',
+            where: { isActive: true },
+            required: false,
+            attributes: ['id', 'firstName', 'lastName', 'level', 'dateOfBirth', 'isActive']
+          }]
+        }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Vérifier que le compte est actif
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'Compte désactivé',
+        code: 'ACCOUNT_INACTIVE'
+      });
+    }
+
+    // Réponse avec les données utilisateur
+    res.json({
+      success: true,
+      message: `Bienvenue ${user.firstName} !`,
+      data: {
+        user: user.toSafeJSON(),
+        family: user.family ? {
+          id: user.family.id,
+          name: user.family.name,
+          displayName: user.family.displayName,
+          status: user.family.status,
+          subscriptionType: user.family.subscriptionType,
+          trialEndsAt: user.family.trialEndsAt,
+          subscriptionEndsAt: user.family.subscriptionEndsAt,
+          walletBalance: user.family.walletBalance,
+          totalClaudinePoints: user.family.totalClaudinePoints,
+          claudineRank: user.family.claudineRank,
+          students: user.family.students || []
+        } : null
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération profil utilisateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
     });
   }
 });

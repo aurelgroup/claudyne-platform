@@ -1255,7 +1255,6 @@
                 }
 
                 currentTeacher = JSON.parse(userDataStr);
-                console.log('✅ Données enseignant chargées:', currentTeacher);
 
                 // Mettre à jour l'interface
                 const teacherNameEl = document.getElementById('teacher-name');
@@ -1266,8 +1265,6 @@
                 // Mettre à jour les champs du formulaire settings
                 document.getElementById('teacherName').value = `Prof. ${currentTeacher.firstName} ${currentTeacher.lastName}`;
                 document.getElementById('teacherEmail').value = currentTeacher.email;
-
-                console.log('✅ Interface enseignant mise à jour');
             } catch (error) {
                 console.error('❌ Erreur chargement données enseignant:', error);
             }

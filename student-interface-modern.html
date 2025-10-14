@@ -4070,7 +4070,6 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             initializeParticles();
             updateXPDisplay();
             showWelcomeToast();
-            console.log('🚀 Claudyne Max initialisé avec succès');
         });
 
         // ========== CHARGEMENT DONNÉES RÉELLES ==========
@@ -4087,7 +4086,6 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 }
 
                 currentUser = JSON.parse(userDataStr);
-                console.log('✅ Données utilisateur chargées:', currentUser);
 
                 // Mettre à jour l'interface avec les vraies données
                 updateUserInterface(currentUser);
@@ -4121,8 +4119,6 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (aiMessageEl) {
                 aiMessageEl.textContent = `Salut ${user.firstName} ! 👋 Je vois que tu progresses bien. As-tu des questions ? Je peux t'aider avec des explications personnalisées !`;
             }
-
-            console.log('✅ Interface mise à jour avec données utilisateur');
         }
 
         async function fetchAdditionalUserData(token) {
@@ -4140,7 +4136,6 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('✅ Données additionnelles chargées:', data);
 
                     if (data.success && data.data) {
                         // Mettre à jour les stats avec les vraies données
@@ -4150,11 +4145,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
 
                         updateXPDisplay();
                     }
-                } else {
-                    console.warn('⚠️ Impossible de charger les données additionnelles');
                 }
+                // Note: Si l'API profile n'est pas disponible, on continue avec les données de base
             } catch (error) {
-                console.error('❌ Erreur fetch données additionnelles:', error);
+                // Erreur silencieuse - l'interface fonctionne avec les données localStorage
             }
         }
 
@@ -5160,13 +5154,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             }
         }
 
-        console.log('🎮 Claudyne - Interface Étudiant Ultime activée');
-        console.log('🤖 Assistant IA MEUGACK en ligne');
-        console.log('📊 Système d\'analytics prédictifs actif');
-        console.log('🎯 Moteur adaptatif de quiz initialisé');
-        console.log('🌟 Toutes les sections enrichies sont actives !');
-        console.log('🔐 Système de changement de mot de passe actif !');
-        console.log('🔔 Pour tester les notifications, tapez: testNotifications()');
+        // Interface Claudyne chargée
+        if (window.location.hostname === 'localhost') {
+            console.log('🚀 Claudyne - Interface Étudiant chargée');
+        }
     </script>
 </body>
 </html>

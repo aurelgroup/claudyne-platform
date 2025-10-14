@@ -15,6 +15,73 @@ router.use(async (req, res, next) => {
   next();
 });
 
+// Endpoint pour récupérer le profil de l'étudiant connecté
+router.get('/profile', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise',
+        code: 'AUTH_REQUIRED'
+      });
+    }
+
+    const { User, Student } = req.models;
+
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'email', 'firstName', 'lastName', 'role', 'userType']
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    let studentProfile = null;
+    if (req.user.familyId) {
+      studentProfile = await Student.findOne({
+        where: {
+          familyId: req.user.familyId
+        },
+        attributes: [
+          'id', 'firstName', 'lastName', 'currentLevel', 'totalPoints',
+          'claudinePoints', 'currentStreak', 'overallProgress', 'currentAverage'
+        ]
+      });
+    }
+
+    const profileData = {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      userType: user.userType,
+      xp: studentProfile?.totalPoints || 0,
+      level: studentProfile?.currentLevel || 1,
+      dailyStreak: studentProfile?.currentStreak || 0,
+      overallProgress: studentProfile?.overallProgress || 0,
+      currentAverage: studentProfile?.currentAverage || 0,
+      claudinePoints: studentProfile?.claudinePoints || 0
+    };
+
+    res.json({
+      success: true,
+      data: profileData
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération profil étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du profil'
+    });
+  }
+});
+
+
 // Récupérer tous les étudiants de la famille
 router.get('/', async (req, res) => {
   try {

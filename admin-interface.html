@@ -1920,6 +1920,28 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
         .admin-login-header {
             text-align: center;
             margin-bottom: 2rem;
@@ -5277,6 +5299,115 @@
         </div>
     </div>
 
+    <!-- Modal d'édition de plan tarifaire -->
+    <div id="editPlanModal" class="modal glass-modal">
+        <div class="modal-content glass-modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal('editPlanModal')">&times;</span>
+                <h2>Éditer le plan tarifaire</h2>
+                <p>Modifier les caractéristiques du plan d'abonnement</p>
+            </div>
+
+            <div class="modal-body">
+                <form id="editPlanForm">
+                    <input type="hidden" id="editPlanId" name="planId">
+
+                    <!-- Informations de base -->
+                    <div class="form-group">
+                        <label for="editPlanName">Nom du plan *</label>
+                        <input type="text" id="editPlanName" name="name" placeholder="Ex: Premium Familial" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPlanDescription">Description</label>
+                        <textarea id="editPlanDescription" name="description" rows="2" placeholder="Description du plan..."></textarea>
+                    </div>
+
+                    <!-- Tarification -->
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanPrice">Prix (FCFA) *</label>
+                            <input type="number" id="editPlanPrice" name="price" min="0" placeholder="0" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanOriginalPrice">Prix original (FCFA)</label>
+                            <input type="number" id="editPlanOriginalPrice" name="originalPrice" min="0" placeholder="Optionnel">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanDiscount">Réduction (FCFA)</label>
+                            <input type="number" id="editPlanDiscount" name="discount" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanCurrency">Devise</label>
+                            <select id="editPlanCurrency" name="currency">
+                                <option value="FCFA">FCFA</option>
+                                <option value="EUR">EUR</option>
+                                <option value="USD">USD</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Durée/Intervalle -->
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanInterval">Période *</label>
+                            <select id="editPlanInterval" name="interval" required onchange="updateEditIntervalCount()">
+                                <option value="trial">Essai</option>
+                                <option value="monthly">Mensuel</option>
+                                <option value="quarterly">Trimestriel</option>
+                                <option value="annual">Annuel</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanIntervalCount">Nombre de périodes</label>
+                            <input type="number" id="editPlanIntervalCount" name="intervalCount" min="1" placeholder="1">
+                        </div>
+                    </div>
+
+                    <!-- Fonctionnalités (textarea pour flexibilité) -->
+                    <div class="form-group">
+                        <label for="editPlanFeatures">Fonctionnalités incluses *</label>
+                        <textarea id="editPlanFeatures" name="features" rows="6" placeholder="Une fonctionnalité par ligne&#10;Ex:&#10;Accès illimité toutes matières&#10;Jusqu'à 3 enfants&#10;Support prioritaire" required></textarea>
+                        <small style="color: #9CA3AF; font-size: 0.85rem;">Une fonctionnalité par ligne</small>
+                    </div>
+
+                    <!-- Statut et visibilité -->
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="editPlanStatus">Statut</label>
+                            <select id="editPlanStatus" name="status">
+                                <option value="active">Actif</option>
+                                <option value="inactive">Inactif</option>
+                                <option value="draft">Brouillon</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1; display: flex; align-items: center; padding-top: 1.5rem;">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="editPlanFeatured" name="featured">
+                                <span>⭐ Plan mis en avant</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPlanSubscriptions">Nombre d'abonnés actuels</label>
+                        <input type="number" id="editPlanSubscriptions" name="subscriptions" min="0" disabled>
+                        <small style="color: #9CA3AF; font-size: 0.85rem;">Lecture seule - mis à jour automatiquement</small>
+                    </div>
+                </form>
+
+                <!-- Boutons d'action -->
+                <div class="modal-actions">
+                    <button class="btn btn-secondary glass-btn" onclick="closeModal('editPlanModal')">Annuler</button>
+                    <button class="btn btn-success glass-btn glass-btn-success" onclick="updatePlan()">💾 Enregistrer les modifications</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ================================
         // AUTHENTIFICATION ADMINISTRATEUR
@@ -5644,7 +5775,175 @@
         // Initialiser la vérification backend
         checkBackendAvailability();
         let currentSection = 'dashboard';
-        
+
+        // ================================
+        // HELPER AUTHENTIFICATION API
+        // ================================
+
+        /**
+         * Helper unifié pour les appels API admin authentifiés
+         * Compatible avec le système existant de Claudyne
+         */
+        async function authenticatedFetch(url, options = {}, retryCount = 0) {
+            // Protection contre les boucles infinies
+            const MAX_RETRIES = 1;
+
+            // 1. Vérifier le token
+            const token = localStorage.getItem('claudyne_token');
+            const isLocalMode = localStorage.getItem('claudyne_local_mode') === 'true';
+
+            if (!token) {
+                showError('Session expirée. Veuillez vous reconnecter.');
+                showLoginForm();
+                throw new Error('NO_TOKEN');
+            }
+
+            // 2. Mode local : retourner des données mock
+            if (isLocalMode && USE_MOCK_DATA) {
+                console.log('🔄 Mode local : données simulées');
+                return getMockDataForUrl(url);
+            }
+
+            // 3. Construire la requête avec authentification
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+
+            // 4. Gestion des erreurs HTTP
+            if (!response.ok) {
+                // 401 : Token expiré → tenter refresh (max 1 fois)
+                if (response.status === 401 && retryCount < MAX_RETRIES) {
+                    console.log('🔄 Token expiré, tentative de refresh...');
+
+                    const refreshed = await tryRefreshToken();
+                    if (refreshed) {
+                        // Réessayer la requête avec le nouveau token
+                        console.log('✅ Token rafraîchi, nouvelle tentative...');
+                        return authenticatedFetch(url, options, retryCount + 1);
+                    }
+
+                    // Refresh échoué → déconnecter
+                    console.error('❌ Refresh échoué, déconnexion...');
+                    showError('Session expirée. Veuillez vous reconnecter.');
+                    adminLogout();
+                    throw new Error('TOKEN_EXPIRED');
+                }
+
+                // 401 après retry : boucle détectée
+                if (response.status === 401 && retryCount >= MAX_RETRIES) {
+                    console.error('❌ Boucle de retry détectée, arrêt...');
+                    showError('Authentification impossible. Veuillez vous reconnecter.');
+                    adminLogout();
+                    throw new Error('AUTH_LOOP_DETECTED');
+                }
+
+                // Autres erreurs HTTP
+                if (response.status === 403) {
+                    showError('Accès refusé. Droits administrateur requis.');
+                    throw new Error('FORBIDDEN');
+                }
+
+                if (response.status === 404) {
+                    console.warn(`⚠️ Endpoint non trouvé : ${url}`);
+                    throw new Error('NOT_FOUND');
+                }
+
+                if (response.status >= 500) {
+                    showError('Erreur serveur. Réessayez plus tard.');
+                    throw new Error('SERVER_ERROR');
+                }
+
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            // 5. Parser la réponse
+            // Gérer le cas 204 No Content (DELETE réussi sans body)
+            if (response.status === 204 || response.headers.get('content-length') === '0') {
+                return { success: true, message: 'Opération réussie' };
+            }
+
+            // Parser JSON
+            return response.json();
+        }
+
+        /**
+         * Tente de rafraîchir le token avec le refresh token
+         */
+        async function tryRefreshToken() {
+            const refreshToken = localStorage.getItem('claudyne_refresh_token');
+
+            if (!refreshToken) {
+                console.log('❌ Pas de refresh token disponible');
+                return false;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/refresh`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refreshToken })
+                });
+
+                if (!response.ok) {
+                    console.log('❌ Refresh token invalide ou expiré');
+                    return false;
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.data.accessToken) {
+                    // Sauvegarder le nouveau token
+                    localStorage.setItem('claudyne_token', data.data.accessToken);
+                    console.log('✅ Token rafraîchi avec succès');
+                    return true;
+                }
+
+                return false;
+
+            } catch (error) {
+                console.error('❌ Erreur lors du refresh:', error);
+                return false;
+            }
+        }
+
+        /**
+         * Retourne des données mock pour le mode local
+         */
+        function getMockDataForUrl(url) {
+            // Extraire le endpoint de l'URL
+            const endpoint = url.replace(API_BASE, '').replace('/api/admin/', '');
+
+            console.log(`📦 Mock data pour: ${endpoint}`);
+
+            // Données mock basées sur le endpoint
+            const mockData = {
+                'dashboard': {
+                    success: true,
+                    data: {
+                        stats: { activeFamilies: 24, activeStudents: 0, monthlyRevenue: 0, quizzesTaken: 0 },
+                        activities: [],
+                        recentPayments: []
+                    }
+                },
+                'users': {
+                    success: true,
+                    data: {
+                        users: [],
+                        pagination: { total: 0, page: 1, limit: 20, totalPages: 0 }
+                    }
+                }
+            };
+
+            return mockData[endpoint] || { success: false, message: 'Endpoint non disponible en mode local' };
+        }
+
         // Detection des erreurs JavaScript
         window.addEventListener('error', function(e) {
             console.error('❌ Erreur JavaScript:', e.error);
@@ -5751,8 +6050,7 @@
         // Dashboard Data
         async function loadDashboardData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/dashboard`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/dashboard`);
 
                 if (data.success) {
                     // Mise à jour des statistiques
@@ -5814,9 +6112,8 @@
                     }
                     return;
                 }
-                
-                const response = await fetch(`${API_BASE}/api/admin/users`);
-                const data = await response.json();
+
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/users`);
 
                 if (data.success) {
                     const usersHtml = `
@@ -5905,8 +6202,7 @@
         // Load Courses Data
         async function loadCoursesData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/content`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
 
                 if (data.success) {
                     const coursesHtml = `
@@ -5951,8 +6247,7 @@
         // Load Quizzes Data
         async function loadQuizzesData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/content`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
                 const quizzes = data.success ? data.data.quizzes : [];
                 
                 const quizzesHtml = `
@@ -6072,8 +6367,7 @@
         // Payments Data
         async function loadPaymentsData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/payments`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/payments`);
 
                 if (data.success) {
                     const paymentsHtml = `
@@ -6118,45 +6412,50 @@
         // Analytics Data
         async function loadAnalyticsData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/analytics`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/analytics`);
 
-                if (data.success) {
-                    // Graphique de croissance
-                    const maxUsers = Math.max(...data.data.userGrowth.map(item => item.users));
-                    const chartHtml = data.data.userGrowth.map(item => `
-                        <div class="chart-bar" style="height: ${(item.users / maxUsers) * 200}px;" title="${item.users} utilisateurs en ${item.month}">
-                            <div class="chart-label">${item.month.substring(0, 3)}</div>
-                        </div>
-                    `).join('');
+                if (data.success && data.data) {
+                    // Graphique de croissance (avec protection null)
+                    if (data.data.userGrowth && Array.isArray(data.data.userGrowth) && data.data.userGrowth.length > 0) {
+                        const maxUsers = Math.max(...data.data.userGrowth.map(item => item.users));
+                        const chartHtml = data.data.userGrowth.map(item => `
+                            <div class="chart-bar" style="height: ${(item.users / maxUsers) * 200}px;" title="${item.users} utilisateurs en ${item.month}">
+                                <div class="chart-label">${item.month.substring(0, 3)}</div>
+                            </div>
+                        `).join('');
+                        document.getElementById('user-growth-chart').innerHTML = chartHtml;
+                    } else {
+                        document.getElementById('user-growth-chart').innerHTML = '<p style="color: #9CA3AF;">Aucune donnée de croissance disponible</p>';
+                    }
 
-                    document.getElementById('user-growth-chart').innerHTML = chartHtml;
-
-                    // Statistiques régionales
-                    const regionalHtml = `
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Région</th>
-                                    <th>Familles</th>
-                                    <th>Revenus</th>
-                                    <th>Moyenne par famille</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.data.regionalStats.map(region => `
+                    // Statistiques régionales (avec protection null)
+                    if (data.data.regionalStats && Array.isArray(data.data.regionalStats) && data.data.regionalStats.length > 0) {
+                        const regionalHtml = `
+                            <table class="data-table">
+                                <thead>
                                     <tr>
-                                        <td style="font-weight: 500;">${region.region}</td>
-                                        <td>${region.families}</td>
-                                        <td style="font-weight: 600; color: #10B981;">${formatCurrency(region.revenue)}</td>
-                                        <td>${formatCurrency(Math.round(region.revenue / region.families))}</td>
+                                        <th>Région</th>
+                                        <th>Familles</th>
+                                        <th>Revenus</th>
+                                        <th>Moyenne par famille</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
-
-                    document.getElementById('regional-stats').innerHTML = regionalHtml;
+                                </thead>
+                                <tbody>
+                                    ${data.data.regionalStats.map(region => `
+                                        <tr>
+                                            <td style="font-weight: 500;">${region.region}</td>
+                                            <td>${region.families}</td>
+                                            <td style="font-weight: 600; color: #10B981;">${formatCurrency(region.revenue)}</td>
+                                            <td>${formatCurrency(Math.round(region.revenue / region.families))}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                        document.getElementById('regional-stats').innerHTML = regionalHtml;
+                    } else {
+                        document.getElementById('regional-stats').innerHTML = '<p style="color: #9CA3AF;">Aucune statistique régionale disponible</p>';
+                    }
                 }
             } catch (error) {
                 console.error('Erreur chargement analytics:', error);
@@ -6168,8 +6467,7 @@
         // Settings Data
         async function loadSettingsData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/settings`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/settings`);
 
                 if (data.success) {
                     const settings = data.data;
@@ -6284,8 +6582,7 @@
                     return;
                 }
                 
-                const response = await fetch(`${API_BASE}/api/admin/free-modules`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/free-modules`);
 
                 if (data.success) {
                     const freeModulesHtml = `
@@ -6331,8 +6628,7 @@
         async function loadTrialManagementData() {
             try {
                 // Load trial statistics
-                const statsResponse = await fetch(`${API_BASE}/api/admin/trial-stats`);
-                const statsData = await statsResponse.json();
+                const statsData = await authenticatedFetch(`${API_BASE}/api/admin/trial-stats`);
 
                 if (statsData.success) {
                     document.getElementById('total-extensions').textContent = statsData.data.totalExtensions;
@@ -6341,8 +6637,7 @@
                 }
 
                 // Load trial extensions history
-                const historyResponse = await fetch(`${API_BASE}/api/admin/trial-history`);
-                const historyData = await historyResponse.json();
+                const historyData = await authenticatedFetch(`${API_BASE}/api/admin/trial-history`);
 
                 if (historyData.success) {
                     const historyHtml = `
@@ -6397,18 +6692,13 @@
             try {
                 showTrialResult('⏳ Extension de l\'essai en cours...', 'info');
 
-                const response = await fetch(`${API_BASE}/api/admin/users/${familyId}/trial`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/users/${familyId}/trial`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         trialDays: parseInt(trialDays),
                         reason: reason
                     })
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     showTrialResult(
@@ -6473,15 +6763,10 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/free-modules/settings`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/free-modules/settings`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(settings)
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     // Show success message
@@ -6512,8 +6797,7 @@
         // Communication Data
         async function loadCommunicationData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/messages/history`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/messages/history`);
 
                 if (data.success) {
                     const historyHtml = `
@@ -6577,15 +6861,10 @@
             try {
                 showMessageResult('📤 Envoi du message en cours...', 'info');
 
-                const response = await fetch(`${API_BASE}/api/admin/messages/send`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/messages/send`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(messageData)
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     showMessageResult(`✅ Message envoyé avec succès à ${data.data.sentCount} familles !`, 'success');
@@ -6667,8 +6946,7 @@
         // Reports Data
         async function loadReportsData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/scheduled-reports`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/scheduled-reports`);
 
                 if (data.success) {
                     const reportsHtml = `
@@ -6723,15 +7001,10 @@
             try {
                 showReportResult('📊 Génération du rapport en cours...', 'info');
 
-                const response = await fetch(`${API_BASE}/api/admin/reports/generate`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/reports/generate`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(reportData)
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     showReportResult(`✅ Rapport généré avec succès ! <a href="${data.data.downloadUrl}" target="_blank" style="color: #10B981; text-decoration: underline;">📥 Télécharger</a>`, 'success');
@@ -6775,8 +7048,7 @@
         async function loadSystemMonitoringData() {
             try {
                 // Load system health
-                const healthResponse = await apiRequest(`${API_BASE}/api/admin/system/health`);
-                const healthData = await healthResponse.json();
+                const healthData = await authenticatedFetch(`${API_BASE}/api/admin/system/health`);
 
                 if (healthData.success) {
                     const health = healthData.data;
@@ -6803,8 +7075,7 @@
                 await loadPerformanceMetrics();
 
                 // Load system logs
-                const logsResponse = await fetch(`${API_BASE}/api/admin/system/logs`);
-                const logsData = await logsResponse.json();
+                const logsData = await authenticatedFetch(`${API_BASE}/api/admin/system/logs`);
 
                 if (logsData.success) {
                     const logsHtml = logsData.data.logs.map(log => {
@@ -6826,8 +7097,7 @@
                 }
 
                 // Load backup status
-                const backupResponse = await fetch(`${API_BASE}/api/admin/system/backups`);
-                const backupData = await backupResponse.json();
+                const backupData = await authenticatedFetch(`${API_BASE}/api/admin/system/backups`);
 
                 if (backupData.success) {
                     const backupsHtml = `
@@ -6878,11 +7148,9 @@
         // Trigger Backup
         async function triggerBackup() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/system/backup`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/system/backup`, {
                     method: 'POST'
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     alert('✅ Sauvegarde lancée avec succès !');
@@ -6931,8 +7199,7 @@
         // Security Status Functions
         async function loadSecurityStatus() {
             try {
-                const securityResponse = await apiRequest(`${API_BASE}/api/admin/system/security`);
-                const securityData = await securityResponse.json();
+                const securityData = await authenticatedFetch(`${API_BASE}/api/admin/system/security`);
 
                 if (securityData.success) {
                     const security = securityData.data;
@@ -6986,8 +7253,7 @@
         async function loadPerformanceMetrics() {
             try {
                 const timeRange = document.getElementById('metricsTimeRange')?.value || '24h';
-                const metricsResponse = await apiRequest(`${API_BASE}/api/admin/system/metrics?range=${timeRange}`);
-                const metricsData = await metricsResponse.json();
+                const metricsData = await authenticatedFetch(`${API_BASE}/api/admin/system/metrics?range=${timeRange}`);
 
                 if (metricsData.success) {
                     const metrics = metricsData.data;
@@ -7069,17 +7335,18 @@
                     return;
                 }
                 
-                const response = await fetch(`${API_BASE}/api/admin/roles`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/roles`);
 
-                if (data.success) {
-                    // Update role counts
-                    document.getElementById('admin-count').textContent = data.data.counts.admin;
-                    document.getElementById('teacher-count').textContent = data.data.counts.teacher;
-                    document.getElementById('moderator-count').textContent = data.data.counts.moderator;
-                    document.getElementById('validator-count').textContent = data.data.counts.validator;
+                if (data.success && data.data) {
+                    // Update role counts (avec protection null)
+                    const counts = data.data.counts || {};
+                    document.getElementById('admin-count').textContent = counts.admin || 0;
+                    document.getElementById('teacher-count').textContent = counts.teacher || 0;
+                    document.getElementById('moderator-count').textContent = counts.moderator || 0;
+                    document.getElementById('validator-count').textContent = counts.validator || 0;
 
-                    // Load roles table
+                    // Load roles table (avec protection null)
+                    const roles = data.data.roles || [];
                     const rolesHtml = `
                         <table class="data-table">
                             <thead>
@@ -7094,7 +7361,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${data.data.roles.map(role => `
+                                ${roles.map(role => `
                                     <tr>
                                         <td>
                                             <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -7110,10 +7377,10 @@
                                                 Niveau ${role.level}
                                             </span>
                                         </td>
-                                        <td style="font-weight: 600; color: #10B981;">${role.userCount}</td>
+                                        <td style="font-weight: 600; color: #10B981;">${role.userCount || 0}</td>
                                         <td>
                                             <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                                                ${role.keyPermissions.map(perm => `<span style="background: #F3F4F6; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.625rem;">${perm}</span>`).join('')}
+                                                ${(role.keyPermissions && Array.isArray(role.keyPermissions)) ? role.keyPermissions.map(perm => `<span style="background: #F3F4F6; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.625rem;">${perm}</span>`).join('') : '<span style="color: #9CA3AF; font-size: 0.75rem;">Aucune permission</span>'}
                                             </div>
                                         </td>
                                         <td style="font-size: 0.75rem; color: #6B7280;">${formatDate(role.createdAt)}</td>
@@ -7140,17 +7407,18 @@
         // Staff Management Data
         async function loadStaffManagementData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/staff`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/staff`);
 
-                if (data.success) {
-                    // Update staff counts
-                    document.getElementById('total-staff').textContent = data.data.stats.total;
-                    document.getElementById('active-staff-today').textContent = data.data.stats.activeToday;
-                    document.getElementById('staff-in-training').textContent = data.data.stats.inTraining;
-                    document.getElementById('staff-evaluations').textContent = data.data.stats.pendingEvaluations;
+                if (data.success && data.data) {
+                    // Update staff counts (avec protection null)
+                    const stats = data.data.stats || {};
+                    document.getElementById('total-staff').textContent = stats.total || 0;
+                    document.getElementById('active-staff-today').textContent = stats.activeToday || 0;
+                    document.getElementById('staff-in-training').textContent = stats.inTraining || 0;
+                    document.getElementById('staff-evaluations').textContent = stats.pendingEvaluations || 0;
 
-                    // Load staff directory
+                    // Load staff directory (avec protection null)
+                    const staff = data.data.staff || [];
                     const staffHtml = `
                         <table class="data-table">
                             <thead>
@@ -7166,16 +7434,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                ${data.data.staff.map(member => `
+                                ${staff.map(member => `
                                     <tr>
                                         <td>
                                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                                 <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #10B981, #3B82F6); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.875rem;">
-                                                    ${member.firstName.charAt(0)}${member.lastName.charAt(0)}
+                                                    ${(member.firstName || 'X').charAt(0)}${(member.lastName || 'X').charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <div style="font-weight: 500;">${member.firstName} ${member.lastName}</div>
-                                                    <div style="font-size: 0.75rem; color: #6B7280;">${member.email}</div>
+                                                    <div style="font-weight: 500;">${member.firstName || ''} ${member.lastName || ''}</div>
+                                                    <div style="font-size: 0.75rem; color: #6B7280;">${member.email || ''}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -7216,8 +7484,9 @@
 
                     document.getElementById('staff-directory-table').innerHTML = staffHtml;
 
-                    // Load performance chart
-                    const performanceHtml = data.data.performance.map(dept => `
+                    // Load performance chart (avec protection null)
+                    const performance = data.data.performance || [];
+                    const performanceHtml = performance.map(dept => `
                         <div style="background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 1rem;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                 <h4 style="margin: 0; font-size: 0.875rem; color: #374151;">${dept.department}</h4>
@@ -7283,15 +7552,10 @@
             try {
                 showRoleResult('💾 Sauvegarde du rôle en cours...', 'info');
 
-                const response = await fetch(`${API_BASE}/api/admin/roles`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/roles`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(roleData)
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     showRoleResult(`✅ Rôle "${roleData.name}" créé avec succès !`, 'success');
@@ -7340,15 +7604,10 @@
             try {
                 showStaffResult('👤 Ajout du membre en cours...', 'info');
 
-                const response = await fetch(`${API_BASE}/api/admin/staff`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/staff`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(staffData)
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     showStaffResult(`✅ ${staffData.firstName} ${staffData.lastName} ajouté(e) avec succès !`, 'success');
@@ -7473,33 +7732,40 @@
         }
         
         // Charger les données de liaisons
-        function loadFamilyLinksData(filters = {}) {
-            // Données simulées - À remplacer par un appel API réel
-            const mockData = [
-                {
-                    familyId: 'FAM-001234',
-                    familyName: 'Famille Nkoulou',
-                    students: [
-                        { name: 'Marie Nkoulou', level: 'Terminale A', status: 'linked' },
-                        { name: 'Jean Nkoulou', level: '3ème', status: 'linked' }
-                    ],
-                    status: 'active',
-                    lastActivity: 'Il y a 2 heures'
-                },
-                {
-                    familyId: 'FAM-002567',
-                    familyName: 'Famille Abena',
-                    students: [
-                        { name: 'Paul Abena', level: '1ère S', status: 'orphaned' }
-                    ],
-                    status: 'warning',
-                    lastActivity: 'Il y a 1 jour'
+        async function loadFamilyLinksData(filters = {}) {
+            try {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/users`);
+
+                if (data.success && data.data && data.data.users) {
+                    // Transformer les données users en format family links
+                    const familyLinksData = data.data.users
+                        .filter(user => user.role === 'PARENT' && user.family)
+                        .map(user => ({
+                            familyId: user.family.id,
+                            familyName: user.family.name || `Famille ${user.lastName}`,
+                            students: user.family.students || [],
+                            status: user.family.status === 'ACTIVE' ? 'active' : 'inactive',
+                            lastActivity: user.lastLoginAt
+                                ? formatRelativeTime(new Date(user.lastLoginAt))
+                                : 'Jamais connecté'
+                        }));
+
+                    // Dédupliquer les familles
+                    const uniqueFamilies = Array.from(
+                        new Map(familyLinksData.map(f => [f.familyId, f])).values()
+                    );
+
+                    updateFamilyLinksTable(uniqueFamilies);
+                    updateOrphanStudentsTable();
+                    updateFamilyLinksStats(uniqueFamilies);
+                } else {
+                    console.warn('⚠️ Aucune donnée de liaisons famille-étudiants');
+                    updateFamilyLinksTable([]);
                 }
-            ];
-            
-            updateFamilyLinksTable(mockData);
-            updateOrphanStudentsTable();
-            updateFamilyLinksStats();
+            } catch (error) {
+                console.error('❌ Erreur lors du chargement des liaisons:', error);
+                showError('Erreur lors du chargement des liaisons famille-étudiants');
+            }
         }
         
         // Mettre à jour le tableau des liaisons
@@ -7615,18 +7881,30 @@
         }
         
         // Mettre à jour les statistiques
-        function updateFamilyLinksStats() {
+        function updateFamilyLinksStats(familiesData = []) {
+            const totalFamilies = familiesData.length;
+            const totalStudents = familiesData.reduce((sum, family) => sum + (family.students?.length || 0), 0);
+            const linkedStudents = familiesData.reduce((sum, family) => {
+                return sum + (family.students?.filter(s => s.familyId).length || 0);
+            }, 0);
+            const orphanStudents = totalStudents - linkedStudents;
+
             const stats = {
-                totalFamilies: 248,
-                totalStudents: 832,
-                linkedStudents: 756,
-                orphanStudents: 76
+                totalFamilies,
+                totalStudents,
+                linkedStudents,
+                orphanStudents
             };
-            
-            document.getElementById('totalFamilies').textContent = stats.totalFamilies;
-            document.getElementById('totalStudents').textContent = stats.totalStudents;
-            document.getElementById('linkedStudents').textContent = stats.linkedStudents;
-            document.getElementById('orphanStudents').textContent = stats.orphanStudents;
+
+            const totalFamiliesEl = document.getElementById('totalFamilies');
+            const totalStudentsEl = document.getElementById('totalStudents');
+            const linkedStudentsEl = document.getElementById('linkedStudents');
+            const orphanStudentsEl = document.getElementById('orphanStudents');
+
+            if (totalFamiliesEl) totalFamiliesEl.textContent = stats.totalFamilies;
+            if (totalStudentsEl) totalStudentsEl.textContent = stats.totalStudents;
+            if (linkedStudentsEl) linkedStudentsEl.textContent = stats.linkedStudents;
+            if (orphanStudentsEl) orphanStudentsEl.textContent = stats.orphanStudents;
         }
         
         // Actions spécifiques
@@ -7738,252 +8016,197 @@
             console.log('🔵 showCreateAccountModal() appelée');
             const modal = document.getElementById('createAccountModal');
             if (modal) {
-                modal.style.display = 'block';
-                console.log('✅ Modal nouveau compte affiché');
+                modal.style.display = 'flex';
+                modal.classList.add('show');
+                console.log('✅ Modal nouveau compte affiché avec classe show');
             } else {
                 console.error('❌ Element createAccountModal non trouvé');
             }
-            const typeStep = document.querySelector('#accountTypeStep');
-            const formStep = document.querySelector('#accountFormStep');
-            const previewStep = document.querySelector('#accountPreviewStep');
-            
-            if (typeStep) typeStep.style.display = 'block';
-            if (formStep) formStep.style.display = 'none';
-            if (previewStep) previewStep.style.display = 'none';
+
+            // Réinitialiser le formulaire - masquer le formulaire, afficher le choix de type
+            const accountForm = document.getElementById('accountForm');
+            if (accountForm) {
+                accountForm.style.display = 'none';
+                console.log('✅ Formulaire masqué (doit sélectionner type d\'abord)');
+            }
+
+            // Décocher les types de compte
+            const typeIndividual = document.getElementById('typeIndividual');
+            const typeFamily = document.getElementById('typeFamily');
+            if (typeIndividual) typeIndividual.checked = false;
+            if (typeFamily) typeFamily.checked = false;
+
+            // Réinitialiser le type sélectionné
+            window.selectedAccountType = null;
+            console.log('✅ Type de compte réinitialisé');
         }
 
         function selectAccountType(type) {
-            const formStep = document.querySelector('#accountFormStep');
-            const formContainer = document.querySelector('#accountForm');
-            
-            document.querySelector('#accountTypeStep').style.display = 'none';
-            formStep.style.display = 'block';
+            console.log('🔵 selectAccountType() appelée avec type:', type);
 
-            let formHtml = '';
-            if (type === 'individual') {
-                formHtml = `
-                    <div class="form-group">
-                        <label for="firstName">Prénom *</label>
-                        <input type="text" id="firstName" name="firstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Nom *</label>
-                        <input type="text" id="lastName" name="lastName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Téléphone *</label>
-                        <input type="tel" id="phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="dateOfBirth">Date de naissance</label>
-                        <input type="date" id="dateOfBirth" name="dateOfBirth">
-                    </div>
-                    <div class="form-group">
-                        <label for="subscription">Type d'abonnement *</label>
-                        <select id="subscription" name="subscription" required>
-                            <option value="">Sélectionner...</option>
-                            <option value="basic">Basique (5000 FCFA/mois)</option>
-                            <option value="premium">Premium (8000 FCFA/mois)</option>
-                            <option value="trial">Essai gratuit (7 jours)</option>
-                        </select>
-                    </div>
-                    <input type="hidden" name="accountType" value="individual">
-                `;
-            } else {
-                formHtml = `
-                    <div class="form-group">
-                        <label for="familyName">Nom de famille *</label>
-                        <input type="text" id="familyName" name="familyName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="parentFirstName">Prénom du parent *</label>
-                        <input type="text" id="parentFirstName" name="parentFirstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="parentLastName">Nom du parent *</label>
-                        <input type="text" id="parentLastName" name="parentLastName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Téléphone *</label>
-                        <input type="tel" id="phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="numChildren">Nombre d'enfants *</label>
-                        <input type="number" id="numChildren" name="numChildren" min="1" max="10" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="subscription">Type d'abonnement *</label>
-                        <select id="subscription" name="subscription" required>
-                            <option value="">Sélectionner...</option>
-                            <option value="family-basic">Famille Basique (12000 FCFA/mois)</option>
-                            <option value="family-premium">Famille Premium (18000 FCFA/mois)</option>
-                            <option value="trial">Essai gratuit (14 jours)</option>
-                        </select>
-                    </div>
-                    <input type="hidden" name="accountType" value="family">
-                `;
+            // Afficher le formulaire
+            const accountForm = document.getElementById('accountForm');
+            if (accountForm) {
+                accountForm.style.display = 'block';
+                console.log('✅ Formulaire affiché');
             }
-            
-            formContainer.innerHTML = formHtml;
+
+            // Afficher/masquer la section famille selon le type
+            const familySection = document.getElementById('familySection');
+            if (familySection) {
+                if (type === 'family') {
+                    familySection.style.display = 'block';
+                    console.log('✅ Section famille affichée');
+                } else {
+                    familySection.style.display = 'none';
+                    console.log('✅ Section famille masquée');
+                }
+            }
+
+            // Stocker le type de compte sélectionné
+            window.selectedAccountType = type;
+        }
+
+        function collectFormData() {
+            const accountType = window.selectedAccountType || 'individual';
+
+            // Collecter les données communes
+            const formData = {
+                accountType: accountType,
+                firstName: document.getElementById('firstName')?.value || '',
+                lastName: document.getElementById('lastName')?.value || '',
+                email: document.getElementById('email')?.value || '',
+                phone: document.getElementById('phone')?.value || '',
+                subscriptionType: document.getElementById('subscriptionType')?.value || 'trial',
+                trialDuration: parseInt(document.getElementById('trialDuration')?.value) || 7,
+                initialStatus: document.getElementById('initialStatus')?.value || 'trial',
+                sendWelcomeEmail: document.getElementById('sendWelcomeEmail')?.checked || false,
+                sendWelcomeSMS: document.getElementById('sendWelcomeSMS')?.checked || false,
+                adminNotes: document.getElementById('adminNotes')?.value || ''
+            };
+
+            // Données spécifiques aux comptes familiaux
+            if (accountType === 'family') {
+                formData.familyName = document.getElementById('familyName')?.value || '';
+                formData.numChildren = parseInt(document.getElementById('childrenCount')?.value) || 1;
+                formData.region = document.getElementById('region')?.value || '';
+            }
+
+            return formData;
         }
 
         function validateAccountForm() {
-            const form = document.querySelector('#accountForm');
-            const formData = new FormData(form);
             const errors = [];
+            const accountType = window.selectedAccountType;
+
+            if (!accountType) {
+                alert('❌ Veuillez sélectionner un type de compte');
+                return false;
+            }
 
             // Validation des champs obligatoires
-            const requiredFields = form.querySelectorAll('[required]');
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    errors.push(`Le champ "${field.previousElementSibling.textContent.replace(' *', '')}" est obligatoire`);
-                }
-            });
+            const firstName = document.getElementById('firstName')?.value;
+            const lastName = document.getElementById('lastName')?.value;
+            const email = document.getElementById('email')?.value;
+            const phone = document.getElementById('phone')?.value;
+
+            if (!firstName || !firstName.trim()) errors.push('Le prénom est obligatoire');
+            if (!lastName || !lastName.trim()) errors.push('Le nom est obligatoire');
+            if (!email || !email.trim()) errors.push('L\'email est obligatoire');
+            if (!phone || !phone.trim()) errors.push('Le téléphone est obligatoire');
 
             // Validation email
-            const email = formData.get('email');
             if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
                 errors.push('Format email invalide');
             }
 
             // Validation téléphone
-            const phone = formData.get('phone');
             if (phone && !phone.match(/^[+]?[0-9\s-()]{8,}$/)) {
-                errors.push('Format téléphone invalide');
+                errors.push('Format téléphone invalide (ex: +237670000000)');
+            }
+
+            // Validations spécifiques aux comptes familiaux
+            if (accountType === 'family') {
+                const familyName = document.getElementById('familyName')?.value;
+                if (!familyName || !familyName.trim()) {
+                    errors.push('Le nom de famille est obligatoire');
+                }
             }
 
             if (errors.length > 0) {
-                alert('Erreurs de validation:\n' + errors.join('\n'));
+                alert('❌ Erreurs de validation:\n\n' + errors.join('\n'));
                 return false;
             }
 
-            showAccountPreview(formData);
             return true;
         }
 
-        function showAccountPreview(formData) {
-            const accountType = formData.get('accountType');
-            const subscription = formData.get('subscription');
-            
-            // Génération de l'ID abonné
-            const timestamp = Date.now();
-            const randomNum = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
-            const subscriberId = accountType === 'family' ? `FAM-${randomNum}` : `IND-${randomNum}`;
-            
-            let previewHtml = `
-                <div class="form-group">
-                    <label>ID Abonné:</label>
-                    <div style="font-weight: bold; color: ${accountType === 'family' ? '#10B981' : '#3B82F6'};">
-                        ${subscriberId}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Type de compte:</label>
-                    <div>${accountType === 'family' ? 'Compte Familial' : 'Compte Individuel'}</div>
-                </div>
-            `;
+        // Fonction appelée par le bouton Aperçu - fait juste une validation
+        function previewAccount() {
+            if (validateAccountForm()) {
+                const formData = collectFormData();
+                const accountType = formData.accountType;
 
-            if (accountType === 'individual') {
-                previewHtml += `
-                    <div class="form-group">
-                        <label>Nom complet:</label>
-                        <div>${formData.get('firstName')} ${formData.get('lastName')}</div>
-                    </div>
-                `;
-            } else {
-                previewHtml += `
-                    <div class="form-group">
-                        <label>Famille:</label>
-                        <div>${formData.get('familyName')}</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Parent:</label>
-                        <div>${formData.get('parentFirstName')} ${formData.get('parentLastName')}</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Nombre d'enfants:</label>
-                        <div>${formData.get('numChildren')}</div>
-                    </div>
-                `;
+                let message = '📋 Aperçu du compte:\n\n';
+                message += `Type: ${accountType === 'family' ? 'Familial' : 'Individuel'}\n`;
+                message += `Nom: ${formData.firstName} ${formData.lastName}\n`;
+                message += `Email: ${formData.email}\n`;
+                message += `Téléphone: ${formData.phone}\n`;
+
+                if (accountType === 'family') {
+                    message += `Famille: ${formData.familyName}\n`;
+                    message += `Enfants: ${formData.numChildren}\n`;
+                }
+
+                message += `\nAbonnement: ${formData.subscriptionType}\n`;
+                message += `Durée essai: ${formData.trialDuration} jours\n`;
+
+                alert(message + '\n✅ Validation réussie! Cliquez sur "Créer le compte" pour finaliser.');
+                return true;
             }
-
-            previewHtml += `
-                <div class="form-group">
-                    <label>Email:</label>
-                    <div>${formData.get('email')}</div>
-                </div>
-                <div class="form-group">
-                    <label>Téléphone:</label>
-                    <div>${formData.get('phone')}</div>
-                </div>
-                <div class="form-group">
-                    <label>Abonnement:</label>
-                    <div>${getSubscriptionLabel(subscription)}</div>
-                </div>
-            `;
-
-            document.querySelector('#accountPreview').innerHTML = previewHtml;
-            document.querySelector('#accountFormStep').style.display = 'none';
-            document.querySelector('#accountPreviewStep').style.display = 'block';
-
-            // Stocker les données pour la création
-            window.accountCreationData = {
-                subscriberId,
-                accountType,
-                formData: Object.fromEntries(formData)
-            };
-        }
-
-        function goBackToForm() {
-            document.querySelector('#accountPreviewStep').style.display = 'none';
-            document.querySelector('#accountFormStep').style.display = 'block';
+            return false;
         }
 
         async function createAccount() {
             try {
-                const accountData = window.accountCreationData;
-                
-                const response = await fetch(`${API_BASE}/api/admin/accounts/create`, {
+                // Valider le formulaire avant création
+                if (!validateAccountForm()) {
+                    return;
+                }
+
+                // Collecter les données
+                const formData = collectFormData();
+
+                console.log('🔵 Création de compte avec données:', formData);
+
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/accounts/create`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-                    },
-                    body: JSON.stringify(accountData)
+                    body: JSON.stringify(formData)
                 });
 
-                const result = await response.json();
-
                 if (result.success) {
-                    alert(`Compte créé avec succès!\nID Abonné: ${accountData.subscriberId}`);
+                    console.log('✅ Compte créé avec succès:', result);
+                    alert(`✅ Compte créé avec succès!\n\nEmail: ${formData.email}\nMot de passe temporaire: ${result.data.tempPassword}\n\n⚠️ Notez bien ces identifiants!`);
                     closeModal('createAccountModal');
-                    
+
                     // Recharger la liste des abonnés
-                    if (document.querySelector('#subscribers-section').classList.contains('active')) {
+                    if (document.querySelector('#subscribers-section')?.classList.contains('active')) {
                         loadSubscribersData();
                     }
                 } else {
-                    alert('Erreur lors de la création du compte: ' + result.message);
+                    console.error('❌ Erreur création compte:', result);
+                    alert('❌ Erreur lors de la création du compte:\n' + (result.message || 'Erreur inconnue'));
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur technique lors de la création du compte');
+                console.error('❌ Erreur technique:', error);
+                alert('❌ Erreur technique lors de la création du compte:\n' + error.message);
             }
         }
 
         // Fonctions pour la gestion des plans tarifaires
         async function loadPricingPlansData() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/pricing-plans`);
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/pricing-plans`);
 
                 if (data.success) {
                     displayPricingPlans(data.data.plans);
@@ -7999,38 +8222,60 @@
 
         function displayPricingPlans(plans) {
             const plansGrid = document.getElementById('pricing-plans-grid');
-            
+
             if (!plans || plans.length === 0) {
                 plansGrid.innerHTML = '<p style="text-align: center; color: #6B7280;">Aucun plan tarifaire configuré</p>';
                 return;
             }
 
             const plansHtml = plans.map(plan => {
-                const featuresHtml = plan.features.map(feature => `<li>${feature}</li>`).join('');
-                const priceDisplay = plan.duration === 'trial' ? 'Gratuit' : `${plan.price.toLocaleString()} FCFA`;
+                const featuresHtml = plan.features && plan.features.length > 0 ?
+                    plan.features.map(feature => `<li>${feature}</li>`).join('') :
+                    '<li style="color: #9CA3AF;">Aucune fonctionnalité</li>';
+
+                // Utiliser plan.interval au lieu de plan.duration
+                const priceDisplay = plan.interval === 'trial' ? 'Gratuit' : `${plan.price.toLocaleString()} ${plan.currency || 'FCFA'}`;
+
+                // Affichage avec originalPrice si disponible
+                let priceHtml = priceDisplay;
+                if (plan.originalPrice && plan.originalPrice > plan.price) {
+                    priceHtml = `
+                        <div style="text-decoration: line-through; color: #9CA3AF; font-size: 0.9rem;">${plan.originalPrice.toLocaleString()} ${plan.currency || 'FCFA'}</div>
+                        <div style="color: #10B981; font-weight: bold;">${priceDisplay}</div>
+                    `;
+                }
+
+                // Utiliser plan.intervalCount au lieu de plan.trialDays
                 const durationLabel = {
                     monthly: '/mois',
                     quarterly: '/trimestre',
                     annual: '/an',
-                    trial: `(${plan.trialDays} jours)`
-                }[plan.duration];
+                    trial: plan.intervalCount ? `(${plan.intervalCount} jours)` : '(essai)'
+                }[plan.interval] || '/mois';
 
                 return `
-                    <div class="plan-card ${plan.featured ? 'featured' : ''}">
-                        <div class="plan-status ${plan.status}">${getStatusLabel(plan.status)}</div>
+                    <div class="plan-card ${plan.featured ? 'featured' : ''}" style="border: 2px solid ${plan.featured ? '#F59E0B' : '#374151'};">
+                        <div class="plan-status ${plan.status}" style="background: ${plan.status === 'active' ? '#10B981' : '#6B7280'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; display: inline-block; margin-bottom: 0.5rem;">
+                            ${getStatusLabel(plan.status)}
+                        </div>
+                        ${plan.featured ? '<div style="color: #F59E0B; font-size: 0.85rem; margin-bottom: 0.5rem;">⭐ Plan recommandé</div>' : ''}
                         <div class="plan-header">
-                            <div class="plan-name">${plan.name}</div>
-                            <div class="plan-type ${plan.type}">${plan.type === 'family' ? 'Familial' : 'Individuel'}</div>
-                            <div class="plan-price">${priceDisplay}</div>
-                            <div class="plan-duration">${durationLabel}</div>
+                            <div class="plan-name" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">${plan.name}</div>
+                            ${plan.description ? `<div style="color: #9CA3AF; font-size: 0.9rem; margin-bottom: 0.75rem;">${plan.description}</div>` : ''}
+                            <div class="plan-price" style="font-size: 1.75rem; font-weight: bold; color: #3B82F6; margin: 0.5rem 0;">${priceHtml}</div>
+                            <div class="plan-duration" style="color: #9CA3AF; font-size: 0.9rem;">${durationLabel}</div>
+                            ${plan.discount ? `<div style="background: #10B981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-top: 0.5rem; display: inline-block;">💰 Économisez ${plan.discount.toLocaleString()} ${plan.currency || 'FCFA'}</div>` : ''}
                         </div>
-                        <div class="plan-features">
-                            <ul>${featuresHtml}</ul>
+                        <div class="plan-features" style="margin: 1rem 0;">
+                            <ul style="list-style: none; padding: 0;">${featuresHtml}</ul>
                         </div>
-                        <div class="plan-actions">
-                            <button class="btn btn-sm btn-secondary" onclick="editPlan('${plan.id}')">✏️ Modifier</button>
-                            <button class="btn btn-sm ${plan.status === 'active' ? 'btn-warning' : 'btn-success'}" 
-                                    onclick="togglePlanStatus('${plan.id}', '${plan.status}')">
+                        <div style="color: #6B7280; font-size: 0.85rem; margin: 0.5rem 0;">
+                            👥 ${plan.subscriptions || 0} abonné(s)
+                        </div>
+                        <div class="plan-actions" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn btn-sm btn-secondary" onclick="editPlan('${plan.id}')" style="flex: 1;">✏️ Modifier</button>
+                            <button class="btn btn-sm ${plan.status === 'active' ? 'btn-warning' : 'btn-success'}"
+                                    onclick="togglePlanStatus('${plan.id}', '${plan.status}')" style="flex: 1;">
                                 ${plan.status === 'active' ? '⏸️ Désactiver' : '▶️ Activer'}
                             </button>
                         </div>
@@ -8170,15 +8415,10 @@
             };
             
             try {
-                const response = await fetch(`${API_BASE}/api/admin/pricing-plans/create`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/pricing-plans/create`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(planData)
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     alert('Plan créé avec succès!');
@@ -8197,15 +8437,10 @@
             const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
             
             try {
-                const response = await fetch(`${API_BASE}/api/admin/pricing-plans/${planId}/status`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/pricing-plans/${planId}/status`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({ status: newStatus })
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     loadPricingPlansData();
@@ -8218,9 +8453,124 @@
             }
         }
 
-        function editPlan(planId) {
-            // Pour l'instant, afficher un message
-            alert(`Édition du plan ${planId} - Fonctionnalité à développer`);
+        async function editPlan(planId) {
+            try {
+                // Charger les données du plan
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/pricing-plans`);
+
+                if (!data.success) {
+                    alert('Erreur lors du chargement des plans');
+                    return;
+                }
+
+                // Trouver le plan à éditer
+                const plan = data.data.plans.find(p => p.id === planId);
+                if (!plan) {
+                    alert('Plan non trouvé');
+                    return;
+                }
+
+                // Remplir le formulaire
+                document.getElementById('editPlanId').value = plan.id;
+                document.getElementById('editPlanName').value = plan.name || '';
+                document.getElementById('editPlanDescription').value = plan.description || '';
+                document.getElementById('editPlanPrice').value = plan.price || 0;
+                document.getElementById('editPlanOriginalPrice').value = plan.originalPrice || '';
+                document.getElementById('editPlanDiscount').value = plan.discount || '';
+                document.getElementById('editPlanCurrency').value = plan.currency || 'FCFA';
+                document.getElementById('editPlanInterval').value = plan.interval || 'monthly';
+                document.getElementById('editPlanIntervalCount').value = plan.intervalCount || 1;
+                document.getElementById('editPlanStatus').value = plan.status || 'active';
+                document.getElementById('editPlanFeatured').checked = plan.featured || false;
+                document.getElementById('editPlanSubscriptions').value = plan.subscriptions || 0;
+
+                // Convertir le tableau features en texte (une ligne par feature)
+                if (plan.features && Array.isArray(plan.features)) {
+                    document.getElementById('editPlanFeatures').value = plan.features.join('\n');
+                } else {
+                    document.getElementById('editPlanFeatures').value = '';
+                }
+
+                // Afficher le modal
+                document.getElementById('editPlanModal').style.display = 'block';
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur technique lors du chargement du plan');
+            }
+        }
+
+        async function updatePlan() {
+            const form = document.getElementById('editPlanForm');
+            const planId = document.getElementById('editPlanId').value;
+
+            if (!planId) {
+                alert('ID de plan manquant');
+                return;
+            }
+
+            // Collecter les fonctionnalités (une par ligne)
+            const featuresText = document.getElementById('editPlanFeatures').value;
+            const features = featuresText.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            if (features.length === 0) {
+                alert('Veuillez ajouter au moins une fonctionnalité');
+                return;
+            }
+
+            // Préparer les données
+            const planData = {
+                name: document.getElementById('editPlanName').value,
+                description: document.getElementById('editPlanDescription').value,
+                price: parseInt(document.getElementById('editPlanPrice').value) || 0,
+                originalPrice: document.getElementById('editPlanOriginalPrice').value ?
+                    parseInt(document.getElementById('editPlanOriginalPrice').value) : null,
+                discount: document.getElementById('editPlanDiscount').value ?
+                    parseInt(document.getElementById('editPlanDiscount').value) : null,
+                currency: document.getElementById('editPlanCurrency').value,
+                interval: document.getElementById('editPlanInterval').value,
+                intervalCount: parseInt(document.getElementById('editPlanIntervalCount').value) || 1,
+                features: features,
+                status: document.getElementById('editPlanStatus').value,
+                featured: document.getElementById('editPlanFeatured').checked
+            };
+
+            try {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/pricing-plans/${planId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(planData)
+                });
+
+                if (result.success) {
+                    alert('Plan mis à jour avec succès!');
+                    closeModal('editPlanModal');
+                    loadPricingPlansData();
+                } else {
+                    alert('Erreur lors de la mise à jour: ' + (result.message || 'Erreur inconnue'));
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur technique lors de la mise à jour du plan');
+            }
+        }
+
+        function updateEditIntervalCount() {
+            const interval = document.getElementById('editPlanInterval').value;
+            const intervalCountInput = document.getElementById('editPlanIntervalCount');
+
+            // Suggestions par défaut selon le type de période
+            const defaults = {
+                'trial': 7,
+                'monthly': 1,
+                'quarterly': 3,
+                'annual': 12
+            };
+
+            if (defaults[interval] && !intervalCountInput.value) {
+                intervalCountInput.value = defaults[interval];
+            }
         }
 
         // Fonctions de test des API
@@ -8304,9 +8654,8 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/api/admin/test/sms`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/test/sms`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         apiKey: apiKey,
                         apiUrl: apiUrl,
@@ -8314,8 +8663,6 @@
                         testNumber: '+237690000000'
                     })
                 });
-                
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Test SMS envoyé avec succès!');
                 } else {
@@ -8338,9 +8685,8 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/api/admin/test/email`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/test/email`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         host: smtpHost,
                         port: smtpPort,
@@ -8349,8 +8695,6 @@
                         testEmail: smtpUser
                     })
                 });
-                
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Email de test envoyé avec succès!');
                 } else {
@@ -8369,6 +8713,67 @@
 
         function showSuccess(message) {
             alert(`✅ ${message}`);
+        }
+
+        /**
+         * Afficher une notification toast stylisée
+         * @param {string} message - Le message à afficher
+         * @param {string} type - Type de notification: 'success', 'error', 'warning', 'info'
+         */
+        function showNotification(message, type = 'info') {
+            // Créer l'élément de notification
+            const notification = document.createElement('div');
+            notification.className = `notification-toast notification-${type}`;
+
+            // Icônes selon le type
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            // Couleurs selon le type
+            const colors = {
+                success: '#10B981',
+                error: '#EF4444',
+                warning: '#F59E0B',
+                info: '#3B82F6'
+            };
+
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">${icons[type] || icons.info}</span>
+                    <span style="flex: 1; font-weight: 500;">${message}</span>
+                </div>
+            `;
+
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                color: #1F2937;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                border-left: 4px solid ${colors[type] || colors.info};
+                z-index: 10000;
+                min-width: 300px;
+                max-width: 500px;
+                animation: slideInRight 0.3s ease-out;
+            `;
+
+            // Ajouter au DOM
+            document.body.appendChild(notification);
+
+            // Retirer après 4 secondes
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 4000);
         }
 
         // Get authentication token
@@ -8425,19 +8830,13 @@
                     return;
                 }
 
-                const response = await fetch(`${API_BASE}/api/admin/profile/change-password`, {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/profile/change-password`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
                     body: JSON.stringify({
                         currentPassword: currentPassword,
                         newPassword: newPassword
                     })
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     showSuccess('Mot de passe modifié avec succès !');
@@ -8490,13 +8889,10 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/settings`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/settings`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(settings)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Paramètres sauvegardés avec succès!');
                 } else {
@@ -8513,8 +8909,7 @@
             const filterType = document.querySelector('#subscriberFilter').value;
             
             try {
-                const response = await fetch(`${API_BASE}/api/admin/subscribers/search?q=${encodeURIComponent(searchQuery)}&type=${filterType}`);
-                const result = await response.json();
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/subscribers/search?q=${encodeURIComponent(searchQuery)}&type=${filterType}`);
                 
                 if (result.success) {
                     displaySubscribers(result.data);
@@ -8579,8 +8974,7 @@
         async function exportSubscribersCSV() {
             console.log('🔵 exportSubscribersCSV() appelée');
             try {
-                const response = await fetch(`${API_BASE}/api/admin/subscribers/export`);
-                const blob = await response.blob();
+                const blob = await authenticatedFetch(`${API_BASE}/api/admin/subscribers/export`);
                 
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
@@ -8606,11 +9000,9 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/subscribers/${subscriberId}/suspend`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/subscribers/${subscriberId}/suspend`, {
                     method: 'PUT'
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Abonné suspendu avec succès');
                     searchSubscribers(); // Recharger la liste
@@ -8645,8 +9037,7 @@
 
         async function loadContentTabData(tabName) {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/content/${tabName}`);
-                const result = await response.json();
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/content/${tabName}`);
                 
                 if (result.success) {
                     displayContentData(tabName, result.data);
@@ -9032,15 +9423,10 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/courses`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/courses`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(courseData)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('Cours créé avec succès !');
                     closeModalDynamic(event.target);
@@ -9089,15 +9475,10 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/quizzes`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/quizzes`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(quizData)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('Quiz créé avec succès !');
                     closeModalDynamic(event.target);
@@ -9128,15 +9509,10 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/resources`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/resources`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(resourceData)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('Ressource ajoutée avec succès !');
                     closeModalDynamic(event.target);
@@ -9164,11 +9540,9 @@
 
         async function toggleCourseStatus(courseId) {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/content/courses/${courseId}/toggle`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/content/courses/${courseId}/toggle`, {
                     method: 'PUT'
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     showContentTab('courses'); // Recharger
                 } else {
@@ -9181,11 +9555,9 @@
 
         async function toggleQuizStatus(quizId) {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/content/quizzes/${quizId}/toggle`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/content/quizzes/${quizId}/toggle`, {
                     method: 'PUT'
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     showContentTab('quizzes'); // Recharger
                 } else {
@@ -9212,13 +9584,10 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/messages/send`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/messages/send`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(messageData)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Message envoyé avec succès!');
                     // Réinitialiser le formulaire
@@ -9239,14 +9608,13 @@
             const reportPeriod = document.getElementById('reportPeriod').value;
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/reports/generate`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/reports/generate`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: reportType, period: reportPeriod })
                 });
 
-                if (response.headers.get('content-type').includes('application/pdf')) {
-                    const blob = await response.blob();
+                if (result.headers && result.headers.get('content-type').includes('application/pdf')) {
+                    const blob = result;
                     const url = window.URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
@@ -9277,13 +9645,10 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/subscribers/${subscriberId}/extend-trial`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/subscribers/${subscriberId}/extend-trial`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ days: parseInt(extensionDays) })
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Essai étendu avec succès!');
                 } else {
@@ -10178,16 +10543,9 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             if (!template) return;
 
             try {
-                const token = getAuthToken();
-                const response = await fetch(`${API_BASE}/api/admin/email-templates/${templateId}/duplicate`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-templates/${templateId}/duplicate`, {
+                    method: 'POST'
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     showEmailTemplateSuccess('Template dupliqué avec succès!');
@@ -10210,16 +10568,9 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const token = getAuthToken();
-                const response = await fetch(`${API_BASE}/api/admin/email-templates/${templateId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-templates/${templateId}`, {
+                    method: 'DELETE'
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     showEmailTemplateSuccess('Template supprimé avec succès!');
@@ -10387,187 +10738,145 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         }
 
         // Charger les statistiques d'automatisation
-        function loadEmailAutomationStats() {
-            const stats = {
-                totalTriggers: emailTriggers.length,
-                activeTriggers: emailTriggers.filter(t => t.active).length,
-                pendingEmails: emailQueue.filter(e => e.status === 'pending').length,
-                sentToday: emailQueue.filter(e =>
-                    e.status === 'sent' &&
-                    e.sentAt &&
-                    new Date(e.sentAt).toDateString() === new Date().toDateString()
-                ).length
-            };
+        async function loadEmailAutomationStats() {
+            try {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/email-templates`);
 
-            // Mettre à jour l'interface avec tous les IDs possibles
-            const totalTriggersElements = ['total-triggers', 'activeAutomations'];
-            const activeTriggersElements = ['active-triggers'];
-            const pendingEmailsElements = ['pending-emails', 'emailsInQueue'];
-            const sentTodayElements = ['sent-today', 'emailsSentToday'];
+                if (data.success && data.data) {
+                    const templates = data.data.templates || [];
 
-            totalTriggersElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = stats.totalTriggers;
-            });
+                    const stats = {
+                        totalTriggers: templates.length,
+                        activeTriggers: templates.filter(t => t.isActive).length,
+                        pendingEmails: 0, // À implémenter avec endpoint email-queue
+                        sentToday: 0 // À implémenter avec endpoint email-analytics
+                    };
 
-            activeTriggersElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = stats.activeTriggers;
-            });
+                    // Mettre à jour l'interface avec tous les IDs possibles
+                    const totalTriggersElements = ['total-triggers', 'activeAutomations'];
+                    const activeTriggersElements = ['active-triggers'];
+                    const pendingEmailsElements = ['pending-emails', 'emailsInQueue'];
+                    const sentTodayElements = ['sent-today', 'emailsSentToday'];
 
-            pendingEmailsElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = stats.pendingEmails;
-            });
+                    totalTriggersElements.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = stats.totalTriggers;
+                    });
 
-            sentTodayElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.textContent = stats.sentToday;
-            });
+                    activeTriggersElements.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = stats.activeTriggers;
+                    });
+
+                    pendingEmailsElements.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = stats.pendingEmails;
+                    });
+
+                    sentTodayElements.forEach(id => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = stats.sentToday;
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Erreur chargement stats email automation:', error);
+            }
         }
 
         // Charger et afficher les triggers
-        function loadEmailTriggers() {
+        async function loadEmailTriggers() {
             const triggersGrid = document.getElementById('triggers-grid') || document.getElementById('triggersGrid');
 
-            const triggersHtml = emailTriggers.map(trigger => `
-                <div class="glass-card automation-trigger-card">
-                    <div class="automation-trigger-header">
-                        <h4>${trigger.name}</h4>
-                        <div class="trigger-toggle">
-                            <label class="switch">
-                                <input type="checkbox" ${trigger.active ? 'checked' : ''}
-                                       onchange="toggleTrigger('${trigger.id}')">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
+            try {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/email-templates`);
 
-                    <p class="trigger-description">${trigger.description}</p>
+                if (data.success && data.data && data.data.templates) {
+                    const templates = data.data.templates;
 
-                    <div class="trigger-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Événement:</span>
-                            <span class="detail-value">${getEventLabel(trigger.event)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Délai:</span>
-                            <span class="detail-value">${formatDelay(trigger.delay)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Template:</span>
-                            <span class="detail-value">${trigger.template}</span>
-                        </div>
-                    </div>
+                    const triggersHtml = templates.map(template => `
+                        <div class="glass-card automation-trigger-card">
+                            <div class="automation-trigger-header">
+                                <h4>${template.name || template.templateKey}</h4>
+                                <div class="trigger-toggle">
+                                    <label class="switch">
+                                        <input type="checkbox" ${template.isActive ? 'checked' : ''}
+                                               onchange="toggleTrigger('${template.id}')">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
 
-                    <div class="trigger-stats">
-                        <div class="stat-item">
-                            <span class="stat-value">${trigger.stats.sent}</span>
-                            <span class="stat-label">Envoyés</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">${trigger.stats.opened}</span>
-                            <span class="stat-label">Ouverts</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value">${trigger.stats.clicked}</span>
-                            <span class="stat-label">Cliqués</span>
-                        </div>
-                    </div>
+                            <p class="trigger-description">${template.description || 'Template email automatisé'}</p>
 
-                    <div class="trigger-actions">
-                        <button class="btn glass-btn btn-sm" onclick="editTrigger('${trigger.id}')">
-                            ✏️ Modifier
-                        </button>
-                        <button class="btn glass-btn btn-sm" onclick="testTrigger('${trigger.id}')">
-                            🧪 Tester
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                            <div class="trigger-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Catégorie:</span>
+                                    <span class="detail-value">${template.category || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Clé:</span>
+                                    <span class="detail-value">${template.templateKey || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Sujet:</span>
+                                    <span class="detail-value">${template.subject || 'N/A'}</span>
+                                </div>
+                            </div>
 
-            triggersGrid.innerHTML = triggersHtml;
+                            <div class="trigger-stats">
+                                <div class="stat-item">
+                                    <span class="stat-value">-</span>
+                                    <span class="stat-label">Envoyés</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">-</span>
+                                    <span class="stat-label">Ouverts</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">-</span>
+                                    <span class="stat-label">Cliqués</span>
+                                </div>
+                            </div>
+
+                            <div class="trigger-actions">
+                                <button class="btn glass-btn btn-sm" onclick="editTrigger('${template.id}')">
+                                    ✏️ Modifier
+                                </button>
+                                <button class="btn glass-btn btn-sm" onclick="testTrigger('${template.id}')">
+                                    🧪 Tester
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    triggersGrid.innerHTML = triggersHtml || '<p class="text-center">Aucun template d\'email configuré</p>';
+                } else {
+                    triggersGrid.innerHTML = '<p class="text-center">Aucun template d\'email disponible</p>';
+                }
+            } catch (error) {
+                console.error('❌ Erreur chargement triggers email:', error);
+                triggersGrid.innerHTML = '<p class="text-center text-danger">Erreur de chargement</p>';
+            }
         }
 
         // Charger et afficher la queue d'emails
         function loadEmailQueue() {
             const queueTable = document.getElementById('email-queue-table') || document.getElementById('emailQueueTable');
 
-            if (emailQueue.length === 0) {
-                queueTable.innerHTML = '<p class="text-center">Aucun email en attente</p>';
-                return;
-            }
-
-            const queueHtml = `
-                <table class="glass-table">
-                    <thead>
-                        <tr>
-                            <th>Destinataire</th>
-                            <th>Trigger</th>
-                            <th>Planifié pour</th>
-                            <th>Statut</th>
-                            <th>Tentatives</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${emailQueue.map(email => `
-                            <tr>
-                                <td>
-                                    <div class="user-info">
-                                        <div class="user-name">${email.userName}</div>
-                                        <div class="user-email">${email.userEmail}</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="glass-badge glass-badge-info">
-                                        ${getTriggerName(email.triggerId)}
-                                    </span>
-                                </td>
-                                <td>${formatScheduledTime(email.scheduledFor)}</td>
-                                <td>
-                                    <span class="glass-badge glass-badge-${getStatusColor(email.status)}">
-                                        ${getStatusLabel(email.status)}
-                                    </span>
-                                </td>
-                                <td>${email.attempts}</td>
-                                <td>
-                                    ${email.status === 'pending' ? `
-                                        <button class="btn glass-btn btn-sm" onclick="sendEmailNow('${email.id}')">
-                                            📧 Envoyer
-                                        </button>
-                                        <button class="btn glass-btn glass-btn-warning btn-sm" onclick="cancelEmail('${email.id}')">
-                                            ❌ Annuler
-                                        </button>
-                                    ` : `
-                                        <button class="btn glass-btn btn-sm" onclick="viewEmailDetails('${email.id}')">
-                                            👁️ Détails
-                                        </button>
-                                    `}
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-
-            queueTable.innerHTML = queueHtml;
+            // Note: L'endpoint /api/admin/email-queue n'est pas encore implémenté
+            queueTable.innerHTML = '<p class="text-center" style="padding: 2rem; color: #6B7280;">📧 Queue d\'emails : Fonctionnalité en développement<br><small>Endpoint backend à implémenter</small></p>';
         }
 
         // Charger les analytics d'automatisation
         function loadEmailAnalytics() {
-            // Calculer les données d'analytics
-            const totalSent = emailTriggers.reduce((sum, trigger) => sum + trigger.stats.sent, 0);
-            const totalOpened = emailTriggers.reduce((sum, trigger) => sum + trigger.stats.opened, 0);
-            const totalClicked = emailTriggers.reduce((sum, trigger) => sum + trigger.stats.clicked, 0);
+            // Note: L'endpoint /api/admin/email-analytics n'est pas encore implémenté
+            const totalSentEl = document.getElementById('total-sent');
+            const openRateEl = document.getElementById('open-rate');
+            const clickRateEl = document.getElementById('click-rate');
 
-            const openRate = totalSent > 0 ? ((totalOpened / totalSent) * 100).toFixed(1) : 0;
-            const clickRate = totalOpened > 0 ? ((totalClicked / totalOpened) * 100).toFixed(1) : 0;
-
-            // Mettre à jour l'interface
-            document.getElementById('total-sent').textContent = totalSent;
-            document.getElementById('open-rate').textContent = openRate + '%';
-            document.getElementById('click-rate').textContent = clickRate + '%';
+            if (totalSentEl) totalSentEl.textContent = '-';
+            if (openRateEl) openRateEl.textContent = '-';
+            if (clickRateEl) clickRateEl.textContent = '-';
         }
 
         // ==========================================
@@ -10738,12 +11047,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 resultDiv.style.color = '#374151';
                 resultDiv.textContent = '⏳ Sauvegarde de la configuration email...';
 
-                const response = await apiRequest(`${API_BASE}/api/admin/email-config`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-config`, {
                     method: 'POST',
                     body: JSON.stringify(emailConfig)
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     resultDiv.style.background = '#D1FAE5';
@@ -10778,11 +11085,9 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 resultDiv.style.color = '#374151';
                 resultDiv.textContent = '⏳ Test de la connexion SMTP...';
 
-                const response = await apiRequest(`${API_BASE}/api/admin/email-test-smtp`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-test-smtp`, {
                     method: 'POST'
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     resultDiv.style.background = '#D1FAE5';
@@ -10821,14 +11126,12 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 resultDiv.style.color = '#374151';
                 resultDiv.textContent = `⏳ Envoi email test vers ${emailUser}...`;
 
-                const response = await apiRequest(`${API_BASE}/api/admin/email-test-welcome`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-test-welcome`, {
                     method: 'POST',
                     body: JSON.stringify({
                         testEmail: emailUser
                     })
                 });
-
-                const result = await response.json();
 
                 if (result.success) {
                     resultDiv.style.background = '#D1FAE5';
@@ -10851,10 +11154,9 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Redémarrer le service email
         async function restartEmailService() {
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/email-restart`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-restart`, {
                     method: 'POST'
                 });
-                const result = await response.json();
                 console.log('🔄 Service email redémarré:', result.success);
             } catch (error) {
                 console.error('Erreur redémarrage service email:', error);
@@ -10864,8 +11166,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Charger la configuration email existante
         async function loadEmailConfiguration() {
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/email-config`);
-                const result = await response.json();
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/email-config`);
 
                 if (result.success && result.data) {
                     const config = result.data;
@@ -11150,17 +11451,12 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Générer token admin automatiquement
         async function generateAdminToken() {
             try {
-                const response = await fetch(`${API_BASE}/api/admin/generate-token`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/generate-token`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({
                         adminKey: 'claudyne-admin-2024'
                     })
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     adminToken = result.token;
                     localStorage.setItem('claudyne-admin-token', adminToken);
@@ -11177,44 +11473,6 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         }
 
         // Fonction pour faire des requêtes API avec authentification
-        async function apiRequest(url, options = {}) {
-            // S'assurer qu'on a un token
-            if (!adminToken) {
-                const tokenGenerated = await generateAdminToken();
-                if (!tokenGenerated) {
-                    throw new Error('Impossible de générer le token admin');
-                }
-            }
-
-            // Ajouter le token aux headers
-            const headers = {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${adminToken}`,
-                ...options.headers
-            };
-
-            const response = await fetch(url, {
-                ...options,
-                headers
-            });
-
-            // Si token expiré, en générer un nouveau
-            if (response.status === 401) {
-                console.log('🔄 Token expiré, génération d\'un nouveau...');
-                const tokenGenerated = await generateAdminToken();
-                if (tokenGenerated) {
-                    // Retry avec le nouveau token
-                    headers['Authorization'] = `Bearer ${adminToken}`;
-                    return fetch(url, {
-                        ...options,
-                        headers
-                    });
-                }
-            }
-
-            return response;
-        }
-
         // Chargement initial
         window.addEventListener('load', async function() {
             // Générer token si nécessaire
@@ -11238,12 +11496,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/pricing-config`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/pricing-config`, {
                     method: 'POST',
                     body: JSON.stringify(pricingConfig)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Configuration tarifaire sauvegardée avec succès!');
                 } else {
@@ -11283,12 +11539,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/api-config`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/api-config`, {
                     method: 'POST',
                     body: JSON.stringify(apiConfig)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Configuration des API sauvegardée avec succès!');
                 } else {
@@ -11318,12 +11572,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/team-members`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/team-members`, {
                     method: 'POST',
                     body: JSON.stringify(teamMember)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert(`✅ Membre ${teamMember.firstName} ${teamMember.lastName} ajouté avec succès!`);
                     // Reset form
@@ -11356,12 +11608,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/quick-message`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/quick-message`, {
                     method: 'POST',
                     body: JSON.stringify(message)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert(`✅ Message envoyé avec succès vers ${message.recipients}!`);
                     // Reset form
@@ -11385,12 +11635,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/generate-report`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/generate-report`, {
                     method: 'POST',
                     body: JSON.stringify(reportConfig)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert(`✅ Rapport ${reportConfig.type} généré avec succès!\nTéléchargement en cours...`);
                     if (result.downloadUrl) {
@@ -11420,12 +11668,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/schedule-report`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/schedule-report`, {
                     method: 'POST',
                     body: JSON.stringify(reportSchedule)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert(`✅ Rapport ${reportSchedule.type} programmé avec succès!`);
                 } else {
@@ -11442,11 +11688,9 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             if (!confirm('Forcer une sauvegarde immédiate ?')) return;
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/force-backup`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/force-backup`, {
                     method: 'POST'
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Sauvegarde forcée avec succès!');
                 } else {
@@ -11461,8 +11705,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         // Actualiser logs
         async function refreshLogs() {
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/logs/recent`);
-                const result = await response.json();
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/logs/recent`);
 
                 if (result.success) {
                     const logsContainer = document.getElementById('system-logs');
@@ -11494,12 +11737,10 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await apiRequest(`${API_BASE}/api/admin/automation-config`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/automation-config`, {
                     method: 'POST',
                     body: JSON.stringify(automationConfig)
                 });
-
-                const result = await response.json();
                 if (result.success) {
                     alert('✅ Configuration automation sauvegardée avec succès!');
                 } else {
@@ -11520,18 +11761,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
          */
         async function refreshSubscriptionStats() {
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/subscriptions/stats`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erreur de chargement des statistiques');
-                }
-
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/subscriptions/stats`);
 
                 if (data.success) {
                     const stats = data.stats;
@@ -11568,15 +11798,9 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             outputPre.textContent = '⏳ Exécution en cours...';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/subscriptions/run-job/${jobName}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
-                        'Content-Type': 'application/json'
-                    }
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/subscriptions/run-job/${jobName}`, {
+                    method: 'POST'
                 });
-
-                const data = await response.json();
 
                 if (data.success) {
                     outputPre.textContent = `✅ ${data.message}\n\n` + JSON.stringify(data.result, null, 2);
@@ -11597,18 +11821,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
          */
         async function loadSubscriptionUsers() {
             try {
-                const response = await fetch(`${API_BASE_URL}/admin/users`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erreur de chargement des utilisateurs');
-                }
-
-                const data = await response.json();
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/users`);
 
                 if (data.success) {
                     window.allSubscriptionUsers = data.users || [];
@@ -11705,17 +11918,7 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
         async function editUser(userId) {
             try {
                 // Récupérer les données de l'utilisateur
-                const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération des données');
-                }
-
-                const result = await response.json();
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/users/${userId}`);
                 const user = result.data;
 
                 // Créer le modal
@@ -11794,8 +11997,8 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
                 document.body.insertAdjacentHTML('beforeend', modalHtml);
 
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur lors du chargement des données utilisateur');
+                console.error('Erreur lors du chargement utilisateur:', error);
+                showError('Erreur lors du chargement des données utilisateur');
             }
         }
 
@@ -11826,27 +12029,21 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/users/${userId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    },
                     body: JSON.stringify(updatedData)
                 });
 
-                const result = await response.json();
-
                 if (result.success) {
-                    alert('✅ Utilisateur modifié avec succès !');
+                    showNotification('Utilisateur modifié avec succès', 'success');
                     closeEditUserModal();
                     loadUsersData(); // Recharger la liste
                 } else {
-                    alert('❌ Erreur: ' + result.message);
+                    showError('Erreur: ' + result.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur lors de la sauvegarde');
+                console.error('Erreur sauvegarde utilisateur:', error);
+                showError('Erreur lors de la sauvegarde des modifications');
             }
         }
 
@@ -11861,29 +12058,24 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             const confirmation = prompt('Tapez "SUPPRIMER" en majuscules pour confirmer la suppression:');
 
             if (confirmation !== 'SUPPRIMER') {
-                alert('❌ Suppression annulée');
+                showError('Suppression annulée');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    }
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/users/${userId}`, {
+                    method: 'DELETE'
                 });
 
-                const result = await response.json();
-
                 if (result.success) {
-                    alert('✅ Utilisateur supprimé avec succès');
+                    showNotification('Utilisateur supprimé avec succès', 'success');
                     loadUsersData(); // Recharger la liste
                 } else {
-                    alert('❌ Erreur: ' + result.message);
+                    showError('Erreur: ' + result.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur lors de la suppression');
+                console.error('Erreur suppression utilisateur:', error);
+                showError('Erreur lors de la suppression de l\'utilisateur');
             }
         }
 
@@ -11898,26 +12090,20 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             const reason = prompt('Raison de la désactivation (optionnel):');
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/users/${userId}/disable`, {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/users/${userId}/disable`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    },
                     body: JSON.stringify({ reason })
                 });
 
-                const result = await response.json();
-
                 if (result.success) {
-                    alert('✅ Utilisateur désactivé avec succès');
+                    showNotification('Utilisateur désactivé avec succès', 'success');
                     loadUsersData(); // Recharger la liste
                 } else {
-                    alert('❌ Erreur: ' + result.message);
+                    showError('Erreur: ' + result.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur lors de la désactivation');
+                console.error('Erreur désactivation utilisateur:', error);
+                showError('Erreur lors de la désactivation de l\'utilisateur');
             }
         }
 
@@ -11930,24 +12116,19 @@ prix.claudine@claudyne.com | https://claudyne.com/prix-claudine`,
             }
 
             try {
-                const response = await fetch(`${API_BASE}/api/admin/users/${userId}/enable`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    }
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/users/${userId}/enable`, {
+                    method: 'PUT'
                 });
 
-                const result = await response.json();
-
                 if (result.success) {
-                    alert('✅ Utilisateur réactivé avec succès');
+                    showNotification('Utilisateur réactivé avec succès', 'success');
                     loadUsersData(); // Recharger la liste
                 } else {
-                    alert('❌ Erreur: ' + result.message);
+                    showError('Erreur: ' + result.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('❌ Erreur lors de la réactivation');
+                console.error('Erreur réactivation utilisateur:', error);
+                showError('Erreur lors de la réactivation de l\'utilisateur');
             }
         }
 

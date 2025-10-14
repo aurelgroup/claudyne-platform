@@ -4061,14 +4061,102 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         let userLevel = 15;
         let dailyStreak = 12;
         let currentSection = 'dashboard';
+        let currentUser = null;
 
         // ========== INITIALISATION ==========
         document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données utilisateur réelles
+            loadRealUserData();
             initializeParticles();
             updateXPDisplay();
             showWelcomeToast();
             console.log('🚀 Claudyne Max initialisé avec succès');
         });
+
+        // ========== CHARGEMENT DONNÉES RÉELLES ==========
+        async function loadRealUserData() {
+            try {
+                // Récupérer les données depuis localStorage
+                const userDataStr = localStorage.getItem('claudyne_user');
+                const token = localStorage.getItem('claudyne_token');
+
+                if (!userDataStr || !token) {
+                    console.warn('⚠️ Pas de données utilisateur - Redirection vers login');
+                    window.location.href = '/';
+                    return;
+                }
+
+                currentUser = JSON.parse(userDataStr);
+                console.log('✅ Données utilisateur chargées:', currentUser);
+
+                // Mettre à jour l'interface avec les vraies données
+                updateUserInterface(currentUser);
+
+                // Charger les données additionnelles depuis l'API
+                await fetchAdditionalUserData(token);
+
+            } catch (error) {
+                console.error('❌ Erreur chargement données utilisateur:', error);
+                showToast('Erreur de chargement des données', 'danger');
+            }
+        }
+
+        function updateUserInterface(user) {
+            // Mise à jour du nom d'utilisateur
+            const userNameElements = document.querySelectorAll('h1');
+            userNameElements.forEach(el => {
+                if (el.textContent.trim() === 'Richy NONO') {
+                    el.textContent = `${user.firstName} ${user.lastName}`;
+                }
+            });
+
+            // Mise à jour des informations utilisateur
+            const userDetailsP = document.querySelector('.user-details p');
+            if (userDetailsP && user.studentClass) {
+                userDetailsP.textContent = `${user.studentClass} • ${user.school || 'Étudiant Claudyne'}`;
+            }
+
+            // Mise à jour du message AI personnalisé
+            const aiMessageEl = document.querySelector('.message-bubble.ai');
+            if (aiMessageEl) {
+                aiMessageEl.textContent = `Salut ${user.firstName} ! 👋 Je vois que tu progresses bien. As-tu des questions ? Je peux t'aider avec des explications personnalisées !`;
+            }
+
+            console.log('✅ Interface mise à jour avec données utilisateur');
+        }
+
+        async function fetchAdditionalUserData(token) {
+            try {
+                const API_BASE = 'https://claudyne.com';
+
+                // Appel API pour récupérer les données étendues
+                const response = await fetch(`${API_BASE}/api/students/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Données additionnelles chargées:', data);
+
+                    if (data.success && data.data) {
+                        // Mettre à jour les stats avec les vraies données
+                        if (data.data.xp) userXP = data.data.xp;
+                        if (data.data.level) userLevel = data.data.level;
+                        if (data.data.dailyStreak) dailyStreak = data.data.dailyStreak;
+
+                        updateXPDisplay();
+                    }
+                } else {
+                    console.warn('⚠️ Impossible de charger les données additionnelles');
+                }
+            } catch (error) {
+                console.error('❌ Erreur fetch données additionnelles:', error);
+            }
+        }
 
         // ========== PARTICULES FLOTTANTES ==========
         function initializeParticles() {

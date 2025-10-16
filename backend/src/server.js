@@ -155,6 +155,10 @@ app.get('/', (req, res) => {
 
 // Route sécurisée pour l'interface admin
 app.get('/admin-secure-k7m9x4n2p8w5z1c6', (req, res) => {
+  // Headers anti-cache pour forcer le rechargement à chaque visite
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, '../../admin-interface.html'));
 });
 

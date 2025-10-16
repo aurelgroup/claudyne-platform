@@ -2817,6 +2817,7 @@
             const studentClass = document.getElementById('studentClass').value;
             const name = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
@@ -2861,7 +2862,9 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
+                            accountType: 'PARENT',
                             email: email,
+                            phone: phone,
                             password: password,
                             firstName: firstName,
                             lastName: lastName,
@@ -2896,22 +2899,58 @@
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                     }
-                } else {
-                    // Pour student/teacher, garder la simulation pour l'instant
-                    alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
-                    closeLoginModal();
+                } else if (accountType === 'student' || accountType === 'teacher') {
+                    // Inscription réelle pour étudiant/enseignant
+                    const [firstName, ...lastNameParts] = name.split(' ');
+                    const lastName = lastNameParts.join(' ') || firstName;
 
-                    switch(accountType) {
-                        case 'student':
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            accountType: accountType === 'student' ? 'STUDENT' : 'TEACHER',
+                            email: email,
+                            phone: phone,
+                            password: password,
+                            firstName: firstName,
+                            lastName: lastName,
+                            acceptTerms: true,
+                            // Informations spécifiques aux étudiants
+                            ...(accountType === 'student' && studentClass ? { studentClass: studentClass } : {})
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Sauvegarder les tokens
+                        localStorage.setItem('claudyne_token', data.data.tokens.accessToken);
+                        localStorage.setItem('claudyne_refresh_token', data.data.tokens.refreshToken);
+
+                        // Sauvegarder les données utilisateur
+                        localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
+
+                        alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
+                        closeLoginModal();
+
+                        // Redirection selon le type de compte
+                        if (accountType === 'student') {
                             window.location.href = '/student';
-                            break;
-                        case 'teacher':
+                        } else {
                             window.location.href = '/teacher-interface.html';
-                            break;
+                        }
+                    } else {
+                        // Afficher les erreurs de validation si présentes
+                        let errorMsg = data.message || 'Erreur lors de la création du compte';
+                        if (data.errors && data.errors.length > 0) {
+                            errorMsg += '\n\n' + data.errors.map(e => `• ${e.msg}`).join('\n');
+                        }
+                        alert(`❌ ${errorMsg}`);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
                     }
-
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
                 }
             } catch (error) {
                 console.error('Erreur inscription:', error);

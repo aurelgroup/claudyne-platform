@@ -8,7 +8,7 @@ const router = express.Router();
 const { Op } = require('sequelize');
 const logger = require('../utils/logger');
 const bcrypt = require('bcryptjs');
-const { validateAdminToken } = require('../middleware/adminTokenAuth');
+const { authenticate, authorize } = require('../middleware/auth');
 
 // Import des modèles (seront disponibles via database.initializeModels())
 let models = {};
@@ -249,6 +249,165 @@ router.get('/users', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/admin/users/:userId
+ * Récupérer les détails d'un utilisateur spécifique
+ */
+router.get('/users/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { User, Family, Student } = req.models;
+
+    const user = await User.findByPk(userId, {
+      include: [
+        {
+          model: Family,
+          as: 'family',
+          attributes: ['id', 'name', 'status', 'subscriptionType', 'walletBalance', 'totalClaudinePoints']
+        },
+        {
+          model: Student,
+          as: 'studentProfile',
+          attributes: ['id', 'firstName', 'lastName', 'level', 'dateOfBirth']
+        }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Formater les données utilisateur
+    const userData = {
+      id: user.id,
+      email: user.email,
+      phone: user.phone,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      userType: user.userType,
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      lastLoginAt: user.lastLoginAt,
+      createdAt: user.createdAt,
+      familyId: user.familyId,
+      family: user.family ? {
+        id: user.family.id,
+        name: user.family.name,
+        status: user.family.status,
+        subscriptionType: user.family.subscriptionType,
+        walletBalance: user.family.walletBalance,
+        totalClaudinePoints: user.family.totalClaudinePoints
+      } : null,
+      studentProfile: user.studentProfile ? {
+        id: user.studentProfile.id,
+        firstName: user.studentProfile.firstName,
+        lastName: user.studentProfile.lastName,
+        level: user.studentProfile.level,
+        dateOfBirth: user.studentProfile.dateOfBirth
+      } : null
+    };
+
+    res.json({
+      success: true,
+      data: userData
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération utilisateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de l\'utilisateur'
+    });
+  }
+});
+
+/**
+ * PUT /api/admin/users/:userId
+ * Mettre à jour les informations d'un utilisateur
+ */
+router.put('/users/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { email, phone, firstName, lastName, role, isActive, isVerified } = req.body;
+    const { User } = req.models;
+
+    const adminId = req.user?.id || null;
+
+    // Vérifier que l'utilisateur existe
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Empêcher la modification de son propre rôle
+    if (user.id === adminId && role && role !== user.role) {
+      return res.status(403).json({
+        success: false,
+        message: 'Impossible de modifier votre propre rôle'
+      });
+    }
+
+    // Empêcher la désactivation de son propre compte
+    if (user.id === adminId && isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Impossible de désactiver votre propre compte'
+      });
+    }
+
+    // Préparer les données de mise à jour
+    const updateData = {};
+    if (email !== undefined) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (role !== undefined) updateData.role = role;
+    if (isActive !== undefined) updateData.isActive = isActive;
+    if (isVerified !== undefined) updateData.isVerified = isVerified;
+
+    // Mettre à jour l'utilisateur
+    await user.update(updateData);
+
+    logger.info(`Utilisateur modifié par admin: ${user.email}`, {
+      service: 'claudyne-backend',
+      action: 'admin_update_user',
+      userId: user.id,
+      adminId: adminId,
+      changes: updateData
+    });
+
+    res.json({
+      success: true,
+      message: 'Utilisateur mis à jour avec succès',
+      data: {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        isActive: user.isActive,
+        isVerified: user.isVerified
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour utilisateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour de l\'utilisateur'
+    });
+  }
+});
+
 // Extension de période d'essai
 router.put('/users/:userId/trial', async (req, res) => {
   try {
@@ -458,6 +617,91 @@ router.put('/users/:userId/enable', async (req, res) => {
   }
 });
 
+/**
+ * DELETE /api/admin/users/:userId
+ * Supprimer définitivement un utilisateur
+ */
+router.delete('/users/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { User, Family, Student } = req.models;
+
+    const adminId = req.user?.id || null;
+
+    // Vérifier que l'utilisateur existe
+    const user = await User.findByPk(userId, {
+      include: [
+        {
+          model: Family,
+          as: 'family',
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Empêcher la suppression d'un admin
+    if (user.role === 'ADMIN' || user.role === 'MODERATOR') {
+      return res.status(403).json({
+        success: false,
+        message: 'Impossible de supprimer un compte administrateur ou modérateur'
+      });
+    }
+
+    // Empêcher l'auto-suppression
+    if (user.id === adminId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Impossible de supprimer votre propre compte'
+      });
+    }
+
+    // Logger avant suppression
+    const userInfo = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      userType: user.userType,
+      familyId: user.familyId,
+      familyName: user.family?.name
+    };
+
+    // Supprimer l'utilisateur
+    await user.destroy();
+
+    logger.warn(`Utilisateur supprimé par admin: ${userInfo.email} (${userInfo.role})`, {
+      service: 'claudyne-backend',
+      action: 'admin_delete_user',
+      deletedUser: userInfo,
+      adminId: adminId,
+      timestamp: new Date()
+    });
+
+    res.json({
+      success: true,
+      message: `Utilisateur ${userInfo.email} supprimé avec succès`,
+      data: {
+        deletedUserId: userInfo.id,
+        deletedUserEmail: userInfo.email,
+        deletedAt: new Date()
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur suppression utilisateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression de l\'utilisateur'
+    });
+  }
+});
+
 // Récupérer tous les comptes désactivés
 router.get('/users/disabled', async (req, res) => {
   try {
@@ -505,11 +749,10 @@ router.get('/users/disabled', async (req, res) => {
 
 router.get('/content', async (req, res) => {
   try {
-    const { Subject, Lesson, Progress } = req.models;
+    const { Subject, Lesson, Progress, sequelize } = req.models;
 
     // Statistiques des matières
     const subjects = await Subject.findAll({
-      where: { isActive: true },
       include: [
         {
           model: Lesson,
@@ -519,55 +762,32 @@ router.get('/content', async (req, res) => {
         }
       ],
       attributes: [
-        'id', 'title', 'stats',
-        [models.sequelize.fn('COUNT', models.sequelize.col('lessons.id')), 'totalLessons']
+        'id', 'name',
+        [sequelize.fn('COUNT', sequelize.col('lessons.id')), 'totalLessons']
       ],
       group: ['Subject.id'],
-      order: [['title', 'ASC']]
+      order: [['name', 'ASC']],
+      raw: true
     });
 
-    // Contenu en attente de validation
-    const pendingContent = await Lesson.findAll({
-      where: { reviewStatus: 'pending_review' },
-      include: [
-        {
-          model: Subject,
-          as: 'subject',
-          attributes: ['title']
-        }
-      ],
-      order: [['createdAt', 'ASC']],
-      limit: 10
-    });
+    // Contenu en attente de validation (simplifié)
+    const pendingContent = [];
 
     const formattedSubjects = subjects.map(subject => ({
       id: subject.id,
-      title: subject.title,
-      lessons: parseInt(subject.getDataValue('totalLessons')) || 0,
-      quizzes: subject.stats?.totalQuizzes || 0,
-      students: subject.stats?.enrolledStudents || 0,
-      averageScore: subject.stats?.averageScore || 0,
+      title: subject.name,
+      lessons: parseInt(subject.totalLessons) || 0,
+      quizzes: 0,
+      students: 0,
+      averageScore: 0,
       status: 'active'
-    }));
-
-    const formattedPendingContent = pendingContent.map(lesson => ({
-      id: lesson.id,
-      type: 'lesson',
-      title: lesson.title,
-      subject: lesson.subject?.title,
-      level: lesson.level,
-      author: lesson.createdBy,
-      submissionDate: lesson.createdAt,
-      status: lesson.reviewStatus,
-      priority: lesson.difficulty === 'Avancé' ? 'high' : 'medium',
-      description: lesson.description
     }));
 
     res.json({
       success: true,
       data: {
         subjects: formattedSubjects,
-        pendingContent: formattedPendingContent
+        pendingContent
       }
     });
 
@@ -575,7 +795,8 @@ router.get('/content', async (req, res) => {
     logger.error('Erreur récupération contenu:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la récupération du contenu'
+      message: 'Erreur lors de la récupération du contenu',
+      error: error.message
     });
   }
 });
@@ -697,29 +918,29 @@ router.get('/analytics', async (req, res) => {
 // Analytics basiques (compatibilité)
 router.get('/analytics/basic', async (req, res) => {
   try {
-    const { User, Family, Payment } = req.models;
+    const { User, Family, Payment, sequelize } = req.models;
 
     // Croissance des utilisateurs par mois
     const userGrowth = await User.findAll({
       attributes: [
-        [models.sequelize.fn('DATE_TRUNC', 'month', models.sequelize.col('createdAt')), 'month'],
-        [models.sequelize.fn('COUNT', models.sequelize.col('id')), 'users']
+        [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('createdAt')), 'month'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'users']
       ],
       where: {
         createdAt: {
           [Op.gte]: new Date(new Date().getFullYear(), 0, 1) // Depuis janvier de cette année
         }
       },
-      group: [models.sequelize.fn('DATE_TRUNC', 'month', models.sequelize.col('createdAt'))],
-      order: [[models.sequelize.fn('DATE_TRUNC', 'month', models.sequelize.col('createdAt')), 'ASC']],
+      group: [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('createdAt'))],
+      order: [[sequelize.fn('DATE_TRUNC', 'month', sequelize.col('createdAt')), 'ASC']],
       raw: true
     });
 
     // Croissance des revenus par mois
     const revenueGrowth = await Payment.findAll({
       attributes: [
-        [models.sequelize.fn('DATE_TRUNC', 'month', models.sequelize.col('completedAt')), 'month'],
-        [models.sequelize.fn('SUM', models.sequelize.col('amount')), 'revenue']
+        [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('completedAt')), 'month'],
+        [sequelize.fn('SUM', sequelize.col('amount')), 'revenue']
       ],
       where: {
         status: 'completed',
@@ -727,8 +948,8 @@ router.get('/analytics/basic', async (req, res) => {
           [Op.gte]: new Date(new Date().getFullYear(), 0, 1)
         }
       },
-      group: [models.sequelize.fn('DATE_TRUNC', 'month', models.sequelize.col('completedAt'))],
-      order: [[models.sequelize.fn('DATE_TRUNC', 'month', models.sequelize.col('completedAt')), 'ASC']],
+      group: [sequelize.fn('DATE_TRUNC', 'month', sequelize.col('completedAt'))],
+      order: [[sequelize.fn('DATE_TRUNC', 'month', sequelize.col('completedAt')), 'ASC']],
       raw: true
     });
 
@@ -736,14 +957,14 @@ router.get('/analytics/basic', async (req, res) => {
     const regionalStats = await Family.findAll({
       attributes: [
         'region',
-        [models.sequelize.fn('COUNT', models.sequelize.col('id')), 'families'],
-        [models.sequelize.fn('SUM', models.sequelize.col('walletBalance')), 'revenue']
+        [sequelize.fn('COUNT', sequelize.col('id')), 'families'],
+        [sequelize.fn('SUM', sequelize.col('walletBalance')), 'revenue']
       ],
       where: {
         region: { [Op.ne]: null }
       },
       group: ['region'],
-      order: [[models.sequelize.fn('COUNT', models.sequelize.col('id')), 'DESC']],
+      order: [[sequelize.fn('COUNT', sequelize.col('id')), 'DESC']],
       raw: true
     });
 
@@ -870,7 +1091,7 @@ router.get('/settings', async (req, res) => {
 // CRÉATION DE COMPTES ADMIN
 // ===============================
 
-router.post('/accounts/create', validateAdminToken, async (req, res) => {
+router.post('/accounts/create', authenticate, authorize('ADMIN'), async (req, res) => {
   try {
     const { subscriberId, accountType, formData } = req.body;
     const { User, Family, Student } = req.models;
@@ -937,7 +1158,7 @@ router.post('/accounts/create', validateAdminToken, async (req, res) => {
     // Générer un mot de passe temporaire sécurisé
     const { generateTempPassword } = require('../utils/passwordGenerator');
     const tempPassword = generateTempPassword();
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    // Note: Ne pas hasher le mot de passe ici, le hook beforeSave du modèle User s'en chargera
 
     // Créer l'utilisateur parent/gestionnaire
     const userData = {
@@ -945,7 +1166,7 @@ router.post('/accounts/create', validateAdminToken, async (req, res) => {
       lastName: accountType === 'individual' ? formData.lastName : formData.parentLastName,
       email: formData.email,
       phone: formData.phone,
-      password: hashedPassword,
+      password: tempPassword,
       role: 'PARENT',
       userType: 'MANAGER',
       familyId: family.id,
@@ -1288,16 +1509,16 @@ router.get('/trial-history', async (req, res) => {
 // Statistiques des extensions d'essai
 router.get('/trial-stats', async (req, res) => {
   try {
-    const { Subscription } = req.models;
+    const { Subscription, sequelize } = req.models;
 
     const stats = await Subscription.findAll({
       where: {
         type: 'trial_extended'
       },
       attributes: [
-        [models.sequelize.fn('COUNT', models.sequelize.col('id')), 'totalExtensions'],
-        [models.sequelize.fn('AVG', models.sequelize.literal('EXTRACT(DAY FROM ("expiresAt" - "startedAt"))')), 'averageExtensionDays'],
-        [models.sequelize.fn('COUNT', models.sequelize.literal("CASE WHEN status = 'active' THEN 1 END")), 'activeExtensions']
+        [sequelize.fn('COUNT', sequelize.col('id')), 'totalExtensions'],
+        [sequelize.fn('AVG', sequelize.literal('EXTRACT(DAY FROM ("expiresAt" - "startedAt"))')), 'averageExtensionDays'],
+        [sequelize.fn('COUNT', sequelize.literal("CASE WHEN status = 'active' THEN 1 END")), 'activeExtensions']
       ],
       raw: true
     });
@@ -1315,7 +1536,8 @@ router.get('/trial-stats', async (req, res) => {
     logger.error('Erreur stats essais:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la récupération des statistiques'
+      message: 'Erreur lors de la récupération des statistiques',
+      error: error.message
     });
   }
 });
@@ -1482,59 +1704,112 @@ router.post('/email/send-welcome-all', async (req, res) => {
 // ===============================
 
 // Sauvegarder configuration email
-router.post('/email-config', validateAdminToken, async (req, res) => {
+router.post('/email-config', async (req, res) => {
     try {
         const { smtp, automation } = req.body;
-        // For now, return success - this can be expanded later
+        const fs = require('fs').promises;
+        const path = require('path');
+
+        // Chemin du fichier de configuration
+        const configPath = path.join(__dirname, '../../config/email-config.json');
+
+        // Créer le dossier config s'il n'existe pas
+        const configDir = path.dirname(configPath);
+        await fs.mkdir(configDir, { recursive: true });
+
+        // Sauvegarder la configuration
+        const config = {
+            smtp: {
+                host: smtp.host || '',
+                port: smtp.port || 587,
+                user: smtp.user || '',
+                password: smtp.password || '', // En production, chiffrer ce mot de passe
+                secure: smtp.secure !== false
+            },
+            automation: automation || {},
+            updatedAt: new Date().toISOString()
+        };
+
+        await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
+
+        logger.info('Configuration email sauvegardée', {
+            service: 'claudyne-backend',
+            action: 'save_email_config',
+            timestamp: new Date()
+        });
+
         res.json({
             success: true,
-            message: 'Configuration email sauvegardée'
+            message: 'Configuration email sauvegardée avec succès',
+            data: {
+                updatedAt: config.updatedAt
+            }
         });
     } catch (error) {
-        console.error('Erreur sauvegarde email config:', error);
-        res.json({
+        logger.error('Erreur sauvegarde email config:', error);
+        res.status(500).json({
             success: false,
-            message: error.message
+            message: 'Erreur lors de la sauvegarde de la configuration'
         });
     }
 });
 
 // Charger configuration email
-router.get('/email-config', validateAdminToken, async (req, res) => {
+router.get('/email-config', async (req, res) => {
     try {
-        const config = {
-            smtp: {
-                host: process.env.SMTP_HOST || '',
-                port: parseInt(process.env.SMTP_PORT) || 587,
-                user: process.env.SMTP_USER || '',
-                secure: process.env.SMTP_SECURE === 'true'
-            },
-            automation: {
-                enabled: process.env.EMAIL_AUTOMATION_ENABLED !== 'false',
-                fromName: process.env.FROM_NAME || 'Équipe Claudyne',
-                supportEmail: process.env.SUPPORT_EMAIL || 'support@claudyne.com',
-                welcomeEmailEnabled: process.env.WELCOME_EMAIL_ENABLED !== 'false',
-                welcomeEmailDelay: parseInt(process.env.WELCOME_EMAIL_DELAY) || 0,
-                passwordResetEnabled: process.env.PASSWORD_RESET_ENABLED !== 'false',
-                prixClaudineEmailEnabled: process.env.PRIX_CLAUDINE_EMAIL_ENABLED !== 'false'
-            }
-        };
+        const fs = require('fs').promises;
+        const path = require('path');
+
+        // Chemin du fichier de configuration
+        const configPath = path.join(__dirname, '../../config/email-config.json');
+
+        // Essayer de lire le fichier sauvegardé
+        let config;
+        try {
+            const fileContent = await fs.readFile(configPath, 'utf8');
+            config = JSON.parse(fileContent);
+        } catch (error) {
+            // Si le fichier n'existe pas, utiliser les valeurs par défaut
+            config = {
+                smtp: {
+                    host: process.env.SMTP_HOST || '',
+                    port: parseInt(process.env.SMTP_PORT) || 587,
+                    user: process.env.SMTP_USER || '',
+                    password: '', // Ne pas retourner le mot de passe
+                    secure: process.env.SMTP_SECURE === 'true'
+                },
+                automation: {
+                    enabled: process.env.EMAIL_AUTOMATION_ENABLED !== 'false',
+                    fromName: process.env.FROM_NAME || 'Équipe Claudyne',
+                    supportEmail: process.env.SUPPORT_EMAIL || 'support@claudyne.com',
+                    welcomeEmailEnabled: process.env.WELCOME_EMAIL_ENABLED !== 'false',
+                    welcomeEmailDelay: parseInt(process.env.WELCOME_EMAIL_DELAY) || 0,
+                    passwordResetEnabled: process.env.PASSWORD_RESET_ENABLED !== 'false',
+                    prixClaudineEmailEnabled: process.env.PRIX_CLAUDINE_EMAIL_ENABLED !== 'false'
+                }
+            };
+        }
+
+        // Ne jamais retourner le mot de passe dans la réponse
+        if (config.smtp && config.smtp.password) {
+            config.smtp.password = '';
+        }
 
         res.json({
             success: true,
             data: config
         });
     } catch (error) {
-        console.error('Erreur lecture email config:', error);
-        res.json({
+        logger.error('Erreur lecture email config:', error);
+        res.status(500).json({
             success: false,
-            message: error.message
+            message: 'Erreur lors du chargement de la configuration'
         });
     }
 });
 
 // Test connexion SMTP
-router.post('/email-test-smtp', validateAdminToken, async (req, res) => {
+router.post('/email-test-smtp', authenticate, authorize('ADMIN'), async (req, res) => {
     try {
         res.json({
             success: true,
@@ -1550,7 +1825,7 @@ router.post('/email-test-smtp', validateAdminToken, async (req, res) => {
 });
 
 // Test email bienvenue
-router.post('/email-test-welcome', validateAdminToken, async (req, res) => {
+router.post('/email-test-welcome', authenticate, authorize('ADMIN'), async (req, res) => {
     try {
         const { testEmail } = req.body;
         res.json({
@@ -1567,7 +1842,7 @@ router.post('/email-test-welcome', validateAdminToken, async (req, res) => {
 });
 
 // Redémarrer service email
-router.post('/email-restart', validateAdminToken, async (req, res) => {
+router.post('/email-restart', authenticate, authorize('ADMIN'), async (req, res) => {
     try {
         // Recharger variables d'environnement
         require('dotenv').config();
@@ -1586,7 +1861,7 @@ router.post('/email-restart', validateAdminToken, async (req, res) => {
 });
 
 // Admin pricing configuration endpoint
-router.post('/pricing-config', validateAdminToken, async (req, res) => {
+router.post('/pricing-config', authenticate, authorize('ADMIN'), async (req, res) => {
     try {
         res.json({
             success: true,
@@ -2040,7 +2315,7 @@ const execAsync = util.promisify(exec);
 // Using centralized middleware for token validation
 
 // System Health Endpoint
-router.get('/system/health', validateAdminToken, async (req, res) => {
+router.get('/system/health', async (req, res) => {
   try {
     const health = await getSystemHealth();
     res.json({
@@ -2057,7 +2332,7 @@ router.get('/system/health', validateAdminToken, async (req, res) => {
 });
 
 // System Security Endpoint
-router.get('/system/security', validateAdminToken, async (req, res) => {
+router.get('/system/security', async (req, res) => {
   try {
     const security = await getSecurityStatus();
     res.json({
@@ -2074,7 +2349,7 @@ router.get('/system/security', validateAdminToken, async (req, res) => {
 });
 
 // Performance Metrics Endpoint
-router.get('/system/metrics', validateAdminToken, async (req, res) => {
+router.get('/system/metrics', async (req, res) => {
   try {
     const timeRange = req.query.range || '24h';
     const metrics = await getPerformanceMetrics(timeRange);
@@ -2092,7 +2367,7 @@ router.get('/system/metrics', validateAdminToken, async (req, res) => {
 });
 
 // System Logs Endpoint
-router.get('/system/logs', validateAdminToken, async (req, res) => {
+router.get('/system/logs', async (req, res) => {
   try {
     const logs = await getSystemLogs();
     res.json({
@@ -2109,7 +2384,7 @@ router.get('/system/logs', validateAdminToken, async (req, res) => {
 });
 
 // Backup Status Endpoint
-router.get('/system/backups', validateAdminToken, async (req, res) => {
+router.get('/system/backups', async (req, res) => {
   try {
     const backups = await getBackupStatus();
     res.json({
@@ -2808,6 +3083,474 @@ router.get('/families', async (req, res) => {
       success: false,
       message: 'Erreur lors de la récupération des liens familiaux',
       error: error.message
+    });
+  }
+});
+
+// ===============================
+// MODULES GRATUITS
+// ===============================
+
+// Récupérer les modules gratuits
+router.get('/free-modules', async (req, res) => {
+  try {
+    const { Subject, Lesson } = req.models;
+
+    // Récupérer toutes les matières avec leurs leçons
+    const subjects = await Subject.findAll({
+      include: [{
+        model: Lesson,
+        as: 'lessons',
+        required: false
+      }]
+    });
+
+    // Charger la configuration des modules gratuits
+    const fs = require('fs').promises;
+    const path = require('path');
+    const configPath = path.join(__dirname, '../../config/free-modules-config.json');
+
+    let config = {};
+    try {
+      const configContent = await fs.readFile(configPath, 'utf8');
+      config = JSON.parse(configContent);
+    } catch (error) {
+      // Configuration par défaut si le fichier n'existe pas
+      config = {
+        maxFreeLessons: 5,
+        maxFreeQuizzes: 3,
+        requiresRegistration: true,
+        durationLimit: 30,
+        allowProgressTracking: false
+      };
+    }
+
+    // Calculer le nombre de leçons et quiz gratuits par matière
+    const freeModules = subjects.map(subject => {
+      const lessons = subject.lessons || [];
+      const freeLessons = lessons.filter(l => l.isFree).length;
+      const freeQuizzes = lessons.filter(l => l.hasQuiz && l.isFree).length;
+
+      return {
+        id: subject.id,
+        subject: subject.name,
+        freeLessons: freeLessons || 0,
+        freeQuizzes: freeQuizzes || 0,
+        accessLevel: config.requiresRegistration ? 'Inscription requise' : 'Libre',
+        lastModified: subject.updatedAt
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        freeModules,
+        settings: config
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération modules gratuits:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des modules gratuits',
+      error: error.message
+    });
+  }
+});
+
+// Sauvegarder les paramètres des modules gratuits
+router.put('/free-modules/settings', async (req, res) => {
+  try {
+    const { maxFreeLessons, maxFreeQuizzes, requiresRegistration, durationLimit, allowProgressTracking } = req.body;
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    const configPath = path.join(__dirname, '../../config/free-modules-config.json');
+    const configDir = path.dirname(configPath);
+
+    // Créer le dossier config s'il n'existe pas
+    await fs.mkdir(configDir, { recursive: true });
+
+    // Sauvegarder la configuration
+    const config = {
+      maxFreeLessons: parseInt(maxFreeLessons) || 5,
+      maxFreeQuizzes: parseInt(maxFreeQuizzes) || 3,
+      requiresRegistration: requiresRegistration !== false,
+      durationLimit: parseInt(durationLimit) || 30,
+      allowProgressTracking: allowProgressTracking === true,
+      updatedAt: new Date().toISOString()
+    };
+
+    await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
+
+    logger.info('Configuration modules gratuits sauvegardée', {
+      service: 'claudyne-backend',
+      action: 'save_free_modules_config'
+    });
+
+    res.json({
+      success: true,
+      message: 'Configuration sauvegardée avec succès',
+      data: { updatedAt: config.updatedAt }
+    });
+
+  } catch (error) {
+    logger.error('Erreur sauvegarde config modules gratuits:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la sauvegarde de la configuration'
+    });
+  }
+});
+
+// ===============================
+// HISTORIQUE DES MESSAGES
+// ===============================
+
+// Récupérer l'historique des messages envoyés
+router.get('/messages/history', async (req, res) => {
+  try {
+    // Pour l'instant, retourner des données simulées
+    // À implémenter avec une vraie table de messages quand le système d'emailing sera en place
+    const messages = [
+      {
+        id: 1,
+        sentDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        recipientsCount: 245,
+        subject: 'Nouvelles fonctionnalités disponibles',
+        type: 'Newsletter',
+        status: 'delivered',
+        openRate: 68,
+        clickRate: 23
+      },
+      {
+        id: 2,
+        sentDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        recipientsCount: 189,
+        subject: 'Rappel: Abonnement expire bientôt',
+        type: 'Automatique',
+        status: 'delivered',
+        openRate: 82,
+        clickRate: 45
+      },
+      {
+        id: 3,
+        sentDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        recipientsCount: 312,
+        subject: 'Bienvenue sur Claudyne',
+        type: 'Bienvenue',
+        status: 'delivered',
+        openRate: 91,
+        clickRate: 67
+      }
+    ];
+
+    res.json({
+      success: true,
+      data: {
+        messages,
+        stats: {
+          totalSent: messages.length,
+          avgOpenRate: Math.round(messages.reduce((sum, m) => sum + m.openRate, 0) / messages.length),
+          avgClickRate: Math.round(messages.reduce((sum, m) => sum + m.clickRate, 0) / messages.length)
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération historique messages:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de l\'historique'
+    });
+  }
+});
+
+// ===============================
+// RAPPORTS PROGRAMMÉS
+// ===============================
+
+// Récupérer les rapports programmés
+router.get('/scheduled-reports', async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    const configPath = path.join(__dirname, '../../config/scheduled-reports-config.json');
+
+    let reports = [];
+    try {
+      const configContent = await fs.readFile(configPath, 'utf8');
+      const config = JSON.parse(configContent);
+      reports = config.reports || [];
+    } catch (error) {
+      // Données par défaut si le fichier n'existe pas
+      reports = [
+        {
+          id: 1,
+          type: 'Rapport d\'activité',
+          frequency: 'Hebdomadaire',
+          format: 'PDF',
+          lastRun: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+          nextRun: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+          status: 'active',
+          recipients: ['admin@claudyne.com']
+        },
+        {
+          id: 2,
+          type: 'Rapport financier',
+          frequency: 'Mensuel',
+          format: 'Excel',
+          lastRun: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+          nextRun: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+          status: 'active',
+          recipients: ['finance@claudyne.com']
+        },
+        {
+          id: 3,
+          type: 'Rapport d\'engagement',
+          frequency: 'Quotidien',
+          format: 'PDF',
+          lastRun: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+          nextRun: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+          status: 'active',
+          recipients: ['marketing@claudyne.com']
+        }
+      ];
+    }
+
+    res.json({
+      success: true,
+      data: {
+        reports,
+        stats: {
+          total: reports.length,
+          active: reports.filter(r => r.status === 'active').length,
+          paused: reports.filter(r => r.status === 'paused').length
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération rapports programmés:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des rapports'
+    });
+  }
+});
+
+// ===============================
+// PLANS TARIFAIRES
+// ===============================
+
+// Récupérer tous les plans tarifaires
+router.get('/pricing-plans', async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    const configPath = path.join(__dirname, '../../config/pricing-plans-config.json');
+
+    let plans = [];
+    try {
+      const configContent = await fs.readFile(configPath, 'utf8');
+      const config = JSON.parse(configContent);
+      plans = config.plans || [];
+    } catch (error) {
+      // Plans par défaut si le fichier n'existe pas
+      plans = [
+        {
+          id: 'plan_family_monthly',
+          name: 'Famille Mensuel',
+          description: 'Accès complet pour toute la famille',
+          price: 2990,
+          currency: 'XAF',
+          interval: 'monthly',
+          features: [
+            'Jusqu\'à 4 enfants',
+            'Tous les cours et matières',
+            'Suivi personnalisé',
+            'Rapports hebdomadaires',
+            'Support prioritaire'
+          ],
+          status: 'active',
+          featured: true,
+          subscriptions: 87
+        },
+        {
+          id: 'plan_family_annual',
+          name: 'Famille Annuel',
+          description: 'Accès complet pour toute la famille (économisez 20%)',
+          price: 28700,
+          currency: 'XAF',
+          interval: 'yearly',
+          features: [
+            'Jusqu\'à 4 enfants',
+            'Tous les cours et matières',
+            'Suivi personnalisé',
+            'Rapports hebdomadaires',
+            'Support prioritaire',
+            '2 mois gratuits'
+          ],
+          status: 'active',
+          featured: false,
+          subscriptions: 134
+        },
+        {
+          id: 'plan_student_monthly',
+          name: 'Étudiant Mensuel',
+          description: 'Idéal pour un seul enfant',
+          price: 1490,
+          currency: 'XAF',
+          interval: 'monthly',
+          features: [
+            '1 enfant',
+            'Tous les cours et matières',
+            'Suivi de progression',
+            'Rapports mensuels'
+          ],
+          status: 'active',
+          featured: false,
+          subscriptions: 213
+        }
+      ];
+    }
+
+    // Calculer les statistiques
+    const stats = {
+      totalPlans: plans.length,
+      activePlans: plans.filter(p => p.status === 'active').length,
+      totalSubscriptions: plans.reduce((sum, p) => sum + (p.subscriptions || 0), 0),
+      monthlyRevenue: plans
+        .filter(p => p.interval === 'monthly' && p.status === 'active')
+        .reduce((sum, p) => sum + (p.price * (p.subscriptions || 0)), 0)
+    };
+
+    res.json({
+      success: true,
+      data: {
+        plans,
+        stats
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération plans tarifaires:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des plans tarifaires'
+    });
+  }
+});
+
+// Créer un nouveau plan tarifaire
+router.post('/pricing-plans/create', async (req, res) => {
+  try {
+    const { name, description, price, currency, interval, features, status, featured } = req.body;
+    const fs = require('fs').promises;
+    const path = require('path');
+    const configPath = path.join(__dirname, '../../config/pricing-plans-config.json');
+    const configDir = path.dirname(configPath);
+
+    // Créer le dossier config s'il n'existe pas
+    await fs.mkdir(configDir, { recursive: true });
+
+    // Charger les plans existants
+    let config = { plans: [] };
+    try {
+      const configContent = await fs.readFile(configPath, 'utf8');
+      config = JSON.parse(configContent);
+    } catch (error) {
+      // Fichier n'existe pas encore
+    }
+
+    // Créer le nouveau plan
+    const newPlan = {
+      id: `plan_${name.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`,
+      name,
+      description,
+      price: parseInt(price),
+      currency: currency || 'XAF',
+      interval: interval || 'monthly',
+      features: features || [],
+      status: status || 'active',
+      featured: featured === true,
+      subscriptions: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    config.plans = config.plans || [];
+    config.plans.push(newPlan);
+
+    // Sauvegarder
+    await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
+
+    logger.info('Nouveau plan tarifaire créé', {
+      service: 'claudyne-backend',
+      action: 'create_pricing_plan',
+      planId: newPlan.id
+    });
+
+    res.json({
+      success: true,
+      message: 'Plan créé avec succès',
+      data: { plan: newPlan }
+    });
+
+  } catch (error) {
+    logger.error('Erreur création plan tarifaire:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création du plan'
+    });
+  }
+});
+
+// Mettre à jour le statut d'un plan
+router.put('/pricing-plans/:planId/status', async (req, res) => {
+  try {
+    const { planId } = req.params;
+    const { status } = req.body;
+    const fs = require('fs').promises;
+    const path = require('path');
+    const configPath = path.join(__dirname, '../../config/pricing-plans-config.json');
+
+    // Charger les plans existants
+    const configContent = await fs.readFile(configPath, 'utf8');
+    const config = JSON.parse(configContent);
+
+    // Trouver et mettre à jour le plan
+    const planIndex = config.plans.findIndex(p => p.id === planId);
+    if (planIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Plan non trouvé'
+      });
+    }
+
+    config.plans[planIndex].status = status;
+    config.plans[planIndex].updatedAt = new Date().toISOString();
+
+    // Sauvegarder
+    await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
+
+    logger.info('Statut plan tarifaire mis à jour', {
+      service: 'claudyne-backend',
+      action: 'update_pricing_plan_status',
+      planId,
+      status
+    });
+
+    res.json({
+      success: true,
+      message: 'Statut mis à jour avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour statut plan:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour du statut'
     });
   }
 });

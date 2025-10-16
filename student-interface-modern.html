@@ -1699,28 +1699,28 @@
 
                 <div class="stats-grid">
                     <div class="stat-card" onclick="showDetailedStats('average')">
-                        <div class="stat-value">16.8</div>
+                        <div class="stat-value" id="average-stat">0.0</div>
                         <div class="stat-label">Moyenne générale</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('courses')">
-                        <div class="stat-value">12</div>
+                        <div class="stat-value" id="lessons-stat">0</div>
                         <div class="stat-label">Cours terminés</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('quizzes')">
-                        <div class="stat-value">24</div>
+                        <div class="stat-value" id="quizzes-stat">0</div>
                         <div class="stat-label">Quiz réussis</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('rank')">
-                        <div class="stat-value">3ème</div>
+                        <div class="stat-value" id="rank-stat">-</div>
                         <div class="stat-label">Classement</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('xp')">
-                        <div class="stat-value">2,890</div>
+                        <div class="stat-value" id="header-xp">0</div>
                         <div class="stat-label">Points XP</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('streak')">
-                        <div class="stat-value">
-                            <span class="streak-flame">🔥</span> 12
+                        <div class="stat-value" id="header-streak">
+                            <span class="streak-flame">🔥</span> 0
                         </div>
                         <div class="stat-label">Jours consécutifs</div>
                     </div>
@@ -2897,7 +2897,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                 <div class="criteria-icon">✅</div>
                                 <div class="criteria-info">
                                     <div class="criteria-title">Moyenne générale > 16</div>
-                                    <div class="criteria-desc">Votre moyenne: 16.8/20</div>
+                                    <div class="criteria-desc" id="prix-claudine-average">Votre moyenne: 0.0/20</div>
                                 </div>
                                 <div class="criteria-points">+200 pts</div>
                             </div>
@@ -4060,6 +4060,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         let userXP = 0;
         let userLevel = 1;
         let dailyStreak = 0;
+        let currentAverage = 0;
         let currentSection = 'dashboard';
         let currentUser = null;
         let dashboardData = null;
@@ -4145,7 +4146,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                             userXP = profile.data.xp || 0;
                             userLevel = profile.data.level || 1;
                             dailyStreak = profile.data.dailyStreak || 0;
+                            currentAverage = profile.data.currentAverage || 0;
                             updateXPDisplay();
+                            updateAverageDisplay();
                             console.log('✅ Profil chargé:', profile.data);
                         }
                     } else if (profileRes.status === 401) {
@@ -4263,6 +4266,8 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             const xpFill = document.getElementById('xpFill');
             const xpText = document.getElementById('xpText');
             const levelBadge = document.getElementById('levelBadge');
+            const headerXP = document.getElementById('header-xp');
+            const headerStreak = document.getElementById('header-streak');
 
             const xpForCurrentLevel = (userLevel - 1) * 250;
             const xpForNextLevel = userLevel * 250;
@@ -4273,6 +4278,23 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (xpFill) xpFill.style.width = percentage + '%';
             if (xpText) xpText.textContent = `${currentLevelXP} / ${xpNeeded} XP`;
             if (levelBadge) levelBadge.innerHTML = `<i class="fas fa-crown"></i> Niveau ${userLevel}`;
+
+            // Mettre à jour les valeurs du header
+            if (headerXP) headerXP.textContent = userXP.toLocaleString('fr-FR');
+            if (headerStreak) headerStreak.innerHTML = `<span class="streak-flame">🔥</span> ${dailyStreak}`;
+        }
+
+        function updateAverageDisplay() {
+            const averageStat = document.getElementById('average-stat');
+            const prixClaudineAverage = document.getElementById('prix-claudine-average');
+
+            if (averageStat) {
+                averageStat.textContent = currentAverage.toFixed(1);
+            }
+
+            if (prixClaudineAverage) {
+                prixClaudineAverage.textContent = `Votre moyenne: ${currentAverage.toFixed(1)}/20`;
+            }
         }
 
         function gainXP(amount, reason = '') {
@@ -4410,13 +4432,16 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         }
 
         function showDetailedStats(type) {
+            const lessonsCompleted = dashboardData?.lessonsCompleted || 0;
+            const quizzesPassed = dashboardData?.quizzesPassed || 0;
+
             const messages = {
-                'average': 'Moyenne générale: 16.8/20 • Progression: +1.2 points ce trimestre',
-                'courses': '12 cours terminés ! 89% de taux de réussite moyen',
-                'quizzes': '24 quiz réussis ! Votre taux de réussite moyen est de 89%.',
-                'rank': 'Classement: 3ème sur 156 élèves de votre niveau',
-                'xp': 'Points XP : Vous gagnez en moyenne 95 XP par jour !',
-                'streak': `Série de ${dailyStreak} jours ! Continue comme ça ! 🔥`
+                'average': `Moyenne générale: ${currentAverage.toFixed(1)}/20${currentAverage > 0 ? ' • Continue tes efforts !' : ' • Commence tes cours pour voir ta moyenne'}`,
+                'courses': `${lessonsCompleted} cours terminés !${lessonsCompleted > 0 ? ' Continue ton excellent travail' : ' Commence dès maintenant'}`,
+                'quizzes': `${quizzesPassed} quiz réussis !${quizzesPassed > 0 ? ' Tu progresses bien' : ' Lance ton premier quiz'}`,
+                'rank': 'Classement: Non disponible pour le moment',
+                'xp': `Points XP : ${userXP} XP accumulés !${userXP > 0 ? ' Niveau ' + userLevel : ' Commence à gagner des XP'}`,
+                'streak': `Série de ${dailyStreak} jours !${dailyStreak > 0 ? ' Continue comme ça ! 🔥' : ' Commence ta série aujourd\'hui ! 🔥'}`
             };
 
             showToast(`📊 ${messages[type]}`, 'info', 6000);
@@ -4442,9 +4467,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             const saved = localStorage.getItem('claudyneMaxData');
             if (saved) {
                 const data = JSON.parse(saved);
-                userXP = data.xp || 2890;
-                userLevel = data.level || 15;
-                dailyStreak = data.streak || 12;
+                userXP = data.xp || 0;
+                userLevel = data.level || 1;
+                dailyStreak = data.streak || 0;
                 currentSection = data.currentSection || 'dashboard';
             }
         }

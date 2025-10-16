@@ -4124,6 +4124,11 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         }
 
         async function fetchAdditionalUserData(token) {
+            if (!token) {
+                console.log('ℹ️ Token non disponible - Connexion requise');
+                return;
+            }
+
             try {
                 const API_BASE = 'https://claudyne.com';
                 const headers = {
@@ -4132,38 +4137,56 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 };
 
                 // Profile
-                const profileRes = await fetch(`${API_BASE}/api/students/profile`, { headers });
-                if (profileRes.ok) {
-                    const profile = await profileRes.json();
-                    if (profile.success && profile.data) {
-                        userXP = profile.data.xp || 0;
-                        userLevel = profile.data.level || 1;
-                        dailyStreak = profile.data.dailyStreak || 0;
-                        updateXPDisplay();
+                try {
+                    const profileRes = await fetch(`${API_BASE}/api/students/profile`, { headers });
+                    if (profileRes.ok) {
+                        const profile = await profileRes.json();
+                        if (profile.success && profile.data) {
+                            userXP = profile.data.xp || 0;
+                            userLevel = profile.data.level || 1;
+                            dailyStreak = profile.data.dailyStreak || 0;
+                            updateXPDisplay();
+                            console.log('✅ Profil chargé:', profile.data);
+                        }
+                    } else if (profileRes.status === 401) {
+                        console.log('🔒 Session expirée - Veuillez vous reconnecter');
                     }
+                } catch (err) {
+                    // Ignore profile errors silently
                 }
 
                 // Dashboard
-                const dashRes = await fetch(`${API_BASE}/api/students/dashboard`, { headers });
-                if (dashRes.ok) {
-                    const dash = await dashRes.json();
-                    if (dash.success) {
-                        dashboardData = dash.data;
-                        updateDashboardStats();
+                try {
+                    const dashRes = await fetch(`${API_BASE}/api/students/dashboard`, { headers });
+                    if (dashRes.ok) {
+                        const dash = await dashRes.json();
+                        if (dash.success) {
+                            dashboardData = dash.data;
+                            updateDashboardStats();
+                            console.log('✅ Dashboard chargé:', dash.data);
+                        }
                     }
+                } catch (err) {
+                    // Ignore dashboard errors silently
                 }
 
                 // Subjects
-                const subjRes = await fetch(`${API_BASE}/api/students/subjects`, { headers });
-                if (subjRes.ok) {
-                    const subj = await subjRes.json();
-                    if (subj.success) {
-                        subjectsData = subj.data.subjects || [];
-                        updateSubjectsDisplay();
+                try {
+                    const subjRes = await fetch(`${API_BASE}/api/students/subjects`, { headers });
+                    if (subjRes.ok) {
+                        const subj = await subjRes.json();
+                        if (subj.success) {
+                            subjectsData = subj.data.subjects || [];
+                            updateSubjectsDisplay();
+                            console.log('✅ Matières chargées:', subj.data.subjects.length);
+                        }
                     }
+                } catch (err) {
+                    // Ignore subjects errors silently
                 }
             } catch (error) {
-                // Silent fail
+                // Silent fail - user not authenticated
+                console.log('ℹ️ Chargement des données API ignoré (non connecté)');
             }
         }
 

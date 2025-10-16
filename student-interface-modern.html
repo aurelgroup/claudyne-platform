@@ -4057,11 +4057,13 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
 
     <script>
         // ========== VARIABLES GLOBALES ==========
-        let userXP = 2890;
-        let userLevel = 15;
-        let dailyStreak = 12;
+        let userXP = 0;
+        let userLevel = 1;
+        let dailyStreak = 0;
         let currentSection = 'dashboard';
         let currentUser = null;
+        let dashboardData = null;
+        let subjectsData = [];
 
         // ========== INITIALISATION ==========
         document.addEventListener('DOMContentLoaded', function() {
@@ -4124,32 +4126,75 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         async function fetchAdditionalUserData(token) {
             try {
                 const API_BASE = 'https://claudyne.com';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
 
-                // Appel API pour récupérer les données étendues
-                const response = await fetch(`${API_BASE}/api/students/profile`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-
-                    if (data.success && data.data) {
-                        // Mettre à jour les stats avec les vraies données
-                        if (data.data.xp) userXP = data.data.xp;
-                        if (data.data.level) userLevel = data.data.level;
-                        if (data.data.dailyStreak) dailyStreak = data.data.dailyStreak;
-
+                // Profile
+                const profileRes = await fetch(`${API_BASE}/api/students/profile`, { headers });
+                if (profileRes.ok) {
+                    const profile = await profileRes.json();
+                    if (profile.success && profile.data) {
+                        userXP = profile.data.xp || 0;
+                        userLevel = profile.data.level || 1;
+                        dailyStreak = profile.data.dailyStreak || 0;
                         updateXPDisplay();
                     }
                 }
-                // Note: Si l'API profile n'est pas disponible, on continue avec les données de base
+
+                // Dashboard
+                const dashRes = await fetch(`${API_BASE}/api/students/dashboard`, { headers });
+                if (dashRes.ok) {
+                    const dash = await dashRes.json();
+                    if (dash.success) {
+                        dashboardData = dash.data;
+                        updateDashboardStats();
+                    }
+                }
+
+                // Subjects
+                const subjRes = await fetch(`${API_BASE}/api/students/subjects`, { headers });
+                if (subjRes.ok) {
+                    const subj = await subjRes.json();
+                    if (subj.success) {
+                        subjectsData = subj.data.subjects || [];
+                        updateSubjectsDisplay();
+                    }
+                }
             } catch (error) {
-                // Erreur silencieuse - l'interface fonctionne avec les données localStorage
+                // Silent fail
             }
+        }
+
+        function updateDashboardStats() {
+            if (!dashboardData) return;
+
+            const stats = [
+                { id: 'lessons-stat', value: dashboardData.lessonsCompleted || 0 },
+                { id: 'quizzes-stat', value: dashboardData.quizzesPassed || 0 },
+                { id: 'battles-stat', value: dashboardData.battlesWon || 0 }
+            ];
+
+            stats.forEach(stat => {
+                const el = document.getElementById(stat.id);
+                if (el) el.textContent = stat.value;
+            });
+        }
+
+        function updateSubjectsDisplay() {
+            const container = document.querySelector('.subjects-grid');
+            if (!container || !subjectsData.length) return;
+
+            subjectsData.forEach((subject, idx) => {
+                const card = container.children[idx];
+                if (card) {
+                    const progress = card.querySelector('.subject-progress');
+                    const score = card.querySelector('.subject-score');
+                    if (progress) progress.style.width = `${subject.progress}%`;
+                    if (score) score.textContent = `${subject.score}%`;
+                }
+            });
         }
 
         // ========== PARTICULES FLOTTANTES ==========

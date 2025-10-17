@@ -4274,6 +4274,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 // Orientation - charger profil, recommandations, carrières et établissements
                 await loadOrientationData();
 
+                // Bien-être - charger métriques, exercices et pauses intelligentes
+                await loadWellnessData();
+
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -5672,6 +5675,184 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
 
         function takeOrientationQuiz() {
             showToast('📝 Quiz d\'orientation en cours de développement', 'info');
+        }
+
+        // ===== BIEN-ÊTRE (WELLNESS) SECTION =====
+        let wellnessData = {
+            metrics: null,
+            exercises: [],
+            breaks: []
+        };
+
+        async function loadWellnessData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Wellness] No auth token found');
+                    return;
+                }
+
+                // Load wellness metrics
+                const metricsRes = await fetch(`${API_BASE}/api/wellness/metrics`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (metricsRes.ok) {
+                    const result = await metricsRes.json();
+                    if (result.success && result.data) {
+                        wellnessData.metrics = result.data;
+                        updateWellnessMetrics();
+                        updateWellnessRecommendations();
+                    }
+                }
+
+                // Load relaxation exercises
+                const exercisesRes = await fetch(`${API_BASE}/api/wellness/exercises`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (exercisesRes.ok) {
+                    const result = await exercisesRes.json();
+                    if (result.success && result.data) {
+                        wellnessData.exercises = result.data.exercises || [];
+                    }
+                }
+
+                // Load smart breaks schedule
+                const breaksRes = await fetch(`${API_BASE}/api/wellness/breaks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (breaksRes.ok) {
+                    const result = await breaksRes.json();
+                    if (result.success && result.data) {
+                        wellnessData.breaks = result.data.breaks || [];
+                        updateSmartBreaks(result.data.nextBreak);
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Wellness] Error loading data:', error);
+            }
+        }
+
+        function updateWellnessMetrics() {
+            if (!wellnessData.metrics) return;
+
+            // Update wellness score
+            const wellnessScoreEl = document.querySelector('.wellness-score');
+            if (wellnessScoreEl) {
+                wellnessScoreEl.textContent = `Score: ${wellnessData.metrics.wellnessScore}/100`;
+            }
+
+            // Update stress metric
+            const stressMetric = wellnessData.metrics.metrics.stress;
+            const stressBar = document.querySelector('.metric-icon.stress')?.parentElement.parentElement.querySelector('.metric-fill');
+            const stressValue = document.querySelector('.metric-icon.stress')?.parentElement.parentElement.querySelector('.metric-value');
+            if (stressBar && stressValue) {
+                stressBar.style.width = `${stressMetric.level}%`;
+                stressBar.className = `metric-fill ${stressMetric.status}`;
+                stressValue.textContent = `${stressMetric.label} (${stressMetric.level}%)`;
+            }
+
+            // Update energy metric
+            const energyMetric = wellnessData.metrics.metrics.energy;
+            const energyBar = document.querySelector('.metric-icon.energy')?.parentElement.parentElement.querySelector('.metric-fill');
+            const energyValue = document.querySelector('.metric-icon.energy')?.parentElement.parentElement.querySelector('.metric-value');
+            if (energyBar && energyValue) {
+                energyBar.style.width = `${energyMetric.level}%`;
+                energyBar.className = `metric-fill ${energyMetric.status}`;
+                energyValue.textContent = `${energyMetric.label} (${energyMetric.level}%)`;
+            }
+
+            // Update focus metric
+            const focusMetric = wellnessData.metrics.metrics.focus;
+            const focusBar = document.querySelector('.metric-icon.focus')?.parentElement.parentElement.querySelector('.metric-fill');
+            const focusValue = document.querySelector('.metric-icon.focus')?.parentElement.parentElement.querySelector('.metric-value');
+            if (focusBar && focusValue) {
+                focusBar.style.width = `${focusMetric.level}%`;
+                focusBar.className = `metric-fill ${focusMetric.status}`;
+                focusValue.textContent = `${focusMetric.label} (${focusMetric.level}%)`;
+            }
+        }
+
+        function updateWellnessRecommendations() {
+            if (!wellnessData.metrics || !wellnessData.metrics.recommendations) return;
+
+            const recList = document.querySelector('.wellness-recommendations ul');
+            if (!recList) return;
+
+            recList.innerHTML = '';
+            wellnessData.metrics.recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                recList.appendChild(li);
+            });
+        }
+
+        function updateSmartBreaks(nextBreak) {
+            if (!wellnessData.breaks.length) return;
+
+            const breakSchedule = document.querySelector('.break-schedule');
+            if (!breakSchedule) return;
+
+            breakSchedule.innerHTML = '';
+
+            wellnessData.breaks.forEach(breakItem => {
+                const breakDiv = document.createElement('div');
+                breakDiv.className = `break-item ${breakItem.status}`;
+
+                breakDiv.innerHTML = `
+                    <div class="break-time">${breakItem.time}</div>
+                    <div class="break-type">${breakItem.type}</div>
+                    <div class="break-status">${breakItem.statusLabel}</div>
+                `;
+
+                breakSchedule.appendChild(breakDiv);
+            });
+
+            // Update next break status
+            const breakStatusEl = document.querySelector('.break-status');
+            if (breakStatusEl && nextBreak) {
+                breakStatusEl.textContent = `Prochaine pause: ${nextBreak}`;
+            }
+        }
+
+        function startMeditation() {
+            showToast('🧘 Démarrage de la méditation guidée...', 'info');
+            gainXP(15, 'Session de méditation');
+        }
+
+        function startBreathing() {
+            showToast('🫁 Exercice de respiration 4-7-8 démarré', 'info');
+            gainXP(10, 'Exercice de respiration');
+        }
+
+        function playNatureSounds() {
+            showToast('🎵 Sons de la nature activés', 'success');
+        }
+
+        async function takeBreak() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) return;
+
+                const response = await fetch(`${API_BASE}/api/wellness/break/take`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        showToast('⏸️ Pause démarrée ! Prenez 5 minutes', 'success');
+                        gainXP(20, 'Pause bien-être prise');
+                    }
+                }
+            } catch (error) {
+                console.error('[Wellness] Error taking break:', error);
+                showToast('⏸️ Pause démarrée !', 'info');
+            }
         }
 
         function generateStudyPlan() {

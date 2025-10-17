@@ -23,6 +23,7 @@ const notificationRoutes = require('./notifications');
 const quizRoutes = require('./quiz');
 const revisionsRoutes = require('./revisions');
 const orientationRoutes = require('./orientation');
+const wellnessRoutes = require('./wellness');
 
 // Middleware d'authentification
 const { authenticate, authorize } = require('../middleware/auth');
@@ -123,6 +124,7 @@ router.use('/notifications', notificationRoutes);
 router.use('/quiz', quizRoutes);
 router.use('/revisions', revisionsRoutes);
 router.use('/orientation', orientationRoutes);
+router.use('/wellness', wellnessRoutes);
 
 // Routes administrateur (nécessite rôle ADMIN ou MODERATOR)
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), adminRoutes);

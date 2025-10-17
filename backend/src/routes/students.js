@@ -924,4 +924,326 @@ router.get('/achievements', async (req, res) => {
   }
 });
 
+// Récupérer les paramètres de l'étudiant
+router.get('/settings', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { Student, User, Family } = req.models;
+
+    // Récupérer l'utilisateur avec son profil étudiant
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'email', 'phone', 'address', 'city', 'country']
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    const student = await Student.findOne({
+      where: { familyId: req.user.familyId }
+    });
+
+    const family = await Family.findByPk(req.user.familyId);
+
+    // Structure des paramètres
+    const settings = {
+      // Profil
+      profile: {
+        firstName: student?.firstName || user.firstName || '',
+        lastName: student?.lastName || user.lastName || '',
+        nickname: student?.nickname || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        city: user.city || '',
+        country: user.country || '',
+        dateOfBirth: student?.dateOfBirth || null,
+        gender: student?.gender || null,
+        avatar: student?.avatar || null
+      },
+
+      // Informations scolaires
+      education: {
+        educationLevel: student?.educationLevel || '',
+        schoolName: student?.schoolName || '',
+        schoolType: student?.schoolType || '',
+        academicYear: student?.academicYear || '',
+        className: student?.className || '',
+        currentAverage: student?.currentAverage || 0,
+        targetGrade: student?.targetGrade || 'Mention Bien'
+      },
+
+      // Préférences d'apprentissage
+      learning: {
+        learningStyle: student?.learningStyle || 'ADAPTIVE',
+        preferredLanguage: student?.preferredLanguage || 'fr',
+        difficultySetting: student?.difficultySetting || 'ADAPTIVE',
+        adaptiveDifficulty: student?.difficultySetting === 'ADAPTIVE',
+        detailedExplanations: true,
+        spacedRepetition: true,
+        difficultyLevel: student?.difficultySetting === 'EASY' ? 1 : student?.difficultySetting === 'MEDIUM' ? 3 : student?.difficultySetting === 'HARD' ? 5 : 3
+      },
+
+      // Notifications
+      notifications: {
+        studyReminders: true,
+        newChallenges: true,
+        smartBreaks: true,
+        community: false,
+        email: true,
+        push: true
+      },
+
+      // Interface
+      interface: {
+        theme: 'gradient',
+        particles: true,
+        animations: true,
+        language: student?.preferredLanguage || 'fr'
+      },
+
+      // Sécurité et données
+      security: {
+        autoSave: true,
+        twoFactorEnabled: false,
+        sessionTimeout: 30
+      },
+
+      // Statistiques
+      stats: {
+        totalPoints: student?.totalPoints || 0,
+        claudinePoints: student?.claudinePoints || 0,
+        currentLevel: student?.currentLevel || 1,
+        currentStreak: student?.currentStreak || 0,
+        totalLessonsCompleted: student?.totalLessonsCompleted || 0,
+        totalStudyTimeMinutes: student?.totalStudyTimeMinutes || 0
+      }
+    };
+
+    res.json({
+      success: true,
+      data: settings
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération settings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des paramètres'
+    });
+  }
+});
+
+// Mettre à jour les paramètres de l'étudiant
+router.put('/settings', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { Student, User } = req.models;
+    const {
+      profile,
+      education,
+      learning,
+      notifications,
+      interface: interfaceSettings
+    } = req.body;
+
+    // Mettre à jour l'utilisateur
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Mettre à jour le profil étudiant
+    const student = await Student.findOne({
+      where: { familyId: req.user.familyId }
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Profil étudiant non trouvé'
+      });
+    }
+
+    // Updates pour User
+    const userUpdates = {};
+    if (profile) {
+      if (profile.email) userUpdates.email = profile.email;
+      if (profile.phone) userUpdates.phone = profile.phone;
+      if (profile.address) userUpdates.address = profile.address;
+      if (profile.city) userUpdates.city = profile.city;
+      if (profile.country) userUpdates.country = profile.country;
+    }
+
+    if (Object.keys(userUpdates).length > 0) {
+      await user.update(userUpdates);
+    }
+
+    // Updates pour Student
+    const studentUpdates = {};
+
+    if (profile) {
+      if (profile.firstName) studentUpdates.firstName = profile.firstName;
+      if (profile.lastName) studentUpdates.lastName = profile.lastName;
+      if (profile.nickname) studentUpdates.nickname = profile.nickname;
+      if (profile.dateOfBirth) studentUpdates.dateOfBirth = profile.dateOfBirth;
+      if (profile.gender) studentUpdates.gender = profile.gender;
+      if (profile.avatar) studentUpdates.avatar = profile.avatar;
+    }
+
+    if (education) {
+      if (education.educationLevel) studentUpdates.educationLevel = education.educationLevel;
+      if (education.schoolName) studentUpdates.schoolName = education.schoolName;
+      if (education.schoolType) studentUpdates.schoolType = education.schoolType;
+      if (education.className) studentUpdates.className = education.className;
+      if (education.targetGrade) studentUpdates.targetGrade = education.targetGrade;
+    }
+
+    if (learning) {
+      if (learning.learningStyle) studentUpdates.learningStyle = learning.learningStyle;
+      if (learning.preferredLanguage) studentUpdates.preferredLanguage = learning.preferredLanguage;
+      if (learning.difficultySetting) studentUpdates.difficultySetting = learning.difficultySetting;
+
+      // Mapper le niveau de difficulté numérique vers les enum
+      if (learning.difficultyLevel !== undefined) {
+        const difficultyMap = {
+          1: 'EASY',
+          2: 'EASY',
+          3: 'MEDIUM',
+          4: 'HARD',
+          5: 'HARD'
+        };
+        studentUpdates.difficultySetting = difficultyMap[learning.difficultyLevel] || 'MEDIUM';
+      }
+    }
+
+    if (Object.keys(studentUpdates).length > 0) {
+      await student.update(studentUpdates);
+    }
+
+    // Sauvegarder les préférences dans metadata
+    const metadata = student.metadata || {};
+    if (notifications) metadata.notifications = notifications;
+    if (interfaceSettings) metadata.interface = interfaceSettings;
+
+    if (notifications || interfaceSettings) {
+      await student.update({ metadata });
+    }
+
+    res.json({
+      success: true,
+      message: 'Paramètres mis à jour avec succès',
+      data: {
+        profile: {
+          firstName: student.firstName,
+          lastName: student.lastName,
+          nickname: student.nickname,
+          email: user.email
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour settings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour des paramètres',
+      error: error.message
+    });
+  }
+});
+
+// Changer le mot de passe
+router.post('/change-password', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { User } = req.models;
+    const { currentPassword, newPassword } = req.body;
+
+    // Validation
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mot de passe actuel et nouveau mot de passe requis'
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nouveau mot de passe doit contenir au moins 8 caractères'
+      });
+    }
+
+    // Récupérer l'utilisateur avec le mot de passe
+    const user = await User.scope('withPassword').findByPk(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Vérifier le mot de passe actuel
+    const bcrypt = require('bcrypt');
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Mot de passe actuel incorrect'
+      });
+    }
+
+    // Hasher le nouveau mot de passe
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Mettre à jour le mot de passe
+    await user.update({
+      password: hashedPassword,
+      passwordChangedAt: new Date()
+    });
+
+    logger.info(`Mot de passe changé pour l'utilisateur ${user.id}`);
+
+    res.json({
+      success: true,
+      message: 'Mot de passe modifié avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur changement mot de passe:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors du changement de mot de passe',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

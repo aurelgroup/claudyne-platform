@@ -3762,24 +3762,60 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                     <div class="card-content">
                         <div class="profile-section">
                             <div class="profile-field">
-                                <label>Nom d'utilisateur</label>
-                                <input type="text" value="Étudiant_2025" class="form-input">
+                                <label>Prénom</label>
+                                <input type="text" id="setting-firstName" class="form-input" placeholder="Votre prénom">
+                            </div>
+                            <div class="profile-field">
+                                <label>Nom</label>
+                                <input type="text" id="setting-lastName" class="form-input" placeholder="Votre nom">
+                            </div>
+                            <div class="profile-field">
+                                <label>Surnom (affiché dans l'interface)</label>
+                                <input type="text" id="setting-nickname" class="form-input" placeholder="Surnom optionnel">
+                            </div>
+                            <div class="profile-field">
+                                <label>Email</label>
+                                <input type="email" id="setting-email" class="form-input" placeholder="votre@email.com">
+                            </div>
+                            <div class="profile-field">
+                                <label>Téléphone</label>
+                                <input type="tel" id="setting-phone" class="form-input" placeholder="+237 6XX XXX XXX">
+                            </div>
+                            <div class="profile-field">
+                                <label>Adresse</label>
+                                <input type="text" id="setting-address" class="form-input" placeholder="Votre adresse">
+                            </div>
+                            <div class="profile-field">
+                                <label>Ville</label>
+                                <input type="text" id="setting-city" class="form-input" placeholder="Ville">
+                            </div>
+                            <div class="profile-field">
+                                <label>Pays</label>
+                                <input type="text" id="setting-country" class="form-input" placeholder="Cameroun">
                             </div>
                             <div class="profile-field">
                                 <label>Classe</label>
-                                <select class="form-select">
-                                    <option selected>Terminale S</option>
-                                    <option>Terminale ES</option>
-                                    <option>Terminale L</option>
+                                <select id="setting-educationLevel" class="form-select">
+                                    <option value="6EME">6ème</option>
+                                    <option value="5EME">5ème</option>
+                                    <option value="4EME">4ème</option>
+                                    <option value="3EME">3ème</option>
+                                    <option value="SECONDE">Seconde</option>
+                                    <option value="PREMIERE">Première</option>
+                                    <option value="TERMINALE" selected>Terminale</option>
                                 </select>
                             </div>
                             <div class="profile-field">
+                                <label>Nom de l'établissement</label>
+                                <input type="text" id="setting-schoolName" class="form-input" placeholder="Lycée">
+                            </div>
+                            <div class="profile-field">
                                 <label>Objectif BAC</label>
-                                <select class="form-select">
-                                    <option>Mention Passable</option>
-                                    <option>Mention Assez Bien</option>
-                                    <option selected>Mention Bien</option>
-                                    <option>Mention Très Bien</option>
+                                <select id="setting-targetGrade" class="form-select">
+                                    <option value="Mention Passable">Mention Passable</option>
+                                    <option value="Mention Assez Bien">Mention Assez Bien</option>
+                                    <option value="Mention Bien" selected>Mention Bien</option>
+                                    <option value="Mention Très Bien">Mention Très Bien</option>
                                 </select>
                             </div>
                         </div>
@@ -3799,7 +3835,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="preference-desc">L'IA ajuste automatiquement la difficulté</div>
                                 </div>
                                 <div class="preference-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-adaptiveDifficulty" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="preference-item">
@@ -3808,7 +3844,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="preference-desc">Afficher les solutions étape par étape</div>
                                 </div>
                                 <div class="preference-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-detailedExplanations" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="preference-item">
@@ -3817,14 +3853,14 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="preference-desc">Système de mémorisation optimisé</div>
                                 </div>
                                 <div class="preference-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-spacedRepetition" checked class="toggle-switch">
                                 </div>
                             </div>
                         </div>
 
                         <div class="difficulty-slider">
                             <label>Niveau de difficulté préféré</label>
-                            <input type="range" min="1" max="5" value="3" class="slider">
+                            <input type="range" min="1" max="5" value="3" id="setting-difficultyLevel" class="slider">
                             <div class="slider-labels">
                                 <span>Facile</span>
                                 <span>Difficile</span>
@@ -3846,7 +3882,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Notifications quotidiennes de révision</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-studyReminders" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="notification-item">
@@ -3855,7 +3891,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Alertes pour les nouveaux challenges</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-newChallenges" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="notification-item">
@@ -3864,7 +3900,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Rappels de pause pour le bien-être</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-smartBreaks" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="notification-item">
@@ -3873,7 +3909,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Messages et réponses du forum</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-community" class="toggle-switch">
                                 </div>
                             </div>
                         </div>
@@ -4219,6 +4255,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                         // Ignore analytics errors silently
                     }
                 }
+
+                // Settings - charger les paramètres utilisateur
+                await loadSettings();
+
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -4881,13 +4921,174 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         }
 
         // Fonctions pour les paramètres
-        function saveSettings() {
-            showToast('💾 Paramètres sauvegardés avec succès !', 'success');
-            gainXP(5, 'Sauvegarde paramètres');
+        let settingsData = null;
+
+        async function loadSettings() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) return;
+
+                const response = await fetch(`${API_BASE}/api/students/settings`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) return;
+
+                const result = await response.json();
+                if (result.success) {
+                    settingsData = result.data;
+                    populateSettingsForm(settingsData);
+                    console.log('✅ Paramètres chargés');
+                }
+            } catch (error) {
+                console.log('ℹ️ Erreur chargement paramètres:', error.message);
+            }
+        }
+
+        function populateSettingsForm(settings) {
+            if (!settings) return;
+
+            // Profil
+            if (settings.profile) {
+                const fields = ['firstName', 'lastName', 'nickname', 'email', 'phone', 'address', 'city', 'country'];
+                fields.forEach(field => {
+                    const input = document.getElementById(`setting-${field}`);
+                    if (input && settings.profile[field]) {
+                        input.value = settings.profile[field];
+                    }
+                });
+            }
+
+            // Education
+            if (settings.education) {
+                const educationLevel = document.getElementById('setting-educationLevel');
+                const schoolName = document.getElementById('setting-schoolName');
+                const targetGrade = document.getElementById('setting-targetGrade');
+
+                if (educationLevel && settings.education.educationLevel) {
+                    educationLevel.value = settings.education.educationLevel;
+                }
+                if (schoolName && settings.education.schoolName) {
+                    schoolName.value = settings.education.schoolName;
+                }
+                if (targetGrade && settings.education.targetGrade) {
+                    targetGrade.value = settings.education.targetGrade;
+                }
+            }
+
+            // Préférences d'apprentissage
+            if (settings.learning) {
+                const adaptiveDifficulty = document.getElementById('setting-adaptiveDifficulty');
+                const detailedExplanations = document.getElementById('setting-detailedExplanations');
+                const spacedRepetition = document.getElementById('setting-spacedRepetition');
+                const difficultyLevel = document.getElementById('setting-difficultyLevel');
+
+                if (adaptiveDifficulty) adaptiveDifficulty.checked = settings.learning.adaptiveDifficulty !== false;
+                if (detailedExplanations) detailedExplanations.checked = settings.learning.detailedExplanations !== false;
+                if (spacedRepetition) spacedRepetition.checked = settings.learning.spacedRepetition !== false;
+                if (difficultyLevel && settings.learning.difficultyLevel) {
+                    difficultyLevel.value = settings.learning.difficultyLevel;
+                }
+            }
+
+            // Notifications
+            if (settings.notifications) {
+                const notifFields = ['studyReminders', 'newChallenges', 'smartBreaks', 'community'];
+                notifFields.forEach(field => {
+                    const checkbox = document.getElementById(`setting-notif-${field}`);
+                    if (checkbox) {
+                        checkbox.checked = settings.notifications[field] !== false;
+                    }
+                });
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    showToast('⚠️ Veuillez vous connecter', 'warning');
+                    return;
+                }
+
+                // Collecter les données du formulaire
+                const settingsUpdate = {
+                    profile: {
+                        firstName: document.getElementById('setting-firstName')?.value || '',
+                        lastName: document.getElementById('setting-lastName')?.value || '',
+                        nickname: document.getElementById('setting-nickname')?.value || '',
+                        email: document.getElementById('setting-email')?.value || '',
+                        phone: document.getElementById('setting-phone')?.value || '',
+                        address: document.getElementById('setting-address')?.value || '',
+                        city: document.getElementById('setting-city')?.value || '',
+                        country: document.getElementById('setting-country')?.value || ''
+                    },
+                    education: {
+                        educationLevel: document.getElementById('setting-educationLevel')?.value || '',
+                        schoolName: document.getElementById('setting-schoolName')?.value || '',
+                        targetGrade: document.getElementById('setting-targetGrade')?.value || ''
+                    },
+                    learning: {
+                        adaptiveDifficulty: document.getElementById('setting-adaptiveDifficulty')?.checked || false,
+                        detailedExplanations: document.getElementById('setting-detailedExplanations')?.checked || false,
+                        spacedRepetition: document.getElementById('setting-spacedRepetition')?.checked || false,
+                        difficultyLevel: parseInt(document.getElementById('setting-difficultyLevel')?.value || 3)
+                    },
+                    notifications: {
+                        studyReminders: document.getElementById('setting-notif-studyReminders')?.checked || false,
+                        newChallenges: document.getElementById('setting-notif-newChallenges')?.checked || false,
+                        smartBreaks: document.getElementById('setting-notif-smartBreaks')?.checked || false,
+                        community: document.getElementById('setting-notif-community')?.checked || false
+                    }
+                };
+
+                showToast('💾 Sauvegarde en cours...', 'info');
+
+                const response = await fetch(`${API_BASE}/api/students/settings`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settingsUpdate)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la sauvegarde');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Paramètres sauvegardés avec succès !', 'success');
+                    gainXP(5, 'Sauvegarde paramètres');
+
+                    // Recharger les données du profil
+                    await loadUserData();
+                } else {
+                    throw new Error(result.message || 'Erreur inconnue');
+                }
+
+            } catch (error) {
+                console.error('Erreur sauvegarde paramètres:', error);
+                showToast('❌ Erreur lors de la sauvegarde: ' + error.message, 'danger');
+            }
         }
 
         function resetToDefaults() {
             if (confirm('Êtes-vous sûr de vouloir restaurer les paramètres par défaut ?')) {
+                // Réinitialiser le formulaire
+                document.getElementById('setting-difficultyLevel').value = 3;
+                document.getElementById('setting-adaptiveDifficulty').checked = true;
+                document.getElementById('setting-detailedExplanations').checked = true;
+                document.getElementById('setting-spacedRepetition').checked = true;
+                document.getElementById('setting-notif-studyReminders').checked = true;
+                document.getElementById('setting-notif-newChallenges').checked = true;
+                document.getElementById('setting-notif-smartBreaks').checked = true;
+                document.getElementById('setting-notif-community').checked = false;
+
                 showToast('↻ Paramètres restaurés aux valeurs par défaut', 'warning');
                 gainXP(2, 'Reset paramètres');
             }
@@ -5312,7 +5513,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (submitBtn) submitBtn.disabled = true;
         }
 
-        function changePassword(event) {
+        async function changePassword(event) {
             event.preventDefault();
 
             const currentPassword = document.getElementById('currentPassword').value;
@@ -5338,9 +5539,54 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 return false;
             }
 
-            // Simulation du changement de mot de passe
-            showToast('🔄 Changement de mot de passe en cours...', 'info');
+            try {
+                showToast('🔄 Changement de mot de passe en cours...', 'info');
 
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    showToast('⚠️ Veuillez vous connecter', 'warning');
+                    return false;
+                }
+
+                const response = await fetch(`${API_BASE}/api/students/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Erreur lors du changement de mot de passe');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Mot de passe modifié avec succès !', 'success');
+                    closePasswordModal();
+                    gainXP(10, 'Changement mot de passe');
+
+                    // Réinitialiser le formulaire
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    throw new Error(result.message || 'Erreur inconnue');
+                }
+            } catch (error) {
+                console.error('Erreur changement mot de passe:', error);
+                showToast('❌ ' + error.message, 'error');
+            }
+
+            return false;
+        }
+
+        function _oldChangePasswordCode() {
             setTimeout(() => {
                 showToast('✅ Mot de passe changé avec succès !', 'success');
                 gainXP(50, 'Sécurité: Mot de passe mis à jour');

@@ -24,6 +24,7 @@ const quizRoutes = require('./quiz');
 const revisionsRoutes = require('./revisions');
 const orientationRoutes = require('./orientation');
 const wellnessRoutes = require('./wellness');
+const communityRoutes = require('./community');
 
 // Middleware d'authentification
 const { authenticate, authorize } = require('../middleware/auth');
@@ -125,6 +126,7 @@ router.use('/quiz', quizRoutes);
 router.use('/revisions', revisionsRoutes);
 router.use('/orientation', orientationRoutes);
 router.use('/wellness', wellnessRoutes);
+router.use('/community', communityRoutes);
 
 // Routes administrateur (nécessite rôle ADMIN ou MODERATOR)
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), adminRoutes);

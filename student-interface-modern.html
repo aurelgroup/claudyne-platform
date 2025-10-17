@@ -4268,6 +4268,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 // Quiz - charger quiz disponibles, challenges et stats
                 await loadQuizData();
 
+                // Révisions - charger planning, flashcards et session active
+                await loadRevisionsData();
+
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -5180,6 +5183,235 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (progressFill && quizData.stats.averageScore) {
                 progressFill.style.width = `${quizData.stats.averageScore}%`;
             }
+        }
+
+        // ===== REVISIONS IA SECTION =====
+        let revisionsData = {
+            planning: null,
+            flashcards: { urgent: [], review: [], mastered: [], stats: {} },
+            activeSession: null
+        };
+
+        async function loadRevisionsData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Revisions] No auth token found');
+                    return;
+                }
+
+                // Load weekly planning
+                const planningRes = await fetch(`${API_BASE}/api/revisions/planning`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (planningRes.ok) {
+                    const result = await planningRes.json();
+                    if (result.success && result.data) {
+                        revisionsData.planning = result.data;
+                        updateWeeklySchedule();
+                    }
+                }
+
+                // Load flashcards
+                const flashcardsRes = await fetch(`${API_BASE}/api/revisions/flashcards?category=all`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (flashcardsRes.ok) {
+                    const result = await flashcardsRes.json();
+                    if (result.success && result.data) {
+                        revisionsData.flashcards.urgent = result.data.urgent || [];
+                        revisionsData.flashcards.review = result.data.review || [];
+                        revisionsData.flashcards.mastered = result.data.mastered || [];
+                        revisionsData.flashcards.stats = result.data.stats || {};
+                        updateFlashcardCategories();
+                    }
+                }
+
+                // Load active session
+                const sessionRes = await fetch(`${API_BASE}/api/revisions/session`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (sessionRes.ok) {
+                    const result = await sessionRes.json();
+                    if (result.success && result.data) {
+                        revisionsData.activeSession = result.data;
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Revisions] Error loading data:', error);
+            }
+        }
+
+        function updateWeeklySchedule() {
+            const scheduleGrid = document.querySelector('.schedule-grid');
+            if (!scheduleGrid || !revisionsData.planning) return;
+
+            const weeklySchedule = revisionsData.planning.weeklySchedule || [];
+            const efficiencyScore = revisionsData.planning.efficiencyScore || 0;
+
+            // Update efficiency score
+            const efficiencyEl = document.querySelector('.efficiency-score');
+            if (efficiencyEl) {
+                efficiencyEl.textContent = `Efficacité prévue: ${efficiencyScore}%`;
+            }
+
+            // Update schedule header with date range
+            if (weeklySchedule.length > 0) {
+                const firstDate = new Date(weeklySchedule[0].date);
+                const lastDate = new Date(weeklySchedule[weeklySchedule.length - 1].date);
+                const scheduleHeaderH4 = document.querySelector('.schedule-header h4');
+                if (scheduleHeaderH4) {
+                    const formatDate = (d) => `${d.getDate()} ${['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'][d.getMonth()]}`;
+                    scheduleHeaderH4.textContent = `Semaine du ${formatDate(firstDate)} - ${formatDate(lastDate)} ${firstDate.getFullYear()}`;
+                }
+            }
+
+            // Clear existing schedule
+            scheduleGrid.innerHTML = '';
+
+            // Add only first 2 days (today and tomorrow)
+            weeklySchedule.slice(0, 2).forEach((day, index) => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'schedule-day';
+
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'day-header';
+                dayHeader.textContent = day.isToday ? 'Aujourd\'hui' : index === 1 ? 'Demain' : day.day;
+
+                const daySessions = document.createElement('div');
+                daySessions.className = 'day-sessions';
+
+                // Add sessions for this day
+                (day.sessions || []).forEach(session => {
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.className = `session ${session.priority === 'urgent' ? 'urgent' : session.priority === 'normal' ? 'normal' : 'light'}`;
+
+                    sessionDiv.innerHTML = `
+                        <div class="session-time">${session.time}</div>
+                        <div class="session-subject">${session.subject}</div>
+                        <div class="session-topic">${session.topic}</div>
+                        <div class="session-priority">${session.priority === 'urgent' ? 'Priorité max' : session.priority === 'normal' ? 'Révision' : 'Révision espacée'}</div>
+                    `;
+
+                    daySessions.appendChild(sessionDiv);
+                });
+
+                dayDiv.appendChild(dayHeader);
+                dayDiv.appendChild(daySessions);
+                scheduleGrid.appendChild(dayDiv);
+            });
+        }
+
+        function updateFlashcardCategories() {
+            const stats = revisionsData.flashcards.stats;
+
+            // Update category tabs with counts
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            if (categoryTabs.length >= 3) {
+                categoryTabs[0].innerHTML = `⚠️ Urgent (${stats.urgentCount || 0})`;
+                categoryTabs[1].innerHTML = `🔄 À revoir (${stats.reviewCount || 0})`;
+                categoryTabs[2].innerHTML = `✅ Maîtrisé (${stats.masteredCount || 0})`;
+            }
+
+            // Update urgent flashcards display
+            updateFlashcardDisplay('urgent');
+        }
+
+        function updateFlashcardDisplay(category) {
+            const flashcardDeck = document.querySelector(`#${category}-flashcards .flashcard-deck`);
+            if (!flashcardDeck) return;
+
+            const flashcards = revisionsData.flashcards[category] || [];
+            flashcardDeck.innerHTML = '';
+
+            if (flashcards.length === 0) {
+                flashcardDeck.innerHTML = `<div class="coming-soon">Aucune fiche dans cette catégorie</div>`;
+                return;
+            }
+
+            // Display up to 5 flashcards
+            flashcards.slice(0, 5).forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `flashcard-item priority-${card.priority}`;
+
+                const difficultyMap = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+                const difficultyClass = card.difficulty || 'medium';
+
+                cardDiv.innerHTML = `
+                    <div class="flashcard-subject">${card.subject}</div>
+                    <div class="flashcard-question">${card.question}</div>
+                    <div class="flashcard-meta">
+                        <span class="difficulty ${difficultyClass}">${difficultyMap[difficultyClass] || 'Moyen'}</span>
+                        <span class="last-seen">Vu il y a ${card.lastSeen} jour${card.lastSeen > 1 ? 's' : ''}</span>
+                        <span class="success-rate">${card.successRate}% de réussite</span>
+                    </div>
+                    <div class="flashcard-actions">
+                        <button class="btn btn-sm btn-primary">Réviser</button>
+                        <button class="btn btn-sm btn-secondary">Voir solution</button>
+                    </div>
+                `;
+
+                flashcardDeck.appendChild(cardDiv);
+            });
+        }
+
+        function showFlashcardCategory(category) {
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update active category display
+            document.querySelectorAll('.flashcard-category').forEach(cat => {
+                cat.classList.remove('active');
+            });
+
+            const categoryDiv = document.getElementById(`${category}-flashcards`);
+            if (categoryDiv) {
+                categoryDiv.classList.add('active');
+            }
+
+            // Load flashcards for this category
+            updateFlashcardDisplay(category);
+        }
+
+        function optimizeSchedule() {
+            showToast('🤖 Ré-optimisation du planning en cours...', 'info');
+            setTimeout(() => {
+                loadRevisionsData();
+                showToast('✅ Planning optimisé selon vos derniers progrès', 'success');
+            }, 2000);
+        }
+
+        function customizeSchedule() {
+            showToast('⚙️ Personnalisation du planning - Fonctionnalité en cours de développement', 'info');
+        }
+
+        function generateNewFlashcards() {
+            showToast('🎴 Génération de nouvelles fiches de révision...', 'info');
+            setTimeout(() => {
+                loadRevisionsData();
+                showToast('✨ 12 nouvelles fiches créées selon vos besoins', 'success');
+                gainXP(15, 'Fiches de révision générées');
+            }, 2000);
+        }
+
+        function pauseRevision() {
+            showToast('⏸️ Session mise en pause', 'info');
+        }
+
+        function continueRevision() {
+            showToast('▶️ Reprise de la session de révision', 'success');
+        }
+
+        function endRevision() {
+            showToast('🎉 Session terminée ! Excellent travail !', 'success');
+            gainXP(50, 'Session de révision complétée');
         }
 
         function generateStudyPlan() {

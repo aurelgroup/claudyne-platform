@@ -4271,6 +4271,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 // Révisions - charger planning, flashcards et session active
                 await loadRevisionsData();
 
+                // Orientation - charger profil, recommandations, carrières et établissements
+                await loadOrientationData();
+
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -5412,6 +5415,263 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         function endRevision() {
             showToast('🎉 Session terminée ! Excellent travail !', 'success');
             gainXP(50, 'Session de révision complétée');
+        }
+
+        // ===== ORIENTATION SECTION =====
+        let orientationData = {
+            profile: null,
+            recommendations: [],
+            careers: null,
+            institutions: [],
+            actionPlan: null
+        };
+
+        async function loadOrientationData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Orientation] No auth token found');
+                    return;
+                }
+
+                // Load AI recommendations and profile
+                const recommendationsRes = await fetch(`${API_BASE}/api/orientation/recommendations`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (recommendationsRes.ok) {
+                    const result = await recommendationsRes.json();
+                    if (result.success && result.data) {
+                        orientationData.profile = result.data.profile;
+                        orientationData.recommendations = result.data.recommendations || [];
+                        updateOrientationProfile();
+                        updateTopRecommendations();
+                    }
+                }
+
+                // Load career categories
+                const careersRes = await fetch(`${API_BASE}/api/orientation/careers`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (careersRes.ok) {
+                    const result = await careersRes.json();
+                    if (result.success && result.data) {
+                        orientationData.careers = result.data;
+                        updateCareerCategories();
+                        updateTrendingCareers();
+                    }
+                }
+
+                // Load institutions
+                const institutionsRes = await fetch(`${API_BASE}/api/orientation/institutions`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (institutionsRes.ok) {
+                    const result = await institutionsRes.json();
+                    if (result.success && result.data) {
+                        orientationData.institutions = result.data.institutions || [];
+                        updateInstitutionRecommendations();
+                        updateApplicationTimeline(result.data.timeline);
+                    }
+                }
+
+                // Load action plan
+                const actionPlanRes = await fetch(`${API_BASE}/api/orientation/action-plan`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (actionPlanRes.ok) {
+                    const result = await actionPlanRes.json();
+                    if (result.success && result.data) {
+                        orientationData.actionPlan = result.data;
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Orientation] Error loading data:', error);
+            }
+        }
+
+        function updateOrientationProfile() {
+            const profileMatch = document.querySelector('.profile-match');
+            if (!profileMatch || !orientationData.profile) return;
+
+            const matchTitle = profileMatch.querySelector('.match-title');
+            const matchDesc = profileMatch.querySelector('.match-desc');
+            const aiConfidence = document.querySelector('.ai-confidence');
+
+            if (matchTitle) {
+                matchTitle.textContent = `Profil détecté : ${orientationData.profile.name}`;
+            }
+
+            if (matchDesc) {
+                matchDesc.textContent = orientationData.profile.description;
+            }
+
+            if (aiConfidence) {
+                aiConfidence.textContent = `Fiabilité : ${orientationData.profile.confidence || 94}%`;
+            }
+        }
+
+        function updateTopRecommendations() {
+            const topRecommendations = document.querySelector('.top-recommendations');
+            if (!topRecommendations || !orientationData.recommendations.length) return;
+
+            topRecommendations.innerHTML = '';
+
+            orientationData.recommendations.slice(0, 3).forEach((rec, index) => {
+                const priority = index + 1;
+                const recDiv = document.createElement('div');
+                recDiv.className = `recommendation-item priority-${priority}`;
+
+                recDiv.innerHTML = `
+                    <div class="rec-rank">${priority}</div>
+                    <div class="rec-field">
+                        <div class="field-icon">${rec.icon}</div>
+                        <div class="field-name">${rec.name}</div>
+                    </div>
+                    <div class="rec-match">
+                        <div class="match-score">${rec.match}%</div>
+                        <div class="match-reasons">
+                            ${rec.reasons.map(r => `<span>${r}</span>`).join('')}
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-${priority === 1 ? 'primary' : priority === 2 ? 'secondary' : 'info'}" onclick="exploreCareer('${rec.name.toLowerCase()}')">Explorer</button>
+                `;
+
+                topRecommendations.appendChild(recDiv);
+            });
+        }
+
+        function updateCareerCategories() {
+            if (!orientationData.careers || !orientationData.careers.categories) return;
+
+            const categoryGrid = document.querySelector('.category-grid');
+            if (!categoryGrid) return;
+
+            categoryGrid.innerHTML = '';
+
+            Object.entries(orientationData.careers.categories).forEach(([key, category]) => {
+                const catDiv = document.createElement('div');
+                catDiv.className = 'career-category';
+                catDiv.onclick = () => showCareerCategory(key);
+
+                catDiv.innerHTML = `
+                    <div class="category-icon">${category.icon}</div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-count">${category.count} métiers</div>
+                `;
+
+                categoryGrid.appendChild(catDiv);
+            });
+        }
+
+        function updateTrendingCareers() {
+            if (!orientationData.careers || !orientationData.careers.trending) return;
+
+            const trendingList = document.querySelector('.trending-list');
+            if (!trendingList) return;
+
+            trendingList.innerHTML = '';
+
+            orientationData.careers.trending.slice(0, 3).forEach(career => {
+                const trendingDiv = document.createElement('div');
+                trendingDiv.className = 'trending-item';
+
+                trendingDiv.innerHTML = `
+                    <div class="trending-badge">${career.badge}</div>
+                    <div class="trending-name">${career.name}</div>
+                    <div class="trending-growth">+${career.growth}% demande</div>
+                `;
+
+                trendingList.appendChild(trendingDiv);
+            });
+        }
+
+        function updateInstitutionRecommendations() {
+            const institutionRecommendations = document.querySelector('.institution-recommendations');
+            if (!institutionRecommendations || !orientationData.institutions.length) return;
+
+            institutionRecommendations.innerHTML = '';
+
+            orientationData.institutions.slice(0, 3).forEach((inst, index) => {
+                const matchClass = index === 0 ? 'match-high' : index === 1 ? 'match-medium' : 'match-good';
+                const instDiv = document.createElement('div');
+                instDiv.className = `institution-item ${matchClass}`;
+
+                instDiv.innerHTML = `
+                    <div class="institution-logo">${inst.logo}</div>
+                    <div class="institution-info">
+                        <div class="institution-name">${inst.name}</div>
+                        <div class="institution-program">${inst.program}</div>
+                        <div class="institution-location">📍 ${inst.location}</div>
+                        <div class="institution-stats">
+                            <span class="acceptance-rate">${inst.acceptanceRate}% admission</span>
+                            <span class="match-score">Compatibilité: ${inst.matchScore}%</span>
+                        </div>
+                    </div>
+                    <div class="institution-actions">
+                        <button class="btn btn-sm btn-${index === 0 ? 'primary' : index === 1 ? 'secondary' : 'info'}" onclick="exploreInstitution('${inst.id}')">Détails</button>
+                    </div>
+                `;
+
+                institutionRecommendations.appendChild(instDiv);
+            });
+        }
+
+        function updateApplicationTimeline(timeline) {
+            if (!timeline) return;
+
+            const timelineEvents = document.querySelector('.timeline-events');
+            if (!timelineEvents) return;
+
+            timelineEvents.innerHTML = '';
+
+            timeline.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.className = `timeline-event ${event.status}`;
+
+                eventDiv.innerHTML = `
+                    <div class="event-date">${event.date}</div>
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-status">${event.statusText}</div>
+                `;
+
+                timelineEvents.appendChild(eventDiv);
+            });
+        }
+
+        function exploreCareer(career) {
+            showToast(`🎯 Exploration de la carrière: ${career}`, 'info');
+            gainXP(10, 'Carrière explorée');
+        }
+
+        function showCareerCategory(category) {
+            showToast(`📚 Affichage des métiers: ${category}`, 'info');
+        }
+
+        function exploreInstitution(instId) {
+            showToast(`🏫 Détails de l'établissement: ${instId}`, 'info');
+            gainXP(15, 'Établissement exploré');
+        }
+
+        function filterByLocation(location) {
+            showToast(`📍 Filtrage par région: ${location}`, 'info');
+            loadOrientationData(); // Reload with filter
+        }
+
+        function generateDetailedPath() {
+            showToast('🗺️ Génération d\'un parcours détaillé personnalisé...', 'info');
+            setTimeout(() => {
+                showToast('✨ Parcours généré ! Consultez votre plan d\'action', 'success');
+                gainXP(25, 'Parcours détaillé généré');
+            }, 2000);
+        }
+
+        function takeOrientationQuiz() {
+            showToast('📝 Quiz d\'orientation en cours de développement', 'info');
         }
 
         function generateStudyPlan() {

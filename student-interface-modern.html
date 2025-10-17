@@ -4265,6 +4265,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 // Prix Claudine - charger leaderboard et awards
                 await loadPrixClaudineData();
 
+                // Quiz - charger quiz disponibles, challenges et stats
+                await loadQuizData();
+
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -5040,6 +5043,142 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (qualificationEl && stats.winnersCount > 0) {
                 qualificationEl.classList.add('qualified');
                 qualificationEl.textContent = '🎉 Lauréat(e) du Prix Claudine !';
+            }
+        }
+
+        // ========== QUIZ INTEGRATION ==========
+
+        let quizData = {
+            available: [],
+            challenges: { daily: [], weekly: [] },
+            stats: null,
+            recommendation: null
+        };
+
+        // Load Quiz data (quizzes, challenges, stats)
+        async function loadQuizData() {
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) return;
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Load available quizzes
+                try {
+                    const quizzesRes = await fetch(`${API_BASE}/api/quiz/available?limit=20`, { headers });
+                    if (quizzesRes.ok) {
+                        const result = await quizzesRes.json();
+                        if (result.success) {
+                            quizData.available = result.data.quizzes || [];
+                            quizData.recommendation = result.data.recommendation;
+                            updateQuizRecommendation();
+                            console.log('✅ Quiz disponibles chargés:', quizData.available.length);
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load available quizzes');
+                }
+
+                // Load challenges (weekly/daily)
+                try {
+                    const challengesRes = await fetch(`${API_BASE}/api/quiz/challenges`, { headers });
+                    if (challengesRes.ok) {
+                        const result = await challengesRes.json();
+                        if (result.success) {
+                            quizData.challenges.daily = result.data.daily || [];
+                            quizData.challenges.weekly = result.data.weekly || [];
+                            updateWeeklyChallenges();
+                            console.log('✅ Challenges chargés:', result.data.total);
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load challenges');
+                }
+
+                // Load quiz stats
+                try {
+                    const statsRes = await fetch(`${API_BASE}/api/quiz/stats`, { headers });
+                    if (statsRes.ok) {
+                        const result = await statsRes.json();
+                        if (result.success) {
+                            quizData.stats = result.data;
+                            updateQuizStats();
+                            console.log('✅ Quiz stats chargées');
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load quiz stats');
+                }
+            } catch (error) {
+                console.log('ℹ️ Quiz data loading skipped');
+            }
+        }
+
+        function updateQuizRecommendation() {
+            if (!quizData.recommendation) return;
+
+            // Update AI recommendation section
+            const recommendationSection = document.querySelector('.ai-thinking').nextElementSibling;
+            if (recommendationSection) {
+                recommendationSection.innerHTML = `
+                    <p><strong>🎯 Recommandation :</strong> ${quizData.recommendation.title}</p>
+                    <p><strong>⏱️ Temps estimé :</strong> ${quizData.recommendation.estimatedDuration || 10} minutes</p>
+                    <p><strong>🎮 Récompense :</strong> ${quizData.recommendation.rewardXP || 50} XP</p>
+                `;
+            }
+        }
+
+        function updateWeeklyChallenges() {
+            const challengesContainer = document.querySelector('.weekly-challenges');
+            if (!challengesContainer || quizData.challenges.weekly.length === 0) return;
+
+            // Clear existing challenges
+            challengesContainer.innerHTML = '';
+
+            // Add first 2 weekly challenges
+            quizData.challenges.weekly.slice(0, 2).forEach(challenge => {
+                const challengeDiv = document.createElement('div');
+                challengeDiv.className = `challenge-item ${challenge.isCompleted ? 'completed' : 'active'}`;
+                challengeDiv.innerHTML = `
+                    <div class="challenge-info">
+                        <h4>${challenge.icon || '🎯'} ${challenge.title}</h4>
+                        <p>${challenge.description}</p>
+                        <div class="challenge-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${challenge.progressPercentage || 0}%"></div>
+                            </div>
+                            <span>${challenge.currentValue || 0}/${challenge.targetValue} ${challenge.unit}</span>
+                        </div>
+                    </div>
+                    <div class="challenge-reward">${challenge.reward?.xp || 0} XP</div>
+                `;
+                challengesContainer.appendChild(challengeDiv);
+            });
+        }
+
+        function updateQuizStats() {
+            if (!quizData.stats) return;
+
+            // Update BAC simulation stats
+            const examStats = document.querySelector('.exam-stats');
+            if (examStats) {
+                const avgScore = quizData.stats.averageScore || 0;
+                const recentProgress = quizData.stats.recentProgress || 0;
+                examStats.innerHTML = `
+                    <p><strong>📊 Score moyen :</strong> ${avgScore}/100</p>
+                    <p><strong>📈 Progression :</strong> ${recentProgress > 0 ? '+' : ''}${recentProgress}% récemment</p>
+                    <p><strong>🎯 Total quiz :</strong> ${quizData.stats.totalQuizzes || 0} complétés</p>
+                `;
+            }
+
+            // Update progress bar
+            const progressFill = document.querySelector('#quiz .progress-fill');
+            if (progressFill && quizData.stats.averageScore) {
+                progressFill.style.width = `${quizData.stats.averageScore}%`;
             }
         }
 

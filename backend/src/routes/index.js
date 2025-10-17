@@ -20,6 +20,7 @@ const adminRoutes = require('./admin');
 const monitoringRoutes = require('./monitoring');
 const progressRoutes = require('./progress');
 const notificationRoutes = require('./notifications');
+const quizRoutes = require('./quiz');
 
 // Middleware d'authentification
 const { authenticate, authorize } = require('../middleware/auth');
@@ -117,6 +118,7 @@ router.use('/payments', paymentRoutes);
 router.use('/mentor', mentorRoutes);
 router.use('/progress', progressRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/quiz', quizRoutes);
 
 // Routes administrateur (nécessite rôle ADMIN ou MODERATOR)
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), adminRoutes);

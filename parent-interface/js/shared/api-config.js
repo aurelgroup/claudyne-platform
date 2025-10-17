@@ -47,10 +47,16 @@ class APIConfig {
     // WebSocket endpoints
     getWebSocketEndpoints() {
         return {
+            parentRealtime: `${this.websocketURL}/parent/realtime`,
             aiRecommendations: `${this.websocketURL}/ai/recommendations`,
             childAnalytics: (childId) => `${this.websocketURL}/child/${childId}/analytics`,
             notifications: `${this.websocketURL}/notifications`
         };
+    }
+
+    // Get WebSocket URL for parent realtime updates
+    getParentRealtimeWebSocketURL() {
+        return `${this.websocketURL}/parent/realtime`;
     }
 
     // Mock data fallback when API is not available

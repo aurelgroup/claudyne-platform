@@ -8,6 +8,7 @@ import { AnalyticsEngine } from '../shared/analytics.js';
 import { ExportManager } from '../shared/export.js';
 import api from '../shared/api-client.js';
 import { userManager } from '../shared/user-manager.js';
+import { apiConfig } from '../shared/api-config.js';
 
 export default class Dashboard {
     constructor() {
@@ -186,7 +187,7 @@ export default class Dashboard {
         // Analytics Engine
         this.analytics = new AnalyticsEngine({
             realTime: true,
-            websocketUrl: 'wss://api.claudyne.com/parent/realtime',
+            websocketUrl: apiConfig.getParentRealtimeWebSocketURL(),
             dataPoints: ['performance', 'engagement', 'insights', 'alerts']
         });
 
@@ -672,7 +673,7 @@ export default class Dashboard {
         if (this.websocket) return;
 
         try {
-            this.websocket = new WebSocket('wss://api.claudyne.com/parent/realtime');
+            this.websocket = new WebSocket(apiConfig.getParentRealtimeWebSocketURL());
 
             this.websocket.onopen = () => {
                 console.log('[Dashboard] WebSocket connected');

@@ -4187,6 +4187,38 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 } catch (err) {
                     // Ignore subjects errors silently
                 }
+
+                // Achievements
+                try {
+                    const achRes = await fetch(`${API_BASE}/api/students/achievements`, { headers });
+                    if (achRes.ok) {
+                        const ach = await achRes.json();
+                        if (ach.success) {
+                            achievementsData = ach.data;
+                            updateAchievementsDisplay();
+                            console.log('✅ Achievements chargés:', ach.data.achievements.length);
+                        }
+                    }
+                } catch (err) {
+                    // Ignore achievements errors silently
+                }
+
+                // Analytics (only if we have a student profile)
+                if (profileData && profileData.id) {
+                    try {
+                        const analyticsRes = await fetch(`${API_BASE}/api/students/${profileData.id}/analytics`, { headers });
+                        if (analyticsRes.ok) {
+                            const analytics = await analyticsRes.json();
+                            if (analytics.success) {
+                                analyticsData = analytics.data;
+                                updateAnalyticsDisplay();
+                                console.log('✅ Analytics chargées');
+                            }
+                        }
+                    } catch (err) {
+                        // Ignore analytics errors silently
+                    }
+                }
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -4221,6 +4253,148 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                     if (score) score.textContent = `${subject.score}%`;
                 }
             });
+        }
+
+        function updateAchievementsDisplay() {
+            if (!achievementsData) return;
+
+            // Update level and XP
+            const levelBadge = document.querySelector('.level-badge');
+            const levelTitle = document.querySelector('.level-title');
+            const xpFill = document.querySelector('.xp-fill');
+            const xpText = document.querySelector('.xp-text');
+            const achievementStats = document.querySelector('.achievement-stats');
+
+            if (levelBadge) levelBadge.textContent = achievementsData.level || 1;
+            if (levelTitle) levelTitle.textContent = achievementsData.levelTitle || 'Débutant';
+            if (xpFill) xpFill.style.width = `${achievementsData.xpProgress || 0}%`;
+            if (xpText) xpText.textContent = `${achievementsData.currentXP || 0} / ${achievementsData.nextLevelXP || 1000} XP`;
+            if (achievementStats) achievementStats.textContent = `${achievementsData.achievements.length} badges débloqués`;
+
+            // Update recent badges
+            const badgeGrid = document.querySelector('.badge-grid');
+            if (badgeGrid && achievementsData.achievements.length > 0) {
+                badgeGrid.innerHTML = '';
+
+                // Show the 3 most recent achievements
+                achievementsData.achievements.slice(0, 3).forEach((achievement, idx) => {
+                    const badgeEl = document.createElement('div');
+                    badgeEl.className = `achievement-badge ${idx === 0 ? 'new' : ''}`;
+                    badgeEl.innerHTML = `
+                        <div class="badge-icon ${idx === 0 ? 'gold' : idx === 1 ? 'silver' : 'bronze'}">${achievement.icon}</div>
+                        <div class="badge-info">
+                            <div class="badge-name">${achievement.name}</div>
+                            <div class="badge-desc">${achievement.description || 'Badge débloqué'}</div>
+                            <div class="badge-date">Obtenu ${achievement.earnedDate ? 'le ' + new Date(achievement.earnedDate).toLocaleDateString() : 'récemment'}</div>
+                        </div>
+                    `;
+                    badgeGrid.appendChild(badgeEl);
+                });
+            }
+
+            // Update badge collections
+            const categoryGrid = document.querySelector('#performance-badges .category-grid');
+            if (categoryGrid && achievementsData.achievements.length > 0) {
+                categoryGrid.innerHTML = '';
+
+                achievementsData.achievements.forEach(achievement => {
+                    const badgeItem = document.createElement('div');
+                    badgeItem.className = `badge-item ${achievement.unlocked ? 'earned' : 'locked'}`;
+                    badgeItem.innerHTML = `
+                        <div class="badge-visual ${achievement.unlocked ? 'gold' : ''}">${achievement.icon}</div>
+                        <div class="badge-title">${achievement.name}</div>
+                        <div class="badge-progress">${achievement.unlocked ? 'Complété' : 'Verrouillé'}</div>
+                    `;
+                    categoryGrid.appendChild(badgeItem);
+                });
+            }
+        }
+
+        function updateAnalyticsDisplay() {
+            if (!analyticsData) return;
+
+            // Update real-time performance metrics
+            const metricsGrid = document.querySelector('.analytics-grid');
+            if (metricsGrid) {
+                const metrics = [
+                    {
+                        icon: 'fas fa-bullseye',
+                        iconClass: 'success',
+                        value: `${analyticsData.successRate || 0}%`,
+                        label: 'Taux de réussite',
+                        trend: analyticsData.successRateTrend || '+0%'
+                    },
+                    {
+                        icon: 'fas fa-clock',
+                        iconClass: 'info',
+                        value: analyticsData.avgStudyTime || '0h 0m',
+                        label: 'Temps d\'étude moyen',
+                        trend: analyticsData.studyTimeTrend || '0min'
+                    },
+                    {
+                        icon: 'fas fa-fire',
+                        iconClass: 'warning',
+                        value: `${analyticsData.streak || 0} jours`,
+                        label: 'Série actuelle',
+                        trend: analyticsData.streakStatus || 'Continue!'
+                    },
+                    {
+                        icon: 'fas fa-brain',
+                        iconClass: 'primary',
+                        value: `${analyticsData.cognitiveEfficiency || 0}%`,
+                        label: 'Efficacité cognitive',
+                        trend: analyticsData.cognitiveStatus || 'Optimal'
+                    }
+                ];
+
+                metricsGrid.innerHTML = metrics.map(metric => `
+                    <div class="analytics-metric">
+                        <div class="metric-icon ${metric.iconClass}">
+                            <i class="${metric.icon}"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-value">${metric.value}</div>
+                            <div class="metric-label">${metric.label}</div>
+                            <div class="metric-trend positive">${metric.trend}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update predictions
+            if (analyticsData.predictions) {
+                const predictionGrid = document.querySelector('.prediction-grid');
+                if (predictionGrid && analyticsData.predictions.length > 0) {
+                    predictionGrid.innerHTML = analyticsData.predictions.map(pred => `
+                        <div class="prediction-item">
+                            <div class="subject">${pred.subject}</div>
+                            <div class="prediction-bar">
+                                <div class="prediction-fill" style="width: ${(pred.score / 20) * 100}%"></div>
+                                <span class="prediction-score">${pred.score}/20</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Update weakness analysis
+            if (analyticsData.weaknesses) {
+                const weaknessList = document.querySelector('.weakness-list');
+                if (weaknessList && analyticsData.weaknesses.length > 0) {
+                    weaknessList.innerHTML = analyticsData.weaknesses.map(weak => `
+                        <div class="weakness-item ${weak.severity || 'low'}">
+                            <div class="weakness-icon">${weak.severity === 'high' ? '⚠️' : '📊'}</div>
+                            <div class="weakness-info">
+                                <div class="weakness-title">${weak.topic}</div>
+                                <div class="weakness-desc">Taux d'erreur: ${weak.errorRate}% - ${weak.status || 'À améliorer'}</div>
+                                <div class="weakness-actions">
+                                    <button class="btn btn-sm btn-primary" onclick="reviewTopic('${weak.topic}')">Réviser maintenant</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
         }
 
         // ========== PARTICULES FLOTTANTES ==========

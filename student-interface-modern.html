@@ -4259,6 +4259,12 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 // Settings - charger les paramètres utilisateur
                 await loadSettings();
 
+                // AI Chat - charger l'historique de conversation
+                await loadAiChatHistory();
+
+                // Prix Claudine - charger leaderboard et awards
+                await loadPrixClaudineData();
+
             } catch (error) {
                 // Silent fail - user not authenticated
                 console.log('ℹ️ Chargement des données API ignoré (non connecté)');
@@ -4758,31 +4764,114 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             }
         }
 
-        function sendAiMessage() {
-            const input = document.getElementById('aiInput');
-            const message = input.value.trim();
+        // AI Chat state management
+        let aiSessionId = localStorage.getItem('ai_session_id') || null;
+        let isAiLoading = false;
 
-            if (message) {
-                // Ajouter message utilisateur
-                addAiMessage(message, 'user');
-                input.value = '';
+        // Load AI chat history
+        async function loadAiChatHistory() {
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) return;
 
-                // Simuler réponse IA
-                setTimeout(() => {
-                    const responses = [
-                        "Excellente question ! Laisse-moi t'expliquer cela étape par étape...",
-                        "Je vois que tu progresses bien ! Voici mon analyse personnalisée...",
-                        "C'est un concept important. Voici une approche simplifiée...",
-                        "Parfait ! Je vais créer des exercices adaptés à ton niveau pour ce sujet."
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addAiMessage(randomResponse, 'ai');
-                    gainXP(5, 'Interaction avec MEUGACK');
-                }, 1500);
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const endpoint = aiSessionId
+                    ? `${API_BASE}/api/mentor/chat/${aiSessionId}`
+                    : `${API_BASE}/api/mentor/chat`;
+
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data.messages) {
+                        // Clear existing messages except welcome message
+                        const messagesContainer = document.getElementById('aiMessages');
+                        messagesContainer.innerHTML = '';
+
+                        // Add loaded messages
+                        result.data.messages.forEach(msg => {
+                            const sender = msg.role === 'user' ? 'user' : 'ai';
+                            addAiMessage(msg.content, sender, false);
+                        });
+
+                        // Store sessionId
+                        if (result.data.sessionId) {
+                            aiSessionId = result.data.sessionId;
+                            localStorage.setItem('ai_session_id', aiSessionId);
+                        }
+
+                        console.log('✅ Chat history loaded:', result.data.messages.length, 'messages');
+                    }
+                }
+            } catch (error) {
+                console.log('ℹ️ Could not load AI chat history:', error.message);
             }
         }
 
-        function addAiMessage(message, sender) {
+        async function sendAiMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+
+            if (!message || isAiLoading) return;
+
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) {
+                showToast('🔒 Vous devez être connecté pour utiliser MEUGACK', 'warning');
+                return;
+            }
+
+            // Add user message immediately
+            addAiMessage(message, 'user');
+            input.value = '';
+            isAiLoading = true;
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const response = await fetch(`${API_BASE}/api/mentor/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: aiSessionId
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        // Store sessionId from response
+                        if (result.data.sessionId) {
+                            aiSessionId = result.data.sessionId;
+                            localStorage.setItem('ai_session_id', aiSessionId);
+                        }
+
+                        // Add AI response
+                        if (result.data.assistantMessage) {
+                            addAiMessage(result.data.assistantMessage.content, 'ai');
+                            gainXP(5, 'Interaction avec MEUGACK');
+                        }
+                    }
+                } else {
+                    throw new Error('Failed to get AI response');
+                }
+            } catch (error) {
+                console.error('Error sending AI message:', error);
+                addAiMessage('Désolé, je rencontre un problème technique. Réessaie dans quelques instants.', 'ai');
+                showToast('❌ Erreur de connexion avec MEUGACK', 'error');
+            } finally {
+                isAiLoading = false;
+            }
+        }
+
+        function addAiMessage(message, sender, autoScroll = true) {
             const messagesContainer = document.getElementById('aiMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `ai-message ${sender}`;
@@ -4790,7 +4879,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (sender === 'user') {
                 messageDiv.innerHTML = `
                     <div class="message-bubble user">${message}</div>
-                    <div class="message-avatar user">R</div>
+                    <div class="message-avatar user">${profileData?.firstName?.charAt(0) || 'U'}</div>
                 `;
             } else {
                 messageDiv.innerHTML = `
@@ -4800,7 +4889,158 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             }
 
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            if (autoScroll) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        // ========== PRIX CLAUDINE INTEGRATION ==========
+
+        let prixClaudineData = {
+            leaderboard: [],
+            myAwards: null,
+            stats: null
+        };
+
+        // Load Prix Claudine leaderboard and student's awards
+        async function loadPrixClaudineData() {
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) return;
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Load leaderboard (top 3 for laureates section)
+                try {
+                    const leaderboardRes = await fetch(`${API_BASE}/api/prix-claudine/leaderboard?limit=3`, { headers });
+                    if (leaderboardRes.ok) {
+                        const result = await leaderboardRes.json();
+                        if (result.success) {
+                            prixClaudineData.leaderboard = result.data.leaderboard || [];
+                            prixClaudineData.stats = result.data.stats || {};
+                            updatePrixClaudineLaureates();
+                            updatePrixClaudineStats();
+                            console.log('✅ Prix Claudine leaderboard loaded:', prixClaudineData.leaderboard.length);
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load Prix Claudine leaderboard');
+                }
+
+                // Load student's awards and progression
+                try {
+                    const myAwardsRes = await fetch(`${API_BASE}/api/prix-claudine/my-awards`, { headers });
+                    if (myAwardsRes.ok) {
+                        const result = await myAwardsRes.json();
+                        if (result.success) {
+                            prixClaudineData.myAwards = result.data;
+                            updatePrixClaudineProgression();
+                            console.log('✅ My Prix Claudine awards loaded');
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load my Prix Claudine awards');
+                }
+            } catch (error) {
+                console.log('ℹ️ Prix Claudine data loading skipped');
+            }
+        }
+
+        function updatePrixClaudineStats() {
+            if (!prixClaudineData.stats) return;
+
+            // Update award stats section (participants, laureates, etc.)
+            const statElements = document.querySelectorAll('.award-stats .stat-number');
+            if (statElements.length >= 2) {
+                if (prixClaudineData.stats.totalWinners) {
+                    statElements[0].textContent = prixClaudineData.stats.totalWinners.toLocaleString();
+                }
+            }
+        }
+
+        function updatePrixClaudineLaureates() {
+            if (!prixClaudineData.leaderboard || prixClaudineData.leaderboard.length === 0) return;
+
+            const laureatesGrid = document.querySelector('.laureates-grid');
+            if (!laureatesGrid) return;
+
+            // Clear existing static laureates
+            laureatesGrid.innerHTML = '';
+
+            const ranks = ['gold', 'silver', 'bronze'];
+            const medals = ['🥇', '🥈', '🥉'];
+            const rankTitles = ['Grand Prix', 'Prix d\'Honneur', 'Prix du Mérite'];
+
+            prixClaudineData.leaderboard.slice(0, 3).forEach((laureate, idx) => {
+                const card = document.createElement('div');
+                card.className = `laureate-card ${ranks[idx]}`;
+                card.innerHTML = `
+                    <div class="laureate-rank">
+                        <div class="rank-medal">${medals[idx]}</div>
+                        <div class="rank-title">${rankTitles[idx]}</div>
+                    </div>
+                    <div class="laureate-info">
+                        <div class="laureate-avatar">${laureate.recipient?.avatar || '🎓'}</div>
+                        <div class="laureate-details">
+                            <div class="laureate-name">${laureate.recipient?.name || 'Anonymous'}</div>
+                            <div class="laureate-specialty">${laureate.category || 'Non spécifié'}</div>
+                            <div class="laureate-school">${laureate.recipient?.educationLevel || ''}</div>
+                            <div class="laureate-achievement">
+                                <span class="achievement-badge">🏆</span>
+                                <span>${laureate.points} points</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="laureate-distinctions">
+                        <div class="distinction-item">
+                            <i class="fas fa-star"></i>
+                            <span>${laureate.title || 'Lauréat Prix Claudine'}</span>
+                        </div>
+                        ${laureate.testimonial ? `
+                        <div class="distinction-item">
+                            <i class="fas fa-quote-left"></i>
+                            <span>${laureate.testimonial.substring(0, 100)}...</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                laureatesGrid.appendChild(card);
+            });
+        }
+
+        function updatePrixClaudineProgression() {
+            if (!prixClaudineData.myAwards) return;
+
+            const stats = prixClaudineData.myAwards.stats;
+
+            // Update eligibility score
+            const scoreEl = document.querySelector('.eligibility-score');
+            if (scoreEl && stats.totalPoints) {
+                scoreEl.textContent = `Score: ${stats.totalPoints}/1000`;
+            }
+
+            // Update student average
+            const avgEl = document.getElementById('prix-claudine-average');
+            if (avgEl && currentAverage) {
+                avgEl.textContent = `Votre moyenne: ${currentAverage}/20`;
+            }
+
+            // Update current rank if available
+            const rankEl = document.querySelector('.current-rank span');
+            if (rankEl && stats.bestRank) {
+                rankEl.innerHTML = `<i class="fas fa-medal"></i> <span>Rang actuel: ${stats.bestRank}</span>`;
+            }
+
+            // Update qualification status
+            const qualificationEl = document.querySelector('.qualification-status');
+            if (qualificationEl && stats.winnersCount > 0) {
+                qualificationEl.classList.add('qualified');
+                qualificationEl.textContent = '🎉 Lauréat(e) du Prix Claudine !';
+            }
         }
 
         function generateStudyPlan() {

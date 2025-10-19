@@ -640,6 +640,21 @@ router.get('/dashboard', async (req, res) => {
       });
     }
 
+    // Vérifier que l'utilisateur a une famille
+    if (!req.user.familyId) {
+      return res.json({
+        success: true,
+        data: {
+          lessonsCompleted: 0,
+          quizzesPassed: 0,
+          battlesWon: 0,
+          studyStreak: 0,
+          weeklyStudyTime: 0,
+          recentActivities: []
+        }
+      });
+    }
+
     const { Student, Progress, Lesson } = req.models;
 
     // Récupérer le profil étudiant
@@ -744,6 +759,14 @@ router.get('/subjects', async (req, res) => {
       });
     }
 
+    // Vérifier que l'utilisateur a une famille
+    if (!req.user.familyId) {
+      return res.json({
+        success: true,
+        data: { subjects: [] }
+      });
+    }
+
     const { Student, Subject, Progress, Lesson } = req.models;
 
     const student = await Student.findOne({
@@ -826,6 +849,14 @@ router.get('/achievements', async (req, res) => {
       return res.status(401).json({
         success: false,
         message: 'Authentification requise'
+      });
+    }
+
+    // Vérifier que l'utilisateur a une famille
+    if (!req.user.familyId) {
+      return res.json({
+        success: true,
+        data: { achievements: [], totalUnlocked: 0, totalAvailable: 10 }
       });
     }
 
@@ -1062,12 +1093,29 @@ router.put('/settings', async (req, res) => {
       interface: interfaceSettings
     } = req.body;
 
+    // Log pour debug
+    logger.info('Mise à jour settings pour user:', {
+      userId: req.user.id,
+      familyId: req.user.familyId,
+      hasProfile: !!profile,
+      hasEducation: !!education,
+      hasLearning: !!learning
+    });
+
     // Mettre à jour l'utilisateur
     const user = await User.findByPk(req.user.id);
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Vérifier que l'utilisateur a une famille
+    if (!req.user.familyId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Utilisateur sans famille associée. Veuillez contacter le support.'
       });
     }
 
@@ -1163,10 +1211,14 @@ router.put('/settings', async (req, res) => {
 
   } catch (error) {
     logger.error('Erreur mise à jour settings:', error);
+    logger.error('Stack trace:', error.stack);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour des paramètres',
-      error: error.message
+      error: process.env.NODE_ENV === 'development' ? {
+        message: error.message,
+        stack: error.stack
+      } : error.message
     });
   }
 });

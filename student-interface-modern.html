@@ -1660,12 +1660,12 @@
                         <i class="fas fa-user-graduate"></i>
                     </div>
                     <div class="user-details">
-                        <h1>Richy NONO</h1>
-                        <p>Terminale C • Lycée Bilingue de Logpom</p>
+                        <h1 id="studentName">Chargement...</h1>
+                        <p id="studentInfo">Chargement...</p>
                         <div class="subscription-info">
                             <div class="subscription-badge">
                                 <i class="fas fa-crown"></i>
-                                Premium - Expire dans 2 mois, 15 jours
+                                <span id="subscriptionStatus">Chargement...</span>
                             </div>
                             <button class="btn-renew-premium" onclick="openRenewalModal()">
                                 <i class="fas fa-sync-alt"></i>
@@ -4140,22 +4140,42 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
 
         function updateUserInterface(user) {
             // Mise à jour du nom d'utilisateur
-            const userNameElements = document.querySelectorAll('h1');
-            userNameElements.forEach(el => {
-                if (el.textContent.trim() === 'Richy NONO') {
-                    el.textContent = `${user.firstName} ${user.lastName}`;
-                }
-            });
+            const nameElement = document.getElementById('studentName');
+            if (nameElement) {
+                nameElement.textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Étudiant';
+            }
 
-            // Mise à jour des informations utilisateur
-            const userDetailsP = document.querySelector('.user-details p');
-            if (userDetailsP && user.studentClass) {
-                userDetailsP.textContent = `${user.studentClass} • ${user.school || 'Étudiant Claudyne'}`;
+            // Mise à jour des informations scolaires
+            const infoElement = document.getElementById('studentInfo');
+            if (infoElement && user.educationLevel && user.school) {
+                infoElement.textContent = `${user.educationLevel} • ${user.school}`;
+            } else if (infoElement && user.educationLevel) {
+                infoElement.textContent = user.educationLevel;
+            } else if (infoElement && user.studentClass) {
+                infoElement.textContent = user.studentClass + (user.school ? ` • ${user.school}` : '');
+            } else if (infoElement) {
+                infoElement.textContent = 'Étudiant Claudyne';
+            }
+
+            // Mise à jour du statut d'abonnement
+            const statusElement = document.getElementById('subscriptionStatus');
+            if (statusElement && user.subscriptionType) {
+                const expiryDate = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt) : null;
+                if (expiryDate) {
+                    const daysRemaining = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                    const monthsRemaining = Math.floor(daysRemaining / 30);
+                    const daysInMonth = daysRemaining % 30;
+                    statusElement.textContent = `${user.subscriptionType} - Expire dans ${monthsRemaining} mois, ${daysInMonth} jours`;
+                } else {
+                    statusElement.textContent = user.subscriptionType;
+                }
+            } else if (statusElement) {
+                statusElement.textContent = 'Essai gratuit';
             }
 
             // Mise à jour du message AI personnalisé
             const aiMessageEl = document.querySelector('.message-bubble.ai');
-            if (aiMessageEl) {
+            if (aiMessageEl && user.firstName) {
                 aiMessageEl.textContent = `Salut ${user.firstName} ! 👋 Je vois que tu progresses bien. As-tu des questions ? Je peux t'aider avec des explications personnalisées !`;
             }
         }
@@ -6852,23 +6872,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         });
 
         // ============ FONCTION RENOUVELLEMENT PREMIUM ============
-        function openRenewalModal() {
-            showToast('👑 Ouverture du panneau de renouvellement Premium...', 'info');
-
-            setTimeout(() => {
-                showToast('💳 Redirection vers l\'espace de paiement sécurisé', 'success');
-                gainXP(10, 'Intérêt pour Premium');
-
-                // Simulation d'ouverture d'une page de paiement
-                setTimeout(() => {
-                    showToast('🔗 Lien de paiement généré - Vérifiez vos emails', 'info');
-                }, 2000);
-
-                setTimeout(() => {
-                    showToast('💌 Email de renouvellement envoyé avec succès !', 'success');
-                }, 4000);
-            }, 1500);
-        }
+        // Charger le module de paiement
+        const paymentScript = document.createElement('script');
+        paymentScript.src = '/student-payment-modal.js';
+        document.head.appendChild(paymentScript);
 
         // Fonction de déconnexion étudiant
         function studentLogout() {

@@ -1160,7 +1160,7 @@ router.put('/settings', async (req, res) => {
     if (education) {
       if (education.educationLevel) studentUpdates.educationLevel = education.educationLevel;
       if (education.schoolName) studentUpdates.schoolName = education.schoolName;
-      if (education.schoolType) studentUpdates.schoolType = education.schoolType;
+      // schoolType column does not exist in database - removed
       if (education.className) studentUpdates.className = education.className;
       if (education.targetGrade) studentUpdates.targetGrade = education.targetGrade;
     }

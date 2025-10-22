@@ -8,6 +8,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 
 // Components
 import Layout from '../../components/Layout';
@@ -15,6 +16,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 // Hooks
 import { useAuth } from '../../hooks/useAuth';
+
+// Services
+import { apiService } from '../../services/api';
 
 // Types
 interface Subject {
@@ -64,14 +68,14 @@ export default function FamillePage() {
 
   const fetchSubjects = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subjects`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setSubjects(data.data.subjects);
+      const response = await apiService.getSubjects();
+
+      if (response.success && response.data) {
+        setSubjects(response.data.subjects || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement matières:', error);
+      toast.error(error.message || 'Erreur lors du chargement des matières');
     }
   };
 

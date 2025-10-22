@@ -223,47 +223,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Récupérer un étudiant spécifique
-router.get('/:id', async (req, res) => {
-  try {
-    if (!req.user || !req.user.familyId) {
-      return res.status(401).json({
-        success: false,
-        message: 'Authentification requise'
-      });
-    }
-
-    const { Student } = req.models;
-    const student = await Student.findOne({
-      where: {
-        id: req.params.id,
-        familyId: req.user.familyId,
-        isActive: true
-      }
-    });
-
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: 'Étudiant non trouvé'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: {
-        student: student.toJSON()
-      }
-    });
-
-  } catch (error) {
-    logger.error('Erreur récupération étudiant:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération de l\'étudiant'
-    });
-  }
-});
+// NOTE: Route /:id moved to end of file to avoid intercepting specific routes like /dashboard, /subjects, etc.
 
 // Récupérer la progression d'un étudiant
 router.get('/:id/progress', async (req, res) => {
@@ -1160,7 +1120,7 @@ router.put('/settings', async (req, res) => {
     if (education) {
       if (education.educationLevel) studentUpdates.educationLevel = education.educationLevel;
       if (education.schoolName) studentUpdates.schoolName = education.schoolName;
-      // schoolType column does not exist in database - removed
+      if (education.schoolType) studentUpdates.schoolType = education.schoolType;
       if (education.className) studentUpdates.className = education.className;
       if (education.targetGrade) studentUpdates.targetGrade = education.targetGrade;
     }
@@ -1294,6 +1254,48 @@ router.post('/change-password', async (req, res) => {
       success: false,
       message: 'Erreur lors du changement de mot de passe',
       error: error.message
+    });
+  }
+});
+
+// Récupérer un étudiant spécifique (route générique - doit être en dernier)
+router.get('/:id', async (req, res) => {
+  try {
+    if (!req.user || !req.user.familyId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authentification requise'
+      });
+    }
+
+    const { Student } = req.models;
+    const student = await Student.findOne({
+      where: {
+        id: req.params.id,
+        familyId: req.user.familyId,
+        isActive: true
+      }
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        student: student.toJSON()
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de l\'étudiant'
     });
   }
 });

@@ -47,7 +47,7 @@ router.get('/profile', async (req, res) => {
         },
         attributes: [
           'id', 'firstName', 'lastName', 'currentLevel', 'totalPoints',
-          'claudinePoints', 'currentStreak', 'overallProgress', 'currentAverage'
+          'claudinePoints', 'currentStreak', 'overallprogress', 'currentAverage'
         ]
       });
     }
@@ -62,7 +62,7 @@ router.get('/profile', async (req, res) => {
       xp: studentProfile?.totalPoints || 0,
       level: studentProfile?.currentLevel || 1,
       dailyStreak: studentProfile?.currentStreak || 0,
-      overallProgress: studentProfile?.overallProgress || 0,
+      overallProgress: studentProfile?.overallprogress || 0,
       currentAverage: studentProfile?.currentAverage || 0,
       claudinePoints: studentProfile?.claudinePoints || 0
     };
@@ -346,7 +346,7 @@ router.get('/:id/progress', async (req, res) => {
       success: true,
       data: {
         studentId: student.id,
-        overallProgress: student.overallProgress || 0,
+        overallProgress: student.overallprogress || 0,
         currentAverage: student.currentAverage || 0,
         currentStreak: student.currentStreak || 0,
         totalPoints: student.totalPoints || 0,
@@ -567,7 +567,7 @@ router.get('/:id/analytics', async (req, res) => {
       success: true,
       data: {
         studentId: student.id,
-        overallProgress: student.overallProgress || 0,
+        overallProgress: student.overallprogress || 0,
         currentScore: student.currentAverage || 0,
         weeklyProgress: weeklyProgressChange,
         weeklyStudyTime: `${weeklyStudyHours}h${weeklyStudyMinutes > 0 ? weeklyStudyMinutes + 'm' : ''}`,

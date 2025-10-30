@@ -15,53 +15,7 @@ router.use(async (req, res, next) => {
   next();
 });
 
-// Mock study groups data
-const STUDY_GROUPS = [
-  {
-    id: 'maths-terminale',
-    name: 'Maths Terminale S',
-    subject: 'Mathématiques',
-    avatar: '📐',
-    memberCount: 24,
-    activeMembers: 3,
-    currentTopic: 'Intégrales',
-    description: 'Groupe d\'entraide pour les mathématiques de Terminale S',
-    isActive: true
-  },
-  {
-    id: 'chimie-organique',
-    name: 'Chimie Organique',
-    subject: 'Chimie',
-    avatar: '⚗️',
-    memberCount: 18,
-    activeMembers: 7,
-    currentTopic: 'Réactions',
-    description: 'Étude approfondie de la chimie organique',
-    isActive: true
-  },
-  {
-    id: 'bac-2025',
-    name: 'BAC 2025 - Entraide',
-    subject: 'Général',
-    avatar: '📚',
-    memberCount: 156,
-    activeMembers: 23,
-    currentTopic: 'Discussion générale',
-    description: 'Entraide générale pour la préparation du BAC 2025',
-    isActive: true
-  },
-  {
-    id: 'physique-quantique',
-    name: 'Physique Quantique',
-    subject: 'Physique',
-    avatar: '⚛️',
-    memberCount: 12,
-    activeMembers: 2,
-    currentTopic: 'Mécanique quantique',
-    description: 'Pour les passionnés de physique avancée',
-    isActive: false
-  }
-];
+// NO MORE MOCK DATA - using real database now
 
 /**
  * GET /api/community/groups
@@ -76,18 +30,53 @@ router.get('/groups', async (req, res) => {
       });
     }
 
+    const { StudyGroup, StudyGroupMember, Subject } = req.models;
     const { status } = req.query; // 'active', 'all'
 
-    let groups = STUDY_GROUPS;
+    // Build where clause
+    const where = {};
     if (status === 'active') {
-      groups = STUDY_GROUPS.filter(g => g.isActive);
+      where.isActive = true;
     }
+
+    // Fetch groups from database
+    const groups = await StudyGroup.findAll({
+      where,
+      include: [
+        {
+          model: StudyGroupMember,
+          as: 'members',
+          attributes: ['id', 'studentId', 'isActive', 'lastActiveAt']
+        }
+      ],
+      order: [['currentMembersCount', 'DESC']]
+    });
+
+    // Format groups for response
+    const formattedGroups = groups.map(group => {
+      const activeMembers = group.members ? group.members.filter(m => m.isActive).length : 0;
+
+      return {
+        id: group.id,
+        name: group.name,
+        subject: group.subjectId || 'Général',
+        avatar: getSubjectEmoji(group.subjectId),
+        memberCount: group.currentMembersCount,
+        activeMembers: activeMembers,
+        currentTopic: group.metadata?.currentTopic || 'Discussion générale',
+        description: group.description,
+        isActive: group.isActive,
+        level: group.level,
+        region: group.region,
+        city: group.city
+      };
+    });
 
     res.json({
       success: true,
       data: {
-        groups,
-        total: groups.length
+        groups: formattedGroups,
+        total: formattedGroups.length
       }
     });
 
@@ -99,6 +88,23 @@ router.get('/groups', async (req, res) => {
     });
   }
 });
+
+// Helper function to get emoji for subject
+function getSubjectEmoji(subjectId) {
+  const emojiMap = {
+    'mathematiques': '📐',
+    'maths': '📐',
+    'chimie': '⚗️',
+    'physique': '⚛️',
+    'francais': '📚',
+    'anglais': '🇬🇧',
+    'histoire': '🏛️',
+    'geographie': '🌍',
+    'svt': '🧬',
+    'philosophie': '🤔'
+  };
+  return emojiMap[subjectId?.toLowerCase()] || '📚';
+}
 
 /**
  * GET /api/community/leaderboard
@@ -222,80 +228,37 @@ router.get('/discussions', async (req, res) => {
       });
     }
 
+    const { ForumDiscussion, ForumCategory, User } = req.models;
     const { limit = 10, category } = req.query;
 
-    // Mock recent discussions
-    const discussions = [
-      {
-        id: 'disc-1',
-        title: 'Aide sur les intégrales par parties',
-        author: 'Marie_T',
-        avatar: '🤔',
-        category: 'Mathématiques',
-        replyCount: 3,
-        viewCount: 45,
-        createdAt: new Date(Date.now() - 5 * 60 * 1000), // 5 min ago
-        status: 'new',
-        statusLabel: 'Nouveau'
-      },
-      {
-        id: 'disc-2',
-        title: 'Astuce pour retenir les formules de chimie',
-        author: 'Paul_K',
-        avatar: '💡',
-        category: 'Chimie',
-        replyCount: 12,
-        viewCount: 234,
-        createdAt: new Date(Date.now() - 60 * 60 * 1000), // 1h ago
-        status: 'hot',
-        statusLabel: '🔥 Popular'
-      },
-      {
-        id: 'disc-3',
-        title: 'Retour d\'expérience: organisation révisions',
-        author: 'Camille_B',
-        avatar: '📊',
-        category: 'Méthodologie',
-        replyCount: 8,
-        viewCount: 156,
-        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3h ago
-        status: '',
-        statusLabel: ''
-      },
-      {
-        id: 'disc-4',
-        title: 'Question sur la géométrie dans l\'espace',
-        author: 'Lucas_G',
-        avatar: '📐',
-        category: 'Mathématiques',
-        replyCount: 6,
-        viewCount: 89,
-        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5h ago
-        status: '',
-        statusLabel: ''
-      },
-      {
-        id: 'disc-5',
-        title: 'Préparation oral français BAC',
-        author: 'Emma_L',
-        avatar: '📚',
-        category: 'Français',
-        replyCount: 15,
-        viewCount: 312,
-        createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000), // 8h ago
-        status: 'hot',
-        statusLabel: '🔥 Popular'
-      }
-    ];
-
-    // Filter by category if provided
-    let filteredDiscussions = discussions;
+    // Build where clause
+    const where = {};
     if (category) {
-      filteredDiscussions = discussions.filter(d => d.category === category);
+      // Find category by name
+      const cat = await ForumCategory.findOne({ where: { name: category } });
+      if (cat) {
+        where.categoryId = cat.id;
+      }
     }
 
-    // Limit results
-    const limitedDiscussions = filteredDiscussions.slice(0, parseInt(limit));
+    // Fetch discussions from database
+    const discussions = await ForumDiscussion.findAll({
+      where,
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'firstName', 'lastName']
+        },
+        {
+          model: ForumCategory,
+          as: 'category',
+          attributes: ['name', 'icon', 'color']
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit: parseInt(limit)
+    });
 
     // Format time ago
     const formatTimeAgo = (date) => {
@@ -309,17 +272,47 @@ router.get('/discussions', async (req, res) => {
       return `${days}j`;
     };
 
-    const formattedDiscussions = limitedDiscussions.map(d => ({
-      ...d,
-      timeAgo: formatTimeAgo(d.createdAt),
-      meta: `par ${d.author} • ${formatTimeAgo(d.createdAt)} • ${d.replyCount} réponses`
-    }));
+    // Format discussions for response
+    const formattedDiscussions = discussions.map(d => {
+      const author = d.author;
+      const displayName = author ? `${author.firstName?.charAt(0)}_${author.lastName?.slice(0, 3)}` : 'Anonyme';
+
+      // Determine status
+      let status = '';
+      let statusLabel = '';
+      const hoursSinceCreation = (new Date() - new Date(d.createdAt)) / (1000 * 60 * 60);
+
+      if (hoursSinceCreation < 1) {
+        status = 'new';
+        statusLabel = 'Nouveau';
+      } else if (d.viewsCount > 200 || d.repliesCount > 10) {
+        status = 'hot';
+        statusLabel = '🔥 Popular';
+      }
+
+      return {
+        id: d.id,
+        title: d.title,
+        author: displayName,
+        avatar: getDiscussionEmoji(d.category?.name),
+        category: d.category?.name || 'Général',
+        replyCount: d.repliesCount,
+        viewCount: d.viewsCount,
+        createdAt: d.createdAt,
+        timeAgo: formatTimeAgo(d.createdAt),
+        status,
+        statusLabel,
+        meta: `par ${displayName} • ${formatTimeAgo(d.createdAt)} • ${d.repliesCount} réponses`,
+        isPinned: d.isPinned,
+        isLocked: d.isLocked
+      };
+    });
 
     res.json({
       success: true,
       data: {
         discussions: formattedDiscussions,
-        total: filteredDiscussions.length
+        total: formattedDiscussions.length
       }
     });
 
@@ -331,6 +324,21 @@ router.get('/discussions', async (req, res) => {
     });
   }
 });
+
+// Helper function to get emoji for discussion category
+function getDiscussionEmoji(categoryName) {
+  const emojiMap = {
+    'Mathématiques': '📐',
+    'Chimie': '⚗️',
+    'Physique': '⚛️',
+    'Français': '📚',
+    'Anglais': '🇬🇧',
+    'Méthodologie': '📊',
+    'Motivation': '💪',
+    'Questions': '🤔'
+  };
+  return emojiMap[categoryName] || '💡';
+}
 
 /**
  * POST /api/community/groups/join
@@ -345,6 +353,7 @@ router.post('/groups/join', async (req, res) => {
       });
     }
 
+    const { StudyGroup, StudyGroupMember, Student } = req.models;
     const { groupId } = req.body;
 
     if (!groupId) {
@@ -354,7 +363,8 @@ router.post('/groups/join', async (req, res) => {
       });
     }
 
-    const group = STUDY_GROUPS.find(g => g.id === groupId);
+    // Find the group
+    const group = await StudyGroup.findByPk(groupId);
     if (!group) {
       return res.status(404).json({
         success: false,
@@ -362,9 +372,47 @@ router.post('/groups/join', async (req, res) => {
       });
     }
 
-    // Log the join (could store in database)
+    // Check if group is full
+    if (group.currentMembersCount >= group.maxMembers) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le groupe est complet'
+      });
+    }
+
+    // Find student profile
+    const student = await Student.findOne({ where: { userId: req.user.id } });
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Profil étudiant non trouvé'
+      });
+    }
+
+    // Check if already a member
+    const existingMember = await StudyGroupMember.findOne({
+      where: { groupId, studentId: student.id }
+    });
+
+    if (existingMember) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous êtes déjà membre de ce groupe'
+      });
+    }
+
+    // Add member to group
+    await StudyGroupMember.create({
+      groupId,
+      studentId: student.id,
+      role: 'MEMBER',
+      joinedAt: new Date(),
+      isActive: true
+    });
+
     logger.info('Student joined study group', {
       userId: req.user.id,
+      studentId: student.id,
       groupId,
       groupName: group.name
     });
@@ -373,7 +421,11 @@ router.post('/groups/join', async (req, res) => {
       success: true,
       data: {
         message: `Vous avez rejoint le groupe "${group.name}"`,
-        group
+        group: {
+          id: group.id,
+          name: group.name,
+          description: group.description
+        }
       }
     });
 

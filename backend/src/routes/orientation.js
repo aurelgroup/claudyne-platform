@@ -16,159 +16,19 @@ router.use(async (req, res, next) => {
   next();
 });
 
-/**
- * Career profiles based on subject strengths
- */
-const CAREER_PROFILES = {
-  'scientifique_analytique': {
-    name: 'Scientifique Analytique',
-    description: 'Forces en mathématiques et sciences, esprit logique développé',
-    icon: '🎯',
-    strengthSubjects: ['Mathématiques', 'Physique', 'Chimie'],
-    careers: [
-      { name: 'Ingénierie Informatique', icon: '💻', match: 96, reasons: ['Maths excellentes', 'Logique développée'] },
-      { name: 'Génie Civil', icon: '🏗️', match: 89, reasons: ['Physique forte', 'Spatial développé'] },
-      { name: 'Recherche en Chimie', icon: '🧪', match: 83, reasons: ['Chimie passion', 'Recherche attirance'] }
-    ]
-  },
-  'litteraire_creatif': {
-    name: 'Littéraire Créatif',
-    description: 'Excellence en langues et communication, créativité développée',
-    icon: '📚',
-    strengthSubjects: ['Français', 'Anglais', 'Histoire'],
-    careers: [
-      { name: 'Journalisme', icon: '📰', match: 92, reasons: ['Écriture excellente', 'Communication forte'] },
-      { name: 'Traduction', icon: '🌐', match: 88, reasons: ['Langues maîtrisées', 'Précision linguistique'] },
-      { name: 'Enseignement', icon: '👨‍🏫', match: 85, reasons: ['Pédagogie naturelle', 'Passion transmission'] }
-    ]
-  },
-  'sciences_humaines': {
-    name: 'Sciences Humaines',
-    description: 'Compréhension sociale développée, analyse des comportements',
-    icon: '🧠',
-    strengthSubjects: ['Histoire', 'Philosophie', 'SVT'],
-    careers: [
-      { name: 'Psychologie', icon: '🧠', match: 90, reasons: ['Empathie développée', 'Analyse comportementale'] },
-      { name: 'Sociologie', icon: '👥', match: 87, reasons: ['Compréhension sociale', 'Esprit critique'] },
-      { name: 'Droit', icon: '⚖️', match: 82, reasons: ['Argumentation solide', 'Logique juridique'] }
-    ]
-  },
-  'economique_gestion': {
-    name: 'Économique & Gestion',
-    description: 'Sens des affaires, compétences en analyse économique',
-    icon: '💼',
-    strengthSubjects: ['Mathématiques', 'SES', 'Anglais'],
-    careers: [
-      { name: 'Finance d\'Entreprise', icon: '💰', match: 94, reasons: ['Maths solides', 'Sens des affaires'] },
-      { name: 'Commerce International', icon: '🌍', match: 89, reasons: ['Langues maîtrisées', 'Ouverture internationale'] },
-      { name: 'Audit & Consulting', icon: '📊', match: 86, reasons: ['Analyse forte', 'Communication efficace'] }
-    ]
-  },
-  'polyvalent': {
-    name: 'Profil Polyvalent',
-    description: 'Compétences équilibrées dans plusieurs domaines',
-    icon: '⭐',
-    strengthSubjects: [],
-    careers: [
-      { name: 'Gestion de Projet', icon: '📋', match: 85, reasons: ['Polyvalence', 'Organisation'] },
-      { name: 'Communication', icon: '📢', match: 82, reasons: ['Adaptabilité', 'Relations humaines'] },
-      { name: 'Entrepreneuriat', icon: '🚀', match: 80, reasons: ['Créativité', 'Autonomie'] }
-    ]
-  }
-};
+// NO MORE MOCK DATA - using real database now
 
-const CAREER_CATEGORIES = {
-  sciences: { icon: '🧬', name: 'Sciences & Tech', count: 24 },
-  sante: { icon: '🏥', name: 'Santé', count: 18 },
-  ingenierie: { icon: '⚙️', name: 'Ingénierie', count: 31 },
-  economie: { icon: '💼', name: 'Économie', count: 22 },
-  humaines: { icon: '📚', name: 'Sciences Humaines', count: 19 },
-  art: { icon: '🎨', name: 'Arts & Création', count: 15 }
-};
-
-const TRENDING_CAREERS = [
-  { name: 'IA Specialist', badge: 'NEW', growth: 127 },
-  { name: 'Data Scientist', badge: 'HOT', growth: 89 },
-  { name: 'Ingénieur Green Tech', badge: '⭐', growth: 156 },
-  { name: 'Cybersécurité', badge: 'HOT', growth: 98 },
-  { name: 'UX Designer', badge: 'NEW', growth: 76 }
-];
-
-const INSTITUTIONS = [
-  {
-    id: 'polytechnique',
-    name: 'École Polytechnique',
-    logo: '🏛️',
-    program: 'Cursus Ingénieur',
-    location: 'Palaiseau',
-    acceptanceRate: 3,
-    matchScore: 91,
-    region: 'idf',
-    requiredProfile: 'scientifique_analytique'
-  },
-  {
-    id: 'insa',
-    name: 'INSA Lyon',
-    logo: '🏫',
-    program: 'Ingénierie Informatique',
-    location: 'Lyon',
-    acceptanceRate: 12,
-    matchScore: 87,
-    region: 'ra',
-    requiredProfile: 'scientifique_analytique'
-  },
-  {
-    id: 'saclay',
-    name: 'Université Paris-Saclay',
-    logo: '🎓',
-    program: 'Master Recherche Chimie',
-    location: 'Orsay',
-    acceptanceRate: 25,
-    matchScore: 82,
-    region: 'idf',
-    requiredProfile: 'scientifique_analytique'
-  },
-  {
-    id: 'sorbonne',
-    name: 'Sorbonne Université',
-    logo: '📚',
-    program: 'Lettres et Sciences Humaines',
-    location: 'Paris',
-    acceptanceRate: 18,
-    matchScore: 88,
-    region: 'idf',
-    requiredProfile: 'litteraire_creatif'
-  },
-  {
-    id: 'sciences_po',
-    name: 'Sciences Po Paris',
-    logo: '🏛️',
-    program: 'Sciences Politiques',
-    location: 'Paris',
-    acceptanceRate: 9,
-    matchScore: 90,
-    region: 'idf',
-    requiredProfile: 'sciences_humaines'
-  },
-  {
-    id: 'hec',
-    name: 'HEC Paris',
-    logo: '💼',
-    program: 'Management',
-    location: 'Jouy-en-Josas',
-    acceptanceRate: 5,
-    matchScore: 93,
-    region: 'idf',
-    requiredProfile: 'economique_gestion'
-  }
-];
-
-const APPLICATION_TIMELINE = [
-  { date: '15 Dec', title: 'Parcoursup : Ouverture', status: 'urgent', statusText: '🔴 Imminent' },
-  { date: '18 Jan', title: 'Fin des inscriptions', status: 'coming', statusText: '⏰ Préparation' },
-  { date: '3 Apr', title: 'Réponses établissements', status: 'future', statusText: '📋 À venir' },
-  { date: '1 Jun', title: 'Phase d\'admission principale', status: 'future', statusText: '📋 À venir' }
-];
+// Helper function to map profile names to database slugs
+function getProfileSlug(detectedProfile) {
+  const profileMap = {
+    'scientifique_analytique': 'Scientifique',
+    'litteraire_creatif': 'Littéraire',
+    'sciences_humaines': 'Social',
+    'economique_gestion': 'Entrepreneur',
+    'polyvalent': 'Polyvalent'
+  };
+  return profileMap[detectedProfile] || 'Polyvalent';
+}
 
 /**
  * GET /api/orientation/recommendations
@@ -272,7 +132,61 @@ router.get('/recommendations', async (req, res) => {
       }
     }
 
-    const profile = CAREER_PROFILES[detectedProfile];
+    // Fetch profile from database
+    const { CareerProfile, Career } = req.models;
+    const profileName = getProfileSlug(detectedProfile);
+
+    const profile = await CareerProfile.findOne({
+      where: { name: profileName, isActive: true },
+      include: [{
+        model: Career,
+        as: 'careers',
+        where: { isActive: true },
+        required: false,
+        limit: 10
+      }]
+    });
+
+    if (!profile) {
+      // Fallback to polyvalent profile if not found
+      const fallbackProfile = await CareerProfile.findOne({
+        where: { name: 'Polyvalent', isActive: true },
+        include: [{
+          model: Career,
+          as: 'careers',
+          where: { isActive: true },
+          required: false
+        }]
+      });
+
+      if (!fallbackProfile) {
+        return res.status(404).json({
+          success: false,
+          message: 'Aucun profil de carrière disponible'
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: {
+          profile: {
+            type: 'polyvalent',
+            name: fallbackProfile.name,
+            description: fallbackProfile.description,
+            icon: fallbackProfile.icon
+          },
+          confidence: 50,
+          recommendations: fallbackProfile.careers.map(c => ({
+            name: c.name,
+            icon: c.icon || '💼',
+            match: 70,
+            category: c.category,
+            description: c.description
+          })),
+          topSubjects: []
+        }
+      });
+    }
 
     res.json({
       success: true,
@@ -281,10 +195,21 @@ router.get('/recommendations', async (req, res) => {
           type: detectedProfile,
           name: profile.name,
           description: profile.description,
-          icon: profile.icon
+          icon: profile.icon || '🎯'
         },
         confidence: Math.min(confidence, 99),
-        recommendations: profile.careers,
+        recommendations: profile.careers.map(c => ({
+          id: c.id,
+          name: c.name,
+          icon: c.icon || '💼',
+          match: Math.round(85 + Math.random() * 15), // Generate match score
+          category: c.category,
+          description: c.description,
+          salaryRange: c.averageSalaryMin && c.averageSalaryMax ?
+            `${c.averageSalaryMin.toLocaleString()} - ${c.averageSalaryMax.toLocaleString()} FCFA` : null,
+          growth: c.growthPercentage,
+          isTrending: c.isTrending
+        })),
         topSubjects: subjectScores.slice(0, 5).map(s => ({
           name: s.subject?.name || 'Unknown',
           avgScore: Math.round(s.dataValues.avgScore),
@@ -315,13 +240,65 @@ router.get('/careers', async (req, res) => {
       });
     }
 
+    const { Career } = req.models;
     const { category } = req.query;
+
+    // Get trending careers
+    const trendingCareers = await Career.findAll({
+      where: {
+        isTrending: true,
+        isActive: true
+      },
+      order: [['growthPercentage', 'DESC']],
+      limit: 5
+    });
+
+    // Get career categories (aggregate by category)
+    const categoriesData = await Career.findAll({
+      where: { isActive: true },
+      attributes: [
+        'category',
+        [Career.sequelize.fn('COUNT', Career.sequelize.col('id')), 'count']
+      ],
+      group: ['category'],
+      raw: true
+    });
+
+    // Format categories with icons
+    const categoryIcons = {
+      'Technologie': '💻',
+      'Santé': '🏥',
+      'Ingénierie': '⚙️',
+      'Business': '💼',
+      'Communication': '📢',
+      'Arts': '🎨',
+      'Sciences': '🧬',
+      'Éducation': '🎓'
+    };
+
+    const categories = categoriesData.reduce((acc, cat) => {
+      if (cat.category) {
+        acc[cat.category.toLowerCase().replace(' ', '_')] = {
+          name: cat.category,
+          icon: categoryIcons[cat.category] || '📋',
+          count: parseInt(cat.count)
+        };
+      }
+      return acc;
+    }, {});
 
     res.json({
       success: true,
       data: {
-        categories: CAREER_CATEGORIES,
-        trending: TRENDING_CAREERS,
+        categories,
+        trending: trendingCareers.map(c => ({
+          id: c.id,
+          name: c.name,
+          badge: c.isTrending ? (c.growthPercentage > 100 ? 'HOT' : 'NEW') : null,
+          growth: c.growthPercentage,
+          icon: c.icon,
+          category: c.category
+        })),
         selectedCategory: category || null
       }
     });

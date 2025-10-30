@@ -13,7 +13,7 @@ VPS_IP="89.117.58.53"
 VPS_USER="root"
 DOMAIN="claudyne.com"
 GITHUB_REPO="https://github.com/aurelgroup/claudyne-platform"
-GITHUB_TOKEN="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"
+GITHUB_TOKEN="YOUR_GITHUB_TOKEN_HERE"
 DEPLOY_DIR="/tmp/claudyne-deploy"
 
 # Colors

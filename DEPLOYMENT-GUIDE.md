@@ -22,7 +22,7 @@
 - **SSH:** Key-based authentication
 - **GitHub:** Token access
 - **Repository:** https://github.com/aurelgroup/claudyne-platform
-- **Token:** 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
+- **Token:** YOUR_GITHUB_TOKEN_HERE
 
 ### 🎯 URLs Finales
 - **Frontend:** https://claudyne.com

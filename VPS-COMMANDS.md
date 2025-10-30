@@ -31,7 +31,7 @@ cd /tmp/claudyne-deploy
 
 ```bash
 # Clone avec token GitHub
-git clone https://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@github.com/aurelgroup/claudyne-platform.git .
+git clone https://YOUR_GITHUB_TOKEN_HERE@github.com/aurelgroup/claudyne-platform.git .
 
 # Ou copier depuis votre machine locale (alternative)
 # scp -r * root@89.117.58.53:/tmp/claudyne-deploy/

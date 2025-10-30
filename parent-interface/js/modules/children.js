@@ -78,13 +78,8 @@ export default class Children {
 
     async loadChildrenData() {
         try {
-            // Load from API or cache
-            const api = window.parentApp?.getModule('api');
-            if (api) {
-                this.children = await api.getChildren();
-            } else {
-                this.children = this.getMockChildren();
-            }
+            // Load from localStorage first
+            this.children = this.getChildren();
 
             // Enrich with analytics data
             for (const child of this.children) {
@@ -931,6 +926,62 @@ export default class Children {
         });
 
         return areas.slice(0, 3);
+    }
+
+    /**
+     * Charge les enfants depuis localStorage ou retourne des données mock
+     */
+    getChildren() {
+        try {
+            const studentsStr = localStorage.getItem('claudyne_students');
+            if (studentsStr) {
+                const students = JSON.parse(studentsStr);
+                if (students && students.length > 0) {
+                    // Transformer les données API en format utilisé par l'interface
+                    return students.map((student, index) => ({
+                        id: student.id || `student-${index}`,
+                        name: `${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Étudiant',
+                        age: student.age || this.calculateAge(student.dateOfBirth),
+                        class: student.className || student.educationLevel || 'Non défini',
+                        school: student.school || 'Non défini',
+                        avatar: student.avatar || null,
+                        status: student.isActive ? 'online' : 'offline',
+                        level: student.currentAverage >= 90 ? 'excellent' : student.currentAverage >= 75 ? 'advanced' : 'intermediate',
+                        progressColor: index === 0 ? 'primary' : index === 1 ? 'secondary' : 'accent',
+                        analytics: {
+                            overallProgress: student.overallProgress || 0,
+                            currentScore: student.currentAverage || 0,
+                            weeklyProgress: 0,
+                            weeklyStudyTime: '0h',
+                            weeklyExercises: 0,
+                            streakDays: student.currentStreak || 0,
+                            strongSubject: 'À déterminer',
+                            weakSubject: 'À déterminer'
+                        },
+                        subjects: [],
+                        recommendations: [],
+                        recentActivities: []
+                    }));
+                }
+            }
+        } catch (error) {
+            console.error('[Children] Error loading students from localStorage:', error);
+        }
+
+        // Fallback to mock data
+        return this.getMockChildren();
+    }
+
+    calculateAge(dateOfBirth) {
+        if (!dateOfBirth) return null;
+        const today = new Date();
+        const birthDate = new Date(dateOfBirth);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
     }
 
     getMockChildren() {

@@ -1,0 +1,77 @@
+{
+  "plans": [
+    {
+      "id": "plan_discovery_trial",
+      "name": "Découverte",
+      "description": "7 jours d'essai gratuit",
+      "price": 0,
+      "originalPrice": null,
+      "discount": null,
+      "currency": "FCFA",
+      "interval": "trial",
+      "intervalCount": 7,
+      "features": [
+        "Accès à 3 matières",
+        "Exercices de base",
+        "Suivi basique des progrès",
+        "Support email"
+      ],
+      "status": "active",
+      "featured": false,
+      "subscriptions": 0,
+      "createdAt": "2025-10-12T22:00:00.000Z",
+      "updatedAt": "2025-10-12T22:00:00.000Z"
+    },
+    {
+      "id": "plan_student_monthly",
+      "name": "Individuelle",
+      "description": "Parfait pour un élève",
+      "price": 8000,
+      "originalPrice": null,
+      "discount": null,
+      "currency": "FCFA",
+      "interval": "monthly",
+      "intervalCount": 1,
+      "features": [
+        "Accès illimité toutes matières",
+        "1 élève uniquement",
+        "Suivi personnalisé avec IA",
+        "Prix Claudine (badges)",
+        "Support email"
+      ],
+      "status": "active",
+      "featured": false,
+      "subscriptions": 0,
+      "createdAt": "2025-10-12T22:00:00.000Z",
+      "updatedAt": "2025-10-12T22:00:00.000Z"
+    },
+    {
+      "id": "plan_family_monthly",
+      "name": "💝 Familiale 💝",
+      "description": "🔥 Économisez 9,000 FCFA/mois! 🔥",
+      "price": 15000,
+      "originalPrice": 24000,
+      "discount": 9000,
+      "currency": "FCFA",
+      "interval": "monthly",
+      "intervalCount": 1,
+      "features": [
+        "Accès illimité toutes matières",
+        "Jusqu'à 3 enfants",
+        "Suivi personnalisé avec IA",
+        "Tableau de bord parents",
+        "Prix Claudine (badges/récompenses)",
+        "Support prioritaire"
+      ],
+      "status": "active",
+      "featured": true,
+      "subscriptions": 0,
+      "createdAt": "2025-10-12T22:00:00.000Z",
+      "updatedAt": "2025-10-12T22:00:00.000Z"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2025-10-12T22:00:00.000Z",
+    "version": "1.0.0"
+  }
+}

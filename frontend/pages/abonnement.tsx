@@ -16,6 +16,9 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 // Hooks
 import { useAuth } from '../hooks/useAuth';
 
+// Services
+import { apiService } from '../services/api';
+
 // Types
 interface PaymentMethod {
   id: string;
@@ -93,30 +96,28 @@ export default function AbonnementPage() {
 
   const fetchPlans = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subscriptions/plans`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setPlans(data.data.plans);
+      const response = await apiService.getSubscriptionPlans();
+
+      if (response.success && response.data) {
+        setPlans(response.data.plans || []);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement plans:', error);
-      toast.error('Erreur lors du chargement des plans');
+      toast.error(error.message || 'Erreur lors du chargement des plans');
     }
   };
 
   const fetchPaymentMethods = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/methods`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setPaymentData(data.data);
+      const response = await apiService.getPaymentMethods();
+
+      if (response.success && response.data) {
+        setPaymentData(response.data);
       }
       setIsLoadingData(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement paiements:', error);
-      toast.error('Erreur lors du chargement des méthodes de paiement');
+      toast.error(error.message || 'Erreur lors du chargement des méthodes de paiement');
       setIsLoadingData(false);
     }
   };
@@ -173,37 +174,30 @@ export default function AbonnementPage() {
     setPaymentState(prev => ({ ...prev, isProcessing: true }));
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/initialize`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: paymentState.selectedPlan.price,
-          method: paymentState.selectedMethod.id,
-          planId: paymentState.selectedPlan.id,
-          phone: paymentState.phone
-        })
+      const response = await apiService.initializePayment({
+        amount: paymentState.selectedPlan.price,
+        paymentMethod: paymentState.selectedMethod.id,
+        type: 'subscription',
+        planId: paymentState.selectedPlan.id,
+        phone: paymentState.phone
       });
 
-      const data = await response.json();
-      
-      if (data.success) {
+      if (response.success && response.data) {
         setPaymentState(prev => ({
           ...prev,
-          transactionId: data.data.transactionId,
+          transactionId: response.data.transactionId,
           paymentStatus: 'pending'
         }));
-        toast.success(data.data.message);
-        
+        toast.success(response.data.message || 'Paiement initialisé');
+
         // Vérifier le statut du paiement périodiquement
-        checkPaymentStatus(data.data.transactionId);
+        checkPaymentStatus(response.data.transactionId);
       } else {
-        toast.error(data.message || 'Erreur lors de l\'initialisation du paiement');
+        toast.error(response.message || 'Erreur lors de l\'initialisation du paiement');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur paiement:', error);
-      toast.error('Erreur lors du paiement');
+      toast.error(error.message || 'Erreur lors du paiement');
     } finally {
       setPaymentState(prev => ({ ...prev, isProcessing: false }));
     }
@@ -215,17 +209,16 @@ export default function AbonnementPage() {
 
     const check = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/${transactionId}/status`);
-        const data = await response.json();
-        
-        if (data.success) {
-          if (data.data.status === 'completed') {
+        const response = await apiService.getPaymentStatus(transactionId);
+
+        if (response.success && response.data) {
+          if (response.data.status === 'completed') {
             setPaymentState(prev => ({ ...prev, paymentStatus: 'completed' }));
-            toast.success(data.data.message);
+            toast.success(response.data.message || 'Paiement confirmé !');
             return;
-          } else if (data.data.status === 'failed') {
+          } else if (response.data.status === 'failed') {
             setPaymentState(prev => ({ ...prev, paymentStatus: 'failed' }));
-            toast.error(data.data.message);
+            toast.error(response.data.message || 'Paiement échoué');
             return;
           }
         }
@@ -236,7 +229,7 @@ export default function AbonnementPage() {
         } else {
           toast.error('Délai d\'attente dépassé. Veuillez vérifier votre paiement.');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erreur vérification statut:', error);
       }
     };

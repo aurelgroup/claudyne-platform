@@ -3,7 +3,12 @@
  * La force du savoir en héritage
  */
 
-require('dotenv').config();
+// Load environment variables from root
+const dotenv = require('dotenv');
+const path = require('path');
+// Toujours charger .env à la racine du projet (unifié)
+dotenv.config({ path: path.join(__dirname, '../../.env') });
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -13,19 +18,23 @@ const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const http = require('http');
 const socketIo = require('socket.io');
-const path = require('path');
 
 // Import des modules internes
 const logger = require('./utils/logger');
 const { sequelize, testConnection } = require('./config/database');
 const cacheService = require('./services/cacheService');
 const routes = require('./routes');
+const interfaceRoutes = require("./routes/interfaces");
 const { configureSocket } = require('./websockets/socketHandler');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandlers');
 const { authenticate } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
+
+// Configuration du proxy (nécessaire derrière nginx)
+// 1 = fait confiance au premier proxy uniquement (nginx)
+app.set('trust proxy', 1);
 
 // Configuration Socket.IO pour Battle Royale
 const io = socketIo(server, {
@@ -87,7 +96,8 @@ const limiter = rateLimit({
     code: 'RATE_LIMIT_EXCEEDED'
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // Ralentissement progressif
@@ -95,11 +105,12 @@ const speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 50, // Commence le ralentissement après 50 requêtes
   delayMs: 500, // Ajoute 500ms de délai par requête excessive
-  maxDelayMs: 20000 // Délai maximum de 20 secondes
+  maxDelayMs: 20000, // Délai maximum de 20 secondes
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
-app.use('/api', limiter);
-app.use('/api', speedLimiter);
+// app.use('/api', limiter);
+// app.use('/api', speedLimiter);
 
 // Parsers pour les requêtes
 app.use(express.json({ limit: '10mb' }));
@@ -144,13 +155,95 @@ app.get('/', (req, res) => {
 
 // Route sécurisée pour l'interface admin
 app.get('/admin-secure-k7m9x4n2p8w5z1c6', (req, res) => {
+  // Headers anti-cache pour forcer le rechargement à chaque visite
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(path.join(__dirname, '../../admin-interface.html'));
 });
 
 // Admin token validation moved to routes/admin.js
 
+// Routes d'interfaces utilisateur (AVANT les routes API pour éviter conflicts)
+app.get('/student', (req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(__dirname, '../../student-interface-modern.html');
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        message: "Interface étudiant indisponible",
+        error: "STUDENT_INTERFACE_NOT_FOUND"
+      });
+    }
+
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.send(html);
+
+    logger.info(`Interface étudiant servie - IP: ${req.ip}`);
+  } catch (error) {
+    logger.error(`Erreur interface étudiant:`, error);
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur - Interface étudiant",
+      error: "STUDENT_INTERFACE_ERROR"
+    });
+  }
+});
+
+app.get('/teacher', (req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(__dirname, '../../teacher-interface.html');
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        message: "Interface enseignant indisponible"
+      });
+    }
+
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur - Interface enseignant"
+    });
+  }
+});
+
+app.get('/moderator', (req, res) => {
+  const fs = require('fs');
+  const filePath = path.join(__dirname, '../../moderator-interface.html');
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        success: false,
+        message: "Interface modérateur indisponible"
+      });
+    }
+
+    const html = fs.readFileSync(filePath, 'utf8');
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur - Interface modérateur"
+    });
+  }
+});
+
 // Routes principales de l'API
 app.use('/api', routes);
+// Routes des interfaces utilisateur
+app.use("/", interfaceRoutes);
 
 // Admin endpoints have been moved to routes/admin.js
 

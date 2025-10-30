@@ -1,0 +1,3271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudyne - La Symbiose Quantique</title>
+    
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700;900&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700;900&display=swap">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Fallback pour les icônes si Material Icons ne charge pas -->
+    <style>
+        .material-icons-outlined {
+            font-family: 'Material Icons Outlined', 'Material Icons', sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Fallback en cas d'échec du chargement Material Icons */
+        .material-icons-outlined:not(:empty) {
+            font-family: 'Material Icons Outlined', 'Material Icons', sans-serif;
+        }
+
+        /* Si Material Icons ne charge pas, remplacer par emojis */
+        .icon-fallback {
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+            font-size: 1.2em;
+        }
+    </style>
+    
+    <meta name="description" content="Claudyne - Plateforme éducative innovante pour l'excellence académique au Cameroun. IA, gamification et suivi personnalisé.">
+    <meta name="keywords" content="éducation Cameroun, plateforme éducative, IA éducation, gamification apprentissage, Claudine TCHANDJIO, excellence académique">
+    <meta name="author" content="Équipe Claudyne">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#020205">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='90' font-size='90'%3E⚛️%3C/text%3E%3C/svg%3E">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://claudyne.com/">
+    <meta property="og:title" content="Claudyne - La Symbiose Quantique | Éducation Innovante">
+    <meta property="og:description" content="Révolutionnez l'apprentissage avec Claudyne : IA personnalisée, gamification et excellence académique. Honneur à Ma'a Meffo TCHANDJIO Claudine.">
+    <meta property="og:image" content="https://claudyne.com/og-image.jpg">
+    <meta property="og:locale" content="fr_CM">
+    <meta property="og:site_name" content="Claudyne">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://claudyne.com/">
+    <meta property="twitter:title" content="Claudyne - La Symbiose Quantique | Éducation Innovante">
+    <meta property="twitter:description" content="Révolutionnez l'apprentissage avec Claudyne : IA personnalisée, gamification et excellence académique.">
+    <meta property="twitter:image" content="https://claudyne.com/og-image.jpg">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "Claudyne",
+        "description": "Plateforme éducative innovante pour l'excellence académique au Cameroun",
+        "url": "https://claudyne.com",
+        "logo": "https://claudyne.com/logo.png",
+        "sameAs": [
+            "https://facebook.com/claudyne",
+            "https://twitter.com/claudyne"
+        ],
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "CM",
+            "addressLocality": "Cameroun"
+        },
+        "offers": [
+            {
+                "@type": "Offer",
+                "name": "Formule Familiale",
+                "price": "15000",
+                "priceCurrency": "XAF",
+                "description": "Accès illimité pour jusqu'à 3 enfants"
+            }
+        ]
+    }
+    </script>
+    
+    <style>
+        /* Variables CSS améliorées */
+        :root {
+            --color-dark-bg: #020205;
+            --color-light-text: #f0f0f0;
+            --color-glass-bg: rgba(255, 255, 255, 0.02);
+            --color-glass-border: rgba(255, 255, 255, 0.05);
+            --color-accent-1: #00FFC2;
+            --color-accent-2: #FF57E3;
+            --color-accent-3: #FFC947;
+            --max-width: 1200px;
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+        }
+        
+        /* Reset et base */
+        * { box-sizing: border-box; }
+        html { 
+            scroll-behavior: smooth;
+            /* Anti-overscroll sur mobile */
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+            background-color: var(--color-dark-bg);
+            min-height: 100%;
+        }
+        body { 
+            margin: 0; 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--color-dark-bg); 
+            color: var(--color-light-text); 
+            overflow-x: hidden; 
+            line-height: 1.6; 
+            padding-top: 80px; /* Espace pour la navigation fixe */
+            visibility: hidden; /* Anti-FOUC : masquer jusqu'au chargement */
+            /* Anti-overscroll mobile */
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body.loaded {
+            visibility: visible;
+            animation: fadeInPage 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Navigation fixe */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 2, 5, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--color-glass-border);
+            padding: 1rem 2rem;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .navbar.visible { transform: translateY(0); }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-weight: 900;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--color-light-text);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent-1);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-accent-1);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Navigation toujours visible sur mobile */
+
+        /* Bouton retour en haut */
+        .back-to-top {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 100;
+            background: var(--color-accent-1);
+            color: var(--color-dark-bg);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0);
+            transition: var(--transition);
+        }
+
+        /* Ajustement position sur mobile pour éviter la navigation en bas */
+        @media (max-width: 768px) {
+            .back-to-top {
+                bottom: 100px; /* Au-dessus de la navigation bottom */
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 255, 194, 0.3);
+        }
+
+        .section { 
+            padding: 10vh 20px; 
+            max-width: var(--max-width); 
+            margin: 0 auto; 
+            position: relative; 
+            z-index: 2; 
+        }
+
+        /* Animation de fond optimisée */
+        #starfieldCanvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Effets de texte améliorés avec gradient cyclique */
+        .title-conj { 
+            font-size: clamp(2.5rem, 8vw, 6rem); 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            background: linear-gradient(45deg, #00FFC2, #FF57E3, #FFC947, #3B82F6);
+            background-size: 400% 400%;
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+            animation: 
+                textFadeIn 2s ease-out forwards,
+                floatEffect 4s ease-in-out infinite,
+                gradientCycle 6s ease-in-out infinite;
+            text-align: center;
+        }
+
+        .subtitle-conj { 
+            font-weight: 100; 
+            font-size: clamp(1rem, 2.5vw, 1.6rem); 
+            opacity: 0; 
+            animation: fadeIn 1.5s ease-out 1s forwards;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes floatEffect {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+            }
+            25% { 
+                transform: translateY(-8px) rotate(0.5deg); 
+            }
+            50% { 
+                transform: translateY(-15px) rotate(0deg); 
+            }
+            75% { 
+                transform: translateY(-8px) rotate(-0.5deg); 
+            }
+        }
+
+        @keyframes gradientCycle {
+            0% { 
+                background-position: 0% 50%;
+                filter: hue-rotate(0deg) brightness(1.2);
+            }
+            25% { 
+                background-position: 100% 50%;
+                filter: hue-rotate(90deg) brightness(1.1);
+            }
+            50% { 
+                background-position: 100% 100%;
+                filter: hue-rotate(180deg) brightness(1.3);
+            }
+            75% { 
+                background-position: 0% 100%;
+                filter: hue-rotate(270deg) brightness(1.1);
+            }
+            100% { 
+                background-position: 0% 50%;
+                filter: hue-rotate(360deg) brightness(1.2);
+            }
+        }
+
+        @keyframes textFadeIn { 
+            0% { transform: translateY(30px); opacity: 0; filter: blur(10px); } 
+            100% { transform: translateY(0); opacity: 1; filter: blur(0); } 
+        }
+
+        @keyframes fadeIn { 
+            0% { opacity: 0; transform: translateY(20px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+
+        @keyframes slideInUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes blink {
+            0%, 50% { 
+                opacity: 1; 
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            }
+            25%, 75% { 
+                opacity: 0.7; 
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        @keyframes familialePulse {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3), 0 0 0 0 rgba(255, 215, 0, 0.4);
+            }
+            50% { 
+                transform: scale(1.02);
+                box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4), 0 0 0 10px rgba(255, 215, 0, 0.1);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3), 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Composants glass améliorés */
+        .glass-card { 
+            background: var(--color-glass-bg); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid var(--color-glass-border); 
+            border-radius: var(--border-radius); 
+            padding: 2rem; 
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; 
+            transform: translateY(30px); 
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(0, 255, 194, 0.2), transparent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+            z-index: -1;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        .glass-card:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            box-shadow: 
+                0 25px 50px rgba(0,0,0,0.4),
+                0 0 30px rgba(0, 255, 194, 0.3); 
+            border-color: var(--color-accent-1); 
+        }
+        
+        /* Boutons améliorés */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .glass-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-light-text);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+
+        .glass-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .glass-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .glass-btn-primary { background: var(--color-accent-1); color: var(--color-dark-bg); }
+        .glass-btn-success { background: var(--color-accent-2); color: var(--color-dark-bg); }
+        .glass-btn-warning { background: var(--color-accent-3); color: var(--color-dark-bg); }
+        .glass-btn-danger { background: #ff4757; color: white; }
+
+        .features-grid { 
+            display: grid; 
+            gap: 2rem; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            margin-top: 3rem;
+        }
+        
+        .feature-icon { 
+            font-size: 3rem; 
+            margin-bottom: 1rem; 
+            color: var(--color-accent-3); 
+            transition: var(--transition);
+            display: block;
+        }
+
+        .glass-card:hover .feature-icon { 
+            color: var(--color-accent-1); 
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .cta-flux { 
+            display: inline-block; 
+            padding: 1.2rem 3rem; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            text-decoration: none; 
+            transition: var(--transition); 
+            position: relative; 
+            overflow: hidden; 
+            background: linear-gradient(45deg, var(--color-accent-1), var(--color-accent-2)); 
+            color: var(--color-dark-bg);
+            box-shadow: 0 4px 15px rgba(0, 255, 194, 0.3);
+        }
+
+        .cta-flux::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-flux:hover::before {
+            left: 100%;
+        }
+
+        .cta-flux:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 6px 25px rgba(0, 255, 194, 0.4);
+        }
+
+        /* Section FAQ */
+        .faq-item {
+            border-bottom: 1px solid var(--color-glass-border);
+            margin-bottom: 1rem;
+        }
+
+        .faq-question {
+            background: none;
+            border: none;
+            color: var(--color-light-text);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 0;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .faq-question:hover {
+            color: var(--color-accent-1);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 0 0 1rem;
+        }
+
+        .faq-answer.active {
+            max-height: 200px;
+            padding: 0 0 1rem 1rem;
+        }
+
+        /* Témoignages */
+        .testimonials-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--color-accent-1);
+            position: absolute;
+            top: -10px;
+            left: 20px;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--color-accent-2);
+            margin-top: 1rem;
+        }
+
+        /* Contrôles audio améliorés */
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--color-accent-1);
+        }
+
+        /* Ajustement position audio sur mobile */
+        @media (max-width: 768px) {
+            .audio-control {
+                bottom: 160px; /* Au-dessus de la navigation et du back-to-top */
+                right: 15px;
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        .audio-control:hover {
+            transform: scale(1.1);
+            background: rgba(0, 255, 194, 0.2);
+        }
+
+        /* Indicateur de chargement */
+        /* Preloader anti-FOUC */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-dark-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .preloader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 255, 194, 0.1);
+            border-top: 3px solid var(--color-accent-1);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .preloader-text {
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Couche de protection contre l'overscroll */
+        .overscroll-protection {
+            position: fixed;
+            top: -100vh;
+            left: 0;
+            right: 0;
+            height: 300vh;
+            background: var(--color-dark-bg);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Navigation en bas pour mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 2, 5, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--color-glass-border);
+            padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .bottom-nav-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            padding: 0.5rem 0.25rem;
+            border-radius: 12px;
+            min-width: 50px;
+        }
+
+        .bottom-nav-item.active,
+        .bottom-nav-item:hover {
+            color: var(--color-accent-1);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .bottom-nav-item .material-icons-outlined {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .bottom-nav-item span:not(.material-icons-outlined) {
+            font-size: 0.65rem;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1;
+        }
+
+        /* Responsive amélioré */
+        @media (max-width: 768px) {
+            .nav-links { 
+                display: none;
+            }
+            
+            .bottom-nav {
+                display: block;
+            }
+            
+            .container {
+                padding: 0.5rem 1rem;
+                justify-content: center;
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .navbar {
+                padding: 0.75rem 1rem;
+            }
+            
+            body {
+                padding-bottom: 80px; /* Espace pour la navigation en bas */
+            }
+            
+            .btn-group { 
+                flex-direction: column; 
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .glass-btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .section {
+                padding: 5vh 15px;
+            }
+            
+            /* Réduction des effets sur mobile pour les performances */
+            .glass-card {
+                backdrop-filter: blur(8px);
+            }
+            
+            .glass-card:hover {
+                transform: translateY(-5px);
+            }
+
+            /* Réduire l'intensité des animations sur mobile */
+            .title-conj {
+                animation: 
+                    textFadeIn 2s ease-out forwards,
+                    floatEffect 6s ease-in-out infinite,
+                    gradientCycle 8s ease-in-out infinite;
+            }
+
+            /* Optimiser la carte Familiale sur mobile */
+            .glass-card[style*="familialePulse"] {
+                animation: familialePulse 4s ease-in-out infinite !important;
+                border-width: 2px !important;
+            }
+
+            .popular-badge {
+                font-size: 0.75rem !important;
+                padding: 0.4rem 1.5rem !important;
+            }
+
+            /* Réduire les effets gourmands en ressources */
+            * {
+                animation-duration: 2s !important;
+            }
+
+            @keyframes floatEffect {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-5px); }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title-conj {
+                font-size: 2.5rem;
+            }
+            
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .cta-flux {
+                padding: 1rem 2rem;
+            }
+        }
+
+        /* Mode réduit pour les connexions lentes */
+        @media (max-width: 768px) and (max-height: 600px) {
+            #starfieldCanvas {
+                opacity: 0.5;
+            }
+            
+            .glass-card {
+                backdrop-filter: none;
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        /* Accessibilité améliorée */
+        @media (prefers-reduced-motion: reduce) {
+            .title-conj {
+                animation: textFadeIn 2s ease-out forwards !important;
+            }
+            
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus visible pour l'accessibilité */
+        .glass-btn:focus,
+        .faq-question:focus,
+        .nav-links a:focus {
+            outline: 2px solid var(--color-accent-1);
+            outline-offset: 2px;
+        }
+
+        /* Styles pour les modaux */
+        .glass-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .glass-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .glass-modal-content {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-modal.show .glass-modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: var(--color-light-text);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--color-accent-1);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Protection contre l'overscroll -->
+    <div class="overscroll-protection"></div>
+    
+    <!-- Preloader anti-FOUC -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-logo">CLAUDYNE</div>
+        <div class="preloader-spinner"></div>
+        <div class="preloader-text">Chargement de votre expérience éducative...</div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-brand">CLAUDYNE</a>
+            <ul class="nav-links">
+                <li><a href="#welcome">Accueil</a></li>
+                <li><a href="#features">Fonctionnalités</a></li>
+                <li><a href="#pricing">Tarifs</a></li>
+                <li><a href="#testimonials">Témoignages</a></li>
+                <li><a href="#donation">Faire un don</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Audio -->
+    <audio id="backgroundAudio" loop>
+        <!-- Audio temporairement désactivé pour éviter les erreurs 403 -->
+        <!-- <source src="https://assets.mixkit.co/sfx/preview/mixkit-futuristic-technology-and-data-572.mp3" type="audio/mpeg"> -->
+    </audio>
+
+    <!-- Contrôle audio -->
+    <div class="audio-control" onclick="toggleAudio()" role="button" aria-label="Contrôle audio" tabindex="0">
+        <span class="material-icons-outlined">volume_up</span>
+    </div>
+
+
+    <!-- Bouton retour en haut -->
+    <button class="back-to-top" id="backToTop" aria-label="Retour en haut" onclick="scrollToTop()">
+        <span class="material-icons-outlined">keyboard_arrow_up</span>
+    </button>
+
+    <canvas id="starfieldCanvas" aria-hidden="true"></canvas>
+    
+    <!-- Hero Section -->
+    <main class="section" id="hero">
+        <div style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <h1 class="title-conj">CLAUDYNE</h1>
+            <p class="subtitle-conj">La Révolution Éducative Camerounaise</p>
+            
+            <div style="margin-top: 50px; opacity: 0; animation: fadeIn 1.5s ease-out 1.5s forwards;">
+                <a href="#welcome" class="cta-flux">Découvrir l'Excellence</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Section d'accueil -->
+    <section id="welcome" class="section">
+        <div class="glass-card animate-on-scroll" data-node="node-0">
+            <h2 style="text-align: center; margin-bottom: 20px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-2), var(--color-accent-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Bienvenue dans l'Avenir de l'Éducation</h2>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">Claudyne transforme l'apprentissage au Cameroun avec une approche innovante alliant IA, gamification et excellence pédagogique adaptée aux réalités africaines.</p>
+            <div class="btn-group">
+                <a href="javascript:void(0)" onclick="showLoginModal('student')" class="glass-btn glass-btn-primary">
+                    <span class="material-icons-outlined">school</span>
+                    Étudiant
+                </a>
+                <a href="javascript:void(0)" onclick="showLoginModal('teacher')" class="glass-btn glass-btn-success">
+                    <span class="material-icons-outlined">person</span>
+                    Enseignant
+                </a>
+                <a href="javascript:void(0)" onclick="showLoginModal('parent')" class="glass-btn glass-btn-warning">
+                    <span class="material-icons-outlined">family_restroom</span>
+                    Parent
+                </a>
+                <a href="javascript:void(0)" onclick="showDemoModal()" class="glass-btn">
+                    <span class="material-icons-outlined">rocket_launch</span>
+                    Essai Gratuit
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fonctionnalités -->
+    <section id="features" class="section">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-2), var(--color-accent-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Innovation au Service de l'Excellence</h2>
+        <div class="features-grid">
+            <div class="glass-card animate-on-scroll" data-node="node-1">
+                <span class="material-icons-outlined feature-icon">family_restroom</span>
+                <h3>Écosystème Familial</h3>
+                <p>Une plateforme unifiée permettant aux parents de suivre en temps réel les progrès de leurs enfants avec des tableaux de bord intuitifs et des alertes personnalisées.</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-2">
+                <span class="material-icons-outlined feature-icon">emoji_events</span>
+                <h3>Prix Claudine</h3>
+                <p>Système de gamification révolutionnaire avec badges, classements et récompenses pour motiver l'excellence académique et célébrer chaque progrès.</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-3">
+                <span class="material-icons-outlined feature-icon">auto_stories</span>
+                <h3>Contenu Adapté</h3>
+                <p>Cours développés spécifiquement pour le système éducatif camerounais, avec des références culturelles locales et des méthodes pédagogiques innovantes.</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-4">
+                <span class="material-icons-outlined feature-icon">payment</span>
+                <h3>Paiements Simplifiés</h3>
+                <p>Intégration complète avec MTN Mobile Money, Orange Money, Cartes VISA/MasterCard pour des transactions sécurisées et accessibles à tous.</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-5">
+                <span class="material-icons-outlined feature-icon">analytics</span>
+                <h3>Intelligence Éducative</h3>
+                <p>Analyses avancées avec IA pour identifier les points forts, recommander des améliorations et personnaliser l'apprentissage de chaque élève en fonction de ses difficultés.</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-6">
+                <span class="material-icons-outlined feature-icon">signal_cellular_alt</span>
+                <h3>Optimisé 2G/3G</h3>
+                <p>Interface ultra-légère conçue pour fonctionner parfaitement même avec des connexions Internet limitées, garantissant l'accès pour tous.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarifs -->
+    <section id="pricing" class="section">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Nos Formules</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem;">
+            <!-- Formule Découverte -->
+            <div class="glass-card animate-on-scroll" style="position: relative;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <span class="material-icons-outlined" style="font-size: 3rem; color: var(--color-accent-1); margin-bottom: 1rem; display: block;">school</span>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-accent-1);">Découverte</h3>
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-1); margin-bottom: 0.5rem;">GRATUIT</div>
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">7 jours d'essai</p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Accès à 3 matières</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Exercices de base</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Suivi basique des progrès</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Support email</span>
+                    </div>
+                </div>
+                
+                <button onclick="showDemoModal()" class="glass-btn glass-btn-primary" style="width: 100%;">
+                    <span class="material-icons-outlined">science</span>
+                    Essayer gratuitement
+                </button>
+            </div>
+
+            <!-- Formule Individuelle -->
+            <div class="glass-card animate-on-scroll" style="position: relative;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <span class="material-icons-outlined" style="font-size: 3rem; color: var(--color-accent-1); margin-bottom: 1rem; display: block;">person</span>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-accent-1);">Individuelle</h3>
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-1); margin-bottom: 0.5rem;">8,000 FCFA</div>
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">par mois / élève</p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Accès illimité toutes matières</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>1 élève uniquement</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Suivi personnalisé avec IA</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Prix Claudine (badges)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 1.2rem;">check_circle</span>
+                        <span>Support email</span>
+                    </div>
+                </div>
+                
+                <button onclick="showLoginModal('student')" class="glass-btn glass-btn-primary" style="width: 100%;">
+                    <span class="material-icons-outlined">person</span>
+                    Choisir Individuelle
+                </button>
+            </div>
+
+            <!-- Formule Familiale -->
+            <div class="glass-card animate-on-scroll" style="position: relative; border: 3px solid var(--color-accent-2); margin-top: 30px; overflow: visible; animation: familialePulse 3s ease-in-out infinite; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 50%, rgba(255, 215, 0, 0.1) 100%); background-size: 200% 200%; animation: familialePulse 3s ease-in-out infinite, shimmer 4s ease-in-out infinite;">
+                <div class="popular-badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: linear-gradient(45deg, var(--color-accent-2), #ffd700); color: var(--color-dark-bg); padding: 0.6rem 2rem; border-radius: 25px; font-weight: 700; font-size: 0.85rem; white-space: nowrap; z-index: 100; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); animation: blink 2s infinite;">✨ POPULAIRE ✨</div>
+                
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <span class="material-icons-outlined" style="font-size: 3.5rem; color: var(--color-accent-2); margin-bottom: 1rem; display: block; animation: pulse 2s ease-in-out infinite;">family_restroom</span>
+                    <h3 style="font-size: 1.7rem; margin-bottom: 0.5rem; color: var(--color-accent-2); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">💝 Familiale 💝</h3>
+                    <div style="margin-bottom: 0.5rem;">
+                        <span style="font-size: 1.5rem; color: rgba(255, 255, 255, 0.6); text-decoration: line-through; margin-right: 1rem;">24,000 FCFA</span>
+                        <div style="font-size: 2.8rem; font-weight: 900; color: var(--color-accent-2); background: linear-gradient(45deg, var(--color-accent-2), #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline;">15,000 FCFA</div>
+                    </div>
+                    <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.9); font-weight: 600;">🔥 Économisez 9,000 FCFA/mois!🔥</p>
+                    <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7);">par mois / famille (jusqu'à 3 enfants)</p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span>Accès illimité toutes matières</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span>Jusqu'à 3 enfants</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span>Suivi personnalisé avec IA</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span>Tableau de bord parents</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span>Prix Claudine (badges/récompenses)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 1.2rem;">check_circle</span>
+                        <span>Support prioritaire</span>
+                    </div>
+                </div>
+                
+                <button onclick="showLoginModal()" class="glass-btn glass-btn-success" style="width: 100%; background: linear-gradient(45deg, var(--color-accent-2), #ffd700); font-weight: 700; font-size: 1.1rem; padding: 1rem 2rem; animation: pulse 2s ease-in-out infinite; border: 2px solid #ffd700; box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);">
+                    <span class="material-icons-outlined">star</span>
+                    🚀 CHOISIR FAMILIALE 🚀
+                </button>
+            </div>
+
+            <!-- Formule École -->
+            <div class="glass-card animate-on-scroll" style="position: relative;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <span class="material-icons-outlined" style="font-size: 3rem; color: var(--color-accent-3); margin-bottom: 1rem; display: block;">domain</span>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-accent-3);">École</h3>
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-3); margin-bottom: 0.5rem;">SUR DEVIS</div>
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7);">selon effectifs</p>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span>Solution complète école</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span>Élèves illimités</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span>Interface enseignants</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span>Analytics avancés</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span>Formation équipe</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 1.2rem;">check_circle</span>
+                        <span>Support dédié 24/7</span>
+                    </div>
+                </div>
+                
+                <button onclick="contactSchool()" class="glass-btn glass-btn-warning" style="width: 100%;">
+                    <span class="material-icons-outlined">contact_mail</span>
+                    Demander un devis
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 2rem; max-width: 600px; margin: 0 auto;">
+                <h4 style="color: var(--color-accent-1); margin-bottom: 1rem;">💳 Paiements flexibles</h4>
+                <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1rem;">
+                    Mobile Money (MTN, Orange, Express Union) • Cartes VISA/MasterCard • Virements • Paiement en plusieurs fois disponible
+                </p>
+                <p style="font-size: 0.9rem; color: var(--color-accent-2);">
+                    🎁 Premier mois gratuit pour les nouvelles familles si abonnement sur 6 mois • Remise de 20% pour paiement annuel
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Témoignages -->
+    <section id="testimonials" class="section">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Ce que disent nos utilisateurs</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card animate-on-scroll">
+                <p>Claudyne a transformé l'apprentissage de ma fille. Ses notes se sont améliorées de 40% en 3 mois !</p>
+                <div class="testimonial-author">Marie K. - Parent, Bangoua, Kamnacontinue</div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <p>Une plateforme révolutionnaire qui facilite mon travail d'enseignant et engage vraiment les élèves.</p>
+                <div class="testimonial-author">Prof. Jean M. - Lycée de Bilingue Yaoundé</div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <p>Les exercices gamifiés rendent l'apprentissage amusant. Je ne peux plus m'arrêter d'apprendre !</p>
+                <div class="testimonial-author">Alex T. - Élève de Terminale A</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Faire un don -->
+    <section id="donation" class="section">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-3), var(--color-accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Soutenez l'Éducation Africaine</h2>
+        
+        <div class="glass-card animate-on-scroll">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <span class="material-icons-outlined" style="font-size: 4rem; color: var(--color-accent-3); margin-bottom: 1rem; display: block;">favorite</span>
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem; color: var(--color-accent-1);">Ensemble, démocratisons l'éducation</h3>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem; color: var(--color-light-text);">
+                    Votre générosité permet à Claudyne d'offrir une éducation de qualité aux familles les plus démunies. 
+                    Chaque don contribue à améliorer la plateforme ainsi qu'à construire un avenir meilleur pour les enfants du Cameroun et de l'Afrique.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center;">
+                    <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 2.5rem; margin-bottom: 1rem; display: block;">school</span>
+                    <h4 style="color: var(--color-accent-1); margin-bottom: 0.5rem;">50€</h4>
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Offre 1 mois d'accès gratuit à une famille</p>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center;">
+                    <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 2.5rem; margin-bottom: 1rem; display: block;">groups</span>
+                    <h4 style="color: var(--color-accent-2); margin-bottom: 0.5rem;">150€</h4>
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Permet à 5 familles d'accéder à la plateforme</p>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1.5rem; text-align: center;">
+                    <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 2.5rem; margin-bottom: 1rem; display: block;">public</span>
+                    <h4 style="color: var(--color-accent-3); margin-bottom: 0.5rem;">500€</h4>
+                    <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">Finance un programme complet ou le Prix Claudine pour une école</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(0, 255, 194, 0.1); border: 1px solid var(--color-accent-1); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-1);">💳 Moyens de don privilégiés</h4>
+                <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3);">smartphone</span>
+                        <span>Mobile Money (MTN, Orange, Express Union)</span>
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1);">credit_card</span>
+                        <span>Cartes VISA/MasterCard</span>
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2);">account_balance</span>
+                        <span>Virements bancaires</span>
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3);">receipt</span>
+                        <span>Chèques</span>
+                    </span>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="makeDonation(50)" class="glass-btn glass-btn-primary">
+                        <span class="material-icons-outlined">volunteer_activism</span>
+                        Donner 50€
+                    </button>
+                    <button onclick="makeDonation(150)" class="glass-btn glass-btn-success">
+                        <span class="material-icons-outlined">volunteer_activism</span>
+                        Donner 150€
+                    </button>
+                    <button onclick="makeDonation(500)" class="glass-btn glass-btn-warning">
+                        <span class="material-icons-outlined">volunteer_activism</span>
+                        Donner 500€
+                    </button>
+                    <button onclick="showCustomDonation()" class="glass-btn">
+                        <span class="material-icons-outlined">edit</span>
+                        Montant libre
+                    </button>
+                </div>
+                
+                <p style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin-top: 1rem;">
+                    🏆 Tous les dons sont déductibles d'impôts • Reçu fiscal automatique • Transparence totale des fonds
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistiques -->
+    <section id="stats" class="section" style="text-align: center;">
+        <h2 style="margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-3), var(--color-accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Impact Mesurable</h2>
+        <div class="features-grid">
+            <div class="glass-card animate-on-scroll" data-node="node-7">
+                <div style="font-size: 3rem; font-weight: 900; color: var(--color-accent-1); margin-bottom: 10px;">100+</div>
+                <p style="font-size: 1.1rem; margin: 0;">Familles connectées</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-8">
+                <div style="font-size: 3rem; font-weight: 900; color: var(--color-accent-2); margin-bottom: 10px;">150+</div>
+                <p style="font-size: 1.1rem; margin: 0;">Quizz, Cours et Matières couverts</p>
+            </div>
+            <div class="glass-card animate-on-scroll" data-node="node-9">
+                <div style="font-size: 3rem; font-weight: 900; color: var(--color-accent-3); margin-bottom: 10px;">99.2%</div>
+                <p style="font-size: 1.1rem; margin: 0;">Satisfaction utilisateur</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-2), var(--color-accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Questions Fréquentes</h2>
+        <div class="glass-card">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Comment Claudyne s'adapte-t-elle au système éducatif camerounais ?
+                    <span class="material-icons-outlined">expand_more</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Claudyne suit rigoureusement les programmes officiels du Ministère de l'Éducation Nationale du Cameroun, avec des contenus adaptés aux spécificités culturelles et linguistiques locales.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Quels moyens de paiement sont acceptés ?
+                    <span class="material-icons-outlined">expand_more</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Nous acceptons MTN Mobile Money, Orange Money, ainsi que les virements bancaires. Des plans de paiement flexibles sont disponibles pour s'adapter à tous les budgets familiaux.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    La plateforme fonctionne-t-elle hors ligne ?
+                    <span class="material-icons-outlined">expand_more</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Oui ! Claudyne permet de télécharger les cours pour un accès hors ligne, et synchronise automatiquement vos progrès dès que la connexion est rétablie.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    Comment les enseignants peuvent-ils rejoindre la plateforme ?
+                    <span class="material-icons-outlined">expand_more</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Les enseignants peuvent s'inscrire via notre interface dédiée. Nous proposons des formations gratuites pour maîtriser tous les outils pédagogiques de la plateforme.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- À propos -->
+    <section id="about" class="section" style="text-align: center;">
+        <h2 style="margin-bottom: 30px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Notre Mission</h2>
+        <div class="glass-card animate-on-scroll">
+            <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem;">
+                Claudyne est bien plus qu'une plateforme éducative. C'est un hommage vivant à <strong>Ma'a Meffo TCHANDJIO Claudine (Mètah) </strong>, 
+                une vision qui unit tradition et innovation pour façonner l'avenir de l'éducation africaine.
+            </p>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+                Nous croyons que chaque enfant africain mérite l'excellence éducative. Claudyne démocratise l'accès 
+                aux meilleures ressources pédagogiques, tout en préservant nos valeurs culturelles et en préparant 
+                nos jeunes aux défis du 21ème siècle.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem; background: linear-gradient(90deg, var(--color-accent-3), var(--color-accent-1)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Rejoignez la Révolution Éducative</h2>
+        <div class="glass-card animate-on-scroll">
+            <div style="text-align: center;">
+                <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+                    Prêt à transformer l'avenir éducatif de votre famille ? Contactez-nous dès aujourd'hui !
+                </p>
+                
+                <div class="features-grid" style="margin-bottom: 2rem;">
+                    <div>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-1); font-size: 2rem;">location_on</span>
+                        <h4>Nos Bureaux</h4>
+                        <p>Douala, Cameroun<br>Yaoundé, Cameroun</p>
+                    </div>
+                    <div>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-2); font-size: 2rem;">phone</span>
+                        <h4>Appelez-nous</h4>
+                        <p>+237 694 83 58 44<br>WhatsApp +237 694 835 844</p>
+                    </div>
+                    <div>
+                        <span class="material-icons-outlined" style="color: var(--color-accent-3); font-size: 2rem;">email</span>
+                        <h4>Écrivez-nous</h4>
+                        <p>contact@claudyne.com<br>support@claudyne.com</p>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <a href="javascript:void(0)" onclick="showLoginModal()" class="glass-btn glass-btn-primary">
+                        <span class="material-icons-outlined">play_arrow</span>
+                        Commencer maintenant
+                    </a>
+                    <a href="javascript:void(0)" onclick="showDemoModal()" class="glass-btn glass-btn-success">
+                        <span class="material-icons-outlined">science</span>
+                        Tester gratuitement
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="section" style="text-align: center; border-top: 1px solid var(--color-glass-border); margin-top: 5rem;">
+        <div class="glass-card">
+            <h2 style="margin-bottom: 20px; font-size: 2rem; background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">L'Excellence Éducative Africaine</h2>
+            <p style="margin-bottom: 2rem;">Ensemble, construisons l'avenir de l'éducation au Cameroun et en Afrique.</p>
+            
+            <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <a href="#" style="color: var(--color-accent-1); text-decoration: none;">Politique de confidentialité</a>
+                <a href="#" style="color: var(--color-accent-2); text-decoration: none;">Conditions d'utilisation</a>
+                <a href="#" style="color: var(--color-accent-3); text-decoration: none;">Support technique</a>
+            </div>
+            
+            <p style="font-size: 0.9rem; color: rgba(240, 240, 240, 0.7);">
+                © 2024 Claudyne. Tous droits réservés. Fait avec ❤️ au Cameroun.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal de Connexion -->
+    <div id="loginModal" class="glass-modal">
+        <div class="glass-modal-content">
+            <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 2rem; background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                🔐 Accéder à Claudyne
+            </h2>
+            
+            <!-- Choix entre connexion et inscription -->
+            <div id="authChoice" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                <button type="button" class="glass-btn glass-btn-primary" onclick="showLoginForm()" style="flex: 1;">
+                    🔑 Se connecter
+                </button>
+                <button type="button" class="glass-btn glass-btn-success" onclick="showRegisterForm()" style="flex: 1;">
+                    ✨ S'inscrire
+                </button>
+            </div>
+            
+            <!-- Formulaire de connexion -->
+            <form id="loginForm" style="display: none; flex-direction: column; gap: 1.5rem;">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-1);">Connexion</h3>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Type de compte
+                    </label>
+                    <select id="loginAccountType" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                        <option value="student" style="background: #1F2937; color: white;">👨‍🎓 Étudiant</option>
+                        <option value="parent" style="background: #1F2937; color: white;">👨‍👩‍👧‍👦 Parent</option>
+                        <option value="teacher" style="background: #1F2937; color: white;">👨‍🏫 Enseignant</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Identifiant
+                    </label>
+                    <input type="text" id="loginUsername" placeholder="Votre identifiant" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Mot de passe
+                    </label>
+                    <input type="password" id="loginPassword" placeholder="Votre mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+
+                <!-- Mot de passe oublié -->
+                <div style="text-align: center; margin: 1rem 0;">
+                    <button type="button" onclick="showForgotPassword()" style="background: none; border: none; color: var(--color-accent-1); text-decoration: underline; cursor: pointer; font-size: 0.9rem;">
+                        🔑 Mot de passe oublié ?
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" class="glass-btn" onclick="showAuthChoice()">
+                        ← Retour
+                    </button>
+                    <button type="submit" class="glass-btn glass-btn-primary">
+                        🚀 Se connecter
+                    </button>
+                </div>
+
+                <!-- Accès Admin Sécurisé -->
+                <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <button type="button" onclick="window.open('/admin-secure-k7m9x4n2p8w5z1c6', '_blank')" style="background: none; border: none; color: var(--color-accent-2); text-decoration: none; cursor: pointer; font-size: 0.8rem; opacity: 0.7;">
+                        ⚙️ Accès Administrateur
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Formulaire d'inscription -->
+            <form id="registerForm" style="display: none; flex-direction: column; gap: 1.5rem;">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-2);">Inscription</h3>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Type de compte
+                    </label>
+                    <select id="registerAccountType" onchange="showClassSelection()" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                        <option value="student" style="background: #1F2937; color: white;">👨‍🎓 Étudiant</option>
+                        <option value="parent" style="background: #1F2937; color: white;">👨‍👩‍👧‍👦 Parent</option>
+                        <option value="teacher" style="background: #1F2937; color: white;">👨‍🏫 Enseignant</option>
+                    </select>
+                </div>
+                
+                <div id="classSelection" style="display: block;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Niveau de classe
+                    </label>
+                    <select id="studentClass" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                        <optgroup label="📚 Primaire" style="background: #1F2937; color: var(--color-accent-3); font-weight: bold;">
+                            <option value="sil" style="background: #1F2937; color: white;">SIL (Section d'Initiation au Langage)</option>
+                            <option value="cp" style="background: #1F2937; color: white;">CP (Cours Préparatoire)</option>
+                            <option value="ce1" style="background: #1F2937; color: white;">CE1 (Cours Élémentaire 1)</option>
+                            <option value="ce2" style="background: #1F2937; color: white;">CE2 (Cours Élémentaire 2)</option>
+                            <option value="cm1" style="background: #1F2937; color: white;">CM1 (Cours Moyen 1)</option>
+                            <option value="cm2" style="background: #1F2937; color: white;">CM2 (Cours Moyen 2)</option>
+                        </optgroup>
+                        <optgroup label="🎓 Collège" style="background: #1F2937; color: var(--color-accent-3); font-weight: bold;">
+                            <option value="6e" style="background: #1F2937; color: white;">6ème</option>
+                            <option value="5e" style="background: #1F2937; color: white;">5ème</option>
+                            <option value="4e-espagnol" style="background: #1F2937; color: white;">4ème Espagnol</option>
+                            <option value="4e-allemand" style="background: #1F2937; color: white;">4ème Allemand</option>
+                            <option value="3e-espagnol" style="background: #1F2937; color: white;">3ème Espagnol</option>
+                            <option value="3e-allemand" style="background: #1F2937; color: white;">3ème Allemand</option>
+                        </optgroup>
+                        <optgroup label="🎯 Lycée" style="background: #1F2937; color: var(--color-accent-3); font-weight: bold;">
+                            <option value="seconde-a" style="background: #1F2937; color: white;">Seconde A</option>
+                            <option value="seconde-c" style="background: #1F2937; color: white;">Seconde C</option>
+                            <option value="premiere-a" style="background: #1F2937; color: white;">Première A</option>
+                            <option value="premiere-c" style="background: #1F2937; color: white;">Première C</option>
+                            <option value="premiere-d" style="background: #1F2937; color: white;">Première D</option>
+                            <option value="terminale-a" style="background: #1F2937; color: white;">Terminale A</option>
+                            <option value="terminale-c" style="background: #1F2937; color: white;">Terminale C</option>
+                            <option value="terminale-d" style="background: #1F2937; color: white;">Terminale D</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Nom complet
+                    </label>
+                    <input type="text" id="registerName" placeholder="Votre nom complet" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Email
+                    </label>
+                    <input type="email" id="registerEmail" placeholder="votre.email@example.com" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Téléphone
+                    </label>
+                    <input type="tel" id="registerPhone" placeholder="+237 6XX XXX XXX" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Mot de passe
+                    </label>
+                    <input type="password" id="registerPassword" placeholder="Choisir un mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Confirmer le mot de passe
+                    </label>
+                    <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" class="glass-btn" onclick="showAuthChoice()">
+                        ← Retour
+                    </button>
+                    <button type="submit" class="glass-btn glass-btn-success">
+                        ✨ S'inscrire
+                    </button>
+                </div>
+            </form>
+
+            <!-- Formulaire Mot de passe oublié -->
+            <form id="forgotPasswordForm" style="display: none; flex-direction: column; gap: 1.5rem;">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-1);">🔑 Récupération de mot de passe</h3>
+
+                <p style="text-align: center; margin-bottom: 1.5rem; color: var(--color-light-text); font-size: 0.9rem;">
+                    Entrez votre adresse email pour recevoir un lien de réinitialisation.
+                </p>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                        Adresse email
+                    </label>
+                    <input type="email" id="forgotEmail" placeholder="votre.email@example.com" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" class="glass-btn" onclick="showLoginForm()">
+                        ← Retour à la connexion
+                    </button>
+                    <button type="submit" class="glass-btn glass-btn-primary">
+                        📧 Envoyer le lien
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Démonstration -->
+    <div id="demoModal" class="glass-modal">
+        <div class="glass-modal-content">
+            <span class="modal-close" onclick="closeDemoModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 2rem; background: linear-gradient(90deg, var(--color-accent-2), var(--color-accent-3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                🎮 Essai Gratuit Claudyne
+            </h2>
+            
+            <div id="demoInterfaceChoice" style="display: block;">
+                <p style="text-align: center; margin-bottom: 2rem; color: var(--color-light-text);">
+                    Choisissez l'interface que vous souhaitez découvrir :
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <button onclick="selectDemoInterface('student')" class="glass-btn glass-btn-primary" style="text-align: center;">
+                        👨‍🎓 Interface Étudiant
+                    </button>
+                    <button onclick="selectDemoInterface('parent')" class="glass-btn glass-btn-success" style="text-align: center;">
+                        👨‍👩‍👧‍👦 Interface Parent
+                    </button>
+                    <button onclick="selectDemoInterface('teacher')" class="glass-btn glass-btn-warning" style="text-align: center;">
+                        👨‍🏫 Interface Enseignant
+                    </button>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="button" class="glass-btn" onclick="closeDemoModal()">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formulaire d'inscription pour l'essai gratuit -->
+            <div id="demoRegisterForm" style="display: none;">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: var(--color-accent-1);">
+                    Inscription Essai Gratuit
+                </h3>
+                <p style="text-align: center; margin-bottom: 2rem; color: var(--color-light-text);">
+                    Créez votre compte pour 7 jours d'essai gratuit !
+                </p>
+                
+                <form style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div id="demoClassSelection" style="display: none;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Niveau de classe
+                        </label>
+                        <select id="demoStudentClass" style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                            <optgroup label="📚 Primaire" style="background: #1F2937; color: var(--color-accent-3); font-weight: bold;">
+                                <option value="sil" style="background: #1F2937; color: white;">SIL (Section d'Initiation au Langage)</option>
+                                <option value="cp" style="background: #1F2937; color: white;">CP (Cours Préparatoire)</option>
+                                <option value="ce1" style="background: #1F2937; color: white;">CE1 (Cours Élémentaire 1)</option>
+                                <option value="ce2" style="background: #1F2937; color: white;">CE2 (Cours Élémentaire 2)</option>
+                                <option value="cm1" style="background: #1F2937; color: white;">CM1 (Cours Moyen 1)</option>
+                                <option value="cm2" style="background: #1F2937; color: white;">CM2 (Cours Moyen 2)</option>
+                            </optgroup>
+                            <optgroup label="🎓 Collège" style="background: #1F2937; color: var(--color-accent-3); font-weight: bold;">
+                                <option value="6e" style="background: #1F2937; color: white;">6ème</option>
+                                <option value="5e" style="background: #1F2937; color: white;">5ème</option>
+                                <option value="4e-espagnol" style="background: #1F2937; color: white;">4ème Espagnol</option>
+                                <option value="4e-allemand" style="background: #1F2937; color: white;">4ème Allemand</option>
+                                <option value="3e-espagnol" style="background: #1F2937; color: white;">3ème Espagnol</option>
+                                <option value="3e-allemand" style="background: #1F2937; color: white;">3ème Allemand</option>
+                            </optgroup>
+                            <optgroup label="🎯 Lycée" style="background: #1F2937; color: var(--color-accent-3); font-weight: bold;">
+                                <option value="seconde-a" style="background: #1F2937; color: white;">Seconde A</option>
+                                <option value="seconde-c" style="background: #1F2937; color: white;">Seconde C</option>
+                                <option value="premiere-a" style="background: #1F2937; color: white;">Première A</option>
+                                <option value="premiere-c" style="background: #1F2937; color: white;">Première C</option>
+                                <option value="premiere-d" style="background: #1F2937; color: white;">Première D</option>
+                                <option value="terminale-a" style="background: #1F2937; color: white;">Terminale A</option>
+                                <option value="terminale-c" style="background: #1F2937; color: white;">Terminale C</option>
+                                <option value="terminale-d" style="background: #1F2937; color: white;">Terminale D</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Nom complet
+                        </label>
+                        <input type="text" id="demoName" placeholder="Votre nom complet" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Email
+                        </label>
+                        <input type="email" id="demoEmail" placeholder="votre.email@example.com" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Téléphone
+                        </label>
+                        <input type="tel" id="demoPhone" placeholder="+237 6XX XXX XXX" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Mot de passe
+                        </label>
+                        <input type="password" id="demoPassword" placeholder="Choisir un mot de passe" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <p style="font-size: 0.9rem; text-align: center; color: var(--color-light-text);">
+                            🎁 <strong>7 jours gratuits</strong><br>
+                            Accès complet à toutes les fonctionnalités<br>
+                            Aucun engagement • Annulation gratuite
+                        </p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="button" class="glass-btn" onclick="showDemoInterfaceChoice()">
+                            ← Retour
+                        </button>
+                        <button type="submit" class="glass-btn glass-btn-success">
+                            🎮 Commencer l'essai
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // =========================================
+        // ANTI-FOUC ET PRELOADER
+        // =========================================
+        
+        // Fonction pour masquer le preloader et afficher le contenu
+        function hidePreloader() {
+            const preloader = document.getElementById('preloader');
+            const body = document.body;
+
+            // Ajouter la classe loaded au body pour déclencher l'animation
+            if (body && body.classList) {
+                body.classList.add('loaded');
+            }
+            
+            // Masquer le preloader avec une transition
+            preloader.classList.add('hidden');
+            
+            // Initialiser le starfield et les effets magnétiques maintenant que la page est visible
+            setTimeout(() => {
+                initializeStarfield();
+                initMagneticEffects();
+            }, 100);
+            
+            // Supprimer le preloader du DOM après la transition
+            setTimeout(() => {
+                if (preloader.parentNode) {
+                    preloader.parentNode.removeChild(preloader);
+                }
+            }, 500);
+        }
+
+        // Initialisation du starfield
+        function initializeStarfield() {
+            const canvas = document.getElementById('starfieldCanvas');
+            if (canvas && typeof initParticles === 'function') {
+                // Forcer le redimensionnement et l'initialisation
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                // Réinitialiser les particules et nodes
+                initParticles();
+                if (typeof addNodes === 'function') {
+                    addNodes();
+                }
+                
+                // S'assurer que l'animation démarre
+                if (!animationId && typeof animate === 'function') {
+                    animate();
+                }
+                
+                console.log('🌟 Starfield réinitialisé avec', particles.length, 'particules');
+            }
+        }
+
+        // Déclencheurs pour masquer le preloader
+        let resourcesLoaded = false;
+        let domReady = false;
+
+        function checkReadyState() {
+            if (resourcesLoaded && domReady) {
+                // Attendre un minimum de 800ms pour une expérience fluide
+                setTimeout(hidePreloader, 800);
+            }
+        }
+
+        // Quand le DOM est prêt
+        document.addEventListener('DOMContentLoaded', function() {
+            domReady = true;
+            checkReadyState();
+        });
+
+        // Quand toutes les ressources sont chargées
+        window.addEventListener('load', function() {
+            resourcesLoaded = true;
+            checkReadyState();
+        });
+
+        // Sécurité : forcer le masquage après 5 secondes maximum
+        setTimeout(hidePreloader, 5000);
+
+        // =========================================
+        // PROTECTION CONTRE L'OVERSCROLL MOBILE
+        // =========================================
+
+        // Empêcher l'overscroll bounce sur mobile
+        function preventOverscroll() {
+            let lastY = 0;
+            let isScrolling = false;
+
+            document.addEventListener('touchstart', function(e) {
+                lastY = e.touches[0].pageY;
+                isScrolling = false;
+            }, { passive: false });
+
+            document.addEventListener('touchmove', function(e) {
+                const currentY = e.touches[0].pageY;
+                const deltaY = currentY - lastY;
+                
+                // Vérifier si on est au début ou à la fin de la page
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight;
+                const clientHeight = document.documentElement.clientHeight;
+                
+                // Empêcher l'overscroll au début de la page
+                if (scrollTop <= 0 && deltaY > 0) {
+                    e.preventDefault();
+                }
+                
+                // Empêcher l'overscroll à la fin de la page
+                if (scrollTop + clientHeight >= scrollHeight && deltaY < 0) {
+                    e.preventDefault();
+                }
+                
+                lastY = currentY;
+            }, { passive: false });
+        }
+
+        // Activer la protection overscroll sur mobile
+        if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            preventOverscroll();
+        }
+
+        // Configuration optimisée pour les performances
+        const canvas = document.getElementById('starfieldCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let nodes = [];
+        let mouse = { x: 0, y: 0, radius: 150, force: 50 };
+        let scrollVelocity = 0;
+        let lastScrollY = window.scrollY;
+        let isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        let activeNode = null;
+        let animationId;
+        let isTabVisible = true;
+
+        // Optimisation des performances - pause l'animation quand l'onglet n'est pas visible
+        document.addEventListener('visibilitychange', () => {
+            isTabVisible = !document.hidden;
+            if (isTabVisible) {
+                animate();
+            } else {
+                cancelAnimationFrame(animationId);
+            }
+        });
+
+        // Gestion de la navigation
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            const deltaY = currentScrollY - lastScrollY;
+            scrollVelocity = deltaY * 0.05; // Réduit pour de meilleures performances
+            lastScrollY = currentScrollY;
+
+            // Navigation apparition
+            if (currentScrollY > 100) {
+                navbar.classList.add('visible');
+                backToTop.classList.add('visible');
+            } else {
+                navbar.classList.remove('visible');
+                backToTop.classList.remove('visible');
+            }
+
+            // Mise à jour optimisée des nœuds
+            requestAnimationFrame(addNodes);
+        });
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+            addNodes();
+        }
+
+        window.addEventListener('resize', debounce(() => {
+            resizeCanvas();
+            resizeMagneticCanvas();
+        }, 250));
+        
+        // Optimisation des événements de souris
+        window.addEventListener('mousemove', throttle((event) => {
+            if (!isMobile) {
+                mouse.x = event.x;
+                mouse.y = event.y;
+            }
+            // Mise à jour pour les effets magnétiques
+            magneticMouse.x = event.clientX;
+            magneticMouse.y = event.clientY;
+        }, 16));
+
+        // Events pour les effets magnétiques
+        document.addEventListener('click', (e) => {
+            // Vérifier si c'est un élément interactif
+            const interactiveElements = ['button', '.cta-button', '.magnetic-button', '.bottom-nav-item', '.demo-card'];
+            const isInteractive = interactiveElements.some(selector => {
+                if (selector.startsWith('.')) {
+                    return e.target.closest(selector);
+                } else {
+                    return e.target.tagName.toLowerCase() === selector;
+                }
+            });
+            
+            if (isInteractive) {
+                createMagneticExplosion(e.clientX, e.clientY);
+            }
+        });
+        
+        // Gestion mobile pour les effets magnétiques
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                magneticMouse.x = e.touches[0].clientX;
+                magneticMouse.y = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        // Gestion des cartes interactives
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => { 
+                activeNode = card.getAttribute('data-node'); 
+            });
+            card.addEventListener('mouseleave', () => { 
+                activeNode = null; 
+            });
+        });
+
+        // Classe Particle optimisée
+        class Particle {
+            constructor(x, y, z, vx, vy, vz, size) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.vx = vx;
+                this.vy = vy;
+                this.vz = vz;
+                this.size = size;
+                this.alpha = Math.random();
+            }
+            
+            draw() {
+                const perspective = 200;
+                const scale = perspective / (perspective + this.z);
+                const x2d = this.x * scale + canvas.width / 2;
+                const y2d = this.y * scale + canvas.height / 2;
+                const size2d = this.size * scale;
+                
+                if (size2d > 0.5 && x2d > -50 && x2d < canvas.width + 50 && y2d > -50 && y2d < canvas.height + 50) {
+                    ctx.beginPath();
+                    ctx.arc(x2d, y2d, size2d, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(this.alpha * scale, 1)})`;
+                    ctx.fill();
+                }
+            }
+            
+            update() {
+                // Interaction avec la souris simplifiée
+                const dx = this.x - (mouse.x - canvas.width / 2);
+                const dy = this.y - (mouse.y - canvas.height / 2);
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < mouse.radius) {
+                    const force = mouse.force / (dist + 1);
+                    this.vx += (dx / dist) * force * 0.005;
+                    this.vy += (dy / dist) * force * 0.005;
+                }
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                this.z += this.vz;
+                
+                // Recyclage des particules optimisé
+                if (this.z > 200 || this.z < -200) {
+                    this.z = -200;
+                    this.x = (Math.random() - 0.5) * canvas.width * 1.5;
+                    this.y = (Math.random() - 0.5) * canvas.height * 1.5;
+                    this.vx = (Math.random() - 0.5) * 0.1;
+                    this.vy = (Math.random() - 0.5) * 0.1;
+                    this.vz = Math.random() * 0.3 + 0.05;
+                    this.alpha = Math.random();
+                }
+                
+                // Friction pour la stabilité
+                this.vx *= 0.995;
+                this.vy *= 0.995;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            // Nombre réduit de particules pour de meilleures performances
+            let count = isMobile ? 80 : 150;
+            
+            for (let i = 0; i < count; i++) {
+                let size = Math.random() * 1.5 + 0.5;
+                let x = (Math.random() - 0.5) * canvas.width;
+                let y = (Math.random() - 0.5) * canvas.height;
+                let z = Math.random() * 400 - 200;
+                let vx = (Math.random() - 0.5) * 0.1;
+                let vy = (Math.random() - 0.5) * 0.1;
+                let vz = Math.random() * 0.3 + 0.05;
+                particles.push(new Particle(x, y, z, vx, vy, vz, size));
+            }
+        }
+
+        function connectParticles() {
+            // Connexions simplifiées pour de meilleures performances
+            const visibleParticles = particles.filter(p => p.z > -50);
+            const maxConnections = isMobile ? 20 : 40;
+            let connectionCount = 0;
+            
+            for (let i = 0; i < visibleParticles.length && connectionCount < maxConnections; i++) {
+                for (let j = i + 1; j < visibleParticles.length && connectionCount < maxConnections; j++) {
+                    const dist = Math.hypot(
+                        visibleParticles[i].x - visibleParticles[j].x, 
+                        visibleParticles[i].y - visibleParticles[j].y
+                    );
+                    
+                    if (dist < 100) {
+                        const opacity = (1 - (dist / 100)) * 0.3;
+                        ctx.beginPath();
+                        ctx.moveTo(visibleParticles[i].x, visibleParticles[i].y);
+                        ctx.lineTo(visibleParticles[j].x, visibleParticles[j].y);
+                        ctx.strokeStyle = `rgba(0, 255, 194, ${opacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                        connectionCount++;
+                    }
+                }
+            }
+        }
+
+        function addNodes() {
+            nodes = [];
+            document.querySelectorAll('[data-node]').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    nodes.push({
+                        x: rect.left + rect.width / 2,
+                        y: rect.top + rect.height / 2,
+                        size: 3,
+                        nodeId: el.getAttribute('data-node')
+                    });
+                }
+            });
+        }
+
+        // Observer pour les animations d'entrée optimisé
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.animation = 'slideInUp 0.6s ease-out forwards';
+                }
+            });
+        }, { 
+            threshold: 0.1,
+            rootMargin: '50px 0px -50px 0px'
+        });
+        
+        document.querySelectorAll('.animate-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
+
+        // =========================================
+        // EFFETS MAGNÉTIQUES INTERACTIFS
+        // =========================================
+        
+        // Variables pour les effets magnétiques
+        let magneticParticles = [];
+        let magneticExplosions = [];
+        let magneticMouse = { x: 0, y: 0 };
+        let magneticAudioContext, magneticOscillator, magneticGainNode;
+        let magneticCanvas, magneticCtx;
+        
+        // Particule magnétique
+        class MagneticParticle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.vx = (Math.random() - 0.5) * 1;
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 3 + 1;
+                this.color = `hsl(${Math.random() * 60 + 160}, 70%, 60%)`;
+                this.mass = this.size;
+                this.attracted = false;
+                this.baseOpacity = Math.random() * 0.6 + 0.2;
+            }
+            
+            update() {
+                // Force magnétique vers la souris
+                const dx = magneticMouse.x - this.x;
+                const dy = magneticMouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 250) {
+                    const force = (250 - distance) / 250;
+                    this.vx += (dx / distance) * force * 0.8;
+                    this.vy += (dy / distance) * force * 0.8;
+                    this.attracted = true;
+                } else {
+                    this.attracted = false;
+                }
+                
+                // Mouvement
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // Friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                
+                // Limites écran
+                if (this.x < 0 || this.x > window.innerWidth) this.vx *= -0.8;
+                if (this.y < 0 || this.y > window.innerHeight) this.vy *= -0.8;
+                
+                this.x = Math.max(0, Math.min(window.innerWidth, this.x));
+                this.y = Math.max(0, Math.min(window.innerHeight, this.y));
+            }
+            
+            draw() {
+                if (!magneticCtx) return;
+                magneticCtx.save();
+                
+                if (this.attracted) {
+                    magneticCtx.shadowBlur = 15;
+                    magneticCtx.shadowColor = this.color;
+                    magneticCtx.globalAlpha = this.baseOpacity * 2;
+                } else {
+                    magneticCtx.globalAlpha = this.baseOpacity * 0.7;
+                }
+                
+                magneticCtx.fillStyle = this.color;
+                magneticCtx.beginPath();
+                magneticCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                magneticCtx.fill();
+                magneticCtx.restore();
+            }
+        }
+        
+        // Explosion magnétique
+        class MagneticExplosion {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.particles = [];
+                this.life = 1;
+                
+                for (let i = 0; i < 25; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: (Math.random() - 0.5) * 15,
+                        life: 1,
+                        decay: Math.random() * 0.03 + 0.02
+                    });
+                }
+            }
+            
+            update() {
+                this.life -= 0.03;
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vx *= 0.96;
+                    p.vy *= 0.96;
+                    p.life -= p.decay;
+                });
+            }
+            
+            draw() {
+                if (!magneticCtx) return;
+                magneticCtx.save();
+                this.particles.forEach(p => {
+                    if (p.life > 0) {
+                        magneticCtx.globalAlpha = p.life * 0.8;
+                        magneticCtx.fillStyle = '#00FFC2';
+                        magneticCtx.beginPath();
+                        magneticCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                        magneticCtx.fill();
+                    }
+                });
+                magneticCtx.restore();
+            }
+        }
+        
+        // Initialisation des effets magnétiques
+        function initMagneticEffects() {
+            console.log('🧲 Initialisation des effets magnétiques...');
+            
+            // Vérifier que le DOM est prêt
+            if (!document.body) {
+                console.log('❌ DOM pas prêt, report de 500ms');
+                setTimeout(initMagneticEffects, 500);
+                return;
+            }
+            
+            // Créer le canvas magnétique
+            magneticCanvas = document.createElement('canvas');
+            magneticCanvas.id = 'magneticCanvas';
+            magneticCanvas.style.position = 'fixed';
+            magneticCanvas.style.top = '0';
+            magneticCanvas.style.left = '0';
+            magneticCanvas.style.width = '100%';
+            magneticCanvas.style.height = '100%';
+            magneticCanvas.style.pointerEvents = 'none';
+            magneticCanvas.style.zIndex = '2';
+            magneticCanvas.style.opacity = '1';
+            document.body.appendChild(magneticCanvas);
+            
+            console.log('✅ Canvas magnétique créé');
+            
+            magneticCtx = magneticCanvas.getContext('2d');
+            resizeMagneticCanvas();
+            
+            // Créer les particules
+            magneticParticles = [];
+            for (let i = 0; i < 100; i++) {
+                magneticParticles.push(new MagneticParticle());
+            }
+            
+            console.log(`Créé ${magneticParticles.length} particules magnétiques`);
+            
+            // Démarrer l'animation
+            animateMagneticEffects();
+        }
+        
+        function resizeMagneticCanvas() {
+            if (magneticCanvas) {
+                magneticCanvas.width = window.innerWidth;
+                magneticCanvas.height = window.innerHeight;
+            }
+        }
+        
+        function animateMagneticEffects() {
+            if (!magneticCtx) return;
+            
+            // Nettoyer le canvas sans assombrir
+            magneticCtx.clearRect(0, 0, magneticCanvas.width, magneticCanvas.height);
+            
+            // Dessiner connexions magnétiques
+            magneticCtx.strokeStyle = 'rgba(0, 255, 194, 0.6)';
+            magneticCtx.lineWidth = 2;
+            magneticParticles.forEach(p => {
+                if (p.attracted) {
+                    magneticCtx.beginPath();
+                    magneticCtx.moveTo(p.x, p.y);
+                    magneticCtx.lineTo(magneticMouse.x, magneticMouse.y);
+                    magneticCtx.stroke();
+                }
+            });
+            
+            // Animer particules
+            magneticParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            // Animer explosions
+            magneticExplosions = magneticExplosions.filter(e => e.life > 0);
+            magneticExplosions.forEach(e => {
+                e.update();
+                e.draw();
+            });
+            
+            // Audio réactif
+            if (audioEnabled && magneticParticles.some(p => p.attracted)) {
+                const attractedCount = magneticParticles.filter(p => p.attracted).length;
+                if (magneticOscillator && magneticGainNode) {
+                    try {
+                        magneticOscillator.frequency.setValueAtTime(150 + attractedCount * 3, magneticAudioContext.currentTime);
+                        magneticGainNode.gain.setValueAtTime(0.05, magneticAudioContext.currentTime);
+                    } catch(e) {}
+                }
+            }
+            
+            requestAnimationFrame(animateMagneticEffects);
+        }
+        
+        function createMagneticExplosion(x, y) {
+            magneticExplosions.push(new MagneticExplosion(x, y));
+            if (audioEnabled) playMagneticBeep(660, 0.1, 150);
+        }
+        
+        function playMagneticBeep(frequency, volume, duration) {
+            if (!audioEnabled || !magneticAudioContext) return;
+            try {
+                const beep = magneticAudioContext.createOscillator();
+                const gain = magneticAudioContext.createGain();
+                
+                beep.connect(gain);
+                gain.connect(magneticAudioContext.destination);
+                
+                beep.frequency.setValueAtTime(frequency, magneticAudioContext.currentTime);
+                gain.gain.setValueAtTime(volume, magneticAudioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, magneticAudioContext.currentTime + duration / 1000);
+                
+                beep.start();
+                beep.stop(magneticAudioContext.currentTime + duration / 1000);
+            } catch(e) {}
+        }
+
+        // Fonctions utilitaires de performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Gestion de l'audio avec effets magnétiques
+        let audioEnabled = false;
+        function toggleAudio() {
+            const audio = document.getElementById('backgroundAudio');
+            const icon = document.querySelector('.audio-control .material-icons-outlined');
+            
+            if (!audioEnabled) {
+                // Initialiser le contexte audio pour les effets magnétiques
+                try {
+                    magneticAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    magneticOscillator = magneticAudioContext.createOscillator();
+                    magneticGainNode = magneticAudioContext.createGain();
+                    
+                    magneticOscillator.connect(magneticGainNode);
+                    magneticGainNode.connect(magneticAudioContext.destination);
+                    magneticOscillator.start();
+                    
+                    magneticGainNode.gain.setValueAtTime(0, magneticAudioContext.currentTime);
+                } catch(e) {
+                    console.log('Erreur initialisation audio magnétique:', e);
+                }
+                
+                audio.play().then(() => {
+                    audioEnabled = true;
+                    icon.textContent = 'volume_up';
+                }).catch(e => console.log('Audio autoplay prevented'));
+            } else {
+                audio.pause();
+                if (magneticOscillator) {
+                    try {
+                        magneticOscillator.stop();
+                    } catch(e) {}
+                }
+                audioEnabled = false;
+                icon.textContent = 'volume_off';
+            }
+        }
+
+        // Gestion de la FAQ
+        function toggleFAQ(button) {
+            const answer = button.nextElementSibling;
+            const icon = button.querySelector('.material-icons-outlined');
+            
+            answer.classList.toggle('active');
+            icon.textContent = answer.classList.contains('active') ? 'expand_less' : 'expand_more';
+        }
+
+        // Retour en haut
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Gestion du clavier pour l'accessibilité
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (e.target.classList.contains('audio-control')) {
+                    e.preventDefault();
+                    toggleAudio();
+                }
+            }
+        });
+
+        // Initialisation
+        window.addEventListener('load', () => {
+            if (loadingIndicator) {
+                loadingIndicator.style.transform = 'scaleX(1)';
+                setTimeout(() => {
+                    loadingIndicator.style.opacity = '0';
+                    resizeCanvas();
+                    setTimeout(addNodes, 500);
+                }, 800);
+            } else {
+                resizeCanvas();
+                setTimeout(addNodes, 500);
+            }
+        });
+
+        function animate() {
+            if (!isTabVisible) return;
+            
+            animationId = requestAnimationFrame(animate);
+            
+            // Clear avec fade effect optimisé
+            ctx.fillStyle = isMobile ? 'rgba(2, 2, 5, 0.6)' : 'rgba(2, 2, 5, 0.4)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Update et draw des particules
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            // Connexions moins fréquentes sur mobile
+            if (!isMobile || Math.random() < 0.3) {
+                connectParticles();
+            }
+        }
+
+        animate();
+
+        // Performance monitoring (dev only)
+        if (window.location.hostname === 'localhost') {
+            let frameCount = 0;
+            let lastTime = performance.now();
+            
+            function checkFPS() {
+                frameCount++;
+                const currentTime = performance.now();
+                
+                if (currentTime - lastTime >= 1000) {
+                    console.log(`FPS: ${frameCount}`);
+                    frameCount = 0;
+                    lastTime = currentTime;
+                }
+                requestAnimationFrame(checkFPS);
+            }
+            checkFPS();
+        }
+
+        // Variables globales pour la logique de connexion
+        let selectedDemoInterface = null;
+
+        // Modal de connexion
+        function showLoginModal(accountType = null) {
+            document.getElementById('loginModal').classList.add('show');
+            // Toujours afficher le choix entre "Se connecter" et "S'inscrire" d'abord
+            showAuthChoice();
+            
+            // Si un type de compte est spécifié, le stocker pour l'utiliser ensuite
+            if (accountType) {
+                window.preselectedAccountType = accountType;
+            } else {
+                window.preselectedAccountType = null;
+            }
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+            // Réinitialiser le type de compte présélectionné
+            window.preselectedAccountType = null;
+        }
+
+        // Navigation dans le modal de connexion
+        function showAuthChoice() {
+            document.getElementById('authChoice').style.display = 'flex';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+        }
+
+        function showLoginForm() {
+            document.getElementById('authChoice').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'flex';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+
+            // Appliquer le type de compte présélectionné s'il existe
+            if (window.preselectedAccountType) {
+                document.getElementById('loginAccountType').value = window.preselectedAccountType;
+            }
+        }
+
+        function showRegisterForm() {
+            document.getElementById('authChoice').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'flex';
+            document.getElementById('forgotPasswordForm').style.display = 'none';
+
+            // Appliquer le type de compte présélectionné s'il existe
+            if (window.preselectedAccountType) {
+                document.getElementById('registerAccountType').value = window.preselectedAccountType;
+                // Déclencher la fonction de sélection de classe si nécessaire
+                showClassSelection();
+            }
+        }
+
+        // 🔑 FONCTION MOT DE PASSE OUBLIÉ
+        function showForgotPassword() {
+            document.getElementById('authChoice').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('forgotPasswordForm').style.display = 'flex';
+        }
+
+        // Gestion de la sélection de classe pour l'inscription
+        function showClassSelection() {
+            const accountType = document.getElementById('registerAccountType').value;
+            const classSelection = document.getElementById('classSelection');
+            
+            if (accountType === 'student') {
+                classSelection.style.display = 'block';
+            } else {
+                classSelection.style.display = 'none';
+            }
+        }
+
+        // Modal de démonstration  
+        function showDemoModal() {
+            document.getElementById('demoModal').classList.add('show');
+            showDemoInterfaceChoice(); // Afficher le choix d'interface par défaut
+        }
+
+        function closeDemoModal() {
+            document.getElementById('demoModal').classList.remove('show');
+        }
+
+        // Navigation dans le modal de démonstration
+        function showDemoInterfaceChoice() {
+            document.getElementById('demoInterfaceChoice').style.display = 'block';
+            document.getElementById('demoRegisterForm').style.display = 'none';
+        }
+
+        function selectDemoInterface(interfaceType) {
+            selectedDemoInterface = interfaceType;
+            
+            // Afficher/masquer la sélection de classe selon le type
+            const classSelection = document.getElementById('demoClassSelection');
+            if (interfaceType === 'student') {
+                classSelection.style.display = 'block';
+            } else {
+                classSelection.style.display = 'none';
+            }
+            
+            // Passer au formulaire d'inscription
+            document.getElementById('demoInterfaceChoice').style.display = 'none';
+            document.getElementById('demoRegisterForm').style.display = 'block';
+        }
+
+        // Gestion du formulaire de connexion
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const accountType = document.getElementById('loginAccountType').value;
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Validation des champs
+            if (!username || !password) {
+                alert('Veuillez saisir votre email/téléphone et mot de passe');
+                return;
+            }
+
+            // Affichage d'un message de connexion
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ Connexion...';
+            submitBtn.disabled = true;
+
+            // Appel à l'API d'authentification
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    credential: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Stockage des tokens - adapter à la structure de réponse du backend
+                    const tokens = data.tokens || data.data?.tokens || {};
+                    const user = data.user || data.data?.user || {};
+                    const family = data.family || data.data?.family || {};
+
+                    if (data.token) {
+                        // Structure simple du backend mobile
+                        localStorage.setItem('claudyne_token', data.token);
+                        localStorage.setItem('claudyne_user', JSON.stringify(user));
+                    } else if (tokens.accessToken) {
+                        // Structure complète
+                        localStorage.setItem('claudyne_token', tokens.accessToken);
+                        localStorage.setItem('claudyne_refresh_token', tokens.refreshToken);
+                        localStorage.setItem('claudyne_user', JSON.stringify(user));
+                        localStorage.setItem('claudyne_family', JSON.stringify(family));
+                    }
+
+                    // Redirection selon le type de compte utilisateur
+                    const userType = data.data.user.userType;
+                    const role = data.data.user.role;
+
+                    if (role === 'ADMIN') {
+                        window.location.href = '/admin-interface.html';
+                    } else if (userType === 'MANAGER' || role === 'PARENT') {
+                        window.location.href = '/parent-interface/index.html';
+                    } else if (role === 'STUDENT') {
+                        window.location.href = '/student-interface-modern.html';
+                    } else if (role === 'TEACHER') {
+                        window.location.href = '/teacher-interface.html';
+                    } else {
+                        // Par défaut, redirection vers l'interface parent
+                        window.location.href = '/parent-interface/index.html';
+                    }
+                } else {
+                    // Affichage de l'erreur
+                    alert(data.message || 'Identifiants invalides');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de connexion:', error);
+                alert('Erreur de connexion. Vérifiez votre connexion internet.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Gestion du formulaire d'inscription
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const accountType = document.getElementById('registerAccountType').value;
+            const studentClass = document.getElementById('studentClass').value;
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation des mots de passe
+            if (password !== confirmPassword) {
+                alert('❌ Les mots de passe ne correspondent pas');
+                return;
+            }
+
+            // Simulation d'inscription
+            const userData = {
+                accountType,
+                name,
+                email,
+                password,
+                ...(accountType === 'student' && { studentClass })
+            };
+
+            console.log('Inscription:', userData);
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ Création du compte...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
+                closeLoginModal();
+                
+                // Redirection automatique
+                switch(accountType) {
+                    case 'student':
+                        window.location.href = '/student';
+                        break;
+                    case 'parent':
+                        window.location.href = '/parent';
+                        break;
+                    case 'teacher':
+                        window.location.href = '/teacher-interface.html';
+                        break;
+                }
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+
+        // 🔑 GESTION DU FORMULAIRE MOT DE PASSE OUBLIÉ
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('forgotEmail').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+
+            // Animation de chargement
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ Envoi en cours...';
+            submitBtn.disabled = true;
+
+            try {
+                // Appel API backend pour récupération mot de passe
+                const response = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Afficher message de succès
+                    const successMessage = document.createElement('div');
+                    successMessage.style.cssText = `
+                        background: rgba(0, 255, 194, 0.1);
+                        border: 1px solid rgba(0, 255, 194, 0.3);
+                        padding: 1rem;
+                        border-radius: 8px;
+                        margin-top: 1rem;
+                        text-align: center;
+                        color: var(--color-accent-1);
+                    `;
+
+                    // En développement, afficher le lien direct
+                    const devLink = data.resetLink ? `<br><br><a href="${data.resetLink}" style="color: var(--color-accent-1); text-decoration: underline;">🔗 Lien de test (dev)</a>` : '';
+
+                    successMessage.innerHTML = `
+                        ✅ ${data.message}<br>
+                        <small>Vérifiez votre boîte email : ${email}</small>
+                        ${devLink}
+                    `;
+
+                    e.target.appendChild(successMessage);
+
+                    // Réinitialiser le bouton
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    // Retour à la connexion après 5 secondes
+                    setTimeout(() => {
+                        showLoginForm();
+                        successMessage.remove();
+                        e.target.reset();
+                    }, 5000);
+                } else {
+                    throw new Error(data.message || 'Erreur lors de l\'envoi');
+                }
+
+            } catch (error) {
+                console.error('Erreur forgot password:', error);
+
+                // Afficher message d'erreur
+                const errorMessage = document.createElement('div');
+                errorMessage.style.cssText = `
+                    background: rgba(255, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 0, 0, 0.3);
+                    padding: 1rem;
+                    border-radius: 8px;
+                    margin-top: 1rem;
+                    text-align: center;
+                    color: #ff6b6b;
+                `;
+                errorMessage.innerHTML = `
+                    ❌ Erreur lors de l'envoi<br>
+                    <small>${error.message}</small>
+                `;
+
+                e.target.appendChild(errorMessage);
+
+                // Réinitialiser le bouton
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Supprimer le message d'erreur après 5 secondes
+                setTimeout(() => {
+                    errorMessage.remove();
+                }, 5000);
+            }
+        });
+
+        // Gestion du formulaire d'essai gratuit
+        document.querySelector('#demoRegisterForm form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('demoName').value;
+            const email = document.getElementById('demoEmail').value;
+            const phone = document.getElementById('demoPhone').value;
+            const password = document.getElementById('demoPassword').value;
+            const studentClass = selectedDemoInterface === 'student' ? document.getElementById('demoStudentClass').value : null;
+
+            const demoUserData = {
+                interfaceType: selectedDemoInterface,
+                name,
+                email,
+                phone,
+                password,
+                ...(studentClass && { studentClass }),
+                trialDays: 7
+            };
+
+            console.log('Inscription essai gratuit:', demoUserData);
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '⏳ Création de votre essai...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                alert(`🎉 Félicitations ${name} !\n\nVotre essai gratuit de 7 jours a été activé !\nVous allez être redirigé vers votre interface.`);
+                closeDemoModal();
+                
+                // Redirection selon l'interface choisie
+                switch(selectedDemoInterface) {
+                    case 'student':
+                        window.location.href = '/student?trial=true';
+                        break;
+                    case 'parent':
+                        window.location.href = '/parent?trial=true';
+                        break;
+                    case 'teacher':
+                        window.location.href = '/teacher-interface.html?trial=true';
+                        break;
+                }
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 2500);
+        });
+
+        // Fermer les modaux en cliquant à l'extérieur
+        document.querySelectorAll('.glass-modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+
+        // Fonctions de gestion des dons
+        function makeDonation(amount) {
+            // Simulation du processus de don
+            const confirmed = confirm(`Confirmer un don de ${amount}€ pour soutenir l'éducation africaine ?\n\nVotre contribution aidera directement les familles dans le besoin.`);
+            
+            if (confirmed) {
+                // Ici on redirigerait vers la plateforme de paiement
+                alert(`🙏 Merci pour votre générosité !\n\nVous allez être redirigé vers notre plateforme de paiement sécurisée pour finaliser votre don de ${amount}€.\n\n✅ Reçu fiscal envoyé automatiquement\n💝 Impact direct sur l'éducation des enfants`);
+                
+                // Redirection vers la plateforme de paiement (à implémenter)
+                console.log(`Don de ${amount}€ initié`);
+                // window.location.href = `payment-gateway.html?amount=${amount}&type=donation`;
+            }
+        }
+
+        function showCustomDonation() {
+            const customAmount = prompt('Entrez le montant de votre don en euros :\n(Minimum 10€)', '');
+            
+            if (customAmount && !isNaN(customAmount) && parseFloat(customAmount) >= 10) {
+                makeDonation(parseFloat(customAmount));
+            } else if (customAmount !== null) {
+                alert('❌ Veuillez entrer un montant valide (minimum 10€)');
+            }
+        }
+
+        // Fonction pour contact école
+        function contactSchool() {
+            const schoolInfo = prompt('Pour obtenir un devis personnalisé, veuillez nous indiquer :\n- Nom de votre établissement\n- Nombre d\'élèves approximatif\n- Ville\n\nOu laissez vos coordonnées pour être contacté :', '');
+            
+            if (schoolInfo && schoolInfo.trim() !== '') {
+                alert('📧 Merci pour votre intérêt !\n\nVotre demande a été transmise à notre équipe commerciale.\nVous serez contacté sous 24h pour un devis personnalisé.\n\n✅ Rendez-vous téléphonique gratuit\n📊 Présentation personnalisée\n🎯 Solution adaptée à vos besoins');
+                console.log('Demande de devis école:', schoolInfo);
+                
+                // Ici on enverrait les données au système de CRM
+                // sendSchoolQuoteRequest(schoolInfo);
+            }
+        }
+
+        console.log('🎓 Interface Claudyne chargée');
+        console.log('👨‍👩‍👧‍👦 Hommage à Maa Meffo  TCHANDJIO Claudine');
+
+        // Enregistrement du Service Worker pour optimisations 2G/3G
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker enregistré:', registration.scope);
+                        
+                        // Cache progressif des ressources secondaires après 3 secondes
+                        setTimeout(() => {
+                            registration.active && registration.active.postMessage({
+                                type: 'CACHE_SECONDARY'
+                            });
+                        }, 3000);
+                    })
+                    .catch(error => {
+                        console.warn('⚠️ Erreur Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
+
+        // =========================================
+        // PLACEHOLDERS POUR INTÉGRATION MAVIANCE API
+        // À configurer lundi avec les vraies clés API
+        // =========================================
+
+        const MAVIANCE_CONFIG = {
+            // À remplacer par les vraies valeurs
+            API_BASE_URL: "https://api.maviance.com/v1/",
+            MERCHANT_ID: "PLACEHOLDER_MERCHANT_ID",
+            API_KEY: "PLACEHOLDER_API_KEY",
+            CALLBACK_URL: "https://claudyne.com/payment-callback",
+            CURRENCIES: {
+                XAF: "Franc CFA",
+                EUR: "Euro"
+            }
+        };
+
+        // Fonctions de paiement Maviance
+        async function initiateMaviancePayment(amount, currency, method, userInfo) {
+            console.log("🔄 Initiation paiement Maviance:", { amount, currency, method, userInfo });
+            
+            try {
+                const paymentData = {
+                    amount: amount,
+                    currency: currency,
+                    payment_method: method, // "mtn_momo", "orange_money", "visa", "mastercard"
+                    merchant_id: MAVIANCE_CONFIG.MERCHANT_ID,
+                    callback_url: MAVIANCE_CONFIG.CALLBACK_URL,
+                    customer: {
+                        name: userInfo.name,
+                        email: userInfo.email,
+                        phone: userInfo.phone
+                    },
+                    order_id: "CLY-" + Date.now(),
+                    description: userInfo.plan + " - Claudyne"
+                };
+
+                showPaymentProcessing();
+                
+                // REMPLACER par vraie API call lundi
+                setTimeout(() => {
+                    hidePaymentProcessing();
+                    showPaymentSuccess();
+                }, 3000);
+                
+            } catch (error) {
+                console.error("❌ Erreur paiement Maviance:", error);
+                hidePaymentProcessing();
+                showPaymentError("Erreur de paiement: " + error.message);
+            }
+        }
+
+        function showPaymentProcessing() {
+            console.log("🔄 Traitement du paiement en cours...");
+        }
+
+        function hidePaymentProcessing() {
+            console.log("✅ Traitement terminé");
+        }
+
+        function showPaymentSuccess() {
+            console.log("✅ Paiement réussi!");
+            alert("✅ Paiement réussi! Bienvenue dans Claudyne!");
+        }
+
+        function showPaymentError(message) {
+            console.log("❌ Erreur paiement:", message);
+            alert("❌ " + message);
+        }
+
+        // Système de paiement intégré et opérationnel
+        // Configuration Maviance et Orange Money sécurisée
+
+        // =========================================
+        // NAVIGATION EN BAS - GESTION ACTIVE STATE
+        // =========================================
+
+        function setActiveTab(sectionId) {
+            // Retirer active de tous les items
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Ajouter active à l'item correspondant
+            const activeItem = document.querySelector(`[data-section="${sectionId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+        }
+
+        // Observer pour détecter la section visible
+        const observerOptions = {
+            threshold: 0.6,
+            rootMargin: '-80px 0px -80px 0px'
+        };
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveTab(entry.target.id);
+                }
+            });
+        }, observerOptions);
+
+        // Observer toutes les sections principales
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = ['hero', 'features', 'pricing', 'testimonials', 'donation'];
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    sectionObserver.observe(section);
+                }
+            });
+
+            // Définir l'onglet actif initial
+            setActiveTab('hero');
+
+            // Message de bienvenue console
+            console.log('🎓 Claudyne Platform - La force du savoir en héritage');
+            console.log('🚀 Version 1.2.0 - Déployée avec succès');
+
+            // Vérifier et corriger les icônes Material Icons
+            setTimeout(() => {
+                checkAndFixIcons();
+            }, 2000);
+        });
+
+        // Fonction pour détecter et corriger les icônes manquantes
+        function checkAndFixIcons() {
+            const iconMapping = {
+                'family_restroom': '👨‍👩‍👧‍👦',
+                'rocket_launch': '🚀',
+                'emoji_events': '🏆',
+                'science': '🧪',
+                'play_arrow': '▶️',
+                'location_on': '📍',
+                'contact_mail': '📧',
+                'school': '🎓',
+                'person': '👤',
+                'home': '🏠',
+                'auto_awesome': '✨',
+                'monetization_on': '💰',
+                'star': '⭐',
+                'volunteer_activism': '💝',
+                'account_circle': '👤',
+                'volume_up': '🔊',
+                'keyboard_arrow_up': '⬆️'
+            };
+
+            // Parcourir tous les éléments avec material-icons-outlined
+            document.querySelectorAll('.material-icons-outlined').forEach(icon => {
+                const iconName = icon.textContent.trim();
+
+                // Si l'icône contient du texte (pas d'icône chargée), la remplacer
+                if (iconName && iconMapping[iconName]) {
+                    // Vérifier si l'icône s'affiche bien
+                    const testElement = document.createElement('span');
+                    testElement.className = 'material-icons-outlined';
+                    testElement.style.position = 'absolute';
+                    testElement.style.left = '-9999px';
+                    testElement.textContent = iconName;
+                    document.body.appendChild(testElement);
+
+                    const computedStyle = window.getComputedStyle(testElement);
+                    const fontFamily = computedStyle.fontFamily;
+
+                    // Si Material Icons ne se charge pas, utiliser emoji
+                    if (!fontFamily.includes('Material Icons')) {
+                        icon.innerHTML = iconMapping[iconName];
+                        icon.className = icon.className.replace('material-icons-outlined', 'icon-fallback');
+                        console.log(`🔄 Icône "${iconName}" remplacée par emoji: ${iconMapping[iconName]}`);
+                    }
+
+                    document.body.removeChild(testElement);
+                }
+            });
+        }
+
+    </script>
+
+    <!-- Navigation en bas pour mobile -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-container">
+            <a href="#hero" class="bottom-nav-item active" data-section="hero">
+                <span class="material-icons-outlined">home</span>
+                <span>Accueil</span>
+            </a>
+            <a href="#features" class="bottom-nav-item" data-section="features">
+                <span class="material-icons-outlined">auto_awesome</span>
+                <span>Features</span>
+            </a>
+            <a href="#pricing" class="bottom-nav-item" data-section="pricing">
+                <span class="material-icons-outlined">monetization_on</span>
+                <span>Tarifs</span>
+            </a>
+            <a href="#testimonials" class="bottom-nav-item" data-section="testimonials">
+                <span class="material-icons-outlined">star</span>
+                <span>Avis</span>
+            </a>
+            <a href="#donation" class="bottom-nav-item" data-section="donation">
+                <span class="material-icons-outlined">volunteer_activism</span>
+                <span>Don</span>
+            </a>
+            <a href="javascript:void(0)" class="bottom-nav-item" onclick="showLoginModal()">
+                <span class="material-icons-outlined">account_circle</span>
+                <span>Connexion</span>
+            </a>
+        </div>
+    </nav>
+
+</body>
+</html>

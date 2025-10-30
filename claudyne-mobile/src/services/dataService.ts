@@ -6,6 +6,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS, APP_CONFIG } from '../constants/config';
 import ApiService from './apiService';
+import SecurityUtils from '../utils/security';
 import type { User, ApiResponse } from '../types';
 
 class DataService {
@@ -36,9 +37,9 @@ class DataService {
         timestamp: Date.now()
       }));
       this.lastSyncTimes[cacheKey] = Date.now();
-      console.log(`💾 Données mises en cache: ${cacheKey}`);
+      // ✅ Cache sécurisé mis à jour
     } catch (error) {
-      console.error(`❌ Erreur cache ${cacheKey}:`, error);
+      console.error('❌ Erreur cache sécurisé:', SecurityUtils.sanitizeForLogging(error));
     }
   }
 
@@ -58,10 +59,10 @@ class DataService {
         return null;
       }
 
-      console.log(`📦 Données récupérées du cache: ${cacheKey}`);
+      // ✅ Cache hit (logging sécurisé)
       return data;
     } catch (error) {
-      console.error(`❌ Erreur lecture cache ${cacheKey}:`, error);
+      console.error('❌ Erreur lecture cache:', SecurityUtils.sanitizeForLogging({ cacheKey, error }));
       return null;
     }
   }
@@ -83,7 +84,7 @@ class DataService {
       }
     }
 
-    console.log('🔄 Récupération du profil depuis l\'API...');
+    // 🔄 Récupération profil API
     const response = await ApiService.getProfile();
 
     if (response.success && response.data) {
@@ -106,7 +107,7 @@ class DataService {
       }
     }
 
-    console.log('📈 Récupération des stats depuis l\'API...');
+    // 📈 Récupération stats API
     const response = await ApiService.getUserStats();
 
     if (response.success && response.data) {
@@ -129,7 +130,7 @@ class DataService {
       }
     }
 
-    console.log('📚 Récupération des cours depuis l\'API...');
+    // 📚 Récupération cours API
     const response = await ApiService.getCourses();
 
     if (response.success && response.data) {
@@ -152,7 +153,7 @@ class DataService {
     courses: any[];
     isFromCache: boolean;
   }> {
-    console.log('📊 Chargement des données dashboard...');
+    // 📊 Chargement dashboard sécurisé
 
     try {
       // Charger en parallèle pour optimiser les performances
@@ -169,16 +170,11 @@ class DataService {
         isFromCache: !forceRefresh && this.isCacheValid('user_profile')
       };
 
-      console.log('✅ Données dashboard chargées:', {
-        hasUser: !!result.user,
-        statsPoints: result.stats.points || 0,
-        coursesCount: result.courses.length,
-        isFromCache: result.isFromCache
-      });
+      // ✅ Dashboard chargé avec succès
 
       return result;
     } catch (error) {
-      console.error('❌ Erreur chargement dashboard:', error);
+      console.error('❌ Erreur dashboard:', SecurityUtils.sanitizeForLogging(error));
 
       // Essayer de récupérer les données du cache en cas d'erreur réseau
       const cachedProfile = await this.getFromCache('user_profile');
@@ -215,7 +211,7 @@ class DataService {
       }
     }
 
-    console.log('⚙️ Récupération config mobile...');
+    // ⚙️ Config mobile API
     const response = await ApiService.getMobileConfig();
 
     if (response.success && response.data) {
@@ -246,7 +242,7 @@ class DataService {
         };
       }
     } catch (error) {
-      console.error('❌ Erreur vérification version:', error);
+      console.error('❌ Erreur version:', SecurityUtils.sanitizeForLogging(error));
     }
 
     return {
@@ -276,12 +272,12 @@ class DataService {
           const { timestamp } = JSON.parse(cachedData);
           if (Date.now() - timestamp > this.cacheTimeout) {
             await AsyncStorage.removeItem(key);
-            console.log(`🗑️ Cache expiré supprimé: ${key}`);
+            // 🗑️ Cache nettoyé
           }
         }
       }
     } catch (error) {
-      console.error('❌ Erreur nettoyage cache:', error);
+      console.error('❌ Erreur nettoyage:', SecurityUtils.sanitizeForLogging(error));
     }
   }
 
@@ -298,9 +294,9 @@ class DataService {
 
       await AsyncStorage.multiRemove(cacheKeys);
       this.lastSyncTimes = {};
-      console.log('🗑️ Cache vidé complètement');
+      // 🗑️ Cache vidé sécurisé
     } catch (error) {
-      console.error('❌ Erreur vidage cache:', error);
+      console.error('❌ Erreur vidage:', SecurityUtils.sanitizeForLogging(error));
     }
   }
 
@@ -308,7 +304,7 @@ class DataService {
    * Forcer le rechargement de toutes les données
    */
   async refreshAllData(): Promise<void> {
-    console.log('🔄 Rechargement forcé de toutes les données...');
+    // 🔄 Rechargement données forcé
     this.lastSyncTimes = {};
     await this.loadDashboardData(true);
   }

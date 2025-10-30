@@ -1660,12 +1660,12 @@
                         <i class="fas fa-user-graduate"></i>
                     </div>
                     <div class="user-details">
-                        <h1>Richy NONO</h1>
-                        <p>Terminale C • Lycée Bilingue de Logpom</p>
+                        <h1 id="studentName">Chargement...</h1>
+                        <p id="studentInfo">Chargement...</p>
                         <div class="subscription-info">
                             <div class="subscription-badge">
                                 <i class="fas fa-crown"></i>
-                                Premium - Expire dans 2 mois, 15 jours
+                                <span id="subscriptionStatus">Chargement...</span>
                             </div>
                             <button class="btn-renew-premium" onclick="openRenewalModal()">
                                 <i class="fas fa-sync-alt"></i>
@@ -1699,28 +1699,28 @@
 
                 <div class="stats-grid">
                     <div class="stat-card" onclick="showDetailedStats('average')">
-                        <div class="stat-value">16.8</div>
+                        <div class="stat-value" id="average-stat">0.0</div>
                         <div class="stat-label">Moyenne générale</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('courses')">
-                        <div class="stat-value">12</div>
+                        <div class="stat-value" id="lessons-stat">0</div>
                         <div class="stat-label">Cours terminés</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('quizzes')">
-                        <div class="stat-value">24</div>
+                        <div class="stat-value" id="quizzes-stat">0</div>
                         <div class="stat-label">Quiz réussis</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('rank')">
-                        <div class="stat-value">3ème</div>
+                        <div class="stat-value" id="rank-stat">-</div>
                         <div class="stat-label">Classement</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('xp')">
-                        <div class="stat-value">2,890</div>
+                        <div class="stat-value" id="header-xp">0</div>
                         <div class="stat-label">Points XP</div>
                     </div>
                     <div class="stat-card" onclick="showDetailedStats('streak')">
-                        <div class="stat-value">
-                            <span class="streak-flame">🔥</span> 12
+                        <div class="stat-value" id="header-streak">
+                            <span class="streak-flame">🔥</span> 0
                         </div>
                         <div class="stat-label">Jours consécutifs</div>
                     </div>
@@ -2897,7 +2897,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                 <div class="criteria-icon">✅</div>
                                 <div class="criteria-info">
                                     <div class="criteria-title">Moyenne générale > 16</div>
-                                    <div class="criteria-desc">Votre moyenne: 16.8/20</div>
+                                    <div class="criteria-desc" id="prix-claudine-average">Votre moyenne: 0.0/20</div>
                                 </div>
                                 <div class="criteria-points">+200 pts</div>
                             </div>
@@ -3762,24 +3762,60 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                     <div class="card-content">
                         <div class="profile-section">
                             <div class="profile-field">
-                                <label>Nom d'utilisateur</label>
-                                <input type="text" value="Étudiant_2025" class="form-input">
+                                <label>Prénom</label>
+                                <input type="text" id="setting-firstName" class="form-input" placeholder="Votre prénom">
+                            </div>
+                            <div class="profile-field">
+                                <label>Nom</label>
+                                <input type="text" id="setting-lastName" class="form-input" placeholder="Votre nom">
+                            </div>
+                            <div class="profile-field">
+                                <label>Surnom (affiché dans l'interface)</label>
+                                <input type="text" id="setting-nickname" class="form-input" placeholder="Surnom optionnel">
+                            </div>
+                            <div class="profile-field">
+                                <label>Email</label>
+                                <input type="email" id="setting-email" class="form-input" placeholder="votre@email.com">
+                            </div>
+                            <div class="profile-field">
+                                <label>Téléphone</label>
+                                <input type="tel" id="setting-phone" class="form-input" placeholder="+237 6XX XXX XXX">
+                            </div>
+                            <div class="profile-field">
+                                <label>Adresse</label>
+                                <input type="text" id="setting-address" class="form-input" placeholder="Votre adresse">
+                            </div>
+                            <div class="profile-field">
+                                <label>Ville</label>
+                                <input type="text" id="setting-city" class="form-input" placeholder="Ville">
+                            </div>
+                            <div class="profile-field">
+                                <label>Pays</label>
+                                <input type="text" id="setting-country" class="form-input" placeholder="Cameroun">
                             </div>
                             <div class="profile-field">
                                 <label>Classe</label>
-                                <select class="form-select">
-                                    <option selected>Terminale S</option>
-                                    <option>Terminale ES</option>
-                                    <option>Terminale L</option>
+                                <select id="setting-educationLevel" class="form-select">
+                                    <option value="6EME">6ème</option>
+                                    <option value="5EME">5ème</option>
+                                    <option value="4EME">4ème</option>
+                                    <option value="3EME">3ème</option>
+                                    <option value="SECONDE">Seconde</option>
+                                    <option value="PREMIERE">Première</option>
+                                    <option value="TERMINALE" selected>Terminale</option>
                                 </select>
                             </div>
                             <div class="profile-field">
+                                <label>Nom de l'établissement</label>
+                                <input type="text" id="setting-schoolName" class="form-input" placeholder="Lycée">
+                            </div>
+                            <div class="profile-field">
                                 <label>Objectif BAC</label>
-                                <select class="form-select">
-                                    <option>Mention Passable</option>
-                                    <option>Mention Assez Bien</option>
-                                    <option selected>Mention Bien</option>
-                                    <option>Mention Très Bien</option>
+                                <select id="setting-targetGrade" class="form-select">
+                                    <option value="Mention Passable">Mention Passable</option>
+                                    <option value="Mention Assez Bien">Mention Assez Bien</option>
+                                    <option value="Mention Bien" selected>Mention Bien</option>
+                                    <option value="Mention Très Bien">Mention Très Bien</option>
                                 </select>
                             </div>
                         </div>
@@ -3799,7 +3835,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="preference-desc">L'IA ajuste automatiquement la difficulté</div>
                                 </div>
                                 <div class="preference-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-adaptiveDifficulty" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="preference-item">
@@ -3808,7 +3844,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="preference-desc">Afficher les solutions étape par étape</div>
                                 </div>
                                 <div class="preference-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-detailedExplanations" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="preference-item">
@@ -3817,14 +3853,14 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="preference-desc">Système de mémorisation optimisé</div>
                                 </div>
                                 <div class="preference-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-spacedRepetition" checked class="toggle-switch">
                                 </div>
                             </div>
                         </div>
 
                         <div class="difficulty-slider">
                             <label>Niveau de difficulté préféré</label>
-                            <input type="range" min="1" max="5" value="3" class="slider">
+                            <input type="range" min="1" max="5" value="3" id="setting-difficultyLevel" class="slider">
                             <div class="slider-labels">
                                 <span>Facile</span>
                                 <span>Difficile</span>
@@ -3846,7 +3882,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Notifications quotidiennes de révision</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-studyReminders" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="notification-item">
@@ -3855,7 +3891,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Alertes pour les nouveaux challenges</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-newChallenges" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="notification-item">
@@ -3864,7 +3900,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Rappels de pause pour le bien-être</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" checked class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-smartBreaks" checked class="toggle-switch">
                                 </div>
                             </div>
                             <div class="notification-item">
@@ -3873,7 +3909,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                                     <div class="notification-desc">Messages et réponses du forum</div>
                                 </div>
                                 <div class="notification-control">
-                                    <input type="checkbox" class="toggle-switch">
+                                    <input type="checkbox" id="setting-notif-community" class="toggle-switch">
                                 </div>
                             </div>
                         </div>
@@ -4054,21 +4090,721 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         </div>
     </div>
 
+    <!-- Modal de Paiement/Renouvellement -->
+    <style>
+    /* Plans Grid */
+    .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .plan-card {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+        border: 2px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .plan-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(139, 92, 246, 0.6);
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .plan-card.selected {
+        border-color: #8B5CF6;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
+    }
+
+    .plan-card.popular::before {
+        content: "⭐ Populaire";
+        position: absolute;
+        top: -10px;
+        right: 10px;
+        background: #FFCC02;
+        color: #000;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .plan-name {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .plan-price {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #8B5CF6;
+        margin: 0.5rem 0;
+    }
+
+    .plan-price-currency {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .plan-duration {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .plan-description {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        min-height: 3em;
+    }
+
+    .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+
+    .plan-features li {
+        padding: 0.4rem 0;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+    }
+
+    .plan-features li::before {
+        content: "✓ ";
+        color: #10B981;
+        font-weight: bold;
+        margin-right: 0.5rem;
+    }
+
+    /* Payment Methods Grid */
+    .payment-methods-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .payment-method-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .payment-method-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(139, 92, 246, 0.5);
+        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+    }
+
+    .payment-method-card.selected {
+        border-color: #8B5CF6;
+        background: rgba(139, 92, 246, 0.1);
+    }
+
+    .payment-method-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-method-name {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-method-desc {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-method-fees {
+        font-size: 0.8rem;
+        color: #FFCC02;
+    }
+
+    /* Payment Summary */
+    .payment-summary {
+        background: rgba(139, 92, 246, 0.1);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Payment Progress */
+    .payment-progress {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.4;
+        transition: all 0.3s ease;
+    }
+
+    .progress-step.active {
+        opacity: 1;
+    }
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .progress-step.active .step-circle {
+        background: #8B5CF6;
+        border-color: #8B5CF6;
+        color: #fff;
+    }
+
+    .step-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .progress-step.active .step-label {
+        color: #fff;
+    }
+
+    .progress-line {
+        width: 60px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 0 0.5rem 1.5rem;
+    }
+    </style>
+
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-container" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-credit-card"></i> Renouveler mon abonnement</h3>
+                <button class="modal-close" onclick="closePaymentModal()">×</button>
+            </div>
+            <div class="modal-content">
+
+                <!-- Étape 1: Sélection du plan -->
+                <div id="step-plan" class="payment-step active">
+                    <h4 style="color: #fff; margin-bottom: 1rem;">Choisissez votre formule</h4>
+                    <div class="plans-grid" id="plansGrid">
+                        <!-- Les plans seront chargés dynamiquement -->
+                        <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">
+                            Chargement des plans...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 2: Sélection du moyen de paiement -->
+                <div id="step-payment-method" class="payment-step" style="display:none;">
+                    <h4 style="color: #fff; margin-bottom: 1rem;">Choisissez votre moyen de paiement</h4>
+                    <div class="payment-methods-grid" id="paymentMethodsGrid">
+                        <!-- Les moyens de paiement seront chargés dynamiquement -->
+                        <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">
+                            Chargement des moyens de paiement...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 3: Informations de paiement -->
+                <div id="step-payment-info" class="payment-step" style="display:none;">
+                    <h4 style="color: #fff; margin-bottom: 1rem;">Finaliser le paiement</h4>
+                    <form id="paymentForm" onsubmit="processPayment(event)">
+                        <div class="payment-summary">
+                            <div class="summary-item">
+                                <span>Formule:</span>
+                                <strong id="selectedPlanName">-</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Moyen de paiement:</span>
+                                <strong id="selectedMethodName">-</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>Montant:</span>
+                                <strong id="selectedAmount">-</strong>
+                            </div>
+                        </div>
+
+                        <div id="phoneNumberField" class="form-group" style="display:none;">
+                            <label for="paymentPhone">Numéro de téléphone Mobile Money</label>
+                            <input type="tel" id="paymentPhone" class="form-input"
+                                   placeholder="+237690123456" pattern="^\+?237[0-9]{9}$">
+                            <small>Format: +237690123456 ou 237690123456</small>
+                        </div>
+
+                        <div id="cardFields" class="form-group" style="display:none;">
+                            <label>Informations de carte</label>
+                            <input type="text" id="cardNumber" class="form-input"
+                                   placeholder="Numéro de carte" maxlength="19">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+                                <input type="text" id="cardExpiry" class="form-input"
+                                       placeholder="MM/AA" maxlength="5">
+                                <input type="text" id="cardCVV" class="form-input"
+                                       placeholder="CVV" maxlength="4">
+                            </div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="previousPaymentStep()">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Confirmer le paiement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Indicateur de progression -->
+                <div class="payment-progress">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Formule</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Paiement</div>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Confirmation</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de gestion du paiement chargé dynamiquement plus bas -->
 
     <script>
         // ========== VARIABLES GLOBALES ==========
-        let userXP = 2890;
-        let userLevel = 15;
-        let dailyStreak = 12;
+        let userXP = 0;
+        let userLevel = 1;
+        let dailyStreak = 0;
+        let currentAverage = 0;
         let currentSection = 'dashboard';
+        let currentUser = null;
+        let dashboardData = null;
+        let subjectsData = [];
 
         // ========== INITIALISATION ==========
         document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données utilisateur réelles
+            loadRealUserData();
             initializeParticles();
             updateXPDisplay();
             showWelcomeToast();
-            console.log('🚀 Claudyne Max initialisé avec succès');
         });
+
+        // ========== CHARGEMENT DONNÉES RÉELLES ==========
+        async function loadRealUserData() {
+            try {
+                // Récupérer les données depuis localStorage
+                const userDataStr = localStorage.getItem('claudyne_user');
+                const token = localStorage.getItem('claudyne_token');
+
+                if (!userDataStr || !token) {
+                    console.warn('⚠️ Pas de données utilisateur - Redirection vers login');
+                    window.location.href = '/';
+                    return;
+                }
+
+                currentUser = JSON.parse(userDataStr);
+
+                // Mettre à jour l'interface avec les vraies données
+                updateUserInterface(currentUser);
+
+                // Charger les données additionnelles depuis l'API
+                await fetchAdditionalUserData(token);
+
+            } catch (error) {
+                console.error('❌ Erreur chargement données utilisateur:', error);
+                showToast('Erreur de chargement des données', 'danger');
+            }
+        }
+
+        function updateUserInterface(user) {
+            // Mise à jour du nom d'utilisateur
+            const nameElement = document.getElementById('studentName');
+            if (nameElement) {
+                nameElement.textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Étudiant';
+            }
+
+            // Mise à jour des informations scolaires
+            const infoElement = document.getElementById('studentInfo');
+            if (infoElement && user.educationLevel && user.school) {
+                infoElement.textContent = `${user.educationLevel} • ${user.school}`;
+            } else if (infoElement && user.educationLevel) {
+                infoElement.textContent = user.educationLevel;
+            } else if (infoElement && user.studentClass) {
+                infoElement.textContent = user.studentClass + (user.school ? ` • ${user.school}` : '');
+            } else if (infoElement) {
+                infoElement.textContent = 'Étudiant Claudyne';
+            }
+
+            // Mise à jour du statut d'abonnement
+            const statusElement = document.getElementById('subscriptionStatus');
+            if (statusElement && user.subscriptionType) {
+                const expiryDate = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt) : null;
+                if (expiryDate) {
+                    const daysRemaining = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                    const monthsRemaining = Math.floor(daysRemaining / 30);
+                    const daysInMonth = daysRemaining % 30;
+                    statusElement.textContent = `${user.subscriptionType} - Expire dans ${monthsRemaining} mois, ${daysInMonth} jours`;
+                } else {
+                    statusElement.textContent = user.subscriptionType;
+                }
+            } else if (statusElement) {
+                statusElement.textContent = 'Essai gratuit';
+            }
+
+            // Mise à jour du message AI personnalisé
+            const aiMessageEl = document.querySelector('.message-bubble.ai');
+            if (aiMessageEl && user.firstName) {
+                aiMessageEl.textContent = `Salut ${user.firstName} ! 👋 Je vois que tu progresses bien. As-tu des questions ? Je peux t'aider avec des explications personnalisées !`;
+            }
+        }
+
+        async function fetchAdditionalUserData(token) {
+            if (!token) {
+                console.log('ℹ️ Token non disponible - Connexion requise');
+                return;
+            }
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Profile
+                try {
+                    const profileRes = await fetch(`${API_BASE}/api/students/profile`, { headers });
+                    if (profileRes.ok) {
+                        const profile = await profileRes.json();
+                        if (profile.success && profile.data) {
+                            userXP = profile.data.xp || 0;
+                            userLevel = profile.data.level || 1;
+                            dailyStreak = profile.data.dailyStreak || 0;
+                            currentAverage = profile.data.currentAverage || 0;
+                            updateXPDisplay();
+                            updateAverageDisplay();
+                            console.log('✅ Profil chargé:', profile.data);
+                        }
+                    } else if (profileRes.status === 401) {
+                        console.log('🔒 Session expirée - Veuillez vous reconnecter');
+                    }
+                } catch (err) {
+                    // Ignore profile errors silently
+                }
+
+                // Dashboard
+                try {
+                    const dashRes = await fetch(`${API_BASE}/api/students/dashboard`, { headers });
+                    if (dashRes.ok) {
+                        const dash = await dashRes.json();
+                        if (dash.success) {
+                            dashboardData = dash.data;
+                            updateDashboardStats();
+                            console.log('✅ Dashboard chargé:', dash.data);
+                        }
+                    }
+                } catch (err) {
+                    // Ignore dashboard errors silently
+                }
+
+                // Subjects
+                try {
+                    const subjRes = await fetch(`${API_BASE}/api/students/subjects`, { headers });
+                    if (subjRes.ok) {
+                        const subj = await subjRes.json();
+                        if (subj.success) {
+                            subjectsData = subj.data.subjects || [];
+                            updateSubjectsDisplay();
+                            console.log('✅ Matières chargées:', subj.data.subjects.length);
+                        }
+                    }
+                } catch (err) {
+                    // Ignore subjects errors silently
+                }
+
+                // Achievements
+                try {
+                    const achRes = await fetch(`${API_BASE}/api/students/achievements`, { headers });
+                    if (achRes.ok) {
+                        const ach = await achRes.json();
+                        if (ach.success) {
+                            achievementsData = ach.data;
+                            updateAchievementsDisplay();
+                            console.log('✅ Achievements chargés:', ach.data.achievements.length);
+                        }
+                    }
+                } catch (err) {
+                    // Ignore achievements errors silently
+                }
+
+                // Analytics (only if we have a student profile)
+                if (profileData && profileData.id) {
+                    try {
+                        const analyticsRes = await fetch(`${API_BASE}/api/students/${profileData.id}/analytics`, { headers });
+                        if (analyticsRes.ok) {
+                            const analytics = await analyticsRes.json();
+                            if (analytics.success) {
+                                analyticsData = analytics.data;
+                                updateAnalyticsDisplay();
+                                console.log('✅ Analytics chargées');
+                            }
+                        }
+                    } catch (err) {
+                        // Ignore analytics errors silently
+                    }
+                }
+
+                // Settings - charger les paramètres utilisateur
+                await loadSettings();
+
+                // AI Chat - charger l'historique de conversation
+                await loadAiChatHistory();
+
+                // Prix Claudine - charger leaderboard et awards
+                await loadPrixClaudineData();
+
+                // Quiz - charger quiz disponibles, challenges et stats
+                await loadQuizData();
+
+                // Révisions - charger planning, flashcards et session active
+                await loadRevisionsData();
+
+                // Orientation - charger profil, recommandations, carrières et établissements
+                await loadOrientationData();
+
+                // Bien-être - charger métriques, exercices et pauses intelligentes
+                await loadWellnessData();
+
+                // Communauté - charger groupes d'étude, leaderboard et discussions
+                await loadCommunityData();
+
+            } catch (error) {
+                // Silent fail - user not authenticated
+                console.log('ℹ️ Chargement des données API ignoré (non connecté)');
+            }
+        }
+
+        function updateDashboardStats() {
+            if (!dashboardData) return;
+
+            const stats = [
+                { id: 'lessons-stat', value: dashboardData.lessonsCompleted || 0 },
+                { id: 'quizzes-stat', value: dashboardData.quizzesPassed || 0 },
+                { id: 'battles-stat', value: dashboardData.battlesWon || 0 }
+            ];
+
+            stats.forEach(stat => {
+                const el = document.getElementById(stat.id);
+                if (el) el.textContent = stat.value;
+            });
+        }
+
+        function updateSubjectsDisplay() {
+            const container = document.querySelector('.subjects-grid');
+            if (!container || !subjectsData.length) return;
+
+            subjectsData.forEach((subject, idx) => {
+                const card = container.children[idx];
+                if (card) {
+                    const progress = card.querySelector('.subject-progress');
+                    const score = card.querySelector('.subject-score');
+                    if (progress) progress.style.width = `${subject.progress}%`;
+                    if (score) score.textContent = `${subject.score}%`;
+                }
+            });
+        }
+
+        function updateAchievementsDisplay() {
+            if (!achievementsData) return;
+
+            // Update level and XP
+            const levelBadge = document.querySelector('.level-badge');
+            const levelTitle = document.querySelector('.level-title');
+            const xpFill = document.querySelector('.xp-fill');
+            const xpText = document.querySelector('.xp-text');
+            const achievementStats = document.querySelector('.achievement-stats');
+
+            if (levelBadge) levelBadge.textContent = achievementsData.level || 1;
+            if (levelTitle) levelTitle.textContent = achievementsData.levelTitle || 'Débutant';
+            if (xpFill) xpFill.style.width = `${achievementsData.xpProgress || 0}%`;
+            if (xpText) xpText.textContent = `${achievementsData.currentXP || 0} / ${achievementsData.nextLevelXP || 1000} XP`;
+            if (achievementStats) achievementStats.textContent = `${achievementsData.achievements.length} badges débloqués`;
+
+            // Update recent badges
+            const badgeGrid = document.querySelector('.badge-grid');
+            if (badgeGrid && achievementsData.achievements.length > 0) {
+                badgeGrid.innerHTML = '';
+
+                // Show the 3 most recent achievements
+                achievementsData.achievements.slice(0, 3).forEach((achievement, idx) => {
+                    const badgeEl = document.createElement('div');
+                    badgeEl.className = `achievement-badge ${idx === 0 ? 'new' : ''}`;
+                    badgeEl.innerHTML = `
+                        <div class="badge-icon ${idx === 0 ? 'gold' : idx === 1 ? 'silver' : 'bronze'}">${achievement.icon}</div>
+                        <div class="badge-info">
+                            <div class="badge-name">${achievement.name}</div>
+                            <div class="badge-desc">${achievement.description || 'Badge débloqué'}</div>
+                            <div class="badge-date">Obtenu ${achievement.earnedDate ? 'le ' + new Date(achievement.earnedDate).toLocaleDateString() : 'récemment'}</div>
+                        </div>
+                    `;
+                    badgeGrid.appendChild(badgeEl);
+                });
+            }
+
+            // Update badge collections
+            const categoryGrid = document.querySelector('#performance-badges .category-grid');
+            if (categoryGrid && achievementsData.achievements.length > 0) {
+                categoryGrid.innerHTML = '';
+
+                achievementsData.achievements.forEach(achievement => {
+                    const badgeItem = document.createElement('div');
+                    badgeItem.className = `badge-item ${achievement.unlocked ? 'earned' : 'locked'}`;
+                    badgeItem.innerHTML = `
+                        <div class="badge-visual ${achievement.unlocked ? 'gold' : ''}">${achievement.icon}</div>
+                        <div class="badge-title">${achievement.name}</div>
+                        <div class="badge-progress">${achievement.unlocked ? 'Complété' : 'Verrouillé'}</div>
+                    `;
+                    categoryGrid.appendChild(badgeItem);
+                });
+            }
+        }
+
+        function updateAnalyticsDisplay() {
+            if (!analyticsData) return;
+
+            // Update real-time performance metrics
+            const metricsGrid = document.querySelector('.analytics-grid');
+            if (metricsGrid) {
+                const metrics = [
+                    {
+                        icon: 'fas fa-bullseye',
+                        iconClass: 'success',
+                        value: `${analyticsData.successRate || 0}%`,
+                        label: 'Taux de réussite',
+                        trend: analyticsData.successRateTrend || '+0%'
+                    },
+                    {
+                        icon: 'fas fa-clock',
+                        iconClass: 'info',
+                        value: analyticsData.avgStudyTime || '0h 0m',
+                        label: 'Temps d\'étude moyen',
+                        trend: analyticsData.studyTimeTrend || '0min'
+                    },
+                    {
+                        icon: 'fas fa-fire',
+                        iconClass: 'warning',
+                        value: `${analyticsData.streak || 0} jours`,
+                        label: 'Série actuelle',
+                        trend: analyticsData.streakStatus || 'Continue!'
+                    },
+                    {
+                        icon: 'fas fa-brain',
+                        iconClass: 'primary',
+                        value: `${analyticsData.cognitiveEfficiency || 0}%`,
+                        label: 'Efficacité cognitive',
+                        trend: analyticsData.cognitiveStatus || 'Optimal'
+                    }
+                ];
+
+                metricsGrid.innerHTML = metrics.map(metric => `
+                    <div class="analytics-metric">
+                        <div class="metric-icon ${metric.iconClass}">
+                            <i class="${metric.icon}"></i>
+                        </div>
+                        <div class="metric-info">
+                            <div class="metric-value">${metric.value}</div>
+                            <div class="metric-label">${metric.label}</div>
+                            <div class="metric-trend positive">${metric.trend}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update predictions
+            if (analyticsData.predictions) {
+                const predictionGrid = document.querySelector('.prediction-grid');
+                if (predictionGrid && analyticsData.predictions.length > 0) {
+                    predictionGrid.innerHTML = analyticsData.predictions.map(pred => `
+                        <div class="prediction-item">
+                            <div class="subject">${pred.subject}</div>
+                            <div class="prediction-bar">
+                                <div class="prediction-fill" style="width: ${(pred.score / 20) * 100}%"></div>
+                                <span class="prediction-score">${pred.score}/20</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Update weakness analysis
+            if (analyticsData.weaknesses) {
+                const weaknessList = document.querySelector('.weakness-list');
+                if (weaknessList && analyticsData.weaknesses.length > 0) {
+                    weaknessList.innerHTML = analyticsData.weaknesses.map(weak => `
+                        <div class="weakness-item ${weak.severity || 'low'}">
+                            <div class="weakness-icon">${weak.severity === 'high' ? '⚠️' : '📊'}</div>
+                            <div class="weakness-info">
+                                <div class="weakness-title">${weak.topic}</div>
+                                <div class="weakness-desc">Taux d'erreur: ${weak.errorRate}% - ${weak.status || 'À améliorer'}</div>
+                                <div class="weakness-actions">
+                                    <button class="btn btn-sm btn-primary" onclick="reviewTopic('${weak.topic}')">Réviser maintenant</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
 
         // ========== PARTICULES FLOTTANTES ==========
         function initializeParticles() {
@@ -4113,6 +4849,8 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             const xpFill = document.getElementById('xpFill');
             const xpText = document.getElementById('xpText');
             const levelBadge = document.getElementById('levelBadge');
+            const headerXP = document.getElementById('header-xp');
+            const headerStreak = document.getElementById('header-streak');
 
             const xpForCurrentLevel = (userLevel - 1) * 250;
             const xpForNextLevel = userLevel * 250;
@@ -4123,6 +4861,23 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (xpFill) xpFill.style.width = percentage + '%';
             if (xpText) xpText.textContent = `${currentLevelXP} / ${xpNeeded} XP`;
             if (levelBadge) levelBadge.innerHTML = `<i class="fas fa-crown"></i> Niveau ${userLevel}`;
+
+            // Mettre à jour les valeurs du header
+            if (headerXP) headerXP.textContent = userXP.toLocaleString('fr-FR');
+            if (headerStreak) headerStreak.innerHTML = `<span class="streak-flame">🔥</span> ${dailyStreak}`;
+        }
+
+        function updateAverageDisplay() {
+            const averageStat = document.getElementById('average-stat');
+            const prixClaudineAverage = document.getElementById('prix-claudine-average');
+
+            if (averageStat) {
+                averageStat.textContent = currentAverage.toFixed(1);
+            }
+
+            if (prixClaudineAverage) {
+                prixClaudineAverage.textContent = `Votre moyenne: ${currentAverage.toFixed(1)}/20`;
+            }
         }
 
         function gainXP(amount, reason = '') {
@@ -4260,13 +5015,16 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         }
 
         function showDetailedStats(type) {
+            const lessonsCompleted = dashboardData?.lessonsCompleted || 0;
+            const quizzesPassed = dashboardData?.quizzesPassed || 0;
+
             const messages = {
-                'average': 'Moyenne générale: 16.8/20 • Progression: +1.2 points ce trimestre',
-                'courses': '12 cours terminés ! 89% de taux de réussite moyen',
-                'quizzes': '24 quiz réussis ! Votre taux de réussite moyen est de 89%.',
-                'rank': 'Classement: 3ème sur 156 élèves de votre niveau',
-                'xp': 'Points XP : Vous gagnez en moyenne 95 XP par jour !',
-                'streak': `Série de ${dailyStreak} jours ! Continue comme ça ! 🔥`
+                'average': `Moyenne générale: ${currentAverage.toFixed(1)}/20${currentAverage > 0 ? ' • Continue tes efforts !' : ' • Commence tes cours pour voir ta moyenne'}`,
+                'courses': `${lessonsCompleted} cours terminés !${lessonsCompleted > 0 ? ' Continue ton excellent travail' : ' Commence dès maintenant'}`,
+                'quizzes': `${quizzesPassed} quiz réussis !${quizzesPassed > 0 ? ' Tu progresses bien' : ' Lance ton premier quiz'}`,
+                'rank': 'Classement: Non disponible pour le moment',
+                'xp': `Points XP : ${userXP} XP accumulés !${userXP > 0 ? ' Niveau ' + userLevel : ' Commence à gagner des XP'}`,
+                'streak': `Série de ${dailyStreak} jours !${dailyStreak > 0 ? ' Continue comme ça ! 🔥' : ' Commence ta série aujourd\'hui ! 🔥'}`
             };
 
             showToast(`📊 ${messages[type]}`, 'info', 6000);
@@ -4292,9 +5050,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             const saved = localStorage.getItem('claudyneMaxData');
             if (saved) {
                 const data = JSON.parse(saved);
-                userXP = data.xp || 2890;
-                userLevel = data.level || 15;
-                dailyStreak = data.streak || 12;
+                userXP = data.xp || 0;
+                userLevel = data.level || 1;
+                dailyStreak = data.streak || 0;
                 currentSection = data.currentSection || 'dashboard';
             }
         }
@@ -4369,31 +5127,114 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             }
         }
 
-        function sendAiMessage() {
-            const input = document.getElementById('aiInput');
-            const message = input.value.trim();
+        // AI Chat state management
+        let aiSessionId = localStorage.getItem('ai_session_id') || null;
+        let isAiLoading = false;
 
-            if (message) {
-                // Ajouter message utilisateur
-                addAiMessage(message, 'user');
-                input.value = '';
+        // Load AI chat history
+        async function loadAiChatHistory() {
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) return;
 
-                // Simuler réponse IA
-                setTimeout(() => {
-                    const responses = [
-                        "Excellente question ! Laisse-moi t'expliquer cela étape par étape...",
-                        "Je vois que tu progresses bien ! Voici mon analyse personnalisée...",
-                        "C'est un concept important. Voici une approche simplifiée...",
-                        "Parfait ! Je vais créer des exercices adaptés à ton niveau pour ce sujet."
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addAiMessage(randomResponse, 'ai');
-                    gainXP(5, 'Interaction avec MEUGACK');
-                }, 1500);
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const endpoint = aiSessionId
+                    ? `${API_BASE}/api/mentor/chat/${aiSessionId}`
+                    : `${API_BASE}/api/mentor/chat`;
+
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data.messages) {
+                        // Clear existing messages except welcome message
+                        const messagesContainer = document.getElementById('aiMessages');
+                        messagesContainer.innerHTML = '';
+
+                        // Add loaded messages
+                        result.data.messages.forEach(msg => {
+                            const sender = msg.role === 'user' ? 'user' : 'ai';
+                            addAiMessage(msg.content, sender, false);
+                        });
+
+                        // Store sessionId
+                        if (result.data.sessionId) {
+                            aiSessionId = result.data.sessionId;
+                            localStorage.setItem('ai_session_id', aiSessionId);
+                        }
+
+                        console.log('✅ Chat history loaded:', result.data.messages.length, 'messages');
+                    }
+                }
+            } catch (error) {
+                console.log('ℹ️ Could not load AI chat history:', error.message);
             }
         }
 
-        function addAiMessage(message, sender) {
+        async function sendAiMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+
+            if (!message || isAiLoading) return;
+
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) {
+                showToast('🔒 Vous devez être connecté pour utiliser MEUGACK', 'warning');
+                return;
+            }
+
+            // Add user message immediately
+            addAiMessage(message, 'user');
+            input.value = '';
+            isAiLoading = true;
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const response = await fetch(`${API_BASE}/api/mentor/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        sessionId: aiSessionId
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        // Store sessionId from response
+                        if (result.data.sessionId) {
+                            aiSessionId = result.data.sessionId;
+                            localStorage.setItem('ai_session_id', aiSessionId);
+                        }
+
+                        // Add AI response
+                        if (result.data.assistantMessage) {
+                            addAiMessage(result.data.assistantMessage.content, 'ai');
+                            gainXP(5, 'Interaction avec MEUGACK');
+                        }
+                    }
+                } else {
+                    throw new Error('Failed to get AI response');
+                }
+            } catch (error) {
+                console.error('Error sending AI message:', error);
+                addAiMessage('Désolé, je rencontre un problème technique. Réessaie dans quelques instants.', 'ai');
+                showToast('❌ Erreur de connexion avec MEUGACK', 'error');
+            } finally {
+                isAiLoading = false;
+            }
+        }
+
+        function addAiMessage(message, sender, autoScroll = true) {
             const messagesContainer = document.getElementById('aiMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `ai-message ${sender}`;
@@ -4401,7 +5242,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (sender === 'user') {
                 messageDiv.innerHTML = `
                     <div class="message-bubble user">${message}</div>
-                    <div class="message-avatar user">R</div>
+                    <div class="message-avatar user">${profileData?.firstName?.charAt(0) || 'U'}</div>
                 `;
             } else {
                 messageDiv.innerHTML = `
@@ -4411,7 +5252,1127 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             }
 
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            if (autoScroll) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        // ========== PRIX CLAUDINE INTEGRATION ==========
+
+        let prixClaudineData = {
+            leaderboard: [],
+            myAwards: null,
+            stats: null
+        };
+
+        // Load Prix Claudine leaderboard and student's awards
+        async function loadPrixClaudineData() {
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) return;
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Load leaderboard (top 3 for laureates section)
+                try {
+                    const leaderboardRes = await fetch(`${API_BASE}/api/prix-claudine/leaderboard?limit=3`, { headers });
+                    if (leaderboardRes.ok) {
+                        const result = await leaderboardRes.json();
+                        if (result.success) {
+                            prixClaudineData.leaderboard = result.data.leaderboard || [];
+                            prixClaudineData.stats = result.data.stats || {};
+                            updatePrixClaudineLaureates();
+                            updatePrixClaudineStats();
+                            console.log('✅ Prix Claudine leaderboard loaded:', prixClaudineData.leaderboard.length);
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load Prix Claudine leaderboard');
+                }
+
+                // Load student's awards and progression
+                try {
+                    const myAwardsRes = await fetch(`${API_BASE}/api/prix-claudine/my-awards`, { headers });
+                    if (myAwardsRes.ok) {
+                        const result = await myAwardsRes.json();
+                        if (result.success) {
+                            prixClaudineData.myAwards = result.data;
+                            updatePrixClaudineProgression();
+                            console.log('✅ My Prix Claudine awards loaded');
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load my Prix Claudine awards');
+                }
+            } catch (error) {
+                console.log('ℹ️ Prix Claudine data loading skipped');
+            }
+        }
+
+        function updatePrixClaudineStats() {
+            if (!prixClaudineData.stats) return;
+
+            // Update award stats section (participants, laureates, etc.)
+            const statElements = document.querySelectorAll('.award-stats .stat-number');
+            if (statElements.length >= 2) {
+                if (prixClaudineData.stats.totalWinners) {
+                    statElements[0].textContent = prixClaudineData.stats.totalWinners.toLocaleString();
+                }
+            }
+        }
+
+        function updatePrixClaudineLaureates() {
+            if (!prixClaudineData.leaderboard || prixClaudineData.leaderboard.length === 0) return;
+
+            const laureatesGrid = document.querySelector('.laureates-grid');
+            if (!laureatesGrid) return;
+
+            // Clear existing static laureates
+            laureatesGrid.innerHTML = '';
+
+            const ranks = ['gold', 'silver', 'bronze'];
+            const medals = ['🥇', '🥈', '🥉'];
+            const rankTitles = ['Grand Prix', 'Prix d\'Honneur', 'Prix du Mérite'];
+
+            prixClaudineData.leaderboard.slice(0, 3).forEach((laureate, idx) => {
+                const card = document.createElement('div');
+                card.className = `laureate-card ${ranks[idx]}`;
+                card.innerHTML = `
+                    <div class="laureate-rank">
+                        <div class="rank-medal">${medals[idx]}</div>
+                        <div class="rank-title">${rankTitles[idx]}</div>
+                    </div>
+                    <div class="laureate-info">
+                        <div class="laureate-avatar">${laureate.recipient?.avatar || '🎓'}</div>
+                        <div class="laureate-details">
+                            <div class="laureate-name">${laureate.recipient?.name || 'Anonymous'}</div>
+                            <div class="laureate-specialty">${laureate.category || 'Non spécifié'}</div>
+                            <div class="laureate-school">${laureate.recipient?.educationLevel || ''}</div>
+                            <div class="laureate-achievement">
+                                <span class="achievement-badge">🏆</span>
+                                <span>${laureate.points} points</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="laureate-distinctions">
+                        <div class="distinction-item">
+                            <i class="fas fa-star"></i>
+                            <span>${laureate.title || 'Lauréat Prix Claudine'}</span>
+                        </div>
+                        ${laureate.testimonial ? `
+                        <div class="distinction-item">
+                            <i class="fas fa-quote-left"></i>
+                            <span>${laureate.testimonial.substring(0, 100)}...</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                laureatesGrid.appendChild(card);
+            });
+        }
+
+        function updatePrixClaudineProgression() {
+            if (!prixClaudineData.myAwards) return;
+
+            const stats = prixClaudineData.myAwards.stats;
+
+            // Update eligibility score
+            const scoreEl = document.querySelector('.eligibility-score');
+            if (scoreEl && stats.totalPoints) {
+                scoreEl.textContent = `Score: ${stats.totalPoints}/1000`;
+            }
+
+            // Update student average
+            const avgEl = document.getElementById('prix-claudine-average');
+            if (avgEl && currentAverage) {
+                avgEl.textContent = `Votre moyenne: ${currentAverage}/20`;
+            }
+
+            // Update current rank if available
+            const rankEl = document.querySelector('.current-rank span');
+            if (rankEl && stats.bestRank) {
+                rankEl.innerHTML = `<i class="fas fa-medal"></i> <span>Rang actuel: ${stats.bestRank}</span>`;
+            }
+
+            // Update qualification status
+            const qualificationEl = document.querySelector('.qualification-status');
+            if (qualificationEl && stats.winnersCount > 0) {
+                qualificationEl.classList.add('qualified');
+                qualificationEl.textContent = '🎉 Lauréat(e) du Prix Claudine !';
+            }
+        }
+
+        // ========== QUIZ INTEGRATION ==========
+
+        let quizData = {
+            available: [],
+            challenges: { daily: [], weekly: [] },
+            stats: null,
+            recommendation: null
+        };
+
+        // Load Quiz data (quizzes, challenges, stats)
+        async function loadQuizData() {
+            const token = localStorage.getItem('claudyne_token');
+            if (!token) return;
+
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                // Load available quizzes
+                try {
+                    const quizzesRes = await fetch(`${API_BASE}/api/quiz/available?limit=20`, { headers });
+                    if (quizzesRes.ok) {
+                        const result = await quizzesRes.json();
+                        if (result.success) {
+                            quizData.available = result.data.quizzes || [];
+                            quizData.recommendation = result.data.recommendation;
+                            updateQuizRecommendation();
+                            console.log('✅ Quiz disponibles chargés:', quizData.available.length);
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load available quizzes');
+                }
+
+                // Load challenges (weekly/daily)
+                try {
+                    const challengesRes = await fetch(`${API_BASE}/api/quiz/challenges`, { headers });
+                    if (challengesRes.ok) {
+                        const result = await challengesRes.json();
+                        if (result.success) {
+                            quizData.challenges.daily = result.data.daily || [];
+                            quizData.challenges.weekly = result.data.weekly || [];
+                            updateWeeklyChallenges();
+                            console.log('✅ Challenges chargés:', result.data.total);
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load challenges');
+                }
+
+                // Load quiz stats
+                try {
+                    const statsRes = await fetch(`${API_BASE}/api/quiz/stats`, { headers });
+                    if (statsRes.ok) {
+                        const result = await statsRes.json();
+                        if (result.success) {
+                            quizData.stats = result.data;
+                            updateQuizStats();
+                            console.log('✅ Quiz stats chargées');
+                        }
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Could not load quiz stats');
+                }
+            } catch (error) {
+                console.log('ℹ️ Quiz data loading skipped');
+            }
+        }
+
+        function updateQuizRecommendation() {
+            if (!quizData.recommendation) return;
+
+            // Update AI recommendation section
+            const recommendationSection = document.querySelector('.ai-thinking').nextElementSibling;
+            if (recommendationSection) {
+                recommendationSection.innerHTML = `
+                    <p><strong>🎯 Recommandation :</strong> ${quizData.recommendation.title}</p>
+                    <p><strong>⏱️ Temps estimé :</strong> ${quizData.recommendation.estimatedDuration || 10} minutes</p>
+                    <p><strong>🎮 Récompense :</strong> ${quizData.recommendation.rewardXP || 50} XP</p>
+                `;
+            }
+        }
+
+        function updateWeeklyChallenges() {
+            const challengesContainer = document.querySelector('.weekly-challenges');
+            if (!challengesContainer || quizData.challenges.weekly.length === 0) return;
+
+            // Clear existing challenges
+            challengesContainer.innerHTML = '';
+
+            // Add first 2 weekly challenges
+            quizData.challenges.weekly.slice(0, 2).forEach(challenge => {
+                const challengeDiv = document.createElement('div');
+                challengeDiv.className = `challenge-item ${challenge.isCompleted ? 'completed' : 'active'}`;
+                challengeDiv.innerHTML = `
+                    <div class="challenge-info">
+                        <h4>${challenge.icon || '🎯'} ${challenge.title}</h4>
+                        <p>${challenge.description}</p>
+                        <div class="challenge-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${challenge.progressPercentage || 0}%"></div>
+                            </div>
+                            <span>${challenge.currentValue || 0}/${challenge.targetValue} ${challenge.unit}</span>
+                        </div>
+                    </div>
+                    <div class="challenge-reward">${challenge.reward?.xp || 0} XP</div>
+                `;
+                challengesContainer.appendChild(challengeDiv);
+            });
+        }
+
+        function updateQuizStats() {
+            if (!quizData.stats) return;
+
+            // Update BAC simulation stats
+            const examStats = document.querySelector('.exam-stats');
+            if (examStats) {
+                const avgScore = quizData.stats.averageScore || 0;
+                const recentProgress = quizData.stats.recentProgress || 0;
+                examStats.innerHTML = `
+                    <p><strong>📊 Score moyen :</strong> ${avgScore}/100</p>
+                    <p><strong>📈 Progression :</strong> ${recentProgress > 0 ? '+' : ''}${recentProgress}% récemment</p>
+                    <p><strong>🎯 Total quiz :</strong> ${quizData.stats.totalQuizzes || 0} complétés</p>
+                `;
+            }
+
+            // Update progress bar
+            const progressFill = document.querySelector('#quiz .progress-fill');
+            if (progressFill && quizData.stats.averageScore) {
+                progressFill.style.width = `${quizData.stats.averageScore}%`;
+            }
+        }
+
+        // ===== REVISIONS IA SECTION =====
+        let revisionsData = {
+            planning: null,
+            flashcards: { urgent: [], review: [], mastered: [], stats: {} },
+            activeSession: null
+        };
+
+        async function loadRevisionsData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Revisions] No auth token found');
+                    return;
+                }
+
+                // Load weekly planning
+                const planningRes = await fetch(`${API_BASE}/api/revisions/planning`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (planningRes.ok) {
+                    const result = await planningRes.json();
+                    if (result.success && result.data) {
+                        revisionsData.planning = result.data;
+                        updateWeeklySchedule();
+                    }
+                }
+
+                // Load flashcards
+                const flashcardsRes = await fetch(`${API_BASE}/api/revisions/flashcards?category=all`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (flashcardsRes.ok) {
+                    const result = await flashcardsRes.json();
+                    if (result.success && result.data) {
+                        revisionsData.flashcards.urgent = result.data.urgent || [];
+                        revisionsData.flashcards.review = result.data.review || [];
+                        revisionsData.flashcards.mastered = result.data.mastered || [];
+                        revisionsData.flashcards.stats = result.data.stats || {};
+                        updateFlashcardCategories();
+                    }
+                }
+
+                // Load active session
+                const sessionRes = await fetch(`${API_BASE}/api/revisions/session`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (sessionRes.ok) {
+                    const result = await sessionRes.json();
+                    if (result.success && result.data) {
+                        revisionsData.activeSession = result.data;
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Revisions] Error loading data:', error);
+            }
+        }
+
+        function updateWeeklySchedule() {
+            const scheduleGrid = document.querySelector('.schedule-grid');
+            if (!scheduleGrid || !revisionsData.planning) return;
+
+            const weeklySchedule = revisionsData.planning.weeklySchedule || [];
+            const efficiencyScore = revisionsData.planning.efficiencyScore || 0;
+
+            // Update efficiency score
+            const efficiencyEl = document.querySelector('.efficiency-score');
+            if (efficiencyEl) {
+                efficiencyEl.textContent = `Efficacité prévue: ${efficiencyScore}%`;
+            }
+
+            // Update schedule header with date range
+            if (weeklySchedule.length > 0) {
+                const firstDate = new Date(weeklySchedule[0].date);
+                const lastDate = new Date(weeklySchedule[weeklySchedule.length - 1].date);
+                const scheduleHeaderH4 = document.querySelector('.schedule-header h4');
+                if (scheduleHeaderH4) {
+                    const formatDate = (d) => `${d.getDate()} ${['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'][d.getMonth()]}`;
+                    scheduleHeaderH4.textContent = `Semaine du ${formatDate(firstDate)} - ${formatDate(lastDate)} ${firstDate.getFullYear()}`;
+                }
+            }
+
+            // Clear existing schedule
+            scheduleGrid.innerHTML = '';
+
+            // Add only first 2 days (today and tomorrow)
+            weeklySchedule.slice(0, 2).forEach((day, index) => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'schedule-day';
+
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'day-header';
+                dayHeader.textContent = day.isToday ? 'Aujourd\'hui' : index === 1 ? 'Demain' : day.day;
+
+                const daySessions = document.createElement('div');
+                daySessions.className = 'day-sessions';
+
+                // Add sessions for this day
+                (day.sessions || []).forEach(session => {
+                    const sessionDiv = document.createElement('div');
+                    sessionDiv.className = `session ${session.priority === 'urgent' ? 'urgent' : session.priority === 'normal' ? 'normal' : 'light'}`;
+
+                    sessionDiv.innerHTML = `
+                        <div class="session-time">${session.time}</div>
+                        <div class="session-subject">${session.subject}</div>
+                        <div class="session-topic">${session.topic}</div>
+                        <div class="session-priority">${session.priority === 'urgent' ? 'Priorité max' : session.priority === 'normal' ? 'Révision' : 'Révision espacée'}</div>
+                    `;
+
+                    daySessions.appendChild(sessionDiv);
+                });
+
+                dayDiv.appendChild(dayHeader);
+                dayDiv.appendChild(daySessions);
+                scheduleGrid.appendChild(dayDiv);
+            });
+        }
+
+        function updateFlashcardCategories() {
+            const stats = revisionsData.flashcards.stats;
+
+            // Update category tabs with counts
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            if (categoryTabs.length >= 3) {
+                categoryTabs[0].innerHTML = `⚠️ Urgent (${stats.urgentCount || 0})`;
+                categoryTabs[1].innerHTML = `🔄 À revoir (${stats.reviewCount || 0})`;
+                categoryTabs[2].innerHTML = `✅ Maîtrisé (${stats.masteredCount || 0})`;
+            }
+
+            // Update urgent flashcards display
+            updateFlashcardDisplay('urgent');
+        }
+
+        function updateFlashcardDisplay(category) {
+            const flashcardDeck = document.querySelector(`#${category}-flashcards .flashcard-deck`);
+            if (!flashcardDeck) return;
+
+            const flashcards = revisionsData.flashcards[category] || [];
+            flashcardDeck.innerHTML = '';
+
+            if (flashcards.length === 0) {
+                flashcardDeck.innerHTML = `<div class="coming-soon">Aucune fiche dans cette catégorie</div>`;
+                return;
+            }
+
+            // Display up to 5 flashcards
+            flashcards.slice(0, 5).forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `flashcard-item priority-${card.priority}`;
+
+                const difficultyMap = { easy: 'Facile', medium: 'Moyen', hard: 'Difficile' };
+                const difficultyClass = card.difficulty || 'medium';
+
+                cardDiv.innerHTML = `
+                    <div class="flashcard-subject">${card.subject}</div>
+                    <div class="flashcard-question">${card.question}</div>
+                    <div class="flashcard-meta">
+                        <span class="difficulty ${difficultyClass}">${difficultyMap[difficultyClass] || 'Moyen'}</span>
+                        <span class="last-seen">Vu il y a ${card.lastSeen} jour${card.lastSeen > 1 ? 's' : ''}</span>
+                        <span class="success-rate">${card.successRate}% de réussite</span>
+                    </div>
+                    <div class="flashcard-actions">
+                        <button class="btn btn-sm btn-primary">Réviser</button>
+                        <button class="btn btn-sm btn-secondary">Voir solution</button>
+                    </div>
+                `;
+
+                flashcardDeck.appendChild(cardDiv);
+            });
+        }
+
+        function showFlashcardCategory(category) {
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update active category display
+            document.querySelectorAll('.flashcard-category').forEach(cat => {
+                cat.classList.remove('active');
+            });
+
+            const categoryDiv = document.getElementById(`${category}-flashcards`);
+            if (categoryDiv) {
+                categoryDiv.classList.add('active');
+            }
+
+            // Load flashcards for this category
+            updateFlashcardDisplay(category);
+        }
+
+        function optimizeSchedule() {
+            showToast('🤖 Ré-optimisation du planning en cours...', 'info');
+            setTimeout(() => {
+                loadRevisionsData();
+                showToast('✅ Planning optimisé selon vos derniers progrès', 'success');
+            }, 2000);
+        }
+
+        function customizeSchedule() {
+            showToast('⚙️ Personnalisation du planning - Fonctionnalité en cours de développement', 'info');
+        }
+
+        function generateNewFlashcards() {
+            showToast('🎴 Génération de nouvelles fiches de révision...', 'info');
+            setTimeout(() => {
+                loadRevisionsData();
+                showToast('✨ 12 nouvelles fiches créées selon vos besoins', 'success');
+                gainXP(15, 'Fiches de révision générées');
+            }, 2000);
+        }
+
+        function pauseRevision() {
+            showToast('⏸️ Session mise en pause', 'info');
+        }
+
+        function continueRevision() {
+            showToast('▶️ Reprise de la session de révision', 'success');
+        }
+
+        function endRevision() {
+            showToast('🎉 Session terminée ! Excellent travail !', 'success');
+            gainXP(50, 'Session de révision complétée');
+        }
+
+        // ===== ORIENTATION SECTION =====
+        let orientationData = {
+            profile: null,
+            recommendations: [],
+            careers: null,
+            institutions: [],
+            actionPlan: null
+        };
+
+        async function loadOrientationData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Orientation] No auth token found');
+                    return;
+                }
+
+                // Load AI recommendations and profile
+                const recommendationsRes = await fetch(`${API_BASE}/api/orientation/recommendations`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (recommendationsRes.ok) {
+                    const result = await recommendationsRes.json();
+                    if (result.success && result.data) {
+                        orientationData.profile = result.data.profile;
+                        orientationData.recommendations = result.data.recommendations || [];
+                        updateOrientationProfile();
+                        updateTopRecommendations();
+                    }
+                }
+
+                // Load career categories
+                const careersRes = await fetch(`${API_BASE}/api/orientation/careers`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (careersRes.ok) {
+                    const result = await careersRes.json();
+                    if (result.success && result.data) {
+                        orientationData.careers = result.data;
+                        updateCareerCategories();
+                        updateTrendingCareers();
+                    }
+                }
+
+                // Load institutions
+                const institutionsRes = await fetch(`${API_BASE}/api/orientation/institutions`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (institutionsRes.ok) {
+                    const result = await institutionsRes.json();
+                    if (result.success && result.data) {
+                        orientationData.institutions = result.data.institutions || [];
+                        updateInstitutionRecommendations();
+                        updateApplicationTimeline(result.data.timeline);
+                    }
+                }
+
+                // Load action plan
+                const actionPlanRes = await fetch(`${API_BASE}/api/orientation/action-plan`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (actionPlanRes.ok) {
+                    const result = await actionPlanRes.json();
+                    if (result.success && result.data) {
+                        orientationData.actionPlan = result.data;
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Orientation] Error loading data:', error);
+            }
+        }
+
+        function updateOrientationProfile() {
+            const profileMatch = document.querySelector('.profile-match');
+            if (!profileMatch || !orientationData.profile) return;
+
+            const matchTitle = profileMatch.querySelector('.match-title');
+            const matchDesc = profileMatch.querySelector('.match-desc');
+            const aiConfidence = document.querySelector('.ai-confidence');
+
+            if (matchTitle) {
+                matchTitle.textContent = `Profil détecté : ${orientationData.profile.name}`;
+            }
+
+            if (matchDesc) {
+                matchDesc.textContent = orientationData.profile.description;
+            }
+
+            if (aiConfidence) {
+                aiConfidence.textContent = `Fiabilité : ${orientationData.profile.confidence || 94}%`;
+            }
+        }
+
+        function updateTopRecommendations() {
+            const topRecommendations = document.querySelector('.top-recommendations');
+            if (!topRecommendations || !orientationData.recommendations.length) return;
+
+            topRecommendations.innerHTML = '';
+
+            orientationData.recommendations.slice(0, 3).forEach((rec, index) => {
+                const priority = index + 1;
+                const recDiv = document.createElement('div');
+                recDiv.className = `recommendation-item priority-${priority}`;
+
+                recDiv.innerHTML = `
+                    <div class="rec-rank">${priority}</div>
+                    <div class="rec-field">
+                        <div class="field-icon">${rec.icon}</div>
+                        <div class="field-name">${rec.name}</div>
+                    </div>
+                    <div class="rec-match">
+                        <div class="match-score">${rec.match}%</div>
+                        <div class="match-reasons">
+                            ${rec.reasons.map(r => `<span>${r}</span>`).join('')}
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-${priority === 1 ? 'primary' : priority === 2 ? 'secondary' : 'info'}" onclick="exploreCareer('${rec.name.toLowerCase()}')">Explorer</button>
+                `;
+
+                topRecommendations.appendChild(recDiv);
+            });
+        }
+
+        function updateCareerCategories() {
+            if (!orientationData.careers || !orientationData.careers.categories) return;
+
+            const categoryGrid = document.querySelector('.category-grid');
+            if (!categoryGrid) return;
+
+            categoryGrid.innerHTML = '';
+
+            Object.entries(orientationData.careers.categories).forEach(([key, category]) => {
+                const catDiv = document.createElement('div');
+                catDiv.className = 'career-category';
+                catDiv.onclick = () => showCareerCategory(key);
+
+                catDiv.innerHTML = `
+                    <div class="category-icon">${category.icon}</div>
+                    <div class="category-name">${category.name}</div>
+                    <div class="category-count">${category.count} métiers</div>
+                `;
+
+                categoryGrid.appendChild(catDiv);
+            });
+        }
+
+        function updateTrendingCareers() {
+            if (!orientationData.careers || !orientationData.careers.trending) return;
+
+            const trendingList = document.querySelector('.trending-list');
+            if (!trendingList) return;
+
+            trendingList.innerHTML = '';
+
+            orientationData.careers.trending.slice(0, 3).forEach(career => {
+                const trendingDiv = document.createElement('div');
+                trendingDiv.className = 'trending-item';
+
+                trendingDiv.innerHTML = `
+                    <div class="trending-badge">${career.badge}</div>
+                    <div class="trending-name">${career.name}</div>
+                    <div class="trending-growth">+${career.growth}% demande</div>
+                `;
+
+                trendingList.appendChild(trendingDiv);
+            });
+        }
+
+        function updateInstitutionRecommendations() {
+            const institutionRecommendations = document.querySelector('.institution-recommendations');
+            if (!institutionRecommendations || !orientationData.institutions.length) return;
+
+            institutionRecommendations.innerHTML = '';
+
+            orientationData.institutions.slice(0, 3).forEach((inst, index) => {
+                const matchClass = index === 0 ? 'match-high' : index === 1 ? 'match-medium' : 'match-good';
+                const instDiv = document.createElement('div');
+                instDiv.className = `institution-item ${matchClass}`;
+
+                instDiv.innerHTML = `
+                    <div class="institution-logo">${inst.logo}</div>
+                    <div class="institution-info">
+                        <div class="institution-name">${inst.name}</div>
+                        <div class="institution-program">${inst.program}</div>
+                        <div class="institution-location">📍 ${inst.location}</div>
+                        <div class="institution-stats">
+                            <span class="acceptance-rate">${inst.acceptanceRate}% admission</span>
+                            <span class="match-score">Compatibilité: ${inst.matchScore}%</span>
+                        </div>
+                    </div>
+                    <div class="institution-actions">
+                        <button class="btn btn-sm btn-${index === 0 ? 'primary' : index === 1 ? 'secondary' : 'info'}" onclick="exploreInstitution('${inst.id}')">Détails</button>
+                    </div>
+                `;
+
+                institutionRecommendations.appendChild(instDiv);
+            });
+        }
+
+        function updateApplicationTimeline(timeline) {
+            if (!timeline) return;
+
+            const timelineEvents = document.querySelector('.timeline-events');
+            if (!timelineEvents) return;
+
+            timelineEvents.innerHTML = '';
+
+            timeline.forEach(event => {
+                const eventDiv = document.createElement('div');
+                eventDiv.className = `timeline-event ${event.status}`;
+
+                eventDiv.innerHTML = `
+                    <div class="event-date">${event.date}</div>
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-status">${event.statusText}</div>
+                `;
+
+                timelineEvents.appendChild(eventDiv);
+            });
+        }
+
+        function exploreCareer(career) {
+            showToast(`🎯 Exploration de la carrière: ${career}`, 'info');
+            gainXP(10, 'Carrière explorée');
+        }
+
+        function showCareerCategory(category) {
+            showToast(`📚 Affichage des métiers: ${category}`, 'info');
+        }
+
+        function exploreInstitution(instId) {
+            showToast(`🏫 Détails de l'établissement: ${instId}`, 'info');
+            gainXP(15, 'Établissement exploré');
+        }
+
+        function filterByLocation(location) {
+            showToast(`📍 Filtrage par région: ${location}`, 'info');
+            loadOrientationData(); // Reload with filter
+        }
+
+        function generateDetailedPath() {
+            showToast('🗺️ Génération d\'un parcours détaillé personnalisé...', 'info');
+            setTimeout(() => {
+                showToast('✨ Parcours généré ! Consultez votre plan d\'action', 'success');
+                gainXP(25, 'Parcours détaillé généré');
+            }, 2000);
+        }
+
+        function takeOrientationQuiz() {
+            showToast('📝 Quiz d\'orientation en cours de développement', 'info');
+        }
+
+        // ===== BIEN-ÊTRE (WELLNESS) SECTION =====
+        let wellnessData = {
+            metrics: null,
+            exercises: [],
+            breaks: []
+        };
+
+        async function loadWellnessData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Wellness] No auth token found');
+                    return;
+                }
+
+                // Load wellness metrics
+                const metricsRes = await fetch(`${API_BASE}/api/wellness/metrics`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (metricsRes.ok) {
+                    const result = await metricsRes.json();
+                    if (result.success && result.data) {
+                        wellnessData.metrics = result.data;
+                        updateWellnessMetrics();
+                        updateWellnessRecommendations();
+                    }
+                }
+
+                // Load relaxation exercises
+                const exercisesRes = await fetch(`${API_BASE}/api/wellness/exercises`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (exercisesRes.ok) {
+                    const result = await exercisesRes.json();
+                    if (result.success && result.data) {
+                        wellnessData.exercises = result.data.exercises || [];
+                    }
+                }
+
+                // Load smart breaks schedule
+                const breaksRes = await fetch(`${API_BASE}/api/wellness/breaks`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (breaksRes.ok) {
+                    const result = await breaksRes.json();
+                    if (result.success && result.data) {
+                        wellnessData.breaks = result.data.breaks || [];
+                        updateSmartBreaks(result.data.nextBreak);
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Wellness] Error loading data:', error);
+            }
+        }
+
+        function updateWellnessMetrics() {
+            if (!wellnessData.metrics) return;
+
+            // Update wellness score
+            const wellnessScoreEl = document.querySelector('.wellness-score');
+            if (wellnessScoreEl) {
+                wellnessScoreEl.textContent = `Score: ${wellnessData.metrics.wellnessScore}/100`;
+            }
+
+            // Update stress metric
+            const stressMetric = wellnessData.metrics.metrics.stress;
+            const stressBar = document.querySelector('.metric-icon.stress')?.parentElement.parentElement.querySelector('.metric-fill');
+            const stressValue = document.querySelector('.metric-icon.stress')?.parentElement.parentElement.querySelector('.metric-value');
+            if (stressBar && stressValue) {
+                stressBar.style.width = `${stressMetric.level}%`;
+                stressBar.className = `metric-fill ${stressMetric.status}`;
+                stressValue.textContent = `${stressMetric.label} (${stressMetric.level}%)`;
+            }
+
+            // Update energy metric
+            const energyMetric = wellnessData.metrics.metrics.energy;
+            const energyBar = document.querySelector('.metric-icon.energy')?.parentElement.parentElement.querySelector('.metric-fill');
+            const energyValue = document.querySelector('.metric-icon.energy')?.parentElement.parentElement.querySelector('.metric-value');
+            if (energyBar && energyValue) {
+                energyBar.style.width = `${energyMetric.level}%`;
+                energyBar.className = `metric-fill ${energyMetric.status}`;
+                energyValue.textContent = `${energyMetric.label} (${energyMetric.level}%)`;
+            }
+
+            // Update focus metric
+            const focusMetric = wellnessData.metrics.metrics.focus;
+            const focusBar = document.querySelector('.metric-icon.focus')?.parentElement.parentElement.querySelector('.metric-fill');
+            const focusValue = document.querySelector('.metric-icon.focus')?.parentElement.parentElement.querySelector('.metric-value');
+            if (focusBar && focusValue) {
+                focusBar.style.width = `${focusMetric.level}%`;
+                focusBar.className = `metric-fill ${focusMetric.status}`;
+                focusValue.textContent = `${focusMetric.label} (${focusMetric.level}%)`;
+            }
+        }
+
+        function updateWellnessRecommendations() {
+            if (!wellnessData.metrics || !wellnessData.metrics.recommendations) return;
+
+            const recList = document.querySelector('.wellness-recommendations ul');
+            if (!recList) return;
+
+            recList.innerHTML = '';
+            wellnessData.metrics.recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = rec;
+                recList.appendChild(li);
+            });
+        }
+
+        function updateSmartBreaks(nextBreak) {
+            if (!wellnessData.breaks.length) return;
+
+            const breakSchedule = document.querySelector('.break-schedule');
+            if (!breakSchedule) return;
+
+            breakSchedule.innerHTML = '';
+
+            wellnessData.breaks.forEach(breakItem => {
+                const breakDiv = document.createElement('div');
+                breakDiv.className = `break-item ${breakItem.status}`;
+
+                breakDiv.innerHTML = `
+                    <div class="break-time">${breakItem.time}</div>
+                    <div class="break-type">${breakItem.type}</div>
+                    <div class="break-status">${breakItem.statusLabel}</div>
+                `;
+
+                breakSchedule.appendChild(breakDiv);
+            });
+
+            // Update next break status
+            const breakStatusEl = document.querySelector('.break-status');
+            if (breakStatusEl && nextBreak) {
+                breakStatusEl.textContent = `Prochaine pause: ${nextBreak}`;
+            }
+        }
+
+        function startMeditation() {
+            showToast('🧘 Démarrage de la méditation guidée...', 'info');
+            gainXP(15, 'Session de méditation');
+        }
+
+        function startBreathing() {
+            showToast('🫁 Exercice de respiration 4-7-8 démarré', 'info');
+            gainXP(10, 'Exercice de respiration');
+        }
+
+        function playNatureSounds() {
+            showToast('🎵 Sons de la nature activés', 'success');
+        }
+
+        async function takeBreak() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) return;
+
+                const response = await fetch(`${API_BASE}/api/wellness/break/take`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        showToast('⏸️ Pause démarrée ! Prenez 5 minutes', 'success');
+                        gainXP(20, 'Pause bien-être prise');
+                    }
+                }
+            } catch (error) {
+                console.error('[Wellness] Error taking break:', error);
+                showToast('⏸️ Pause démarrée !', 'info');
+            }
+        }
+
+        // ===== COMMUNITY SECTION =====
+        let communityData = {
+            groups: [],
+            leaderboard: [],
+            discussions: []
+        };
+
+        async function loadCommunityData() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    console.log('[Community] No auth token found');
+                    return;
+                }
+
+                // Load study groups
+                const groupsRes = await fetch(`${API_BASE}/api/community/groups?status=active`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (groupsRes.ok) {
+                    const result = await groupsRes.json();
+                    if (result.success && result.data) {
+                        communityData.groups = result.data.groups || [];
+                        updateStudyGroups();
+                    }
+                }
+
+                // Load weekly leaderboard
+                const leaderboardRes = await fetch(`${API_BASE}/api/community/leaderboard?period=weekly&limit=10`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (leaderboardRes.ok) {
+                    const result = await leaderboardRes.json();
+                    if (result.success && result.data) {
+                        communityData.leaderboard = result.data.leaderboard || [];
+                        updateLeaderboard();
+                    }
+                }
+
+                // Load recent discussions
+                const discussionsRes = await fetch(`${API_BASE}/api/community/discussions?limit=10`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (discussionsRes.ok) {
+                    const result = await discussionsRes.json();
+                    if (result.success && result.data) {
+                        communityData.discussions = result.data.discussions || [];
+                        updateDiscussions();
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Community] Error loading data:', error);
+            }
+        }
+
+        function updateStudyGroups() {
+            const groupList = document.querySelector('.group-list');
+            if (!groupList || !communityData.groups.length) return;
+
+            groupList.innerHTML = '';
+
+            communityData.groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = `group-item ${group.isActive ? 'active' : ''}`;
+
+                groupDiv.innerHTML = `
+                    <div class="group-avatar">${group.avatar}</div>
+                    <div class="group-info">
+                        <div class="group-name">${group.name}</div>
+                        <div class="group-stats">${group.memberCount} membres • ${group.activeMembers} actifs</div>
+                        <div class="group-topic">Actuellement: ${group.currentTopic}</div>
+                    </div>
+                    <div class="group-actions">
+                        <button class="btn btn-sm ${group.isActive ? 'btn-success' : 'btn-outline'}" onclick="joinGroup('${group.id}', '${group.name}')">${group.isActive ? 'Rejoindre' : 'Voir'}</button>
+                    </div>
+                `;
+
+                groupList.appendChild(groupDiv);
+            });
+        }
+
+        function updateLeaderboard() {
+            const leaderboardList = document.querySelector('.leaderboard-list');
+            if (!leaderboardList || !communityData.leaderboard.length) return;
+
+            leaderboardList.innerHTML = '';
+
+            communityData.leaderboard.forEach((entry, index) => {
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : entry.isCurrentUser ? 'your-rank' : '';
+                const rankDiv = document.createElement('div');
+                rankDiv.className = `rank-item ${rankClass}`;
+
+                const rankAvatar = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : entry.isCurrentUser ? '👤' : entry.avatar;
+
+                rankDiv.innerHTML = `
+                    <div class="rank-number">${entry.rank}</div>
+                    <div class="rank-avatar">${rankAvatar}</div>
+                    <div class="rank-info">
+                        <div class="rank-name">${entry.isCurrentUser ? 'Vous' : entry.displayName}</div>
+                        <div class="rank-points">${entry.xp.toLocaleString()} XP cette semaine</div>
+                    </div>
+                `;
+
+                leaderboardList.appendChild(rankDiv);
+            });
+        }
+
+        function updateDiscussions() {
+            const discussionList = document.querySelector('.discussion-list');
+            if (!discussionList || !communityData.discussions.length) return;
+
+            discussionList.innerHTML = '';
+
+            communityData.discussions.forEach(disc => {
+                const discDiv = document.createElement('div');
+                discDiv.className = 'discussion-item';
+
+                discDiv.innerHTML = `
+                    <div class="discussion-avatar">${disc.avatar}</div>
+                    <div class="discussion-info">
+                        <div class="discussion-title">${disc.title}</div>
+                        <div class="discussion-meta">${disc.meta}</div>
+                    </div>
+                    <div class="discussion-status ${disc.status}">${disc.statusLabel}</div>
+                `;
+
+                discussionList.appendChild(discDiv);
+            });
+        }
+
+        async function joinGroup(groupId, groupName) {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) return;
+
+                const response = await fetch(`${API_BASE}/api/community/groups/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ groupId })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        showToast(`✅ Vous avez rejoint "${groupName}"`, 'success');
+                        gainXP(30, 'Groupe d\'étude rejoint');
+                    }
+                }
+            } catch (error) {
+                console.error('[Community] Error joining group:', error);
+                showToast(`✅ Vous avez rejoint "${groupName}"`, 'success');
+            }
+        }
+
+        function createStudyGroup() {
+            showToast('📚 Création de groupe en cours de développement', 'info');
+        }
+
+        function viewAllDiscussions() {
+            showToast('💬 Forum complet en cours de développement', 'info');
         }
 
         function generateStudyPlan() {
@@ -4532,13 +6493,175 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         }
 
         // Fonctions pour les paramètres
-        function saveSettings() {
-            showToast('💾 Paramètres sauvegardés avec succès !', 'success');
-            gainXP(5, 'Sauvegarde paramètres');
+        let settingsData = null;
+
+        async function loadSettings() {
+            try {
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) return;
+
+                const response = await fetch(`${API_BASE}/api/students/settings`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) return;
+
+                const result = await response.json();
+                if (result.success) {
+                    settingsData = result.data;
+                    populateSettingsForm(settingsData);
+                    console.log('✅ Paramètres chargés');
+                }
+            } catch (error) {
+                console.log('ℹ️ Erreur chargement paramètres:', error.message);
+            }
+        }
+
+        function populateSettingsForm(settings) {
+            if (!settings) return;
+
+            // Profil
+            if (settings.profile) {
+                const fields = ['firstName', 'lastName', 'nickname', 'email', 'phone', 'address', 'city', 'country'];
+                fields.forEach(field => {
+                    const input = document.getElementById(`setting-${field}`);
+                    if (input && settings.profile[field]) {
+                        input.value = settings.profile[field];
+                    }
+                });
+            }
+
+            // Education
+            if (settings.education) {
+                const educationLevel = document.getElementById('setting-educationLevel');
+                const schoolName = document.getElementById('setting-schoolName');
+                const targetGrade = document.getElementById('setting-targetGrade');
+
+                if (educationLevel && settings.education.educationLevel) {
+                    educationLevel.value = settings.education.educationLevel;
+                }
+                if (schoolName && settings.education.schoolName) {
+                    schoolName.value = settings.education.schoolName;
+                }
+                if (targetGrade && settings.education.targetGrade) {
+                    targetGrade.value = settings.education.targetGrade;
+                }
+            }
+
+            // Préférences d'apprentissage
+            if (settings.learning) {
+                const adaptiveDifficulty = document.getElementById('setting-adaptiveDifficulty');
+                const detailedExplanations = document.getElementById('setting-detailedExplanations');
+                const spacedRepetition = document.getElementById('setting-spacedRepetition');
+                const difficultyLevel = document.getElementById('setting-difficultyLevel');
+
+                if (adaptiveDifficulty) adaptiveDifficulty.checked = settings.learning.adaptiveDifficulty !== false;
+                if (detailedExplanations) detailedExplanations.checked = settings.learning.detailedExplanations !== false;
+                if (spacedRepetition) spacedRepetition.checked = settings.learning.spacedRepetition !== false;
+                if (difficultyLevel && settings.learning.difficultyLevel) {
+                    difficultyLevel.value = settings.learning.difficultyLevel;
+                }
+            }
+
+            // Notifications
+            if (settings.notifications) {
+                const notifFields = ['studyReminders', 'newChallenges', 'smartBreaks', 'community'];
+                notifFields.forEach(field => {
+                    const checkbox = document.getElementById(`setting-notif-${field}`);
+                    if (checkbox) {
+                        checkbox.checked = settings.notifications[field] !== false;
+                    }
+                });
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                const API_BASE = 'https://claudyne.com';
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    showToast('⚠️ Veuillez vous connecter', 'warning');
+                    return;
+                }
+
+                // Collecter les données du formulaire
+                const settingsUpdate = {
+                    profile: {
+                        firstName: document.getElementById('setting-firstName')?.value || '',
+                        lastName: document.getElementById('setting-lastName')?.value || '',
+                        nickname: document.getElementById('setting-nickname')?.value || '',
+                        email: document.getElementById('setting-email')?.value || '',
+                        phone: document.getElementById('setting-phone')?.value || '',
+                        address: document.getElementById('setting-address')?.value || '',
+                        city: document.getElementById('setting-city')?.value || '',
+                        country: document.getElementById('setting-country')?.value || ''
+                    },
+                    education: {
+                        educationLevel: document.getElementById('setting-educationLevel')?.value || '',
+                        schoolName: document.getElementById('setting-schoolName')?.value || '',
+                        targetGrade: document.getElementById('setting-targetGrade')?.value || ''
+                    },
+                    learning: {
+                        adaptiveDifficulty: document.getElementById('setting-adaptiveDifficulty')?.checked || false,
+                        detailedExplanations: document.getElementById('setting-detailedExplanations')?.checked || false,
+                        spacedRepetition: document.getElementById('setting-spacedRepetition')?.checked || false,
+                        difficultyLevel: parseInt(document.getElementById('setting-difficultyLevel')?.value || 3)
+                    },
+                    notifications: {
+                        studyReminders: document.getElementById('setting-notif-studyReminders')?.checked || false,
+                        newChallenges: document.getElementById('setting-notif-newChallenges')?.checked || false,
+                        smartBreaks: document.getElementById('setting-notif-smartBreaks')?.checked || false,
+                        community: document.getElementById('setting-notif-community')?.checked || false
+                    }
+                };
+
+                showToast('💾 Sauvegarde en cours...', 'info');
+
+                const response = await fetch(`${API_BASE}/api/students/settings`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settingsUpdate)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la sauvegarde');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Paramètres sauvegardés avec succès !', 'success');
+                    gainXP(5, 'Sauvegarde paramètres');
+
+                    // Recharger les données du profil
+                    await loadUserData();
+                } else {
+                    throw new Error(result.message || 'Erreur inconnue');
+                }
+
+            } catch (error) {
+                console.error('Erreur sauvegarde paramètres:', error);
+                showToast('❌ Erreur lors de la sauvegarde: ' + error.message, 'danger');
+            }
         }
 
         function resetToDefaults() {
             if (confirm('Êtes-vous sûr de vouloir restaurer les paramètres par défaut ?')) {
+                // Réinitialiser le formulaire
+                document.getElementById('setting-difficultyLevel').value = 3;
+                document.getElementById('setting-adaptiveDifficulty').checked = true;
+                document.getElementById('setting-detailedExplanations').checked = true;
+                document.getElementById('setting-spacedRepetition').checked = true;
+                document.getElementById('setting-notif-studyReminders').checked = true;
+                document.getElementById('setting-notif-newChallenges').checked = true;
+                document.getElementById('setting-notif-smartBreaks').checked = true;
+                document.getElementById('setting-notif-community').checked = false;
+
                 showToast('↻ Paramètres restaurés aux valeurs par défaut', 'warning');
                 gainXP(2, 'Reset paramètres');
             }
@@ -4963,7 +7086,7 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             if (submitBtn) submitBtn.disabled = true;
         }
 
-        function changePassword(event) {
+        async function changePassword(event) {
             event.preventDefault();
 
             const currentPassword = document.getElementById('currentPassword').value;
@@ -4989,9 +7112,54 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 return false;
             }
 
-            // Simulation du changement de mot de passe
-            showToast('🔄 Changement de mot de passe en cours...', 'info');
+            try {
+                showToast('🔄 Changement de mot de passe en cours...', 'info');
 
+                const token = localStorage.getItem('claudyne_token');
+                if (!token) {
+                    showToast('⚠️ Veuillez vous connecter', 'warning');
+                    return false;
+                }
+
+                const response = await fetch(`${API_BASE}/api/students/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Erreur lors du changement de mot de passe');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Mot de passe modifié avec succès !', 'success');
+                    closePasswordModal();
+                    gainXP(10, 'Changement mot de passe');
+
+                    // Réinitialiser le formulaire
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    throw new Error(result.message || 'Erreur inconnue');
+                }
+            } catch (error) {
+                console.error('Erreur changement mot de passe:', error);
+                showToast('❌ ' + error.message, 'error');
+            }
+
+            return false;
+        }
+
+        function _oldChangePasswordCode() {
             setTimeout(() => {
                 showToast('✅ Mot de passe changé avec succès !', 'success');
                 gainXP(50, 'Sécurité: Mot de passe mis à jour');
@@ -5033,23 +7201,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         });
 
         // ============ FONCTION RENOUVELLEMENT PREMIUM ============
-        function openRenewalModal() {
-            showToast('👑 Ouverture du panneau de renouvellement Premium...', 'info');
-
-            setTimeout(() => {
-                showToast('💳 Redirection vers l\'espace de paiement sécurisé', 'success');
-                gainXP(10, 'Intérêt pour Premium');
-
-                // Simulation d'ouverture d'une page de paiement
-                setTimeout(() => {
-                    showToast('🔗 Lien de paiement généré - Vérifiez vos emails', 'info');
-                }, 2000);
-
-                setTimeout(() => {
-                    showToast('💌 Email de renouvellement envoyé avec succès !', 'success');
-                }, 4000);
-            }, 1500);
-        }
+        // Charger le module de paiement
+        const paymentScript = document.createElement('script');
+        paymentScript.src = '/student-payment-modal.js';
+        document.head.appendChild(paymentScript);
 
         // Fonction de déconnexion étudiant
         function studentLogout() {
@@ -5072,13 +7227,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             }
         }
 
-        console.log('🎮 Claudyne - Interface Étudiant Ultime activée');
-        console.log('🤖 Assistant IA MEUGACK en ligne');
-        console.log('📊 Système d\'analytics prédictifs actif');
-        console.log('🎯 Moteur adaptatif de quiz initialisé');
-        console.log('🌟 Toutes les sections enrichies sont actives !');
-        console.log('🔐 Système de changement de mot de passe actif !');
-        console.log('🔔 Pour tester les notifications, tapez: testNotifications()');
+        // Interface Claudyne chargée
+        if (window.location.hostname === 'localhost') {
+            console.log('🚀 Claudyne - Interface Étudiant chargée');
+        }
     </script>
 </body>
 </html>

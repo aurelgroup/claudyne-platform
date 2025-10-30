@@ -100,7 +100,7 @@ async function testConnection() {
 
 // Fonction pour initialiser les modèles
 function initializeModels() {
-  // Import des modèles
+  // Import des modèles existants
   const User = require('../models/User')(sequelize);
   const Family = require('../models/Family')(sequelize);
   const Student = require('../models/Student')(sequelize);
@@ -115,6 +115,20 @@ function initializeModels() {
   const Notification = require('../models/Notification')(sequelize);
   const AdminSetting = require('../models/AdminSetting')(sequelize);
   const EmailTemplate = require('../models/EmailTemplate')(sequelize);
+
+  // Import des nouveaux modèles
+  const StudyGroup = require('../models/StudyGroup')(sequelize);
+  const StudyGroupMember = require('../models/StudyGroupMember')(sequelize);
+  const ForumCategory = require('../models/ForumCategory')(sequelize);
+  const ForumDiscussion = require('../models/ForumDiscussion')(sequelize);
+  const ForumPost = require('../models/ForumPost')(sequelize);
+  const WellnessExercise = require('../models/WellnessExercise')(sequelize);
+  const CareerProfile = require('../models/CareerProfile')(sequelize);
+  const Career = require('../models/Career')(sequelize);
+  const Institution = require('../models/Institution')(sequelize);
+  const ApplicationDeadline = require('../models/ApplicationDeadline')(sequelize);
+  const BattleParticipation = require('../models/BattleParticipation')(sequelize);
+  const RevisionSession = require('../models/RevisionSession')(sequelize);
 
   // Définition des associations
   defineAssociations({
@@ -131,7 +145,19 @@ function initializeModels() {
     ChatMessage,
     Notification,
     AdminSetting,
-    EmailTemplate
+    EmailTemplate,
+    StudyGroup,
+    StudyGroupMember,
+    ForumCategory,
+    ForumDiscussion,
+    ForumPost,
+    WellnessExercise,
+    CareerProfile,
+    Career,
+    Institution,
+    ApplicationDeadline,
+    BattleParticipation,
+    RevisionSession
   });
 
   return {
@@ -149,6 +175,18 @@ function initializeModels() {
     Notification,
     AdminSetting,
     EmailTemplate,
+    StudyGroup,
+    StudyGroupMember,
+    ForumCategory,
+    ForumDiscussion,
+    ForumPost,
+    WellnessExercise,
+    CareerProfile,
+    Career,
+    Institution,
+    ApplicationDeadline,
+    BattleParticipation,
+    RevisionSession,
     sequelize
   };
 }

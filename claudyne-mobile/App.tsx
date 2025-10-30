@@ -31,13 +31,14 @@ export default function App() {
   const testParentLogin = async () => {
     Alert.alert('🧪 Test Parent Login', 'Test du compte parent en cours...');
 
+    // ⚠️ DEVELOPMENT ONLY - Credentials de test
     try {
       const response = await fetch('https://claudyne.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: 'parent@claudyne.com',
-          password: 'parent123',
+          password: 'parent123', // TEST ONLY
           clientType: 'mobile'
         })
       });
@@ -73,11 +74,13 @@ export default function App() {
     });
 
     // Test 2: Comptes test prédéfinis
+    // ⚠️ DEVELOPMENT ONLY - Ces credentials sont pour TEST uniquement
+    // NE JAMAIS utiliser en production - Créer de vrais comptes via l'API
     const testAccounts = [
       { email: 'test@claudyne.com', password: 'test123', role: 'Student' },
       { email: 'parent@claudyne.com', password: 'parent123', role: 'Parent' },
-      { email: 'admin@claudyne.com', password: 'admin123', role: 'Admin' },
       { email: 'prof@claudyne.com', password: 'prof123', role: 'Teacher' }
+      // Note: Compte admin retiré pour raisons de sécurité
     ];
 
     for (const account of testAccounts) {

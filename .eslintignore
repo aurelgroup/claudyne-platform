@@ -1,0 +1,69 @@
+# Dépendances
+node_modules/
+**/node_modules/
+
+# Build et dist
+dist/
+build/
+.next/
+out/
+
+# Mobile
+claudyne-mobile/.expo/
+claudyne-mobile/android/
+claudyne-mobile/ios/
+*.apk
+*.ipa
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Cache
+.cache/
+.eslintcache
+.npm/
+.yarn/
+
+# Fichiers temporaires
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Fichiers minifiés
+*.min.js
+*.bundle.js
+
+# Documentation générée
+docs/generated/
+
+# Fichiers de configuration système
+*.swp
+*.swo
+*~
+
+# Base de données
+*.sqlite
+*.db
+
+# Secrets
+.env.local
+.env.*.local
+secrets/
+
+# Anciens fichiers
+*.backup
+*.old
+*.bak
+
+# Fichiers spécifiques à ignorer
+admin-interface.html
+student-interface-modern.html

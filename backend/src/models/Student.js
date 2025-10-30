@@ -82,12 +82,12 @@ module.exports = (sequelize) => {
       allowNull: true,
       comment: 'Nom de l\'établissement scolaire'
     },
-    
+
     schoolType: {
       type: DataTypes.ENUM('PUBLIC', 'PRIVE_LAIQUE', 'PRIVE_CONFESSIONNEL', 'INTERNATIONAL', 'DOMICILE'),
       allowNull: true
     },
-    
+
     academicYear: {
       type: DataTypes.STRING,
       allowNull: true,

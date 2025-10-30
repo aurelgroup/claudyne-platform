@@ -66,7 +66,7 @@ interface RegisterData {
   acceptTerms: boolean;
 }
 
-interface AuthContextType extends AuthState {
+export interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
@@ -154,7 +154,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 }
 
 // Context
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Provider Props
 interface AuthProviderProps {
@@ -177,11 +177,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('claudyne_token', response.data.tokens.accessToken);
       localStorage.setItem('claudyne_refresh_token', response.data.tokens.refreshToken);
       
-      dispatch({ 
-        type: 'AUTH_SUCCESS', 
+      dispatch({
+        type: 'AUTH_SUCCESS',
         payload: {
-          user: response.data.user,
-          family: response.data.family
+          user: response.data.user as User,
+          family: response.data.family as Family
         }
       });
       
@@ -213,11 +213,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('claudyne_token', response.data.tokens.accessToken);
       localStorage.setItem('claudyne_refresh_token', response.data.tokens.refreshToken);
       
-      dispatch({ 
-        type: 'AUTH_SUCCESS', 
+      dispatch({
+        type: 'AUTH_SUCCESS',
         payload: {
-          user: response.data.user,
-          family: response.data.family
+          user: response.data.user as User,
+          family: response.data.family as Family
         }
       });
       

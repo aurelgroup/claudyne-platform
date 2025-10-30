@@ -1,0 +1,9 @@
+{
+  "accountType": "PARENT",
+  "email": "test_validation_final@claudyne.test",
+  "password": "Test123456!",
+  "firstName": "Test",
+  "lastName": "Validation",
+  "familyName": "Famille Test Validation",
+  "acceptTerms": true
+}

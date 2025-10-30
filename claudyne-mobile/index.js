@@ -1,5 +1,5 @@
-import { registerRootComponent } from 'expo';
-import App from './App';
 
-// This is the native entry point for Expo Go
+import { registerRootComponent } from 'expo';
+import App from './App.tsx';
+
 registerRootComponent(App);

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 Claudyne Mobile - Démo Interface Révolutionnaire</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #020205;
+            color: white;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: rotate 10s linear infinite;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px #00FFC2;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #FF57E3;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        /* BOUTON CONNEXION QUANTIQUE */
+        .quantum-button {
+            position: relative;
+            width: 320px;
+            height: 80px;
+            margin: 40px auto;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #00FFC2, #FF57E3, #FFC947, #00FFC2);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 255, 194, 0.5);
+        }
+
+        .quantum-inner {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            background: rgba(2, 2, 5, 0.9);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .quantum-text {
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: white;
+            text-shadow: 0 0 10px #00FFC2;
+        }
+
+        .quantum-subtext {
+            font-size: 12px;
+            color: #FF57E3;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        .binary-code {
+            font-size: 8px;
+            color: #00FFC2;
+            font-family: monospace;
+            margin-top: 5px;
+            opacity: 0.6;
+        }
+
+        /* PARTICULES FLOTTANTES */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00FFC2;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .particle1 { top: 10px; left: 20px; animation-delay: 0s; }
+        .particle2 { bottom: 15px; right: 30px; background: #FF57E3; animation-delay: 1s; }
+        .particle3 { top: 50%; left: 10px; background: #FFC947; animation-delay: 2s; }
+
+        /* BOUTON RÉCUPÉRATION BIOMÉTRIQUE */
+        .biometric-button {
+            position: relative;
+            width: 280px;
+            height: 60px;
+            margin: 20px auto;
+            border-radius: 20px;
+            background: linear-gradient(90deg, rgba(255, 87, 227, 0.2), rgba(0, 255, 194, 0.2));
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 8px 15px rgba(255, 87, 227, 0.4);
+        }
+
+        .biometric-inner {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(2, 2, 5, 0.8);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .biometric-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .biometric-text {
+            flex: 1;
+        }
+
+        .biometric-main {
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .biometric-sub {
+            font-size: 10px;
+            color: #FF57E3;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* NAVIGATION FUTURISTE */
+        .nav-tabs {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            color: #00FFC2;
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ANIMATIONS */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .demo-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 255, 194, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            max-width: 300px;
+        }
+
+        .demo-title {
+            color: #00FFC2;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .demo-text {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-info">
+        <div class="demo-title">🔮 DÉMO INTERFACE RÉVOLUTIONNAIRE</div>
+        <div class="demo-text">
+            Interface de connexion avec Email + Biométrie jamais vue !<br>
+            ✅ Animations quantiques<br>
+            ✅ Gradient tri-couleur<br>
+            ✅ Particules flottantes<br>
+            ✅ Navigation futuriste
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🇨🇲</div>
+            <div class="title">CLAUDYNE</div>
+            <div class="subtitle">Plateforme éducative camerounaise</div>
+            <div class="tagline">La Symbiose Quantique de l'Excellence</div>
+        </div>
+
+        <!-- Bouton Connexion Quantique -->
+        <button class="quantum-button" onclick="testConnection()">
+            <div class="quantum-inner">
+                <div class="particle particle1"></div>
+                <div class="particle particle2"></div>
+                <div class="particle particle3"></div>
+
+                <div class="quantum-text">CONNEXION</div>
+                <div class="quantum-subtext">NEURALE</div>
+                <div class="binary-code">01001000 01100101 01101100 01101100 01101111</div>
+            </div>
+        </button>
+
+        <!-- Bouton Récupération Biométrique -->
+        <button class="biometric-button" onclick="testBiometric()">
+            <div class="biometric-inner">
+                <div class="biometric-icon">🔐</div>
+                <div class="biometric-text">
+                    <div class="biometric-main">RÉCUPÉRATION</div>
+                    <div class="biometric-sub">Biométrie Quantique</div>
+                </div>
+                <div class="biometric-icon">🛡️</div>
+            </div>
+        </button>
+    </div>
+
+    <!-- Navigation Futuriste -->
+    <nav class="nav-tabs">
+        <a href="#" class="nav-tab">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Accueil</div>
+        </a>
+        <a href="#" class="nav-tab">
+            <div class="nav-icon">📚</div>
+            <div class="nav-label">Leçons</div>
+        </a>
+        <a href="#" class="nav-tab">
+            <div class="nav-icon">⚡</div>
+            <div class="nav-label">Battles</div>
+        </a>
+        <a href="#" class="nav-tab">
+            <div class="nav-icon">💬</div>
+            <div class="nav-label">Mentor IA</div>
+        </a>
+        <a href="#" class="nav-tab">
+            <div class="nav-icon">👨‍👩‍👧‍👦</div>
+            <div class="nav-label">Parent</div>
+        </a>
+    </nav>
+
+    <script>
+        function testConnection() {
+            alert('🔮 Connexion Quantique Activée!\n\nFonctionnalités:\n• Gradient tri-couleur animé\n• Particules flottantes\n• Hologramme central\n• Code binaire défilant\n• Authentification neurale\n\nInterface révolutionnaire prête!');
+        }
+
+        function testBiometric() {
+            alert('🔐 Récupération Biométrique!\n\nSystème Email + Biométrie:\n• Validation email temps réel\n• Scanner empreinte 3D\n• Touch ID/Face ID natif\n• 6 particules quantiques\n• Vibrations tactiles\n• Sécurité maximale\n\nJamais vu dans une app mobile!');
+        }
+
+        // Animation continue des particules
+        setInterval(() => {
+            document.querySelectorAll('.particle').forEach(particle => {
+                particle.style.transform = `translateY(${Math.sin(Date.now() * 0.001) * 10}px)`;
+            });
+        }, 16);
+    </script>
+</body>
+</html>

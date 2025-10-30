@@ -17,6 +17,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 // Hooks
 import { useAuth } from '../../hooks/useAuth';
 
+// Services
+import { apiService } from '../../services/api';
+
 // Types
 interface Lesson {
   id: number;
@@ -71,34 +74,31 @@ export default function ApprentissagePage() {
 
   const fetchSubjectData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subjects`);
-      const data = await response.json();
-      
-      if (data.success) {
-        const foundSubject = data.data.subjects.find((s: Subject) => s.id === subjectId);
-        setSubject(foundSubject || null);
+      const response = await apiService.getSubject(subjectId as string);
+
+      if (response.success && response.data) {
+        setSubject(response.data.subject || null);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement matière:', error);
-      toast.error('Erreur lors du chargement de la matière');
+      toast.error(error.message || 'Erreur lors du chargement de la matière');
     }
   };
 
   const fetchLessons = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/subjects/${subjectId}/lessons`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setLessons(data.data.lessons);
-        if (data.data.lessons.length > 0) {
-          setSelectedLesson(data.data.lessons[0]);
+      const response = await apiService.getSubjectLessons(subjectId as string);
+
+      if (response.success && response.data) {
+        setLessons(response.data.lessons || []);
+        if (response.data.lessons && response.data.lessons.length > 0) {
+          setSelectedLesson(response.data.lessons[0]);
         }
       }
       setIsLoadingData(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement leçons:', error);
-      toast.error('Erreur lors du chargement des leçons');
+      toast.error(error.message || 'Erreur lors du chargement des leçons');
       setIsLoadingData(false);
     }
   };
@@ -382,7 +382,7 @@ export default function ApprentissagePage() {
                             {!selectedLesson.completed && (
                               <button
                                 className="bg-primary-green text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
-                                onClick={() => toast.info('Fonctionnalité en cours de développement')}
+                                onClick={() => toast('Fonctionnalité en cours de développement')}
                               >
                                 Marquer comme terminé
                               </button>

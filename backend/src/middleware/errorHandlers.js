@@ -4,6 +4,7 @@
  */
 
 const logger = require('../utils/logger');
+const secureLogger = require('../utils/secureLogger');
 
 /**
  * Gestionnaire d'erreurs 404 - Route non trouvée
@@ -50,8 +51,16 @@ const errorHandler = (error, req, res, next) => {
     };
   }
 
-  // Erreurs JWT
+  // Erreurs JWT avec logging sécurisé
   if (err.name === 'JsonWebTokenError') {
+    // Log tentative d'accès avec token invalide
+    logger.logSecurity && logger.logSecurity('Invalid JWT token attempt', {
+      ip: req.ip,
+      userAgent: req.get('User-Agent'),
+      url: req.originalUrl,
+      timestamp: new Date().toISOString()
+    });
+
     err = {
       message: 'Token invalide',
       status: 401

@@ -7,15 +7,8 @@ import { ReactNode, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Components
-import Header from './navigation/Header';
-import Sidebar from './navigation/Sidebar';
-import BottomNavigation from './navigation/BottomNavigation';
-import LoadingBar from './ui/LoadingBar';
-
 // Hooks
 import { useAuth } from '../hooks/useAuth';
-import { useWindowSize } from '../hooks/useWindowSize';
 
 // Types
 interface LayoutProps {
@@ -30,56 +23,19 @@ const mobileOnlyPages = ['/bataille', '/science-lab'];
 
 export default function Layout({ children }: LayoutProps) {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
-  const { width, isMobile, isTablet } = useWindowSize();
-  
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
+  const authContext = useAuth();
+  const user = authContext.user;
+  const isLoading = authContext.isLoading;
 
   const isPublicPage = publicPages.includes(router.pathname);
-  const isMobileOnlyPage = mobileOnlyPages.includes(router.pathname);
   const needsAuthentication = !isPublicPage;
-  const showCompleteLayout = user && !isPublicPage;
-
-  // Gestion du loading lors des changements de page
-  useEffect(() => {
-    const handleStart = () => setIsPageLoading(true);
-    const handleComplete = () => setIsPageLoading(false);
-
-    router.events.on('routeChangeStart', handleStart);
-    router.events.on('routeChangeComplete', handleComplete);
-    router.events.on('routeChangeError', handleComplete);
-
-    return () => {
-      router.events.off('routeChangeStart', handleStart);
-      router.events.off('routeChangeComplete', handleComplete);
-      router.events.off('routeChangeError', handleComplete);
-    };
-  }, [router]);
-
-  // Fermer la sidebar sur mobile lors des changements de route
-  useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
-    }
-  }, [router.pathname, isMobile]);
-
-  // Auto-fermer sidebar sur desktop si écran trop petit
-  useEffect(() => {
-    if (width && width < 1024) {
-      setSidebarOpen(false);
-    }
-  }, [width]);
 
   // Pages publiques (login, etc.)
   if (isPublicPage) {
     return (
-      <>
-        {isPageLoading && <LoadingBar />}
-        <div className="min-h-screen">
-          {children}
-        </div>
-      </>
+      <div className="min-h-screen">
+        {children}
+      </div>
     );
   }
 
@@ -110,117 +66,21 @@ export default function Layout({ children }: LayoutProps) {
     return null;
   }
 
-  // Layout mobile uniquement pour certaines pages
-  if (isMobileOnlyPage) {
-    return (
-      <>
-        {isPageLoading && <LoadingBar />}
-        <div className="min-h-screen bg-neutral-50">
-          <Header 
-            onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-            showMenuButton={false}
-          />
-          <main className="pt-20">
-            {children}
-          </main>
-          <BottomNavigation />
-        </div>
-      </>
-    );
-  }
-
-  // Layout complet pour utilisateurs connectés
+  // Layout authentifié basique
   return (
-    <>
-      {isPageLoading && <LoadingBar />}
-      
-      <div className="min-h-screen bg-neutral-50">
-        {/* Header */}
-        <Header 
-          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-          showMenuButton={!isTablet && !sidebarOpen}
-        />
-
-        <div className="flex">
-          {/* Sidebar Desktop */}
-          {!isMobile && (
-            <AnimatePresence>
-              {sidebarOpen && (
-                <motion.div
-                  initial={{ x: -280, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -280, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                  className="fixed left-0 top-20 h-[calc(100vh-80px)] z-30"
-                >
-                  <Sidebar onClose={() => setSidebarOpen(false)} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          )}
-
-          {/* Sidebar Mobile */}
-          {isMobile && (
-            <AnimatePresence>
-              {sidebarOpen && (
-                <>
-                  {/* Backdrop */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="fixed inset-0 bg-black/50 z-40"
-                    onClick={() => setSidebarOpen(false)}
-                  />
-                  
-                  {/* Sidebar */}
-                  <motion.div
-                    initial={{ x: -320, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -320, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    className="fixed left-0 top-0 h-full z-50"
-                  >
-                    <Sidebar onClose={() => setSidebarOpen(false)} isMobile />
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          )}
-
-          {/* Contenu principal */}
-          <main className={`
-            flex-1 transition-all duration-300 ease-in-out
-            ${!isMobile && sidebarOpen ? 'ml-80' : ''}
-            ${isMobile ? 'pt-20 pb-20' : 'pt-20'}
-          `}>
-            <div className="container mx-auto px-4 py-6 max-w-7xl">
-              <motion.div
-                key={router.pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                {children}
-              </motion.div>
-            </div>
-          </main>
-        </div>
-
-        {/* Navigation mobile en bas */}
-        {isMobile && <BottomNavigation />}
-
-        {/* Overlay pour fermer la sidebar sur desktop */}
-        {!isMobile && sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-transparent z-20"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+    <div className="min-h-screen bg-neutral-50">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        <motion.div
+          key={router.pathname}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          {children}
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 }
 

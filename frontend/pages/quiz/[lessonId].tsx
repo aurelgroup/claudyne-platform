@@ -16,6 +16,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 // Hooks
 import { useAuth } from '../../hooks/useAuth';
 
+// Services
+import { apiService } from '../../services/api';
+
 // Types
 interface Question {
   id: number;
@@ -54,8 +57,9 @@ export default function QuizPage() {
   const router = useRouter();
   const { lessonId } = router.query;
   const { user, isLoading } = useAuth();
-  
+
   const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [subjectId, setSubjectId] = useState<number | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<{[key: number]: any}>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +67,7 @@ export default function QuizPage() {
   const [showResults, setShowResults] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(600); // 10 minutes
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [startTime] = useState(Date.now());
 
   // Redirection si non connecté
   useEffect(() => {
@@ -97,11 +102,26 @@ export default function QuizPage() {
 
   const fetchQuiz = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonId}/quiz`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setQuiz(data.data.quiz);
+      const response = await apiService.getQuizById(lessonId as string);
+
+      if (response.success && response.data) {
+        // Extraire les données du quiz
+        const quizData = response.data;
+
+        // Stocker le subjectId depuis la réponse
+        if (quizData.subject?.id) {
+          setSubjectId(quizData.subject.id);
+        }
+
+        // Formater les données du quiz
+        setQuiz({
+          id: quizData.id,
+          lessonId: quizData.id,
+          title: quizData.title,
+          questions: quizData.quiz?.questions || [],
+          totalPoints: quizData.quiz?.totalPoints || 100,
+          passingScore: quizData.quiz?.passingScore || 60
+        });
       } else {
         toast.error('Quiz non trouvé');
         router.back();
@@ -134,7 +154,10 @@ export default function QuizPage() {
   };
 
   const handleSubmitQuiz = async () => {
-    if (!quiz) return;
+    if (!quiz || !subjectId) {
+      toast.error('Données du quiz incomplètes');
+      return;
+    }
 
     // Vérifier que toutes les questions ont une réponse
     const unansweredQuestions = quiz.questions.filter(q => !(q.id in answers));
@@ -146,26 +169,26 @@ export default function QuizPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/lessons/${lessonId}/quiz`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ answers })
-      });
+      // Calculer le temps passé en secondes
+      const timeSpent = Math.floor((Date.now() - startTime) / 1000);
 
-      const data = await response.json();
-      
-      if (data.success) {
-        setResult(data.data);
+      const response = await apiService.submitQuiz(
+        subjectId,
+        lessonId as string,
+        answers,
+        timeSpent
+      );
+
+      if (response.success && response.data) {
+        setResult(response.data);
         setShowResults(true);
-        toast.success(data.data.passed ? 'Félicitations ! Quiz réussi ! 🎉' : 'Quiz terminé ! Continuez vos efforts ! 💪');
+        toast.success(response.data.passed ? 'Félicitations ! Quiz réussi ! 🎉' : 'Quiz terminé ! Continuez vos efforts ! 💪');
       } else {
-        toast.error('Erreur lors de la soumission du quiz');
+        toast.error(response.message || 'Erreur lors de la soumission du quiz');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur soumission quiz:', error);
-      toast.error('Erreur lors de la soumission du quiz');
+      toast.error(error.message || 'Erreur lors de la soumission du quiz');
     } finally {
       setIsSubmitting(false);
     }

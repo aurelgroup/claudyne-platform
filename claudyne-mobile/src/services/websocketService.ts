@@ -6,6 +6,7 @@
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG, STORAGE_KEYS } from '../constants/config';
+import SecurityUtils from '../utils/security';
 import type { Battle, BattleParticipant, BattleQuestion } from '../types';
 
 export interface BattleEvents {
@@ -36,7 +37,7 @@ class WebSocketService {
     try {
       const token = await AsyncStorage.getItem(STORAGE_KEYS.USER_TOKEN);
       if (!token) {
-        console.error('No authentication token available for WebSocket connection');
+        // 🔒 Token auth requis pour WebSocket
         return false;
       }
 
@@ -45,36 +46,43 @@ class WebSocketService {
           token: token
         },
         transports: ['websocket', 'polling'],
-        timeout: 10000,
-        forceNew: true
+        timeout: API_CONFIG.CONNECTION_TIMEOUT,
+        forceNew: true,
+        // 🔒 Sécurité WebSocket renforcée
+        rememberUpgrade: false,
+        autoConnect: false,
+        randomizationFactor: 0.5,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        maxReconnectionAttempts: this.maxReconnectAttempts,
       });
 
       this.setupEventHandlers();
 
       return new Promise((resolve) => {
         this.socket!.on('connect', () => {
-          console.log('WebSocket connected successfully');
+          // WebSocket connected successfully
           this.isConnected = true;
           this.reconnectAttempts = 0;
           resolve(true);
         });
 
         this.socket!.on('connect_error', (error) => {
-          console.error('WebSocket connection error:', error);
+          // WebSocket connection error
           this.isConnected = false;
           resolve(false);
         });
 
-        // Timeout après 10 secondes
+        // Timeout optimisé
         setTimeout(() => {
           if (!this.isConnected) {
-            console.error('WebSocket connection timeout');
+            // ⏱️ Timeout WebSocket
             resolve(false);
           }
-        }, 10000);
+        }, API_CONFIG.CONNECTION_TIMEOUT);
       });
     } catch (error) {
-      console.error('Error establishing WebSocket connection:', error);
+      // Error establishing WebSocket connection
       return false;
     }
   }
@@ -86,13 +94,13 @@ class WebSocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('WebSocket connected');
+      // WebSocket connected
       this.isConnected = true;
       this.reconnectAttempts = 0;
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('WebSocket disconnected:', reason);
+      // WebSocket disconnected
       this.isConnected = false;
       this.emit('disconnect', reason);
 
@@ -106,7 +114,7 @@ class WebSocketService {
     });
 
     this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+      // WebSocket connection error
       this.isConnected = false;
       this.emit('connection:error', error);
       this.attemptReconnect();
@@ -129,14 +137,14 @@ class WebSocketService {
    */
   private attemptReconnect(): void {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.error('Max reconnection attempts reached');
+      // Max reconnection attempts reached
       return;
     }
 
     this.reconnectAttempts++;
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
 
-    console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+    // Attempting to reconnect
 
     setTimeout(() => {
       if (!this.isConnected) {
@@ -162,7 +170,7 @@ class WebSocketService {
    */
   joinBattle(battleId: string): void {
     if (!this.isConnected || !this.socket) {
-      console.error('WebSocket not connected');
+      // WebSocket not connected
       return;
     }
 
@@ -174,7 +182,7 @@ class WebSocketService {
    */
   leaveBattle(battleId: string): void {
     if (!this.isConnected || !this.socket) {
-      console.error('WebSocket not connected');
+      // WebSocket not connected
       return;
     }
 
@@ -186,7 +194,7 @@ class WebSocketService {
    */
   submitAnswer(battleId: string, questionId: string, answer: any): void {
     if (!this.isConnected || !this.socket) {
-      console.error('WebSocket not connected');
+      // WebSocket not connected
       return;
     }
 
@@ -228,7 +236,7 @@ class WebSocketService {
         try {
           (callback as any)(data);
         } catch (error) {
-          console.error(`Error in event listener for ${event}:`, error);
+          console.error('❌ Erreur listener WebSocket:', SecurityUtils.sanitizeForLogging(error));
         }
       });
     }

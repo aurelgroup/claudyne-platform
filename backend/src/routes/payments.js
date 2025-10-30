@@ -140,100 +140,67 @@ router.get('/methods', async (req, res) => {
 
 router.get('/subscriptions/plans', async (req, res) => {
   try {
+    // Plans officiels Claudyne (correspondant à l'interface admin et #pricing)
     const plans = [
       {
-        id: 'basic_monthly',
-        name: 'Basique Mensuel',
-        description: 'Accès aux matières de base, quiz et suivi de progression',
-        price: 2500,
-        originalPrice: null,
-        currency: 'XAF',
-        duration: 'monthly',
-        features: [
-          '5 matières de base',
-          'Quiz illimités',
-          'Suivi de progression',
-          'Support par chat',
-          'Accès mobile'
-        ],
-        limitations: [
-          'Pas d\'accès premium',
-          'Mentor IA limité',
-          'Pas de certificats'
-        ],
-        popular: false,
-        savings: null,
-        target: 'Familles débutantes'
-      },
-      {
-        id: 'premium_monthly',
-        name: 'Premium Mensuel',
-        description: 'Accès complet avec fonctionnalités avancées',
-        price: 4500,
-        originalPrice: null,
-        currency: 'XAF',
-        duration: 'monthly',
-        features: [
-          'Toutes les matières',
-          'Quiz illimités',
-          'Suivi avancé',
-          'Support prioritaire',
-          'Certificats officiels',
-          'Accès hors ligne',
-          'Mentor IA complet',
-          'Battle Royale',
-          'Analytics détaillées'
-        ],
-        limitations: [],
-        popular: true,
-        savings: null,
-        target: 'Familles actives'
-      },
-      {
-        id: 'family_yearly',
-        name: 'Famille Annuel',
-        description: 'Plan familial pour plusieurs enfants avec économies',
-        price: 45000,
-        originalPrice: 54000,
-        currency: 'XAF',
-        duration: 'yearly',
-        features: [
-          'Jusqu\'à 6 enfants',
-          'Toutes les matières',
-          'Rapports familiaux',
-          'Support prioritaire',
-          'Certificats officiels',
-          'Réductions sur événements',
-          'Accès anticipé nouveautés',
-          'Session famille mensuelle'
-        ],
-        limitations: [],
-        popular: false,
-        savings: '17% d\'économie',
-        target: 'Grandes familles'
-      },
-      {
-        id: 'trial',
-        name: 'Essai Gratuit',
-        description: 'Découvrez Claudyne pendant 7 jours',
+        id: 'plan_discovery_trial',
+        name: 'Découverte',
+        description: '7 jours d\'essai gratuit',
         price: 0,
         originalPrice: null,
         currency: 'XAF',
         duration: 'trial',
         features: [
-          '3 matières de base',
-          '5 quiz par jour',
-          'Progression limitée',
-          'Support communautaire'
+          'Accès à 3 matières',
+          'Exercices de base',
+          'Suivi basique des progrès',
+          'Support email'
         ],
-        limitations: [
-          'Contenu limité',
-          'Pas de certificats',
-          'Durée limitée'
-        ],
+        limitations: [],
         popular: false,
         savings: null,
-        target: 'Nouveaux utilisateurs'
+        target: 'Découverte gratuite'
+      },
+      {
+        id: 'plan_student_monthly',
+        name: 'Individuelle',
+        description: 'Parfait pour un élève',
+        price: 8000,
+        originalPrice: null,
+        currency: 'XAF',
+        duration: 'monthly',
+        features: [
+          'Accès illimité toutes matières',
+          '1 élève uniquement',
+          'Suivi personnalisé avec IA',
+          'Prix Claudine (badges)',
+          'Support email'
+        ],
+        limitations: [],
+        popular: false,
+        savings: null,
+        target: 'Élève individuel'
+      },
+      {
+        id: 'plan_family_monthly',
+        name: '💝 Familiale 💝',
+        description: '🔥 Économisez 9,000 XAF/mois! 🔥',
+        price: 15000,
+        originalPrice: 24000,
+        currency: 'XAF',
+        duration: 'monthly',
+        features: [
+          'Accès illimité toutes matières',
+          'Jusqu\'à 3 enfants',
+          'Suivi personnalisé avec IA',
+          'Tableau de bord parents',
+          'Prix Claudine (badges/récompenses)',
+          'Support prioritaire'
+        ],
+        limitations: [],
+        popular: true,
+        savings: 9000,
+        target: 'Famille (jusqu\'à 3 enfants)'
       }
     ];
 

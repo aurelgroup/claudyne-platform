@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npx expo install:*)",
+      "Bash(npm install:*)",
+      "Bash(npx:*)",
+      "Bash(npm uninstall:*)",
+      "Read(//c/Users/fa_nono/Documents/CADD/Claudyne/**)",
+      "Bash(ssh root@89.117.58.53 \"cd /var/www/claudyne && echo ''<h1>DOWNLOAD PAGE WORKS!</h1>'' > simple-download.html\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

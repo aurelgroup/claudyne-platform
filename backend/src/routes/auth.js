@@ -36,21 +36,19 @@ const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // Personnalisation pour les familles camerounaises
-  keyGenerator: (req) => {
-    return req.ip + ':' + (req.body.credential || req.body.email || req.body.phone || 'anonymous');
-  }
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // Rate limiting plus strict pour la création de compte
 const registerLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
-  max: process.env.NODE_ENV === 'development' ? 50 : 3, // 50 comptes en dev, 3 en prod
+  max: process.env.NODE_ENV === "development" ? 50 : 10, // 50 comptes en dev, 3 en prod
   message: {
     success: false,
     message: 'Limite de création de comptes atteinte. Contactez le support si nécessaire.',
     code: 'REGISTER_LIMIT_EXCEEDED'
-  }
+  },
+  validate: false // Désactiver validation car nous contrôlons Nginx
 });
 
 // Validations communes
@@ -73,9 +71,13 @@ const passwordValidation = body('password')
 
 /**
  * POST /api/auth/register
- * Création d'un compte famille avec gestionnaire
+ * Création de compte (PARENT, STUDENT ou TEACHER)
  */
 router.post('/register', registerLimiter, [
+  body('accountType')
+    .optional()
+    .isIn(['PARENT', 'STUDENT', 'TEACHER'])
+    .withMessage('Type de compte invalide (PARENT, STUDENT ou TEACHER)'),
   emailValidation,
   phoneValidation,
   body('firstName')
@@ -87,6 +89,7 @@ router.post('/register', registerLimiter, [
     .isLength({ min: 2, max: 50 })
     .withMessage('Le nom doit contenir entre 2 et 50 caractères'),
   body('familyName')
+    .optional()
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage('Le nom de famille doit contenir entre 2 et 100 caractères'),
@@ -105,14 +108,31 @@ router.post('/register', registerLimiter, [
     // Vérification des erreurs de validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // Log détaillé des erreurs de validation pour debugging
+      logger.error('Erreurs validation login:', {
+        errors: errors.array(),
+        credential: req.body.credential,
+        ip: req.ip
+      });
+
       return res.status(400).json({
         success: false,
-        message: 'Données invalides',
-        errors: errors.array()
+        message: 'Email, téléphone, prénom ou nom requis - Vérifiez le format',
+        errors: errors.array(),
+        debug: process.env.NODE_ENV === 'development' ? {
+          receivedCredential: req.body.credential,
+          expectedFormats: [
+            'Email: exemple@domain.com',
+            'Téléphone: +237XXXXXXXX ou 237XXXXXXXX',
+            'Prénom: Jean',
+            'Nom: Dupont'
+          ]
+        } : undefined
       });
     }
     
     const {
+      accountType = 'PARENT', // Par défaut PARENT pour rétro-compatibilité
       email,
       phone,
       password,
@@ -123,7 +143,7 @@ router.post('/register', registerLimiter, [
       region,
       acceptTerms
     } = req.body;
-    
+
     // Vérification qu'au moins email ou téléphone est fourni
     if (!email && !phone) {
       return res.status(400).json({
@@ -131,7 +151,15 @@ router.post('/register', registerLimiter, [
         message: 'Email ou numéro de téléphone requis'
       });
     }
-    
+
+    // Vérification que familyName est fourni pour les comptes PARENT
+    if (accountType === 'PARENT' && !familyName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nom de famille est requis pour la formule familiale (15000 FCFA/mois)'
+      });
+    }
+
     // Vérification que l'utilisateur n'existe pas déjà
     const existingUser = await User.findOne({
       where: {
@@ -141,7 +169,7 @@ router.post('/register', registerLimiter, [
         ].filter(Boolean)
       }
     });
-    
+
     if (existingUser) {
       const field = existingUser.email === email ? 'email' : 'téléphone';
       logger.logSecurity('Duplicate registration attempt', {
@@ -150,7 +178,7 @@ router.post('/register', registerLimiter, [
         existingUserId: existingUser.id,
         ip: req.ip
       });
-      
+
       return res.status(409).json({
         success: false,
         message: `Un compte avec cet ${field} existe déjà`,
@@ -160,91 +188,212 @@ router.post('/register', registerLimiter, [
     
     // Démarrage de transaction
     const transaction = await User.sequelize.transaction();
-    
+
     try {
-      // Création de la famille
-      const family = await Family.create({
-        name: familyName,
-        displayName: `Famille ${familyName}`,
-        city: city || null,
-        region: region || null,
-        status: 'TRIAL',
-        subscriptionType: 'TRIAL',
-        // Configuration financière par défaut
-        walletBalance: 0.00,
-        currency: 'FCFA',
-        totalClaudinePoints: 0,
-        claudineRank: null,
-        // Configuration d'essai par défaut
-        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 jours
-        currentMembersCount: 1,
-        termsAcceptedAt: acceptTerms ? new Date() : null,
-        privacyPolicyAcceptedAt: acceptTerms ? new Date() : null,
-        dataProcessingConsent: acceptTerms
-      }, { transaction });
-      
-      // Création de l'utilisateur gestionnaire
-      const user = await User.create({
-        email,
-        phone,
-        password, // Sera hashé automatiquement par le hook
-        firstName,
-        lastName,
-        role: 'PARENT',
-        userType: 'MANAGER',
-        familyId: family.id,
-        isVerified: false, // Sera vérifié plus tard
-        language: 'fr',
-        timezone: 'Africa/Douala'
-      }, { transaction });
+      let family = null;
+      let user = null;
+
+      // ========================================
+      // CRÉATION SELON LE TYPE DE COMPTE
+      // ========================================
+
+      const trialEndsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 jours d'essai
+
+      if (accountType === 'PARENT') {
+        // FORMULE FAMILIALE: 15000 FCFA/mois - Jusqu'à 3 enfants
+        // Essai gratuit de 7 jours
+        family = await Family.create({
+          name: familyName,
+          displayName: `Famille ${familyName}`,
+          city: city || null,
+          region: region || null,
+          status: 'TRIAL',
+          subscriptionType: 'TRIAL',
+          walletBalance: 0.00,
+          currency: 'FCFA',
+          totalClaudinePoints: 0,
+          claudineRank: null,
+          trialEndsAt: trialEndsAt,
+          currentMembersCount: 1,
+          termsAcceptedAt: acceptTerms ? new Date() : null,
+          privacyPolicyAcceptedAt: acceptTerms ? new Date() : null,
+          dataProcessingConsent: acceptTerms
+        }, { transaction });
+
+        user = await User.create({
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: 'PARENT',
+          userType: 'MANAGER',
+          familyId: family.id,
+          isVerified: false,
+          language: 'fr',
+          timezone: 'Africa/Douala',
+          // Abonnement géré via la Family
+          subscriptionStatus: 'TRIAL',
+          subscriptionPlan: 'FAMILY_MANAGER',
+          trialEndsAt: trialEndsAt,
+          monthlyPrice: 15000.00 // 15000 FCFA/mois via Family
+        }, { transaction });
+
+      } else if (accountType === 'STUDENT') {
+        // FORMULE INDIVIDUELLE: 8000 FCFA/mois par élève
+        // Essai gratuit de 7 jours
+        user = await User.create({
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: 'STUDENT',
+          userType: 'INDIVIDUAL',
+          familyId: null, // Pas de famille
+          isVerified: false,
+          language: 'fr',
+          timezone: 'Africa/Douala',
+          // Abonnement individuel
+          subscriptionStatus: 'TRIAL',
+          subscriptionPlan: 'INDIVIDUAL_STUDENT',
+          trialEndsAt: trialEndsAt,
+          monthlyPrice: 8000.00, // 8000 FCFA/mois
+          autoRenew: true
+        }, { transaction });
+
+      } else if (accountType === 'TEACHER') {
+        // COMPTE ENSEIGNANT - Gratuit ou pricing spécial
+        user = await User.create({
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: 'TEACHER',
+          userType: 'INDIVIDUAL',
+          familyId: null,
+          isVerified: false,
+          language: 'fr',
+          timezone: 'Africa/Douala',
+          // Abonnement enseignant (gratuit pour l'instant)
+          subscriptionStatus: 'ACTIVE',
+          subscriptionPlan: 'INDIVIDUAL_TEACHER',
+          monthlyPrice: 0.00 // Gratuit pour les enseignants
+        }, { transaction });
+      }
       
       // Commit de la transaction
       await transaction.commit();
-      
+      transaction.finished = true;
+
       // Génération des tokens
       const accessToken = generateToken(user);
       const refreshToken = generateRefreshToken(user);
-      
-      // Log de l'événement
-      logger.info('Nouvelle famille créée', {
-        familyId: family.id,
-        userId: user.id,
-        familyName: family.name,
-        city: family.city,
-        userEmail: user.email,
-        userPhone: user.phone
-      });
-      
-      // Réponse de succès (sans données sensibles)
+
+      // Log de l'événement selon le type de compte
+      if (accountType === 'PARENT') {
+        logger.info('Nouvelle famille créée', {
+          accountType,
+          familyId: family.id,
+          userId: user.id,
+          familyName: family.name,
+          city: family.city,
+          userEmail: user.email,
+          userPhone: user.phone
+        });
+      } else {
+        logger.info(`Nouveau compte ${accountType} créé`, {
+          accountType,
+          userId: user.id,
+          userEmail: user.email,
+          userPhone: user.phone,
+          role: user.role
+        });
+      }
+
+      // Messages personnalisés selon le type de compte
+      const messages = {
+        'PARENT': 'Compte famille créé avec succès ! Bienvenue dans Claudyne 🎉 (15000 FCFA/mois - jusqu\'à 3 enfants)',
+        'STUDENT': 'Compte étudiant créé avec succès ! Bienvenue dans Claudyne 🎉 (8000 FCFA/mois)',
+        'TEACHER': 'Compte enseignant créé avec succès ! Bienvenue dans Claudyne 🎉'
+      };
+
+      // Construction de la réponse
+      const responseData = {
+        user: user.toSafeJSON(),
+        tokens: {
+          accessToken,
+          refreshToken,
+          expiresIn: process.env.JWT_EXPIRE || '7d'
+        }
+      };
+
+      // Ajout des données de famille si compte PARENT
+      if (accountType === 'PARENT' && family) {
+        responseData.family = {
+          id: family.id,
+          name: family.name,
+          displayName: family.displayName,
+          status: family.status,
+          subscriptionType: family.subscriptionType,
+          trialEndsAt: family.trialEndsAt,
+          walletBalance: family.walletBalance,
+          totalClaudinePoints: family.totalClaudinePoints
+        };
+      }
+
+      // Ajout des informations d'abonnement
+      responseData.subscription = {
+        status: user.subscriptionStatus,
+        plan: user.subscriptionPlan,
+        monthlyPrice: parseFloat(user.monthlyPrice),
+        currency: 'FCFA',
+        autoRenew: user.autoRenew
+      };
+
+      // Descriptions par type de plan
+      if (accountType === 'PARENT') {
+        responseData.subscription.description = 'Formule Familiale - Jusqu\'à 3 enfants';
+      } else if (accountType === 'STUDENT') {
+        responseData.subscription.description = 'Formule Individuelle Élève';
+      } else if (accountType === 'TEACHER') {
+        responseData.subscription.description = 'Compte Enseignant Gratuit';
+      }
+
+      // Ajout des informations d'essai si PARENT ou STUDENT
+      if (accountType === 'PARENT' || accountType === 'STUDENT') {
+        responseData.trial = {
+          daysLeft: 7,
+          endsAt: user.trialEndsAt,
+          features: ['basic_subjects', 'mentor_chat', 'progress_tracking']
+        };
+
+        if (accountType === 'PARENT') {
+          responseData.trial.features.push('family_dashboard');
+          responseData.trial.pricing = '15000 FCFA/mois après essai';
+          responseData.trial.maxChildren = 3;
+        } else {
+          responseData.trial.pricing = '8000 FCFA/mois après essai';
+        }
+      }
+
+      // Réponse de succès
       res.status(201).json({
         success: true,
-        message: 'Compte famille créé avec succès ! Bienvenue dans Claudyne 🎉',
-        data: {
-          user: user.toSafeJSON(),
-          family: {
-            id: family.id,
-            name: family.name,
-            displayName: family.displayName,
-            status: family.status,
-            subscriptionType: family.subscriptionType,
-            trialEndsAt: family.trialEndsAt,
-            walletBalance: family.walletBalance,
-            totalClaudinePoints: family.totalClaudinePoints
-          },
-          tokens: {
-            accessToken,
-            refreshToken,
-            expiresIn: process.env.JWT_EXPIRE || '7d'
-          },
-          trial: {
-            daysLeft: 7,
-            features: ['basic_subjects', 'mentor_chat', 'progress_tracking', 'family_dashboard']
-          }
-        }
+        message: messages[accountType],
+        data: responseData
       });
       
     } catch (error) {
-      await transaction.rollback();
+      // Rollback sécurisé
+      if (transaction && !transaction.finished) {
+        try {
+          await transaction.rollback();
+        } catch (rbErr) {
+          // Ignore rollback errors
+        }
+      }
       throw error;
     }
     
@@ -264,6 +413,86 @@ router.post('/register', registerLimiter, [
       success: false,
       message: 'Erreur lors de la création du compte',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+/**
+ * POST /api/auth/quick-login
+ * Connexion rapide pour test et développement
+ */
+router.post('/quick-login', [
+  body('email').isEmail().withMessage('Email valide requis'),
+  body('password').notEmpty().withMessage('Mot de passe requis')
+], async (req, res) => {
+  try {
+    initializeModels();
+
+    const { email, password } = req.body;
+
+    // Validation simple
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email et mot de passe requis'
+      });
+    }
+
+    // Recherche utilisateur par email uniquement (plus simple)
+    const user = await User.findOne({
+      where: { email: email.toLowerCase() },
+      include: [{
+        model: Family,
+        as: 'family',
+        include: ['students']
+      }]
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Utilisateur non trouvé avec cet email',
+        debug: process.env.NODE_ENV === 'development' ? { searchedEmail: email } : undefined
+      });
+    }
+
+    // Vérification mot de passe
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Mot de passe incorrect'
+      });
+    }
+
+    // Génération tokens
+    const accessToken = generateToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // Succès
+    res.json({
+      success: true,
+      message: `Connexion rapide réussie ! Bienvenue ${user.firstName} 👋`,
+      data: {
+        user: user.toSafeJSON(),
+        family: user.family ? {
+          id: user.family.id,
+          name: user.family.name,
+          status: user.family.status
+        } : null,
+        tokens: {
+          accessToken,
+          refreshToken,
+          expiresIn: process.env.JWT_EXPIRE || '7d'
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur quick-login:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la connexion'
     });
   }
 });
@@ -361,6 +590,7 @@ router.post('/login', authLimiter, [
       include: [{
         model: Student,
         as: 'students',
+        attributes: ['id', 'firstName', 'lastName', 'isActive', 'createdAt', 'updatedAt'],
         where: { status: 'ACTIVE' },
         required: false
       }]
@@ -705,6 +935,177 @@ router.post('/reset-password', [
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la réinitialisation du mot de passe'
+    });
+  }
+});
+
+/**
+ * GET /api/auth/verify
+ * Vérification de la validité du token
+ * Utilisé par le frontend pour la reconnexion automatique
+ */
+router.get('/verify', async (req, res) => {
+  try {
+    // Récupération du token
+    let token = null;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token manquant',
+        code: 'NO_TOKEN'
+      });
+    }
+
+    // Vérification du token
+    const jwt = require('jsonwebtoken');
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token invalide ou expiré',
+        code: 'INVALID_TOKEN'
+      });
+    }
+
+    // Vérifier que l'utilisateur existe et est actif
+    initializeModels();
+    const user = await User.findByPk(decoded.userId);
+
+    if (!user || !user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token invalide',
+        code: 'INVALID_USER'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Token valide',
+      data: {
+        userId: decoded.userId,
+        email: decoded.email,
+        role: decoded.role,
+        userType: decoded.userType,
+        familyId: decoded.familyId
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur vérification token:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
+    });
+  }
+});
+
+/**
+ * GET /api/auth/me
+ * Récupération des informations de l'utilisateur connecté
+ * Utilisé pour la reconnexion automatique et le rafraîchissement des données
+ */
+router.get('/me', async (req, res) => {
+  try {
+    // Récupération du token
+    let token = null;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.substring(7);
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token manquant',
+        code: 'NO_TOKEN'
+      });
+    }
+
+    // Vérification du token
+    const jwt = require('jsonwebtoken');
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token invalide ou expiré',
+        code: 'INVALID_TOKEN'
+      });
+    }
+
+    initializeModels();
+
+    // Récupérer l'utilisateur avec ses relations
+    const user = await User.findByPk(decoded.userId, {
+      include: [
+        {
+          model: Family,
+          as: 'family',
+          include: [{
+            model: Student,
+            as: 'students',
+            where: { isActive: true },
+            required: false,
+            attributes: ['id', 'firstName', 'lastName', 'level', 'dateOfBirth', 'isActive']
+          }]
+        }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    // Vérifier que le compte est actif
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'Compte désactivé',
+        code: 'ACCOUNT_INACTIVE'
+      });
+    }
+
+    // Réponse avec les données utilisateur
+    res.json({
+      success: true,
+      message: `Bienvenue ${user.firstName} !`,
+      data: {
+        user: user.toSafeJSON(),
+        family: user.family ? {
+          id: user.family.id,
+          name: user.family.name,
+          displayName: user.family.displayName,
+          status: user.family.status,
+          subscriptionType: user.family.subscriptionType,
+          trialEndsAt: user.family.trialEndsAt,
+          subscriptionEndsAt: user.family.subscriptionEndsAt,
+          walletBalance: user.family.walletBalance,
+          totalClaudinePoints: user.family.totalClaudinePoints,
+          claudineRank: user.family.claudineRank,
+          students: user.family.students || []
+        } : null
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération profil utilisateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur'
     });
   }
 });

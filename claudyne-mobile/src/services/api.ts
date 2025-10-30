@@ -152,18 +152,18 @@ class ClaudyneApiService {
   // ========================================
 
   async getProfile(): Promise<ApiResponse> {
-    return this.request('/api/users/profile');
+    return this.request('/api/me');
   }
 
   async updateProfile(profileData: Partial<RegisterData>): Promise<ApiResponse> {
-    return this.request('/api/users/profile', {
+    return this.request('/api/me', {
       method: 'PUT',
       body: JSON.stringify(profileData)
     });
   }
 
   async getFamilyMembers(): Promise<ApiResponse> {
-    return this.request('/api/users/family');
+    return this.request('/api/families');
   }
 
   // ========================================

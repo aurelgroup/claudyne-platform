@@ -863,9 +863,10 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:3001';
+        const API_BASE = 'https://claudyne.com';
         let currentSection = 'dashboard';
         let uploadedFiles = [];
+        let currentTeacher = null;
 
         // Navigation entre sections
         function showSection(sectionName) {
@@ -1241,8 +1242,37 @@
             alert('Export des données étudiants - Fonctionnalité à implémenter');
         }
 
+        // ========== CHARGEMENT DONNÉES RÉELLES ==========
+        async function loadRealTeacherData() {
+            try {
+                const userDataStr = localStorage.getItem('claudyne_user');
+                const token = localStorage.getItem('claudyne_token');
+
+                if (!userDataStr || !token) {
+                    console.warn('⚠️ Pas de données utilisateur - Redirection vers login');
+                    window.location.href = '/';
+                    return;
+                }
+
+                currentTeacher = JSON.parse(userDataStr);
+
+                // Mettre à jour l'interface
+                const teacherNameEl = document.getElementById('teacher-name');
+                if (teacherNameEl) {
+                    teacherNameEl.textContent = `Prof. ${currentTeacher.firstName} ${currentTeacher.lastName}`;
+                }
+
+                // Mettre à jour les champs du formulaire settings
+                document.getElementById('teacherName').value = `Prof. ${currentTeacher.firstName} ${currentTeacher.lastName}`;
+                document.getElementById('teacherEmail').value = currentTeacher.email;
+            } catch (error) {
+                console.error('❌ Erreur chargement données enseignant:', error);
+            }
+        }
+
         // Chargement initial
         window.addEventListener('load', function() {
+            loadRealTeacherData();
             loadTeacherDashboard();
         });
 

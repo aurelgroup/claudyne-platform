@@ -54,7 +54,7 @@ const server = http.createServer(async (req, res) => {
                      req.headers['user-agent']?.includes('Claudyne-Mobile');
 
     if (isMobile) {
-        console.log(`📱 Mobile Request: ${method} ${path}`);
+        // Mobile request logged for debugging
     }
 
     // Handle preflight requests
@@ -143,7 +143,7 @@ const server = http.createServer(async (req, res) => {
                     // Token simple pour POC
                     const token = `claudyne_mobile_${user.id}_${Date.now()}`;
 
-                    console.log(`📱 Mobile Login: ${user.email} (${user.role})`);
+                    // Mobile login successful
 
                     sendMobileJSON(res, 200, {
                         success: true,
@@ -197,7 +197,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         if (path === '/api/sync/force' && method === 'POST') {
-            console.log('📱 Force sync requested from mobile');
+            // Force sync requested from mobile
 
             const success = await syncEngine.performFullSync();
 

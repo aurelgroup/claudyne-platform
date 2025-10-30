@@ -7,7 +7,7 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/api\.claudyne\.cm\/.*$/,
+      urlPattern: /^https:\/\/claudyne\.com\/api\/.*$/,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'claudyne-api-cache',
@@ -69,7 +69,6 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Configuration spéciale pour 2G/3G
     loader: 'default',
-    quality: 75, // Réduction de qualité pour optimiser la bande passante
     unoptimized: false
   },
   
@@ -143,7 +142,6 @@ const nextConfig = {
   
   // Variables d'environnement exposées côté client
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
     NEXT_PUBLIC_APP_VERSION: process.env.npm_package_version || '1.0.0',
     NEXT_PUBLIC_BUILD_TIME: new Date().toISOString()
   },
@@ -153,8 +151,6 @@ const nextConfig = {
     // Optimisations expérimentales pour la performance
     optimizeCss: true,
     scrollRestoration: true,
-    // Support pour les connexions lentes
-    fetchCache: true,
     // Optimisations pour les pays en développement
     largePageDataBytes: 64 * 1024, // 64kb
     adjustFontFallbacks: true
@@ -248,8 +244,6 @@ const nextConfig = {
   
   // Configuration de production
   ...(process.env.NODE_ENV === 'production' && {
-    // Désactiver la télémétrie Next.js
-    telemetry: false,
     // Optimisations de build
     productionBrowserSourceMaps: false,
     optimizeFonts: true
@@ -258,10 +252,8 @@ const nextConfig = {
 
 // Configuration spécifique pour l'Afrique (connexions lentes)
 if (process.env.CLAUDYNE_REGION === 'africa' || process.env.NODE_ENV === 'production') {
-  nextConfig.images.quality = 60; // Réduction plus agressive
   nextConfig.images.formats = ['image/webp']; // Priorité au WebP
   nextConfig.experimental.optimizeCss = true;
-  nextConfig.experimental.gzipSize = true;
 }
 
 // Application du plugin PWA

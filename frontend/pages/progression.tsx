@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 
 // Components
 import Layout from '../components/Layout';
@@ -14,6 +15,9 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 // Hooks
 import { useAuth } from '../hooks/useAuth';
+
+// Services
+import { apiService } from '../services/api';
 
 // Types
 interface GlobalProgress {
@@ -99,28 +103,28 @@ export default function ProgressionPage() {
 
   const fetchProgressData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/progress`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setProgressData(data.data);
+      const response = await apiService.getProgress();
+
+      if (response.success && response.data) {
+        setProgressData(response.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement progression:', error);
+      toast.error(error.message || 'Erreur lors du chargement de la progression');
     }
   };
 
   const fetchAchievements = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/achievements`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setAchievements(data.data);
+      const response = await apiService.getAchievements();
+
+      if (response.success && response.data) {
+        setAchievements(response.data);
       }
       setIsLoadingData(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur chargement récompenses:', error);
+      toast.error(error.message || 'Erreur lors du chargement des récompenses');
       setIsLoadingData(false);
     }
   };

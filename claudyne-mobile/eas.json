@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 5.9.0"
+    "version": ">= 5.9.0",
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -21,11 +22,24 @@
     },
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:bundleRelease"
       },
       "env": {
         "API_URL": "https://claudyne.com/api",
         "NODE_ENV": "production"
+      }
+    },
+    "production-secure": {
+      "extends": "production",
+      "android": {
+        "buildType": "app-bundle",
+        "gradleCommand": ":app:bundleRelease"
+      },
+      "env": {
+        "API_URL": "https://claudyne.com/api",
+        "NODE_ENV": "production",
+        "SECURITY_LEVEL": "maximum"
       }
     }
   },

@@ -1,0 +1,82 @@
+{
+  "projectName": "Claudyne Platform",
+  "version": "2.0.0",
+  "rootPath": "C:\\Users\\fa_nono\\Documents\\CADD\\Claudyne",
+  "monitoring": {
+    "enabled": true,
+    "port": 3333,
+    "realTimeUpdates": true,
+    "webSocket": true
+  },
+  "analysis": {
+    "watchPatterns": [
+      "backend/**/*.js",
+      "frontend/**/*.{tsx,ts,jsx,js}",
+      "claudyne-mobile/**/*.{tsx,ts,jsx,js}",
+      "*.js",
+      "*.json"
+    ],
+    "ignorePatterns": [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      ".next/**",
+      "logs/**",
+      ".git/**"
+    ],
+    "intervals": {
+      "fileWatch": 500,
+      "fullScan": 30000,
+      "reportGeneration": 60000
+    }
+  },
+  "security": {
+    "enableSecurityScans": true,
+    "sqlInjectionDetection": true,
+    "xssDetection": true,
+    "hardcodedSecretsDetection": true,
+    "dependencyVulnerabilityCheck": true
+  },
+  "performance": {
+    "enablePerformanceAnalysis": true,
+    "memoryLeakDetection": true,
+    "asyncOperationAnalysis": true,
+    "databaseQueryOptimization": true
+  },
+  "codeQuality": {
+    "enableQualityChecks": true,
+    "complexityAnalysis": true,
+    "duplicationDetection": true,
+    "conventionChecking": true
+  },
+  "claudyneSpecific": {
+    "educationalPlatform": true,
+    "familyDataProtection": true,
+    "studentProgressTracking": true,
+    "mobileOptimization": true,
+    "cameroonCompliance": true
+  },
+  "notifications": {
+    "console": true,
+    "webDashboard": true,
+    "webhook": false,
+    "email": false,
+    "slack": false
+  },
+  "autoFix": {
+    "enabled": false,
+    "securityIssues": false,
+    "codeStyle": false,
+    "imports": false
+  },
+  "projectPath": {
+    "backend": "C:\\Users\\fa_nono\\Documents\\CADD\\Claudyne\\backend",
+    "frontend": "C:\\Users\\fa_nono\\Documents\\CADD\\Claudyne\\frontend",
+    "mobile": "C:\\Users\\fa_nono\\Documents\\CADD\\Claudyne\\claudyne-mobile"
+  },
+  "enabledModules": {
+    "backend": true,
+    "frontend": true,
+    "mobile": true
+  }
+}

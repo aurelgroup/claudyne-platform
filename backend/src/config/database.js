@@ -157,7 +157,7 @@ function initializeModels() {
     Institution,
     ApplicationDeadline,
     BattleParticipation,
-    RevisionSession
+    RevisionSession,
   });
 
   return {
@@ -196,6 +196,9 @@ function defineAssociations(models) {
   const {
     User, Family, Student, Subject, Lesson, Progress,
     Battle, PrixClaudine, Payment, Subscription,
+    StudyGroup, StudyGroupMember, ForumCategory, ForumDiscussion, ForumPost,
+    WellnessExercise, CareerProfile, Career, Institution, ApplicationDeadline,
+    BattleParticipation, RevisionSession,
     ChatMessage, Notification, AdminSetting, EmailTemplate
   } = models;
 
@@ -339,6 +342,118 @@ function defineAssociations(models) {
   Notification.belongsTo(User, { 
     foreignKey: 'userId', 
     as: 'user' 
+  });
+  // ==================== ASSOCIATIONS NOUVEAUX MODÈLES ====================
+  
+  // Relations Study Groups
+  StudyGroup.hasMany(StudyGroupMember, {
+    foreignKey: "groupId",
+    as: "members",
+    onDelete: "CASCADE"
+  });
+  StudyGroupMember.belongsTo(StudyGroup, {
+    foreignKey: "groupId",
+    as: "group"
+  });
+  
+  StudyGroupMember.belongsTo(User, {
+    foreignKey: "userId",
+    as: "user"
+  });
+  User.hasMany(StudyGroupMember, {
+    foreignKey: "userId",
+    as: "studyGroupMemberships"
+  });
+  
+  StudyGroup.belongsTo(User, {
+    foreignKey: "createdBy",
+    as: "creator"
+  });
+  StudyGroup.belongsTo(User, {
+    foreignKey: "moderatorId",
+    as: "moderator"
+  });
+  
+  // Relations Forums
+  ForumCategory.hasMany(ForumDiscussion, {
+    foreignKey: "categoryId",
+    as: "discussions",
+    onDelete: "CASCADE"
+  });
+  ForumDiscussion.belongsTo(ForumCategory, {
+    foreignKey: "categoryId",
+    as: "category"
+  });
+  
+  ForumDiscussion.hasMany(ForumPost, {
+    foreignKey: "discussionId",
+    as: "posts",
+    onDelete: "CASCADE"
+  });
+  ForumPost.belongsTo(ForumDiscussion, {
+    foreignKey: "discussionId",
+    as: "discussion"
+  });
+  
+  ForumDiscussion.belongsTo(User, {
+    foreignKey: "authorId",
+    as: "author"
+  });
+  ForumPost.belongsTo(User, {
+    foreignKey: "authorId",
+    as: "author"
+  });
+  
+  // Relations Careers
+  CareerProfile.hasMany(Career, {
+    foreignKey: "profileId",
+    as: "careers"
+  });
+  Career.belongsTo(CareerProfile, {
+    foreignKey: "profileId",
+    as: "profile"
+  });
+  
+  Institution.hasMany(ApplicationDeadline, {
+    foreignKey: "institutionId",
+    as: "deadlines",
+    onDelete: "CASCADE"
+  });
+  ApplicationDeadline.belongsTo(Institution, {
+    foreignKey: "institutionId",
+    as: "institution"
+  });
+  
+  // Relations Battle Participation
+  BattleParticipation.belongsTo(Battle, {
+    foreignKey: "battleId",
+    as: "battle"
+  });
+  BattleParticipation.belongsTo(Student, {
+    foreignKey: "studentId",
+    as: "student"
+  });
+  Battle.hasMany(BattleParticipation, {
+    foreignKey: "battleId",
+    as: "participations"
+  });
+  Student.hasMany(BattleParticipation, {
+    foreignKey: "studentId",
+    as: "battleParticipations"
+  });
+  
+  // Relations Revision Sessions
+  RevisionSession.belongsTo(Student, {
+    foreignKey: "studentId",
+    as: "student"
+  });
+  RevisionSession.belongsTo(Subject, {
+    foreignKey: "subjectId",
+    as: "subject"
+  });
+  Student.hasMany(RevisionSession, {
+    foreignKey: "studentId",
+    as: "revisionSessions"
   });
 }
 

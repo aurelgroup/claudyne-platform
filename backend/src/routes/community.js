@@ -437,5 +437,52 @@ router.post('/groups/join', async (req, res) => {
     });
   }
 });
+// Route pour obtenir les catégories de forums
+router.get('/forums/categories', async (req, res) => {
+  try {
+    const { ForumCategory, ForumDiscussion } = req.models;
+    const { sequelize } = require('../config/database');
+
+    // Récupérer toutes les catégories avec le nombre de discussions
+    const categories = await ForumCategory.findAll({
+      include: [{
+        model: ForumDiscussion,
+        as: 'discussions',
+        attributes: []
+      }],
+      attributes: {
+        include: [
+          [sequelize.fn('COUNT', sequelize.col('discussions.id')), 'discussionCount']
+        ]
+      },
+      group: ['ForumCategory.id'],
+      order: [['name', 'ASC']]
+    });
+
+    res.json({
+      success: true,
+      data: {
+        categories: categories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description,
+          icon: cat.icon,
+          color: cat.color,
+          order: cat.order,
+          isActive: cat.isActive,
+          discussionCount: parseInt(cat.dataValues.discussionCount) || 0
+        }))
+      }
+    });
+
+  } catch (error) {
+    console.error('Erreur récupération catégories forums:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des catégories de forums'
+    });
+  }
+});
 
 module.exports = router;

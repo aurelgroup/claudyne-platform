@@ -493,38 +493,25 @@ module.exports = (sequelize) => {
       });
     }
 
-    // Otherwise treat as username - search by firstName, lastName, full name, or email prefix
+        // Otherwise treat as username - search by email, firstName, or lastName
     const lowercaseCredential = credential.toLowerCase();
 
     return this.findOne({
       where: {
         [Op.or]: [
+          // Match by email (case-insensitive) - PRIMARY METHOD
+          sequelize.where(
+            sequelize.fn("LOWER", sequelize.col("email")),
+            lowercaseCredential
+          ),
           // Match by firstName (case-insensitive)
           sequelize.where(
-            sequelize.fn('LOWER', sequelize.col('firstName')),
+            sequelize.fn("LOWER", sequelize.col("\"firstName\"")),
             lowercaseCredential
           ),
           // Match by lastName (case-insensitive)
           sequelize.where(
-            sequelize.fn('LOWER', sequelize.col('lastName')),
-            lowercaseCredential
-          ),
-          // Match by full name (firstName + lastName)
-          sequelize.where(
-            sequelize.fn('LOWER',
-              sequelize.literal('firstName || " " || lastName')
-            ),
-            lowercaseCredential
-          ),
-          // Match by email prefix (part before @) - SQLite compatible
-          sequelize.where(
-            sequelize.fn('LOWER',
-              sequelize.fn('SUBSTR',
-                sequelize.col('email'),
-                1,
-                sequelize.literal('INSTR(email, "@") - 1')
-              )
-            ),
+            sequelize.fn("LOWER", sequelize.col("\"lastName\"")),
             lowercaseCredential
           )
         ]

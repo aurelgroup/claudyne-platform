@@ -14,6 +14,8 @@ router.use(async (req, res, next) => {
   }
   next();
 });
+router.get('/', (req, res) => { res.json({ success: true, message: 'Quiz API', endpoints: { available: '/api/quiz/available' } }); });
+
 
 /**
  * GET /api/quiz/available

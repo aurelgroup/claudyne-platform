@@ -280,6 +280,12 @@ function defineAssociations(models) {
     as: 'battles'
   });
 
+  // Battle -> Subject association
+  Battle.belongsTo(Subject, {
+    foreignKey: 'subjectId',
+    as: 'subject'
+  });
+
   // Relations Prix Claudine
   Student.hasMany(PrixClaudine, { 
     foreignKey: 'studentId', 

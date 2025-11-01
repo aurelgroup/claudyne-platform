@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
       autoIncrement: true
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: true,
@@ -35,11 +35,11 @@ module.exports = (sequelize) => {
       defaultValue: 'National'
     },
     city: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: true
     },
     subjectId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: true,
       references: {
         model: 'subjects',
@@ -167,11 +167,11 @@ module.exports = (sequelize) => {
       }
     },
     createdBy: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: true
     },
     moderatedBy: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: true
     }
   }, {

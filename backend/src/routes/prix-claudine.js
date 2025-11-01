@@ -23,6 +23,8 @@ function initializeModels() {
   }
 }
 
+router.get('/', (req, res) => { res.json({ success: true, message: 'Prix Claudine API', endpoints: { leaderboard: '/api/prix-claudine/leaderboard' } }); });
+
 /**
  * GET /api/prix-claudine/leaderboard
  * Récupération du classement Prix Claudine

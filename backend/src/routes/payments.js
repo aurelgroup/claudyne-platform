@@ -28,6 +28,8 @@ router.use(async (req, res, next) => {
 
 // ===============================
 // MÉTHODES DE PAIEMENT DISPONIBLES
+router.get('/', (req, res) => { res.json({ success: true, message: 'Payments API', endpoints: { methods: '/api/payments/methods' } }); });
+
 // ===============================
 
 router.get('/methods', async (req, res) => {

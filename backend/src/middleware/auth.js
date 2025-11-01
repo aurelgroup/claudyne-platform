@@ -75,7 +75,8 @@ const authenticate = async (req, res, next) => {
       include: [
         {
           model: Family,
-          as: 'family'
+          as: 'family',
+          required: false
         }
       ]
     });

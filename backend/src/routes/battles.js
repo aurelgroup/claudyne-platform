@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
         {
           model: Subject,
           as: 'subject',
-          attributes: ['id', 'name', 'displayName', 'emoji', 'level']
+          attributes: ['id', 'name', 'title', 'icon', 'level']
         }
       ],
       order: [['scheduledAt', 'ASC'], ['createdAt', 'DESC']],

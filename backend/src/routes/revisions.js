@@ -15,6 +15,8 @@ router.use(async (req, res, next) => {
   }
   next();
 });
+router.get('/', (req, res) => { res.json({ success: true, message: 'Revisions API', endpoints: { planning: '/api/revisions/planning' } }); });
+
 
 /**
  * GET /api/revisions/planning

@@ -28,7 +28,6 @@ const achievementsRoutes = require('./achievements');
 const communityRoutes = require('./community');
 const teacherRoutes = require('./teacher');
 const parentRoutes = require('./parent');
-const studentRoutesSingular = require('./student');
 
 // Middleware d'authentification
 const { authenticate, authorize } = require('../middleware/auth');
@@ -133,7 +132,6 @@ router.use('/achievements', achievementsRoutes);
 router.use('/wellness', wellnessRoutes);
 router.use('/teacher', teacherRoutes);
 router.use('/parent', parentRoutes);
-router.use('/student', studentRoutesSingular);
 router.use('/community', communityRoutes);
 
 // Routes administrateur (nécessite rôle ADMIN ou MODERATOR)

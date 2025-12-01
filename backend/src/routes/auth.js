@@ -242,6 +242,25 @@ router.post('/register', registerLimiter, [
       } else if (accountType === 'STUDENT') {
         // FORMULE INDIVIDUELLE: 8000 FCFA/mois par élève
         // Essai gratuit de 7 jours
+
+        // Créer une famille virtuelle pour l'étudiant individuel
+        const virtualFamilyName = `Famille ${firstName} ${lastName}`;
+        family = await Family.create({
+          name: virtualFamilyName,
+          displayName: virtualFamilyName,
+          city: city || 'Autre',
+          region: region || 'Centre',
+          subscriptionType: 'INDIVIDUAL',
+          subscriptionStatus: 'TRIAL',
+          trialEndsAt: trialEndsAt,
+          maxStudents: 1,
+          currentMembersCount: 1,
+          monthlyPrice: 8000.00,
+          status: 'ACTIVE',
+          language: 'fr',
+          timezone: 'Africa/Douala'
+        }, { transaction });
+
         user = await User.create({
           email,
           phone,
@@ -250,7 +269,7 @@ router.post('/register', registerLimiter, [
           lastName,
           role: 'STUDENT',
           userType: 'INDIVIDUAL',
-          familyId: null, // Pas de famille
+          familyId: family.id, // Associer à la famille virtuelle
           isVerified: false,
           language: 'fr',
           timezone: 'Africa/Douala',
@@ -260,6 +279,23 @@ router.post('/register', registerLimiter, [
           trialEndsAt: trialEndsAt,
           monthlyPrice: 8000.00, // 8000 FCFA/mois
           autoRenew: true
+        }, { transaction });
+
+        // Créer le profil Student pour l'étudiant individuel
+        const { educationLevel, dateOfBirth } = req.body;
+        await Student.create({
+          familyId: family.id,
+          userId: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          dateOfBirth: dateOfBirth || new Date('2010-01-01'), // Date par défaut si non fournie
+          educationLevel: educationLevel || '6EME', // Niveau par défaut
+          studentType: 'CHILD',
+          status: 'ACTIVE',
+          isActive: true,
+          currentLevel: 1,
+          totalPoints: 0,
+          claudinePoints: 0
         }, { transaction });
 
       } else if (accountType === 'TEACHER') {

@@ -17,11 +17,25 @@ backend/logs/*.log
 backend/database/*.sqlite
 backend/database/*.db
 
-# Environment files
+# === ENVIRONMENT FILES - NEVER COMMIT THESE ===
 .env
 .env.local
+.env.*.local
 .env.production
 .env.development
+.env.staging
+.env.shared
+.env.backup*
+ADMIN_CREDENTIALS.txt
+SECRETS_BACKUP_*.txt
+
+# Deployment env files
+deploy-scripts/.env.production
+backend/.env.production
+backend/.env.backup*
+frontend/.env.local
+claudyne-mobile/.env
+claudyne-mobile/.env.production
 
 # OS generated files
 .DS_Store
@@ -29,64 +43,55 @@ backend/database/*.db
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
+*~
 *.swp
 *.swo
-*~
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build / Dist
+/dist
+/build
+*.tsbuildinfo
+.next/
+out/
+
+# API & Keys (additional security)
+*.pem
+*.key
+*.crt
+secrets.json
+credentials.json
 
 # Temporary files
-*.tmp
-*.temp
-temp/
 tmp/
+temp/
+*.tmp
 
-# Build outputs
-dist/
-build/
-.next/
-.nuxt/
+# Mobile specific
+claudyne-mobile/builds/
+claudyne-mobile/backups/
+claudyne-mobile/*.apk
+claudyne-mobile/*.ipa
+claudyne-mobile/.expo
 
-# Cache directories
-.cache/
-.npm/
-.yarn/
+# Binary files
+*.apk
+*.ipa
+*.exe
+*.dmg
+*.app
 
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
+# Test coverage
 coverage/
-.nyc_output/
+.nyc_output
 
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# Deployment logs
-deployment.log
-
-# VPS specific files
-backup-*.tar.gz
-*.backup
-
-# Claude files that might be generated
-.claude/nul
+# NPM
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+pnpm-debug.log*

@@ -1,0 +1,205 @@
+═══════════════════════════════════════════════════════════════════════════════
+                  CLAUDYNE PRODUCTION FILES MANIFEST
+                        Version: 1.0 (2025-12-02)
+═══════════════════════════════════════════════════════════════════════════════
+
+DEPLOYMENT & AUTOMATION
+───────────────────────────────────────────────────────────────────────────────
+
+./DEPLOY_PROD_NOW.sh (217 lines)
+  Purpose: Automated production deployment with safety checks
+  When to use: Every production deployment
+  Key features:
+    • Pre-flight checks (git state, env files, database)
+    • Automatic database backups with pg_dump
+    • Migration application (001 & 002)
+    • Dependencies installation with npm ci
+    • Server startup and verification
+    • Automatic rollback procedures documented
+  Usage: ./DEPLOY_PROD_NOW.sh
+
+backend/health-monitor.js (181 lines)
+  Purpose: Automated health checking and monitoring tool
+  When to use: Post-deployment verification, continuous monitoring
+  Key features:
+    • Checks: API health, auth endpoints, database, response times, memory
+    • Modes: One-time or continuous (30-second intervals)
+    • Exit codes: 0 = healthy, 1 = unhealthy (CI/CD ready)
+    • Supports: Verbose output, JSON formatting
+  Usage: node backend/health-monitor.js [--continuous]
+
+
+OPERATIONAL DOCUMENTATION
+───────────────────────────────────────────────────────────────────────────────
+
+PRODUCTION_RUNBOOK.md (400+ lines) ⭐ START HERE
+  Purpose: Complete production deployment and operations guide
+  Sections:
+    1. Quick Start (TL;DR for experienced ops)
+    2. Pre-Deployment (environment setup, security, database, dependencies)
+    3. Deployment Steps (backup → pull → migrate → stop → start → verify)
+    4. Monitoring (health checks, logging, metrics)
+    5. Troubleshooting (database connection, port conflicts, migrations, crashes)
+    6. Rollback (quick < 5 min and full procedures)
+    7. Security Checklist (pre/post/ongoing)
+    8. Performance Tuning (Node.js, PM2, database)
+  When to use: Every deployment, ongoing operations reference
+  Key commands: Included for each step
+
+DEPLOYMENT_VERIFICATION.md (543 lines)
+  Purpose: Post-deployment verification and continuous monitoring setup
+  Sections:
+    1. Quick Verification Checklist (5-minute post-deploy check)
+    2. Continuous Health Monitoring (manual, PM2, cron options)
+    3. Log Aggregation Strategy (real-time, rotation, centralized)
+    4. Metrics & Alerting (thresholds, alert rules, Slack integration)
+    5. Database Health Monitoring (connection pooling, slow queries, backups)
+    6. Performance Profiling (Node.js profiling, request timing)
+    7. Automated Health Check & Auto-Recovery (systemd, PM2 configuration)
+    8. Troubleshooting During Deployment
+    9. Monthly Maintenance Checklist
+  When to use: After deployment, ongoing monitoring, performance issues
+
+INCIDENT_RESPONSE_PLAYBOOK.md (723 lines) ⭐ FOR EMERGENCIES
+  Purpose: Step-by-step incident response procedures for production issues
+  Severity Levels:
+    • P1 Critical (5 min response) - SERVICE DOWN
+    • P2 High (15 min response) - PARTIAL OUTAGE
+    • P3 Medium (1 hour response) - DEGRADED
+    • P4 Low (next day response) - MINOR
+  Scenarios Covered:
+    1. Service Down - Backend not responding
+    2. Hanging Server - Slow/stuck responses
+    3. Memory Issues - Memory leaks or high usage
+    4. CPU Issues - High CPU usage / expensive operations
+    5. Database Issues - Hung queries
+    6. Connection Failures - Database won't connect
+    7. Startup Failures - Server crashes on startup
+    8. Error Rate High - Many errors in logs
+    9. Rollback Procedure - Emergency rollback
+   10. Security Incident - Possible compromise response
+  When to use: During production incidents
+
+OPERATIONS_MANUAL.md (401 lines) ⭐ MASTER INDEX
+  Purpose: Master navigation guide for all operations documentation
+  Sections:
+    1. Quick Navigation by Task
+    2. Document Overview
+    3. Standard Metrics & SLAs
+    4. Runbook Decision Tree
+    5. Troubleshooting Matrix
+    6. Pre-Production Checklist
+    7. Document Cross-References
+    8. Learning Path (90-minute onboarding)
+  When to use: When unsure which document to read
+
+PRODUCTION_DEPLOYMENT_COMPLETE.md (434 lines)
+  Purpose: Final summary of security hardening and production setup
+  When to use: Overview of deliverables and next steps
+
+
+REFERENCE & SECURITY DOCUMENTATION
+───────────────────────────────────────────────────────────────────────────────
+
+DEPLOYMENT_SECURITY_HARDENING.md (200 lines)
+  Purpose: Security hardening details and pre-deployment checklist
+
+BACKEND_ARCHITECTURE.md
+  Purpose: Document backend structure and entry point clarification
+
+claudyne-mobile/APK_MANAGEMENT.md
+  Purpose: Strategy for managing 142 MB of APK files currently in git
+
+backend/migrations/README.md
+  Purpose: Database migration guidelines and history
+
+
+ENVIRONMENT & CONFIGURATION
+───────────────────────────────────────────────────────────────────────────────
+
+.env.example (root)
+  Purpose: Clean template showing all required environment variables
+  Usage: cp .env.example .env.production (then fill in real values)
+
+backend/.env.example (backend)
+  Purpose: Backend-specific environment template
+
+SECRETS_BACKUP_PROD.txt (local file, NEVER committed)
+  Purpose: Local backup of production secrets for recovery
+
+
+DATABASE MIGRATIONS
+───────────────────────────────────────────────────────────────────────────────
+
+backend/migrations/20250101_init_schema.sql
+  Purpose: Base schema initialization
+
+backend/migrations/20250601_add_lessons_columns.sql
+  Purpose: Enhanced lesson table columns
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DEPLOYMENT WORKFLOW
+
+1. BEFORE DEPLOYMENT
+   → Read: OPERATIONS_MANUAL.md (master index)
+   → Read: PRODUCTION_RUNBOOK.md (full guide)
+   → Verify: All pre-deployment checks
+   → Test: ./DEPLOY_PROD_NOW.sh on staging first
+
+2. DURING DEPLOYMENT
+   → Run: ./DEPLOY_PROD_NOW.sh
+   → Verify: node backend/health-monitor.js
+   → Monitor: Watch logs and metrics during startup
+
+3. AFTER DEPLOYMENT (First 24 Hours)
+   → Use: DEPLOYMENT_VERIFICATION.md checklist
+   → Monitor: CONTINUOUS=true node backend/health-monitor.js
+   → Log: Document any issues in incident log
+
+4. IF PROBLEMS OCCUR
+   → Refer: INCIDENT_RESPONSE_PLAYBOOK.md
+   → Find: Your specific scenario in playbook
+   → Follow: Step-by-step diagnosis and fix procedures
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+QUICK REFERENCE COMMANDS
+
+Health Check:
+  node backend/health-monitor.js
+
+Continuous Monitoring:
+  CONTINUOUS=true node backend/health-monitor.js
+
+Deploy:
+  ./DEPLOY_PROD_NOW.sh
+
+Database Backup:
+  pg_dump -U claudyne_user -d claudyne_production > backup.sql
+
+Check Server Process:
+  ps aux | grep "node.*minimal-server"
+
+View Logs:
+  pm2 logs claudyne-backend
+
+Restart Server:
+  pm2 restart claudyne-backend
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STATUS: ✅ PRODUCTION READY
+
+All files are in place. The Claudyne platform is ready for production deployment.
+
+Start with: OPERATIONS_MANUAL.md (master index)
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Generated: 2025-12-02
+By: Claude Code
+Repository: https://github.com/aurelgroup/claudyne-platform

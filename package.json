@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node server.js",
     "backend": "cd backend && node minimal-server.js",
-    "backend:prod": "cd backend && NODE_ENV=production node minimal-server.js",
+    "backend:prod": "cd backend && NODE_ENV=production node src/server.js",
     "mobile-api": "cd backend && node mobile-server.js",
     "sync": "cd backend && node sync-database.js --auto-sync",
     "production": "NODE_ENV=production node backend/minimal-server.js",

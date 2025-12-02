@@ -53,13 +53,13 @@ const registerLimiter = rateLimit({
 
 // Validations communes
 const emailValidation = body('email')
-  .optional()
+  .if((value) => value && value.trim() !== '') // Seulement valider si non-vide
   .isEmail()
   .normalizeEmail()
   .withMessage('Format email invalide');
 
 const phoneValidation = body('phone')
-  .optional()
+  .if((value) => value && value.trim() !== '') // Seulement valider si non-vide
   .matches(/^(\+237|237)?[26][0-9]{8}$/)
   .withMessage('Format téléphone camerounais invalide (+237 6XX XXX XXX)');
 

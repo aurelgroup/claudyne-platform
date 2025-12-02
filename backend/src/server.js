@@ -6,8 +6,20 @@
 // Load environment variables from root
 const dotenv = require('dotenv');
 const path = require('path');
-// Toujours charger .env à la racine du projet (unifié)
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+const fs = require('fs');
+
+// Load environment-specific .env file
+const envFile = process.env.NODE_ENV === 'production'
+  ? path.join(__dirname, '../../.env.production')
+  : path.join(__dirname, '../../.env');
+
+// Load .env.production first if it exists (takes priority)
+if (fs.existsSync(path.join(__dirname, '../../.env.production'))) {
+  dotenv.config({ path: path.join(__dirname, '../../.env.production') });
+}
+
+// Then load .env as fallback (for development)
+dotenv.config({ path: path.join(__dirname, '../../.env'), override: false });
 
 const express = require('express');
 const cors = require('cors');

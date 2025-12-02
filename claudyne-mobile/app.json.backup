@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Claudyne",
+    "slug": "claudyne-platform",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2E7D32"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.claudyne.app"
+    },
+    "android": {
+      "package": "com.claudyne.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2E7D32"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5522402b-87e8-4f92-9dff-380bc8850fd5"
+      }
+    },
+    "owner": "aurelgroup"
+  }
+}

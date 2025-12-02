@@ -25,15 +25,19 @@ export default function SignupForm({
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    acceptTerms: false
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [contactMethod, setContactMethod] = useState<'email' | 'phone'>('email');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
@@ -64,20 +68,31 @@ export default function SignupForm({
     } else {
       if (!formData.phone.trim()) {
         newErrors.phone = 'Numéro de téléphone requis';
-      } else if (!/^\+?[0-9\s-]+$/.test(formData.phone)) {
-        newErrors.phone = 'Format de numéro invalide';
+      } else if (!/^(\+237|237)?[26][0-9]{8}$/.test(formData.phone.replace(/\s|-/g, ''))) {
+        newErrors.phone = 'Format camerounais invalide (ex: +237600000000 ou 260000000)';
       }
     }
 
-    // Mot de passe
+    // Mot de passe - Aligner avec les règles du backend
     if (!formData.password) {
       newErrors.password = 'Mot de passe requis';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Mot de passe trop court (min 6 caractères)';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Mot de passe trop court (min 8 caractères)';
+    } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = 'Le mot de passe doit contenir au moins une minuscule';
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = 'Le mot de passe doit contenir au moins une majuscule';
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = 'Le mot de passe doit contenir au moins un chiffre';
     }
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+    }
+
+    // Acceptation des conditions obligatoire
+    if (!formData.acceptTerms) {
+      newErrors.acceptTerms = 'Vous devez accepter les conditions d\'utilisation';
     }
 
     setErrors(newErrors);
@@ -86,13 +101,17 @@ export default function SignupForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       const submitData = {
         ...formData,
         // Clear unused contact field
         email: contactMethod === 'email' ? formData.email : '',
-        phone: contactMethod === 'phone' ? formData.phone : ''
+        phone: contactMethod === 'phone' ? formData.phone : '',
+        // Convertir acceptTerms en string 'true' pour le backend
+        acceptTerms: formData.acceptTerms ? 'true' : 'false',
+        // Par défaut, compte PARENT pour inscription depuis le formulaire
+        accountType: 'PARENT'
       };
       onSubmit(submitData);
     }
@@ -281,6 +300,26 @@ export default function SignupForm({
           </div>
         </div>
       )}
+
+      {/* Acceptation des conditions */}
+      <div>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="acceptTerms"
+            checked={formData.acceptTerms}
+            onChange={handleChange}
+            disabled={isLoading}
+            className="mt-1 w-5 h-5 rounded border-neutral-300 text-primary-green focus:ring-2 focus:ring-primary-green cursor-pointer"
+          />
+          <span className="text-sm text-neutral-600">
+            J'accepte les <span className="font-medium">conditions d'utilisation</span> et la <span className="font-medium">politique de confidentialité</span> de Claudyne
+          </span>
+        </label>
+        {errors.acceptTerms && (
+          <p className="mt-2 text-sm text-red-600">{errors.acceptTerms}</p>
+        )}
+      </div>
 
       {/* Bouton de soumission */}
       <motion.button

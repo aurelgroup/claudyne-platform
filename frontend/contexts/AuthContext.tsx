@@ -63,7 +63,8 @@ interface RegisterData {
   familyName: string;
   city?: string;
   region?: string;
-  acceptTerms: boolean;
+  acceptTerms: string | boolean;
+  accountType?: 'PARENT' | 'STUDENT' | 'TEACHER';
 }
 
 export interface AuthContextType extends AuthState {

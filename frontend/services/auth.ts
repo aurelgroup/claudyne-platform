@@ -33,7 +33,8 @@ interface RegisterData {
   familyName: string;
   city?: string;
   region?: string;
-  acceptTerms: boolean;
+  acceptTerms: string | boolean;
+  accountType?: 'PARENT' | 'STUDENT' | 'TEACHER';
 }
 
 // Interface pour la réponse de connexion/inscription
@@ -188,7 +189,14 @@ class AuthService {
   // Inscription
   async register(userData: RegisterData): Promise<ApiResponse<AuthResponse>> {
     try {
-      const response = await this.api.post('/auth/register', userData);
+      // Normaliser acceptTerms en string pour le backend
+      const payload = {
+        ...userData,
+        acceptTerms: typeof userData.acceptTerms === 'boolean'
+          ? (userData.acceptTerms ? 'true' : 'false')
+          : userData.acceptTerms
+      };
+      const response = await this.api.post('/auth/register', payload);
       return response.data;
     } catch (error: any) {
       throw this.handleError(error);

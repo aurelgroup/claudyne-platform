@@ -64,8 +64,8 @@ const phoneValidation = body('phone')
   .withMessage('Format téléphone camerounais invalide (+237 6XX XXX XXX)');
 
 const passwordValidation = body('password')
-  .isLength({ min: 6, max: 100 })
-  .withMessage('Le mot de passe doit contenir entre 6 et 100 caractères')
+  .isLength({ min: 8, max: 100 })
+  .withMessage('Le mot de passe doit contenir entre 8 et 100 caractères')
   .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
   .withMessage('Le mot de passe doit contenir au moins une minuscule, une majuscule et un chiffre');
 
@@ -109,24 +109,26 @@ router.post('/register', registerLimiter, [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       // Log détaillé des erreurs de validation pour debugging
-      logger.error('Erreurs validation login:', {
+      logger.error('Erreurs validation inscription:', {
         errors: errors.array(),
-        credential: req.body.credential,
+        email: req.body.email,
+        phone: req.body.phone,
         ip: req.ip
       });
 
       return res.status(400).json({
         success: false,
-        message: 'Email, téléphone, prénom ou nom requis - Vérifiez le format',
+        message: 'Erreurs de validation - Vérifiez les champs requis',
         errors: errors.array(),
         debug: process.env.NODE_ENV === 'development' ? {
-          receivedCredential: req.body.credential,
-          expectedFormats: [
-            'Email: exemple@domain.com',
-            'Téléphone: +237XXXXXXXX ou 237XXXXXXXX',
-            'Prénom: Jean',
-            'Nom: Dupont'
-          ]
+          expectedFormats: {
+            email: 'exemple@domain.com',
+            phone: '+237600000000 ou 260000000',
+            firstName: 'Jean (2-50 caractères)',
+            lastName: 'Dupont (2-50 caractères)',
+            password: 'Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre',
+            acceptTerms: 'true'
+          }
         } : undefined
       });
     }

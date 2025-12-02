@@ -25,7 +25,10 @@ class TokenService {
                 password: process.env.DB_PASSWORD || 'claudyne_secure_2024',
                 port: process.env.DB_PORT || 5432,
             });
-            this.initializeDatabase();
+            // Non-blocking initialization - don't crash the app if DB table creation fails
+            this.initializeDatabase().catch(err => {
+                console.error('⚠️ Database initialization failed (non-blocking):', err.message);
+            });
         } else {
             // En développement, simuler PostgreSQL avec SQLite
             this.pool = null;
@@ -57,6 +60,7 @@ class TokenService {
             console.log('✅ Table admin_tokens initialisée avec succès');
         } catch (error) {
             console.error('❌ Erreur initialisation table admin_tokens:', error);
+            // Don't throw - let the app continue even if table creation fails
         }
     }
 

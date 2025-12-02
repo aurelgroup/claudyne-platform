@@ -104,9 +104,9 @@ class DatabaseAuth {
 
         if (useDatabase && pool) {
             const query = `
-                INSERT INTO users (email, password, firstname, lastname, phone, role, usertype, isactive, isverified)
+                INSERT INTO users (email, password, "firstName", "lastName", phone, role, "userType", "isActive", "isVerified")
                 VALUES ($1, $2, $3, $4, $5, $6, $7, true, false)
-                RETURNING id, email, firstname, lastname, phone, role, usertype, isactive
+                RETURNING id, email, "firstName", "lastName", phone, role, "userType", "isActive"
             `;
 
             try {
@@ -225,7 +225,7 @@ class DatabaseAuth {
 
     // Compter le nombre total d'utilisateurs
     async getUserCount() {
-        const query = 'SELECT COUNT(*) as count FROM users WHERE isactive = true';
+        const query = 'SELECT COUNT(*) as count FROM users WHERE "isActive" = true';
         try {
             const result = await pool.query(query);
             return parseInt(result.rows[0].count);

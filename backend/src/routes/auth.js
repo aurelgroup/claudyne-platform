@@ -60,8 +60,14 @@ const emailValidation = body('email')
 
 const phoneValidation = body('phone')
   .if((value) => value && value.trim() !== '') // Seulement valider si non-vide
-  .matches(/^(\+237|237)?[26][0-9]{8}$/)
-  .withMessage('Format téléphone camerounais invalide (+237 6XX XXX XXX)');
+  .matches(/^\+?[1-9]\d{6,14}$/)
+  .withMessage('Format téléphone E.164 invalide (ex: +237695000000, +33612345678)');
+
+// Validation du dialCode optionnel
+const dialCodeValidation = body('dialCode')
+  .optional()
+  .matches(/^\+?[1-9]\d{0,3}$/)
+  .withMessage('Format indicatif invalide');
 
 const passwordValidation = body('password')
   .isLength({ min: 8, max: 100 })
@@ -80,6 +86,7 @@ router.post('/register', registerLimiter, [
     .withMessage('Type de compte invalide (PARENT, STUDENT ou TEACHER)'),
   emailValidation,
   phoneValidation,
+  dialCodeValidation,
   body('firstName')
     .trim()
     .isLength({ min: 2, max: 50 })
@@ -137,6 +144,7 @@ router.post('/register', registerLimiter, [
       accountType = 'PARENT', // Par défaut PARENT pour rétro-compatibilité
       email,
       phone,
+      dialCode,
       password,
       firstName,
       lastName,
@@ -225,6 +233,7 @@ router.post('/register', registerLimiter, [
         user = await User.create({
           email,
           phone,
+          dialCode,
           password,
           firstName,
           lastName,
@@ -266,6 +275,7 @@ router.post('/register', registerLimiter, [
         user = await User.create({
           email,
           phone,
+          dialCode,
           password,
           firstName,
           lastName,
@@ -305,6 +315,7 @@ router.post('/register', registerLimiter, [
         user = await User.create({
           email,
           phone,
+          dialCode,  // ADDED: Support for international phones
           password,
           firstName,
           lastName,

@@ -36,12 +36,20 @@ module.exports = (sequelize) => {
           if (!value || value.trim() === '') {
             return;
           }
-          // Valider le format uniquement si la valeur n'est pas vide
-          if (!/^(\+237|237)?[26][0-9]{8}$/.test(value.trim())) {
-            throw new Error('Format téléphone camerounais invalide');
+          // Valider le format E.164 international: +[1-9]\d{6,14}
+          // Accepte formats comme: +237695000000, +33612345678, +225987654321, etc.
+          if (!/^\+?[1-9]\d{6,14}$/.test(value.trim())) {
+            throw new Error('Format téléphone E.164 invalide (ex: +237695000000)');
           }
         }
       }
+    },
+
+    // Dial code du pays (stocké pour faciliter les recherches)
+    dialCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      comment: 'Indicatif téléphonique du pays (ex: +237 pour Cameroun)'
     },
     
     password: {

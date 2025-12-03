@@ -1665,8 +1665,37 @@
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
                         Téléphone
                     </label>
-                    <input type="tel" id="registerPhone" placeholder="+237 6XX XXX XXX" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    <div style="display: flex; gap: 0.75rem; align-items: flex-end;">
+                        <div style="flex: 0 0 auto; min-width: 120px;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text); font-size: 0.85rem;">Pays</label>
+                            <select id="registerCountry" onchange="updateCountryDialCode()" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; font-size: 0.9rem; cursor: pointer;">
+                                <option value="">Sélectionner...</option>
+                                <option value="CM|+237|🇨🇲">🇨🇲 Cameroun (+237)</option>
+                                <option value="CI|+225|🇨🇮">🇨🇮 Côte d'Ivoire (+225)</option>
+                                <option value="SN|+221|🇸🇳">🇸🇳 Sénégal (+221)</option>
+                                <option value="BJ|+229|🇧🇯">🇧🇯 Bénin (+229)</option>
+                                <option value="GA|+241|🇬🇦">🇬🇦 Gabon (+241)</option>
+                                <option value="FR|+33|🇫🇷">🇫🇷 France (+33)</option>
+                                <option value="BE|+32|🇧🇪">🇧🇪 Belgique (+32)</option>
+                                <option value="CH|+41|🇨🇭">🇨🇭 Suisse (+41)</option>
+                                <option value="CA|+1|🇨🇦">🇨🇦 Canada (+1)</option>
+                                <option value="US|+1|🇺🇸">🇺🇸 États-Unis (+1)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span id="dialCodeDisplay" style="color: var(--color-light-text); min-width: 50px; text-align: center;">-</span>
+                                <input type="tel" id="registerPhoneLocal" placeholder="6XX XXX XXX" required style="flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                            </div>
+                        </div>
+                    </div>
+                    <small style="display: block; margin-top: 0.5rem; color: rgba(255, 255, 255, 0.6); font-size: 0.85rem;">
+                        ℹ️ Numéro local sans indicatif (ex: 6XX XXX XXX pour Cameroun)
+                    </small>
                 </div>
+
+                <input type="hidden" id="registerPhoneE164" placeholder="">
+                <input type="hidden" id="registerDialCode" placeholder="">
                 
                 <div>
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
@@ -2636,6 +2665,41 @@
             }
         }
 
+        // Handle country selection and dial code update
+        function updateCountryDialCode() {
+            const countrySelect = document.getElementById('registerCountry');
+            const selected = countrySelect.value;
+
+            if (!selected) {
+                document.getElementById('dialCodeDisplay').textContent = '-';
+                document.getElementById('registerDialCode').value = '';
+                return;
+            }
+
+            const [countryCode, dialCode, flag] = selected.split('|');
+            document.getElementById('dialCodeDisplay').textContent = dialCode;
+            document.getElementById('registerDialCode').value = dialCode;
+        }
+
+        // Format phone to E.164 format
+        function formatPhoneE164(dialCode, phoneLocal) {
+            if (!dialCode || !phoneLocal) return '';
+
+            // Remove spaces and special characters from phoneLocal
+            const cleaned = phoneLocal.replace(/\s+/g, '').replace(/[^\d]/g, '');
+
+            // Ensure dialCode starts with +
+            const normalizedDialCode = dialCode.startsWith('+') ? dialCode : '+' + dialCode;
+
+            return normalizedDialCode + cleaned;
+        }
+
+        // Validate E.164 phone format
+        function isValidE164Phone(phone) {
+            const e164Regex = /^\+?[1-9]\d{6,14}$/;
+            return e164Regex.test(phone);
+        }
+
         // Modal de connexion
         function showLoginModal(accountType = null) {
             document.getElementById('loginModal').classList.add('show');
@@ -2832,11 +2896,31 @@
             const studentClass = document.getElementById('studentClass').value;
             const firstName = document.getElementById('registerFirstName').value;
             const lastName = document.getElementById('registerLastName').value;
-            const email = document.getElementById('registerEmail').value;
-            const phone = document.getElementById('registerPhone').value;
+            const email = document.getElementById('registerEmail').value.toLowerCase();
+            const dialCode = document.getElementById('registerDialCode').value;
+            const phoneLocal = document.getElementById('registerPhoneLocal').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const acceptTerms = document.getElementById('acceptTerms').checked;
+
+            // Validation du pays et téléphone
+            if (!dialCode) {
+                alert('❌ Veuillez sélectionner un pays');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Format phone to E.164
+            const phoneE164 = formatPhoneE164(dialCode, phoneLocal);
+
+            // Validate E.164 format
+            if (!isValidE164Phone(phoneE164)) {
+                alert('❌ Format de téléphone invalide. Veuillez vérifier le numéro.\n\nFormat attendu (E.164): +[dialCode][numéro local sans espaces]\nEx: +237695000000');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                return;
+            }
 
             // Validation des mots de passe
             if (password !== confirmPassword) {
@@ -2884,7 +2968,8 @@
                         body: JSON.stringify({
                             accountType: 'PARENT',
                             email: email,
-                            phone: phone,
+                            phone: phoneE164,
+                            dialCode: dialCode,
                             password: password,
                             firstName: firstName,
                             lastName: lastName,

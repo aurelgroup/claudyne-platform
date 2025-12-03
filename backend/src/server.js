@@ -298,13 +298,23 @@ async function startServer() {
 
       // Synchronisation des modèles
       // En développement: force: false (préserve les données)
-      // En production: alter: true (ajoute/modifie les colonnes sans supprimer)
-      const syncOptions = process.env.NODE_ENV === 'production'
-        ? { alter: true, logging: false }
-        : { force: false };
-
-      await sequelize.sync(syncOptions);
-      logger.info('✅ Modèles de base de données synchronisés');
+      // En production: only sync in development to avoid schema conflicts
+      if (process.env.NODE_ENV === 'development') {
+        await sequelize.sync({ force: false });
+        logger.info('✅ Modèles de base de données synchronisés');
+      } else {
+        // En production, ajouter manuellement la colonne dialCode si elle n'existe pas
+        try {
+          await sequelize.query(`
+            ALTER TABLE "users"
+            ADD COLUMN IF NOT EXISTS "dialCode" VARCHAR(10);
+          `);
+          logger.info('✅ Colonne dialCode ajoutée (si nécessaire)');
+        } catch (error) {
+          // La colonne existe probablement déjà, ce n'est pas grave
+          logger.debug('ℹ️ Colonne dialCode déjà présente');
+        }
+      }
     } else {
       logger.warn('⚠️ PostgreSQL non disponible - Mode sans base de données');
     }

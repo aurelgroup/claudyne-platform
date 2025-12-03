@@ -4,7 +4,7 @@ const withPWA = require('next-pwa')({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
+  disable: true, // Disable PWA for now due to build issues
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/claudyne\.com\/api\/.*$/,

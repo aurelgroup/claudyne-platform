@@ -31,10 +31,6 @@ module.exports = (sequelize) => {
       allowNull: true, // Peut être null si connexion par email
       unique: true,
       validate: {
-        is: {
-          args: /^(\+237|237)?[26][0-9]{8}$/,
-          msg: 'Format téléphone camerounais invalide'
-        },
         isValidOrEmpty(value) {
           // Permette les valeurs vides (null ou string vide)
           if (!value || value.trim() === '') {

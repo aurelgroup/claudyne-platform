@@ -1639,11 +1639,19 @@
                     </select>
                 </div>
                 
-                <div>
-                    <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
-                        Nom complet
-                    </label>
-                    <input type="text" id="registerName" placeholder="Votre nom complet" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Prénom
+                        </label>
+                        <input type="text" id="registerFirstName" placeholder="Votre prénom" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text);">
+                            Nom de famille
+                        </label>
+                        <input type="text" id="registerLastName" placeholder="Votre nom de famille" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
+                    </div>
                 </div>
                 
                 <div>
@@ -1686,12 +1694,19 @@
                         </button>
                     </div>
                 </div>
-                
-                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button type="button" class="glass-btn" onclick="showAuthChoice()">
+
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin: 1.5rem 0 1rem 0; padding: 1rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <input type="checkbox" id="acceptTerms" name="acceptTerms" required style="cursor: pointer; width: 18px; height: 18px; flex-shrink: 0;">
+                    <label for="acceptTerms" style="color: var(--color-light-text); cursor: pointer; font-size: 0.9rem; margin: 0;">
+                        J'accepte les <a href="#" style="color: var(--color-accent-1); text-decoration: none; font-weight: 500;">conditions d'utilisation</a> et la <a href="#" style="color: var(--color-accent-2); text-decoration: none; font-weight: 500;">politique de confidentialité</a>
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" style="flex: 1; padding: 14px 24px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)); backdrop-filter: blur(10px); border: 1.5px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: var(--color-light-text); font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; hover-effect: true;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1))'; this.style.boxShadow='0 8px 16px rgba(0, 0, 0, 0.3)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))'; this.style.boxShadow='none';" onclick="showAuthChoice()">
                         ← Retour
                     </button>
-                    <button type="submit" class="glass-btn glass-btn-success">
+                    <button type="submit" style="flex: 1; padding: 14px 24px; background: linear-gradient(135deg, var(--color-accent-1), var(--color-accent-2)); backdrop-filter: blur(10px); border: 1.5px solid rgba(255, 255, 255, 0.2); border-radius: 10px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(123, 85, 255, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(123, 85, 255, 0.5)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(123, 85, 255, 0.3)';">
                         ✨ S'inscrire
                     </button>
                 </div>
@@ -2815,11 +2830,13 @@
 
             const accountType = document.getElementById('registerAccountType').value;
             const studentClass = document.getElementById('studentClass').value;
-            const name = document.getElementById('registerName').value;
+            const firstName = document.getElementById('registerFirstName').value;
+            const lastName = document.getElementById('registerLastName').value;
             const email = document.getElementById('registerEmail').value;
             const phone = document.getElementById('registerPhone').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const acceptTerms = document.getElementById('acceptTerms').checked;
 
             // Validation des mots de passe
             if (password !== confirmPassword) {
@@ -2850,12 +2867,15 @@
             submitBtn.innerHTML = '⏳ Création du compte...';
             submitBtn.disabled = true;
 
+            // Validation that terms are accepted
+            if (!acceptTerms) {
+                alert('❌ Vous devez accepter les conditions d\'utilisation et la politique de confidentialité');
+                return;
+            }
+
             try {
                 // Appel API pour inscription parent
                 if (accountType === 'parent') {
-                    const [firstName, ...lastNameParts] = name.split(' ');
-                    const lastName = lastNameParts.join(' ') || firstName;
-
                     const response = await fetch('/api/auth/register', {
                         method: 'POST',
                         headers: {
@@ -2869,7 +2889,7 @@
                             firstName: firstName,
                             lastName: lastName,
                             familyName: `Famille ${lastName}`,
-                            acceptTerms: true
+                            acceptTerms: acceptTerms
                         })
                     });
 
@@ -2884,7 +2904,7 @@
                         localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
                         localStorage.setItem('claudyne_family', JSON.stringify(data.data.family));
 
-                        alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
+                        alert(`✅ Compte créé avec succès !\nBienvenue ${firstName} ${lastName} !`);
                         closeLoginModal();
 
                         // Redirection vers interface parent
@@ -2932,7 +2952,7 @@
                         // Sauvegarder les données utilisateur
                         localStorage.setItem('claudyne_user', JSON.stringify(data.data.user));
 
-                        alert(`✅ Compte créé avec succès !\nBienvenue ${name} !`);
+                        alert(`✅ Compte créé avec succès !\nBienvenue ${firstName} ${lastName} !`);
                         closeLoginModal();
 
                         // Redirection selon le type de compte

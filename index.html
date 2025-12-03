@@ -1666,25 +1666,50 @@
                         Téléphone
                     </label>
                     <div style="display: flex; gap: 0.75rem; align-items: flex-end;">
-                        <div style="flex: 0 0 auto; min-width: 120px;">
+                        <div style="flex: 0 0 auto; min-width: 140px;">
                             <label style="display: block; margin-bottom: 0.5rem; color: var(--color-light-text); font-size: 0.85rem;">Pays</label>
-                            <select id="registerCountry" onchange="updateCountryDialCode()" required style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; font-size: 0.9rem; cursor: pointer;">
-                                <option value="">Sélectionner...</option>
-                                <option value="CM|+237|🇨🇲">🇨🇲 Cameroun (+237)</option>
-                                <option value="CI|+225|🇨🇮">🇨🇮 Côte d'Ivoire (+225)</option>
-                                <option value="SN|+221|🇸🇳">🇸🇳 Sénégal (+221)</option>
-                                <option value="BJ|+229|🇧🇯">🇧🇯 Bénin (+229)</option>
-                                <option value="GA|+241|🇬🇦">🇬🇦 Gabon (+241)</option>
-                                <option value="FR|+33|🇫🇷">🇫🇷 France (+33)</option>
-                                <option value="BE|+32|🇧🇪">🇧🇪 Belgique (+32)</option>
-                                <option value="CH|+41|🇨🇭">🇨🇭 Suisse (+41)</option>
-                                <option value="CA|+1|🇨🇦">🇨🇦 Canada (+1)</option>
-                                <option value="US|+1|🇺🇸">🇺🇸 États-Unis (+1)</option>
+                            <select id="registerCountry" onchange="updateCountryDialCode()" required style="width: 100%; padding: 12px; border-radius: 8px; background: #2c3e50; border: 2px solid rgba(255, 255, 255, 0.3); color: white; font-size: 0.9rem; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\"white\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 8px center; background-size: 20px; padding-right: 35px;">
+                                <option value="" style="background: #2c3e50; color: white;">Sélectionner...</option>
+                                <optgroup label="Afrique" style="background: #34495e; color: white;">
+                                    <option value="CM|+237|🇨🇲" style="background: #2c3e50; color: white;">🇨🇲 Cameroun (+237)</option>
+                                    <option value="CI|+225|🇨🇮" style="background: #2c3e50; color: white;">🇨🇮 Côte d'Ivoire (+225)</option>
+                                    <option value="SN|+221|🇸🇳" style="background: #2c3e50; color: white;">🇸🇳 Sénégal (+221)</option>
+                                    <option value="BJ|+229|🇧🇯" style="background: #2c3e50; color: white;">🇧🇯 Bénin (+229)</option>
+                                    <option value="GA|+241|🇬🇦" style="background: #2c3e50; color: white;">🇬🇦 Gabon (+241)</option>
+                                    <option value="TG|+228|🇹🇬" style="background: #2c3e50; color: white;">🇹🇬 Togo (+228)</option>
+                                    <option value="BF|+226|🇧🇫" style="background: #2c3e50; color: white;">🇧🇫 Burkina Faso (+226)</option>
+                                    <option value="ML|+223|🇲🇱" style="background: #2c3e50; color: white;">🇲🇱 Mali (+223)</option>
+                                    <option value="NE|+227|🇳🇪" style="background: #2c3e50; color: white;">🇳🇪 Niger (+227)</option>
+                                    <option value="NG|+234|🇳🇬" style="background: #2c3e50; color: white;">🇳🇬 Nigéria (+234)</option>
+                                    <option value="GH|+233|🇬🇭" style="background: #2c3e50; color: white;">🇬🇭 Ghana (+233)</option>
+                                    <option value="KE|+254|🇰🇪" style="background: #2c3e50; color: white;">🇰🇪 Kenya (+254)</option>
+                                    <option value="ZA|+27|🇿🇦" style="background: #2c3e50; color: white;">🇿🇦 Afrique du Sud (+27)</option>
+                                </optgroup>
+                                <optgroup label="Europe" style="background: #34495e; color: white;">
+                                    <option value="FR|+33|🇫🇷" style="background: #2c3e50; color: white;">🇫🇷 France (+33)</option>
+                                    <option value="BE|+32|🇧🇪" style="background: #2c3e50; color: white;">🇧🇪 Belgique (+32)</option>
+                                    <option value="CH|+41|🇨🇭" style="background: #2c3e50; color: white;">🇨🇭 Suisse (+41)</option>
+                                    <option value="DE|+49|🇩🇪" style="background: #2c3e50; color: white;">🇩🇪 Allemagne (+49)</option>
+                                    <option value="ES|+34|🇪🇸" style="background: #2c3e50; color: white;">🇪🇸 Espagne (+34)</option>
+                                    <option value="IT|+39|🇮🇹" style="background: #2c3e50; color: white;">🇮🇹 Italie (+39)</option>
+                                    <option value="GB|+44|🇬🇧" style="background: #2c3e50; color: white;">🇬🇧 Royaume-Uni (+44)</option>
+                                </optgroup>
+                                <optgroup label="Amérique du Nord" style="background: #34495e; color: white;">
+                                    <option value="CA|+1|🇨🇦" style="background: #2c3e50; color: white;">🇨🇦 Canada (+1)</option>
+                                    <option value="US|+1|🇺🇸" style="background: #2c3e50; color: white;">🇺🇸 États-Unis (+1)</option>
+                                    <option value="MX|+52|🇲🇽" style="background: #2c3e50; color: white;">🇲🇽 Mexique (+52)</option>
+                                </optgroup>
+                                <optgroup label="Asie" style="background: #34495e; color: white;">
+                                    <option value="CN|+86|🇨🇳" style="background: #2c3e50; color: white;">🇨🇳 Chine (+86)</option>
+                                    <option value="IN|+91|🇮🇳" style="background: #2c3e50; color: white;">🇮🇳 Inde (+91)</option>
+                                    <option value="JP|+81|🇯🇵" style="background: #2c3e50; color: white;">🇯🇵 Japon (+81)</option>
+                                    <option value="SG|+65|🇸🇬" style="background: #2c3e50; color: white;">🇸🇬 Singapour (+65)</option>
+                                </optgroup>
                             </select>
                         </div>
                         <div style="flex: 1;">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span id="dialCodeDisplay" style="color: var(--color-light-text); min-width: 50px; text-align: center;">-</span>
+                                <span id="dialCodeDisplay" style="color: var(--color-light-text); min-width: 50px; text-align: center; font-weight: bold;">-</span>
                                 <input type="tel" id="registerPhoneLocal" placeholder="6XX XXX XXX" required style="flex: 1; padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white;">
                             </div>
                         </div>

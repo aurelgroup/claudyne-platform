@@ -34,6 +34,16 @@ module.exports = (sequelize) => {
         is: {
           args: /^(\+237|237)?[26][0-9]{8}$/,
           msg: 'Format téléphone camerounais invalide'
+        },
+        isValidOrEmpty(value) {
+          // Permette les valeurs vides (null ou string vide)
+          if (!value || value.trim() === '') {
+            return;
+          }
+          // Valider le format uniquement si la valeur n'est pas vide
+          if (!/^(\+237|237)?[26][0-9]{8}$/.test(value.trim())) {
+            throw new Error('Format téléphone camerounais invalide');
+          }
         }
       }
     },

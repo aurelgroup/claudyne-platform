@@ -6,10 +6,128 @@
 const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
+const fs = require('fs');
+const path = require('path');
 const { db } = require('./database.js');
 const productionEndpoints = require('./production-endpoints.js');
 
 const PORT = process.env.PORT || 3001;
+
+// Stockage simple des contenus (cours/quiz/ressources)
+const contentStoreFile = path.join(__dirname, 'content-store.json');
+
+const SUBJECT_LABELS = {
+  mathematiques: 'Mathématiques',
+  physique: 'Physique',
+  chimie: 'Chimie',
+  biologie: 'Biologie',
+  francais: 'Français',
+  anglais: 'Anglais',
+  histoire: 'Histoire',
+  geographie: 'Géographie'
+};
+
+const ensureContentStore = () => {
+  try {
+    if (!fs.existsSync(contentStoreFile)) {
+      const initial = {
+        subjects: [
+          {
+            id: 'math-6eme',
+            title: 'Mathématiques 6ème',
+            lessons: 0,
+            quizzes: 0,
+            students: 0,
+            averageScore: 0,
+            status: 'active'
+          },
+          {
+            id: 'francais-6eme',
+            title: 'Français 6ème',
+            lessons: 0,
+            quizzes: 0,
+            students: 0,
+            averageScore: 0,
+            status: 'active'
+          }
+        ],
+        courses: [],
+        quizzes: [],
+        resources: [],
+        pendingContent: []
+      };
+      fs.writeFileSync(contentStoreFile, JSON.stringify(initial, null, 2), 'utf8');
+    }
+  } catch (error) {
+    console.error('Impossible d’initialiser le fichier de contenus:', error);
+  }
+};
+
+const loadContentStore = () => {
+  ensureContentStore();
+  try {
+    const data = fs.readFileSync(contentStoreFile, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Erreur lecture content-store.json:', error);
+    return { subjects: [], courses: [], quizzes: [], resources: [], pendingContent: [] };
+  }
+};
+
+const saveContentStore = (store) => {
+  try {
+    fs.writeFileSync(contentStoreFile, JSON.stringify(store, null, 2), 'utf8');
+  } catch (error) {
+    console.error('Erreur sauvegarde content-store.json:', error);
+  }
+};
+
+const getSubjectLabel = (subjectId) => SUBJECT_LABELS[subjectId] || subjectId || 'Matière';
+
+const refreshSubjectAggregates = (store) => {
+  const subjectIndex = {};
+  store.subjects.forEach((s) => {
+    subjectIndex[s.id] = { ...s, lessons: 0, quizzes: 0, students: s.students || 0, averageScore: s.averageScore || 0 };
+  });
+
+  store.courses.forEach((course) => {
+    const id = course.subject || 'autre';
+    if (!subjectIndex[id]) {
+      subjectIndex[id] = {
+        id,
+        title: getSubjectLabel(id),
+        lessons: 0,
+        quizzes: 0,
+        students: 0,
+        averageScore: 0,
+        status: 'active'
+      };
+    }
+    subjectIndex[id].lessons += 1;
+  });
+
+  store.quizzes.forEach((quiz) => {
+    const id = quiz.subject || 'autre';
+    if (!subjectIndex[id]) {
+      subjectIndex[id] = {
+        id,
+        title: getSubjectLabel(id),
+        lessons: 0,
+        quizzes: 0,
+        students: 0,
+        averageScore: 0,
+        status: 'active'
+      };
+    }
+    subjectIndex[id].quizzes += 1;
+  });
+
+  store.subjects = Object.values(subjectIndex);
+  return store.subjects;
+};
+
+// Créer le fichier de contenu au démarrage si besoin
+ensureContentStore();
 
 // Fonction utilitaire pour les headers CORS sécurisés
 function setCorsHeaders(res, req) {
@@ -1105,47 +1223,65 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Admin Content Management
+    // Admin Content Management
+
   if (pathname === '/api/admin/content' && method === 'GET') {
+
+    const store = loadContentStore();
+
+    const subjects = refreshSubjectAggregates(store);
+
     sendJSON(res, 200, {
+
       success: true,
+
       data: {
-        subjects: [
-          {
-            id: 'math-6eme',
-            title: 'Mathématiques 6ème',
-            lessons: 12,
-            quizzes: 8,
-            students: 156,
-            averageScore: 74,
-            status: 'active'
-          },
-          {
-            id: 'francais-6eme',
-            title: 'Français 6ème',
-            lessons: 15,
-            quizzes: 10,
-            students: 142,
-            averageScore: 68,
-            status: 'active'
-          }
-        ],
-        pendingContent: [
-          {
-            id: 'history-6eme-lesson-5',
-            type: 'lesson',
-            title: 'Histoire: Les royaumes du Cameroun',
-            status: 'pending_review',
-            submittedBy: 'Prof. Atangana',
-            submissionDate: '2025-09-08T15:00:00Z'
-          }
-        ]
+
+        subjects,
+
+        courses: store.courses,
+
+        quizzes: store.quizzes,
+
+        resources: store.resources,
+
+        pendingContent: store.pendingContent || []
+
       }
-    });
+
+    }, req);
+
     return;
+
   }
 
-  // Admin Payments Management
+
+
+  if (pathname.startsWith('/api/admin/content/') && method === 'GET') {
+
+    const tab = pathname.split('/').pop();
+
+    const store = loadContentStore();
+
+    const allowed = { courses: store.courses, quizzes: store.quizzes, resources: store.resources };
+
+    if (allowed[tab] !== undefined) {
+
+      sendJSON(res, 200, { success: true, data: allowed[tab] }, req);
+
+    } else {
+
+      sendJSON(res, 404, { success: false, message: 'Tab inconnu' }, req);
+
+    }
+
+    return;
+
+  }
+
+
+
+// Admin Payments Management
   if (pathname === '/api/admin/payments' && method === 'GET') {
     sendJSON(res, 200, {
       success: true,
@@ -2495,147 +2631,365 @@ const server = http.createServer((req, res) => {
   }
 
   // API pour la gestion des cours
+
   if (pathname === '/api/admin/courses' && method === 'POST') {
+
     parseBody(req, (err, body) => {
+
       if (err) {
+
         sendJSON(res, 400, { success: false, message: 'Corps de requête invalide' });
+
         return;
+
       }
+
+
 
       const { title, subject, level, description, content, duration, created_by } = body;
+
       
+
       // Validation
+
       if (!title || !subject || !level || !content) {
+
         sendJSON(res, 400, {
+
           success: false,
+
           message: 'Les champs titre, matière, niveau et contenu sont obligatoires'
+
         });
+
         return;
+
       }
 
-      // Simuler la création du cours
+
+
+      const store = loadContentStore();
+
       const courseId = 'COURS-' + Date.now();
-      // Cours créé avec succès
+
+      const newCourse = {
+
+        id: courseId,
+
+        title,
+
+        subject,
+
+        level,
+
+        description,
+
+        content,
+
+        duration: duration || 45,
+
+        status: 'active',
+
+        students: 0,
+
+        averageScore: 0,
+
+        created_by,
+
+        created_at: new Date().toISOString()
+
+      };
+
+
+
+      store.courses.push(newCourse);
+
+      refreshSubjectAggregates(store);
+
+      saveContentStore(store);
+
+
 
       sendJSON(res, 200, {
+
         success: true,
+
         message: 'Cours créé avec succès',
-        data: {
-          id: courseId,
-          title,
-          subject,
-          level,
-          description,
-          content,
-          duration: duration || 45,
-          created_by,
-          created_at: new Date().toISOString()
-        }
-      });
+
+        data: newCourse
+
+      }, req);
+
     });
+
     return;
+
   }
 
-  // API pour la gestion des quiz
+
+
+// API pour la gestion des quiz
+
   if (pathname === '/api/admin/quizzes' && method === 'POST') {
+
     parseBody(req, (err, body) => {
+
       if (err) {
+
         sendJSON(res, 400, { success: false, message: 'Corps de requête invalide' });
+
         return;
+
       }
+
+
 
       const { title, subject, level, description, duration, passing_score, questions, created_by } = body;
+
       
+
       // Validation
+
       if (!title || !subject || !level || !questions || questions.length === 0) {
+
         sendJSON(res, 400, {
+
           success: false,
+
           message: 'Les champs titre, matière, niveau et au moins une question sont obligatoires'
+
         });
+
         return;
+
       }
+
+
 
       // Valider les questions
-      const questionsLength = questions.length;
-      for (let i = 0; i < questionsLength; i++) {
+
+      for (let i = 0; i < questions.length; i++) {
+
+
+
         const question = questions[i];
+
+
+
         if (!question.question || !question.options || !question.correct_answer) {
+
           sendJSON(res, 400, {
+
             success: false,
-            message: `Question ${i + 1} incomplète`
+
+            message: 'Question ' + (i + 1) + ' incomplète'
+
           });
+
           return;
+
         }
+
+
+
       }
 
-      // Simuler la création du quiz
+
+
+      const store = loadContentStore();
+
       const quizId = 'QUIZ-' + Date.now();
-      // Quiz créé avec succès
+
+      const newQuiz = {
+
+        id: quizId,
+
+        title,
+
+        subject,
+
+        level,
+
+        description,
+
+        duration: duration || 20,
+
+        passing_score: passing_score || 60,
+
+        questions,
+
+        status: 'active',
+
+        attempts: 0,
+
+        averageScore: 0,
+
+        created_by,
+
+        created_at: new Date().toISOString()
+
+      };
+
+
+
+      store.quizzes.push(newQuiz);
+
+      refreshSubjectAggregates(store);
+
+      saveContentStore(store);
+
+
 
       sendJSON(res, 200, {
+
         success: true,
+
         message: 'Quiz créé avec succès',
-        data: {
-          id: quizId,
-          title,
-          subject,
-          level,
-          description,
-          duration: duration || 20,
-          passing_score: passing_score || 60,
-          questions,
-          created_by,
-          created_at: new Date().toISOString()
-        }
-      });
+
+        data: newQuiz
+
+      }, req);
+
     });
+
     return;
+
   }
 
-  // API pour la gestion des ressources
+
+
+// API pour la gestion des ressources
+
   if (pathname === '/api/admin/resources' && method === 'POST') {
+
     parseBody(req, (err, body) => {
+
       if (err) {
+
         sendJSON(res, 400, { success: false, message: 'Corps de requête invalide' });
+
         return;
+
       }
+
+
 
       const { title, type, subject, level, description, url, is_premium, created_by } = body;
+
       
+
       // Validation
+
       if (!title || !type || !subject || !level) {
+
         sendJSON(res, 400, {
+
           success: false,
+
           message: 'Les champs titre, type, matière et niveau sont obligatoires'
+
         });
+
         return;
+
       }
 
-      // Simuler la création de la ressource
+
+
+      const store = loadContentStore();
+
       const resourceId = 'RES-' + Date.now();
-      console.log('Nouvelle ressource créée:', { resourceId, title, type, subject, level });
+
+      const newResource = {
+
+        id: resourceId,
+
+        title,
+
+        type,
+
+        subject,
+
+        level,
+
+        description,
+
+        url,
+
+        is_premium: !!is_premium,
+
+        created_by,
+
+        created_at: new Date().toISOString()
+
+      };
+
+
+
+      store.resources.push(newResource);
+
+      saveContentStore(store);
+
+
 
       sendJSON(res, 200, {
+
         success: true,
+
         message: 'Ressource ajoutée avec succès',
-        data: {
-          id: resourceId,
-          title,
-          type,
-          subject,
-          level,
-          description,
-          url,
-          is_premium: !!is_premium,
-          created_by,
-          created_at: new Date().toISOString()
-        }
-      });
+
+        data: newResource
+
+      }, req);
+
     });
+
     return;
+
   }
 
-  // API manquants pour éviter les 404
+
+
+
+  // Toggle course status
+  if (pathname.startsWith('/api/admin/content/courses/') && method === 'PUT') {
+    const parts = pathname.split('/');
+    const courseId = parts[5];
+    const action = parts[6];
+    if (action === 'toggle' && courseId) {
+      const store = loadContentStore();
+      const course = store.courses.find(c => c.id === courseId);
+      if (course) {
+        course.status = course.status === 'active' ? 'inactive' : 'active';
+        saveContentStore(store);
+        sendJSON(res, 200, { success: true, message: 'Statut du cours mis à jour', data: course }, req);
+      } else {
+        sendJSON(res, 404, { success: false, message: 'Cours non trouvé' }, req);
+      }
+      return;
+    }
+  }
+
+  // Toggle quiz status
+  if (pathname.startsWith('/api/admin/content/quizzes/') && method === 'PUT') {
+    const parts = pathname.split('/');
+    const quizId = parts[5];
+    const action = parts[6];
+    if (action === 'toggle' && quizId) {
+      const store = loadContentStore();
+      const quiz = store.quizzes.find(q => q.id === quizId);
+      if (quiz) {
+        quiz.status = quiz.status === 'active' ? 'inactive' : 'active';
+        saveContentStore(store);
+        sendJSON(res, 200, { success: true, message: 'Statut du quiz mis à jour', data: quiz }, req);
+      } else {
+        sendJSON(res, 404, { success: false, message: 'Quiz non trouvé' }, req);
+      }
+      return;
+    }
+  }
+
+// API manquants pour éviter les 404
   if (pathname === '/api/admin/roles' && method === 'GET') {
     sendJSON(res, 200, {
       success: true,
@@ -3011,3 +3365,4 @@ server.on('error', (err) => {
 });
 
 module.exports = server;
+

@@ -95,3 +95,17 @@ npm-debug.log*
 yarn-error.log*
 yarn-debug.log*
 pnpm-debug.log*
+
+# Deployment reports and temporary files
+deployment-report-*.txt
+test-deployment.sh
+test-payment-tickets-deployment.sh
+backend-*.js
+display_courses_fix.js
+fix-encoding*.py
+lessons-loader.js
+*-backup.html
+*.bak
+
+# Claude settings (local only)
+.claude/settings.local.json

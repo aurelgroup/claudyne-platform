@@ -6,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const logger = require('../utils/logger');
+const { Op } = require('sequelize');
 
 router.use(async (req, res, next) => {
   if (!req.models) {
@@ -136,7 +137,7 @@ router.get('/leaderboard', async (req, res) => {
     // Get all active students
     const students = await Student.findAll({
       where: { status: 'ACTIVE' },
-      attributes: ['id', 'firstName', 'lastName', 'currentLevel', 'currentXP'],
+      attributes: ['id', 'firstName', 'lastName', 'currentLevel', 'experiencePoints'],
       limit: parseInt(limit) + 10 // Get extra to account for current user
     });
 
@@ -147,10 +148,10 @@ router.get('/leaderboard', async (req, res) => {
           where: {
             studentId: student.id,
             createdAt: {
-              [Progress.sequelize.Op.gte]: startDate
+              [Op.gte]: startDate
             }
           },
-          attributes: ['score', 'xpEarned']
+          attributes: ['score', 'claudinePointsEarned']
         });
 
         const xpEarned = progressInPeriod.reduce((sum, p) => {

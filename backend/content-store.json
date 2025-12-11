@@ -1,0 +1,35 @@
+{
+  "subjects": [
+    {
+      "id": "mathematiques-6eme",
+      "title": "Mathématiques 6ème",
+      "lessons": 0,
+      "quizzes": 0,
+      "students": 0,
+      "averageScore": 0,
+      "status": "active"
+    },
+    {
+      "id": "francais-6eme",
+      "title": "Français 6ème",
+      "lessons": 0,
+      "quizzes": 0,
+      "students": 0,
+      "averageScore": 0,
+      "status": "active"
+    },
+    {
+      "id": "physique-5eme",
+      "title": "Physique 5ème",
+      "lessons": 0,
+      "quizzes": 0,
+      "students": 0,
+      "averageScore": 0,
+      "status": "active"
+    }
+  ],
+  "courses": [],
+  "quizzes": [],
+  "resources": [],
+  "pendingContent": []
+}

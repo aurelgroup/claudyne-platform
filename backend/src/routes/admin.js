@@ -3555,4 +3555,312 @@ router.put('/pricing-plans/:planId/status', async (req, res) => {
   }
 });
 
+// ===============================
+// GESTION DES MATIÈRES (SUBJECTS)
+// ===============================
+
+// Créer une nouvelle matière
+router.post('/subjects', async (req, res) => {
+  try {
+    const { Subject } = req.models;
+    const {
+      title,
+      description,
+      level,
+      category,
+      icon,
+      color,
+      difficulty,
+      estimatedDuration,
+      isPremium
+    } = req.body;
+
+    // Validation
+    if (!title || !level || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Titre, niveau et catégorie sont requis'
+      });
+    }
+
+    const subject = await Subject.create({
+      title,
+      description,
+      level,
+      category,
+      icon: icon || '📚',
+      color: color || '#3B82F6',
+      difficulty: difficulty || 'Débutant',
+      estimatedDuration: estimatedDuration || 45,
+      isPremium: isPremium || false,
+      isActive: true,
+      createdBy: req.user.id
+    });
+
+    logger.info(`Matière créée: ${subject.title} (${subject.id})`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Matière créée avec succès',
+      data: subject
+    });
+
+  } catch (error) {
+    logger.error('Erreur création matière:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création de la matière',
+      error: error.message
+    });
+  }
+});
+
+// Mettre à jour une matière
+router.put('/subjects/:subjectId', async (req, res) => {
+  try {
+    const { Subject } = req.models;
+    const { subjectId } = req.params;
+
+    const subject = await Subject.findByPk(subjectId);
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Matière non trouvée'
+      });
+    }
+
+    await subject.update({
+      ...req.body,
+      lastUpdatedBy: req.user.id
+    });
+
+    res.json({
+      success: true,
+      message: 'Matière mise à jour avec succès',
+      data: subject
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour matière:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour'
+    });
+  }
+});
+
+// Supprimer une matière (soft delete)
+router.delete('/subjects/:subjectId', async (req, res) => {
+  try {
+    const { Subject } = req.models;
+    const { subjectId } = req.params;
+
+    const subject = await Subject.findByPk(subjectId);
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Matière non trouvée'
+      });
+    }
+
+    await subject.destroy();
+
+    res.json({
+      success: true,
+      message: 'Matière supprimée avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur suppression matière:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression'
+    });
+  }
+});
+
+// ===============================
+// GESTION DES LEÇONS (LESSONS)
+// ===============================
+
+// Créer une nouvelle leçon
+router.post('/subjects/:subjectId/lessons', async (req, res) => {
+  try {
+    const { Lesson, Subject } = req.models;
+    const { subjectId } = req.params;
+    const {
+      title,
+      description,
+      type,
+      difficulty,
+      estimatedDuration,
+      content,
+      objectives,
+      prerequisites,
+      hasQuiz,
+      quiz,
+      isPremium,
+      isFree
+    } = req.body;
+
+    // Vérifier que la matière existe
+    const subject = await Subject.findByPk(subjectId);
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Matière non trouvée'
+      });
+    }
+
+    // Validation
+    if (!title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: 'Titre et contenu sont requis'
+      });
+    }
+
+    const lesson = await Lesson.create({
+      title,
+      description,
+      subjectId,
+      type: type || 'interactive',
+      difficulty: difficulty || 'Débutant',
+      estimatedDuration: estimatedDuration || 25,
+      content: typeof content === 'string' ? { keyPoints: [content] } : content,
+      objectives: objectives || [],
+      prerequisites: prerequisites || [],
+      hasQuiz: hasQuiz || false,
+      quiz: quiz || null,
+      isPremium: isPremium || false,
+      isFree: isFree || false,
+      isActive: true,
+      reviewStatus: 'approved', // Approuvé automatiquement par l'admin
+      publishedAt: new Date(),
+      createdBy: req.user.id
+    });
+
+    // Mettre à jour les stats de la matière
+    await subject.updateStats();
+
+    logger.info(`Leçon créée: ${lesson.title} (${lesson.id}) pour ${subject.title}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Leçon créée avec succès',
+      data: lesson
+    });
+
+  } catch (error) {
+    logger.error('Erreur création leçon:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création de la leçon',
+      error: error.message
+    });
+  }
+});
+
+// Mettre à jour une leçon
+router.put('/lessons/:lessonId', async (req, res) => {
+  try {
+    const { Lesson } = req.models;
+    const { lessonId } = req.params;
+
+    const lesson = await Lesson.findByPk(lessonId);
+    if (!lesson) {
+      return res.status(404).json({
+        success: false,
+        message: 'Leçon non trouvée'
+      });
+    }
+
+    await lesson.update({
+      ...req.body,
+      reviewedBy: req.user.id
+    });
+
+    res.json({
+      success: true,
+      message: 'Leçon mise à jour avec succès',
+      data: lesson
+    });
+
+  } catch (error) {
+    logger.error('Erreur mise à jour leçon:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour'
+    });
+  }
+});
+
+// Supprimer une leçon (soft delete)
+router.delete('/lessons/:lessonId', async (req, res) => {
+  try {
+    const { Lesson, Subject } = req.models;
+    const { lessonId } = req.params;
+
+    const lesson = await Lesson.findByPk(lessonId);
+    if (!lesson) {
+      return res.status(404).json({
+        success: false,
+        message: 'Leçon non trouvée'
+      });
+    }
+
+    const subjectId = lesson.subjectId;
+    await lesson.destroy();
+
+    // Mettre à jour les stats de la matière
+    const subject = await Subject.findByPk(subjectId);
+    if (subject) {
+      await subject.updateStats();
+    }
+
+    res.json({
+      success: true,
+      message: 'Leçon supprimée avec succès'
+    });
+
+  } catch (error) {
+    logger.error('Erreur suppression leçon:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression'
+    });
+  }
+});
+
+// Liste toutes les matières (admin)
+router.get('/subjects', async (req, res) => {
+  try {
+    const { Subject, Lesson } = req.models;
+
+    const subjects = await Subject.findAll({
+      include: [
+        {
+          model: Lesson,
+          as: 'lessons',
+          attributes: ['id', 'title', 'type', 'isActive', 'isPremium', 'isFree'],
+          required: false
+        }
+      ],
+      order: [['order', 'ASC'], ['createdAt', 'DESC']]
+    });
+
+    res.json({
+      success: true,
+      data: subjects
+    });
+
+  } catch (error) {
+    logger.error('Erreur récupération matières:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des matières'
+    });
+  }
+});
+
 module.exports = router;

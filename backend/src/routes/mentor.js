@@ -54,11 +54,20 @@ router.get('/chat/:sessionId?', async (req, res) => {
 
       targetStudentId = studentId;
     }
+    // Pour les étudiants individuels, chercher par userId
     else {
-      return res.status(400).json({
-        success: false,
-        message: 'ID étudiant requis pour les parents'
+      const student = await Student.findOne({
+        where: { userId: req.user.id }
       });
+
+      if (!student) {
+        return res.status(404).json({
+          success: false,
+          message: 'Profil étudiant non trouvé'
+        });
+      }
+
+      targetStudentId = student.id;
     }
 
     const where = { studentId: targetStudentId };
@@ -134,11 +143,20 @@ router.post('/chat', async (req, res) => {
 
       targetStudentId = studentId;
     }
+    // Pour les étudiants individuels, chercher par userId
     else {
-      return res.status(400).json({
-        success: false,
-        message: 'ID étudiant requis pour les parents'
+      const student = await Student.findOne({
+        where: { userId: req.user.id }
       });
+
+      if (!student) {
+        return res.status(404).json({
+          success: false,
+          message: 'Profil étudiant non trouvé'
+        });
+      }
+
+      targetStudentId = student.id;
     }
 
     // Enregistrer le message de l'utilisateur
@@ -147,9 +165,11 @@ router.post('/chat', async (req, res) => {
       sessionId: sessionId,
       role: 'user',
       content: message,
+      message: message, // Keep old column for compatibility
       messageType: 'text',
+      sender: 'student', // Keep old column for compatibility
       metadata: {
-        sentBy: req.user.userType, // Indiquer si envoyé par l'étudiant ou le parent
+        sentBy: req.user.userType,
         sentByUserId: req.user.id
       }
     });
@@ -170,7 +190,9 @@ router.post('/chat', async (req, res) => {
       sessionId: userMessage.sessionId,
       role: 'assistant',
       content: aiResponse,
+      message: aiResponse, // Keep old column for compatibility
       messageType: 'text',
+      sender: 'assistant', // Keep old column for compatibility
       metadata: {
         aiModel: 'claudyne-mentor-v1',
         confidence: 0.85,

@@ -74,6 +74,12 @@ router.get('/metrics', async (req, res) => {
         where: { familyId: req.user.familyId }
       });
       if (student) studentId = student.id;
+    } else {
+      // Pour les étudiants individuels, chercher par userId
+      const student = await Student.findOne({
+        where: { userId: req.user.id }
+      });
+      if (student) studentId = student.id;
     }
 
     // Calculate wellness metrics based on recent activity

@@ -39,24 +39,28 @@ router.get('/profile', async (req, res) => {
       });
     }
 
-    let studentProfile = null;
-    if (req.user.familyId) {
-      studentProfile = await Student.findOne({
-        where: {
-          familyId: req.user.familyId
-        },
-        attributes: [
-          'id', 'firstName', 'lastName', 'currentLevel', 'totalPoints',
-          'claudinePoints', 'currentStreak', 'overallprogress', 'currentAverage'
-        ]
-      });
-    }
+    // Récupérer le profil étudiant par userId (pour tous types d'utilisateurs)
+    const studentProfile = await Student.findOne({
+      where: {
+        userId: req.user.id
+      },
+      attributes: [
+        'id', 'firstName', 'lastName', 'nickname', 'educationLevel', 'schoolName',
+        'currentLevel', 'totalPoints', 'claudinePoints', 'currentStreak',
+        'overallprogress', 'currentAverage'
+      ]
+    });
 
     const profileData = {
       id: user.id,
+      studentId: studentProfile?.id || null, // Add studentId for analytics endpoint
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      // Utiliser les données du Student en priorité, sinon celles du User
+      firstName: studentProfile?.firstName || user.firstName,
+      lastName: studentProfile?.lastName || user.lastName,
+      nickname: studentProfile?.nickname || null,
+      educationLevel: studentProfile?.educationLevel || null,
+      schoolName: studentProfile?.schoolName || null,
       role: user.role,
       userType: user.userType,
       xp: studentProfile?.totalPoints || 0,
@@ -370,7 +374,7 @@ router.get('/:id/progress', async (req, res) => {
 // Récupérer les analytics d'un étudiant
 router.get('/:id/analytics', async (req, res) => {
   try {
-    if (!req.user || !req.user.familyId) {
+    if (!req.user) {
       return res.status(401).json({
         success: false,
         message: 'Authentification requise'
@@ -381,13 +385,20 @@ router.get('/:id/analytics', async (req, res) => {
     const { Sequelize } = require('sequelize');
     const { Op } = Sequelize;
 
-    const student = await Student.findOne({
-      where: {
-        id: req.params.id,
-        familyId: req.user.familyId,
-        isActive: true
-      }
-    });
+    // For INDIVIDUAL/TEACHER users without familyId, search by userId
+    const whereClause = {
+      id: req.params.id,
+      isActive: true
+    };
+
+    if (req.user.familyId) {
+      whereClause.familyId = req.user.familyId;
+    } else {
+      // For individual users, verify the student belongs to the user
+      whereClause.userId = req.user.id;
+    }
+
+    const student = await Student.findOne({ where: whereClause });
 
     if (!student) {
       return res.status(404).json({
@@ -617,9 +628,9 @@ router.get('/dashboard', async (req, res) => {
 
     const { Student, Progress, Lesson } = req.models;
 
-    // Récupérer le profil étudiant
+    // Récupérer le profil étudiant par userId
     const student = await Student.findOne({
-      where: { familyId: req.user.familyId }
+      where: { userId: req.user.id }
     });
 
     if (!student) {
@@ -719,18 +730,11 @@ router.get('/subjects', async (req, res) => {
       });
     }
 
-    // Vérifier que l'utilisateur a une famille
-    if (!req.user.familyId) {
-      return res.json({
-        success: true,
-        data: { subjects: [] }
-      });
-    }
-
     const { Student, Subject, Progress, Lesson } = req.models;
 
+    // Récupérer le profil étudiant par userId
     const student = await Student.findOne({
-      where: { familyId: req.user.familyId }
+      where: { userId: req.user.id }
     });
 
     if (!student) {
@@ -740,9 +744,34 @@ router.get('/subjects', async (req, res) => {
       });
     }
 
-    // Récupérer tous les sujets actifs
+    // Mapping niveau Student -> niveau Subject
+    const LEVEL_MAPPING = {
+      'MATERNELLE_PETITE': 'Maternelle',
+      'MATERNELLE_MOYENNE': 'Maternelle',
+      'MATERNELLE_GRANDE': 'Maternelle',
+      'SIL': 'SIL',
+      'CP': 'CP',
+      'CE1': 'CE1',
+      'CE2': 'CE2',
+      'CM1': 'CM1',
+      'CM2': 'CM2',
+      '6EME': '6ème',
+      '5EME': '5ème',
+      '4EME': '4ème',
+      '3EME': '3ème',
+      'SECONDE': '2nde',
+      'PREMIERE': '1ère',
+      'TERMINALE': 'Tle'
+    };
+
+    const subjectLevel = LEVEL_MAPPING[student.educationLevel];
+
+    // Récupérer tous les sujets actifs du niveau de l'étudiant
     const allSubjects = await Subject.findAll({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        level: subjectLevel || student.educationLevel // Fallback si mapping non trouvé
+      },
       order: [['order', 'ASC']]
     });
 
@@ -812,18 +841,11 @@ router.get('/achievements', async (req, res) => {
       });
     }
 
-    // Vérifier que l'utilisateur a une famille
-    if (!req.user.familyId) {
-      return res.json({
-        success: true,
-        data: { achievements: [], totalUnlocked: 0, totalAvailable: 10 }
-      });
-    }
-
     const { Student, Progress } = req.models;
 
+    // Récupérer le profil étudiant par userId
     const student = await Student.findOne({
-      where: { familyId: req.user.familyId }
+      where: { userId: req.user.id }
     });
 
     if (!student) {
@@ -929,7 +951,7 @@ router.get('/settings', async (req, res) => {
 
     // Récupérer l'utilisateur avec son profil étudiant
     const user = await User.findByPk(req.user.id, {
-      attributes: ['id', 'email', 'phone', 'address', 'city', 'country']
+      attributes: ['id', 'email', 'phone', 'address', 'city', 'country', 'firstName', 'lastName']
     });
 
     if (!user) {
@@ -939,11 +961,13 @@ router.get('/settings', async (req, res) => {
       });
     }
 
+    // Récupérer le profil étudiant par userId (pour tous types d'utilisateurs)
     const student = await Student.findOne({
-      where: { familyId: req.user.familyId }
+      where: { userId: req.user.id }
     });
 
-    const family = await Family.findByPk(req.user.familyId);
+    // La famille peut être null pour certains utilisateurs (enseignants)
+    const family = req.user.familyId ? await Family.findByPk(req.user.familyId) : null;
 
     // Structure des paramètres
     const settings = {
@@ -1071,31 +1095,47 @@ router.put('/settings', async (req, res) => {
       });
     }
 
-    // Vérifier que l'utilisateur a une famille
-    if (!req.user.familyId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Utilisateur sans famille associée. Veuillez contacter le support.'
-      });
-    }
-
-    // Mettre à jour le profil étudiant
+    // Récupérer le profil étudiant par userId (marche pour tous les types d'utilisateurs)
+    // On utilise userId au lieu de familyId pour gérer les enseignants et étudiants individuels
     const student = await Student.findOne({
-      where: { familyId: req.user.familyId }
+      where: { userId: req.user.id }
     });
 
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: 'Profil étudiant non trouvé'
-      });
-    }
+    // Si l'utilisateur n'a pas de profil étudiant, on met à jour juste les infos User de base
+    // (cas des enseignants ou autres rôles sans profil Student)
+    const hasStudentProfile = !!student;
 
     // Updates pour User
     const userUpdates = {};
     if (profile) {
-      if (profile.email) userUpdates.email = profile.email;
-      if (profile.phone) userUpdates.phone = profile.phone;
+      // Nom et prénom dans User (important pour tous les utilisateurs)
+      if (profile.firstName) userUpdates.firstName = profile.firstName;
+      if (profile.lastName) userUpdates.lastName = profile.lastName;
+
+      if (profile.email && profile.email !== user.email) {
+        // Vérifier si l'email est déjà utilisé
+        const existingEmail = await User.findOne({ where: { email: profile.email } });
+        if (existingEmail && existingEmail.id !== user.id) {
+          return res.status(400).json({
+            success: false,
+            message: 'Cet email est déjà utilisé par un autre compte'
+          });
+        }
+        userUpdates.email = profile.email;
+      }
+
+      if (profile.phone && profile.phone !== user.phone) {
+        // Vérifier si le téléphone est déjà utilisé
+        const existingPhone = await User.findOne({ where: { phone: profile.phone } });
+        if (existingPhone && existingPhone.id !== user.id) {
+          return res.status(400).json({
+            success: false,
+            message: 'Ce numéro de téléphone est déjà utilisé par un autre compte'
+          });
+        }
+        userUpdates.phone = profile.phone;
+      }
+
       if (profile.address) userUpdates.address = profile.address;
       if (profile.city) userUpdates.city = profile.city;
       if (profile.country) userUpdates.country = profile.country;
@@ -1105,73 +1145,98 @@ router.put('/settings', async (req, res) => {
       await user.update(userUpdates);
     }
 
-    // Updates pour Student
-    const studentUpdates = {};
+    // Updates pour Student (seulement si le profil existe)
+    if (hasStudentProfile) {
+      const studentUpdates = {};
 
-    if (profile) {
-      if (profile.firstName) studentUpdates.firstName = profile.firstName;
-      if (profile.lastName) studentUpdates.lastName = profile.lastName;
-      if (profile.nickname) studentUpdates.nickname = profile.nickname;
-      if (profile.dateOfBirth) studentUpdates.dateOfBirth = profile.dateOfBirth;
-      if (profile.gender) studentUpdates.gender = profile.gender;
-      if (profile.avatar) studentUpdates.avatar = profile.avatar;
-    }
+      if (profile) {
+        if (profile.firstName) studentUpdates.firstName = profile.firstName;
+        if (profile.lastName) studentUpdates.lastName = profile.lastName;
+        if (profile.nickname) studentUpdates.nickname = profile.nickname;
+        if (profile.dateOfBirth) studentUpdates.dateOfBirth = profile.dateOfBirth;
+        if (profile.gender) studentUpdates.gender = profile.gender;
+        if (profile.avatar) studentUpdates.avatar = profile.avatar;
+      }
 
-    if (education) {
-      if (education.educationLevel) studentUpdates.educationLevel = education.educationLevel;
-      if (education.schoolName) studentUpdates.schoolName = education.schoolName;
-      if (education.schoolType) studentUpdates.schoolType = education.schoolType;
-      if (education.className) studentUpdates.className = education.className;
-      if (education.targetGrade) studentUpdates.targetGrade = education.targetGrade;
-    }
+      if (education) {
+        if (education.educationLevel) studentUpdates.educationLevel = education.educationLevel;
+        if (education.schoolName) studentUpdates.schoolName = education.schoolName;
+        if (education.schoolType) studentUpdates.schoolType = education.schoolType;
+        if (education.className) studentUpdates.className = education.className;
+        if (education.targetGrade) studentUpdates.targetGrade = education.targetGrade;
+      }
 
-    if (learning) {
-      if (learning.learningStyle) studentUpdates.learningStyle = learning.learningStyle;
-      if (learning.preferredLanguage) studentUpdates.preferredLanguage = learning.preferredLanguage;
-      if (learning.difficultySetting) studentUpdates.difficultySetting = learning.difficultySetting;
+      if (learning) {
+        if (learning.learningStyle) studentUpdates.learningStyle = learning.learningStyle;
+        if (learning.preferredLanguage) studentUpdates.preferredLanguage = learning.preferredLanguage;
+        if (learning.difficultySetting) studentUpdates.difficultySetting = learning.difficultySetting;
 
-      // Mapper le niveau de difficulté numérique vers les enum
-      if (learning.difficultyLevel !== undefined) {
-        const difficultyMap = {
-          1: 'EASY',
-          2: 'EASY',
-          3: 'MEDIUM',
-          4: 'HARD',
-          5: 'HARD'
-        };
-        studentUpdates.difficultySetting = difficultyMap[learning.difficultyLevel] || 'MEDIUM';
+        // Mapper le niveau de difficulté numérique vers les enum
+        if (learning.difficultyLevel !== undefined) {
+          const difficultyMap = {
+            1: 'EASY',
+            2: 'EASY',
+            3: 'MEDIUM',
+            4: 'HARD',
+            5: 'HARD'
+          };
+          studentUpdates.difficultySetting = difficultyMap[learning.difficultyLevel] || 'MEDIUM';
+        }
+      }
+
+      if (Object.keys(studentUpdates).length > 0) {
+        await student.update(studentUpdates);
+      }
+
+      // Sauvegarder les préférences dans metadata
+      const metadata = student.metadata || {};
+      if (notifications) metadata.notifications = notifications;
+      if (interfaceSettings) metadata.interface = interfaceSettings;
+
+      if (notifications || interfaceSettings) {
+        await student.update({ metadata });
       }
     }
 
-    if (Object.keys(studentUpdates).length > 0) {
-      await student.update(studentUpdates);
-    }
-
-    // Sauvegarder les préférences dans metadata
-    const metadata = student.metadata || {};
-    if (notifications) metadata.notifications = notifications;
-    if (interfaceSettings) metadata.interface = interfaceSettings;
-
-    if (notifications || interfaceSettings) {
-      await student.update({ metadata });
-    }
+    // Préparer la réponse selon le type de profil
+    const responseData = {
+      profile: {
+        firstName: hasStudentProfile ? student.firstName : user.firstName,
+        lastName: hasStudentProfile ? student.lastName : user.lastName,
+        nickname: hasStudentProfile ? student.nickname : null,
+        email: user.email,
+        phone: user.phone
+      }
+    };
 
     res.json({
       success: true,
       message: 'Paramètres mis à jour avec succès',
-      data: {
-        profile: {
-          firstName: student.firstName,
-          lastName: student.lastName,
-          nickname: student.nickname,
-          email: user.email
-        }
-      }
+      data: responseData,
+      hasStudentProfile
     });
 
   } catch (error) {
     logger.error('Erreur mise à jour settings:', error);
     logger.error('Stack trace:', error.stack);
+
+    // Gérer les erreurs de contrainte unique
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      const field = error.errors[0]?.path;
+      let message = 'Cette valeur est déjà utilisée par un autre compte';
+
+      if (field === 'email') {
+        message = 'Cet email est déjà utilisé par un autre compte';
+      } else if (field === 'phone') {
+        message = 'Ce numéro de téléphone est déjà utilisé par un autre compte';
+      }
+
+      return res.status(400).json({
+        success: false,
+        message
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour des paramètres',

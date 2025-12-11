@@ -1,333 +1,257 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Leçons Interactives — Claudyne</title>
-  <meta name="description" content="Découvrez les leçons interactives de Claudyne — plateforme éducative camerounaise. Apprentissage adapté au système éducatif du Cameroun." />
-  <link rel="canonical" href="https://claudyne.com/lessons" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Leçons interactives | Claudyne</title>
+  <meta name="description" content="Découvrez les leçons interactives Claudyne adaptées au programme camerounais, de la maternelle au lycée.">
+  <link rel="canonical" href="https://claudyne.com/lessons">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
-      --accent:#00853F;
-      --container:1200px;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #00853f;
+      --accent-dark: #0b6a33;
+      --container: 1200px;
+      --shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
     }
-    body {background:var(--bg);color:var(--text);margin:0;padding:2rem;line-height:1.6}
-    .wrap {max-width:var(--container);margin:0 auto;padding:2rem}
-    header h1 {margin:0 0 .5rem;font-size:2.5rem;color:var(--accent);text-align:center}
-    header p {margin:0 0 2rem;color:var(--muted);text-align:center;font-size:1.125rem}
-    h2 {color:var(--accent);margin-top:2rem;font-size:1.75rem}
-    h3 {margin-top:1.5rem;color:var(--text)}
-    .hero {background:linear-gradient(135deg,#00853F,#2E7D32);color:white;padding:3rem 2rem;border-radius:12px;text-align:center;margin:2rem 0}
-    .hero h2 {color:white;margin:0 0 1rem}
-    .hero p {font-size:1.125rem;opacity:0.9}
-    .grade-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin:2rem 0}
-    .grade-card {background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1.5rem;transition:transform 0.2s,box-shadow 0.2s}
-    .grade-card:hover {transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-    .grade-title {color:var(--accent);font-weight:600;font-size:1.25rem;margin:0 0 1rem}
-    .subject-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin:2rem 0}
-    .subject-card {background:white;border:1px solid #e2e8f0;border-radius:8px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);transition:all 0.2s}
-    .subject-card:hover {box-shadow:0 4px 12px rgba(0,0,0,0.15);transform:translateY(-1px)}
-    .subject-icon {font-size:2rem;margin-bottom:0.5rem}
-    .subject-title {font-weight:600;color:var(--text);margin:0 0 0.5rem}
-    .subject-desc {color:var(--muted);font-size:0.875rem;margin:0 0 1rem}
-    .lesson-count {background:var(--accent);color:white;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.75rem;font-weight:600}
-    .features {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin:2rem 0}
-    .feature {text-align:center;padding:1.5rem}
-    .feature-icon {font-size:3rem;margin-bottom:1rem}
-    .feature-title {font-weight:600;margin:0 0 0.5rem;color:var(--text)}
-    .feature-desc {color:var(--muted);font-size:0.875rem}
-    .cta {background:var(--accent);color:white;padding:2rem;border-radius:8px;text-align:center;margin:2rem 0}
-    .cta h3 {color:white;margin:0 0 1rem}
-    .cta-button {background:white;color:var(--accent);border:none;padding:0.75rem 2rem;border-radius:6px;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none;display:inline-block}
-    footer {border-top:1px solid #e6eef2;padding-top:1rem;margin-top:3rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-    .links a {color:var(--muted);text-decoration:none;margin-right:1rem}
-    .brand {font-weight:600;color:var(--text)}
-    @media(max-width:768px){body{padding:1rem}.wrap{padding:1rem}.hero{padding:2rem 1rem}}
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--container); margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    header { text-align: center; padding: 1rem 0 0.5rem; }
+    header h1 { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--accent); }
+    header p { margin: 0.5rem 0 0; color: var(--muted); font-size: 1rem; }
+    .hero {
+      margin-top: 2rem;
+      background: radial-gradient(circle at 20% 20%, rgba(0,133,63,0.18), transparent 40%), linear-gradient(135deg,#0f172a,#0b6a33);
+      color: #fff; padding: 2.5rem 2rem; border-radius: 18px; box-shadow: var(--shadow); text-align: center;
+    }
+    .hero h2 { margin: 0 0 0.75rem; font-size: clamp(1.6rem, 3vw, 2rem); }
+    .hero p { margin: 0; opacity: 0.92; font-size: 1.05rem; }
+    h2.section-title { margin: 2.5rem 0 1rem; font-size: 1.5rem; color: var(--accent-dark); letter-spacing: -0.01em; }
+    .grid { display: grid; gap: 1rem; }
+    .levels { grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); }
+    .subjects { grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
+    .card {
+      background: var(--card); border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .pill { display: inline-block; padding: 0.25rem 0.7rem; border-radius: 999px; background: #e6f4ed; color: var(--accent-dark); font-size: 0.8rem; font-weight: 600; }
+    .subject-count { background: var(--accent); color: #fff; }
+    .muted { color: var(--muted); font-size: 0.95rem; }
+    ul { padding-left: 1rem; margin: 0.5rem 0 0; color: var(--muted); }
+    .features { grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); }
+    .feature { text-align: center; padding: 1.25rem; }
+    .feature strong { display: block; margin-top: 0.5rem; color: var(--text); }
+    .cta {
+      margin: 2.5rem 0; padding: 2rem; border-radius: 16px; background: linear-gradient(120deg,#0b6a33,#0f9e5e);
+      color: #fff; text-align: center; box-shadow: var(--shadow);
+    }
+    .cta a { display: inline-block; margin-top: 1rem; background: #fff; color: var(--accent-dark); padding: 0.8rem 1.8rem; border-radius: 10px; font-weight: 700; }
+    blockquote { margin: 1rem 0; padding: 1rem 1.2rem; border-left: 4px solid var(--accent); background: #f1f5f9; border-radius: 12px; }
+    footer { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: space-between; color: var(--muted); font-size: 0.95rem; }
+    @media (max-width: 640px) {
+      .hero { text-align: left; }
+      .cta { text-align: left; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>📚 Leçons Interactives</h1>
-      <p>Découvrez l'apprentissage révolutionnaire adapté au système éducatif camerounais</p>
+      <h1>Leçons interactives Claudyne</h1>
+      <p>Apprentissage aligné sur le système éducatif camerounais, de la maternelle au lycée.</p>
     </header>
 
-    <div class="hero">
-      <h2>🇨🇲 Excellence Éducative Camerounaise</h2>
-      <p>Des leçons conçues par et pour les élèves camerounais, de la maternelle au lycée.<br>
-      <strong>Honneur à Ma'a Meffo TCHANDJIO Claudine — La force du savoir en héritage !</strong></p>
-    </div>
+    <section class="hero">
+      <h2>Excellence éducative, pensée au Cameroun</h2>
+      <p>Des ressources conçues par des enseignants locaux, accessibles sur ordinateur et mobile.<br>
+      <strong>Honneur à Ma'a Meffo TCHANDJIO Claudine – la force du savoir en héritage.</strong></p>
+    </section>
 
     <section>
-      <h2>🎓 Niveaux d'Enseignement</h2>
-      <div class="grade-grid">
-        <div class="grade-card">
-          <h3 class="grade-title">🌱 Enseignement Maternel</h3>
-          <ul>
-            <li><strong>SIL (Section d'Initiation au Langage)</strong></li>
-            <li>Éveil et développement cognitif</li>
-            <li>Apprentissage ludique et interactif</li>
-            <li>Préparation à la lecture et l'écriture</li>
-          </ul>
+      <h2 class="section-title">Niveaux d'enseignement</h2>
+      <div class="grid levels">
+        <div class="card">
+          <div class="pill">Maternelle</div>
+          <p class="muted">SIL – Éveil, langage, motricité et jeu.</p>
         </div>
-
-        <div class="grade-card">
-          <h3 class="grade-title">📖 Enseignement Primaire</h3>
-          <ul>
-            <li><strong>CP (Cours Préparatoire)</strong> - Fondamentaux</li>
-            <li><strong>CE1 (Cours Élémentaire 1)</strong> - Consolidation</li>
-            <li><strong>CE2 (Cours Élémentaire 2)</strong> - Approfondissement</li>
-            <li><strong>CM1 (Cours Moyen 1)</strong> - Développement</li>
-            <li><strong>CM2 (Cours Moyen 2)</strong> - Préparation au collège</li>
-          </ul>
+        <div class="card">
+          <div class="pill">Primaire</div>
+          <p class="muted">CP à CM2 – Fondamentaux, consolidation, préparation au collège.</p>
         </div>
-
-        <div class="grade-card">
-          <h3 class="grade-title">🏫 Premier Cycle Secondaire</h3>
-          <ul>
-            <li><strong>6ème</strong> - Adaptation au collège</li>
-            <li><strong>5ème</strong> - Consolidation des acquis</li>
-            <li><strong>4ème</strong> - Approfondissement</li>
-            <li><strong>3ème</strong> - Préparation au BEPC</li>
-          </ul>
+        <div class="card">
+          <div class="pill">1er cycle secondaire</div>
+          <p class="muted">6ème à 3ème – Adaptation au collège, préparation BEPC.</p>
         </div>
-
-        <div class="grade-card">
-          <h3 class="grade-title">🎯 Second Cycle Secondaire</h3>
-          <ul>
-            <li><strong>2nde</strong> - Tronc commun et orientation</li>
-            <li><strong>1ère</strong> - Spécialisation (A, C, D, Ti)</li>
-            <li><strong>Terminale</strong> - Préparation au Baccalauréat</li>
-            <li>Accompagnement pour l'enseignement supérieur</li>
-          </ul>
+        <div class="card">
+          <div class="pill">2nd cycle secondaire</div>
+          <p class="muted">2nde, 1ère, Terminale – Spécialités A/C/D/TI, préparation bac.</p>
         </div>
       </div>
     </section>
 
     <section>
-      <h2>📋 Matières Enseignées</h2>
-      <div class="subject-grid">
-        <div class="subject-card">
-          <div class="subject-icon">🇫🇷</div>
-          <h3 class="subject-title">Français</h3>
-          <p class="subject-desc">Littérature, grammaire, expression écrite et orale selon le programme camerounais</p>
-          <span class="lesson-count">120+ leçons</span>
+      <h2 class="section-title">Matières enseignées</h2>
+      <div class="grid subjects" data-lessons-source="/api/admin/content">
+        <div class="card">
+          <div class="pill subject-count">120+ leçons</div>
+          <h3>Français</h3>
+          <p class="muted">Littérature, grammaire, expression écrite et orale.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🇬🇧</div>
-          <h3 class="subject-title">Anglais</h3>
-          <p class="subject-desc">Langue officielle du Cameroun, communication et compréhension</p>
-          <span class="lesson-count">95+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">95+ leçons</div>
+          <h3>Anglais</h3>
+          <p class="muted">Communication bilingue et compréhension.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🔢</div>
-          <h3 class="subject-title">Mathématiques</h3>
-          <p class="subject-desc">Algèbre, géométrie, statistiques et mathématiques appliquées</p>
-          <span class="lesson-count">150+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">150+ leçons</div>
+          <h3>Mathématiques</h3>
+          <p class="muted">Algèbre, géométrie, statistiques, applications.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🧪</div>
-          <h3 class="subject-title">Sciences Physiques</h3>
-          <p class="subject-desc">Physique, chimie et sciences appliquées</p>
-          <span class="lesson-count">80+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">80+ leçons</div>
+          <h3>Sciences physiques</h3>
+          <p class="muted">Physique, chimie et phénomènes du quotidien.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🌱</div>
-          <h3 class="subject-title">Sciences Naturelles</h3>
-          <p class="subject-desc">Biologie, géologie et sciences de la vie</p>
-          <span class="lesson-count">75+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">75+ leçons</div>
+          <h3>Sciences naturelles</h3>
+          <p class="muted">Biologie, géologie, environnement.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🌍</div>
-          <h3 class="subject-title">Histoire-Géographie</h3>
-          <p class="subject-desc">Histoire du Cameroun, géographie africaine et mondiale</p>
-          <span class="lesson-count">65+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">65+ leçons</div>
+          <h3>Histoire-Géographie</h3>
+          <p class="muted">Histoire du Cameroun, Afrique et monde.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🇨🇲</div>
-          <h3 class="subject-title">Éducation Civique</h3>
-          <p class="subject-desc">Citoyenneté camerounaise, valeurs démocratiques et sociales</p>
-          <span class="lesson-count">40+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">40+ leçons</div>
+          <h3>Éducation civique</h3>
+          <p class="muted">Citoyenneté, valeurs et institutions.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">💻</div>
-          <h3 class="subject-title">Informatique</h3>
-          <p class="subject-desc">Programmation, bureautique et technologies numériques</p>
-          <span class="lesson-count">55+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">55+ leçons</div>
+          <h3>Informatique</h3>
+          <p class="muted">Programmation, bureautique, culture numérique.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🎨</div>
-          <h3 class="subject-title">Arts et Culture</h3>
-          <p class="subject-desc">Arts visuels, musique et patrimoine culturel camerounais</p>
-          <span class="lesson-count">35+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">35+ leçons</div>
+          <h3>Arts & culture</h3>
+          <p class="muted">Arts visuels, musique, patrimoine camerounais.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🏃</div>
-          <h3 class="subject-title">Éducation Physique</h3>
-          <p class="subject-desc">Sport, santé et développement physique</p>
-          <span class="lesson-count">30+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">30+ leçons</div>
+          <h3>Éducation physique</h3>
+          <p class="muted">Sport, santé et développement physique.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">📖</div>
-          <h3 class="subject-title">Philosophie</h3>
-          <p class="subject-desc">Pensée critique et philosophie africaine (Terminales)</p>
-          <span class="lesson-count">25+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">25+ leçons</div>
+          <h3>Philosophie</h3>
+          <p class="muted">Pensée critique et philosophie africaine.</p>
         </div>
-
-        <div class="subject-card">
-          <div class="subject-icon">🌐</div>
-          <h3 class="subject-title">Langues Nationales</h3>
-          <p class="subject-desc">Fulfulde, Ewondo, Duala et autres langues camerounaises</p>
-          <span class="lesson-count">20+ leçons</span>
+        <div class="card">
+          <div class="pill subject-count">20+ leçons</div>
+          <h3>Langues nationales</h3>
+          <p class="muted">Fulfulde, Ewondo, Duala et autres.</p>
         </div>
       </div>
     </section>
 
     <section>
-      <h2>✨ Fonctionnalités Innovantes</h2>
-      <div class="features">
+      <h2 class="section-title">Fonctionnalités clés</h2>
+      <div class="grid features">
         <div class="feature">
-          <div class="feature-icon">🎮</div>
-          <h3 class="feature-title">Apprentissage Ludique</h3>
-          <p class="feature-desc">Exercices interactifs, jeux éducatifs et défis stimulants</p>
+          <div class="pill">Apprentissage ludique</div>
+          <strong>Quiz, jeux et défis motivants</strong>
+          <p class="muted">Pour garder l'élève engagé.</p>
         </div>
-
         <div class="feature">
-          <div class="feature-icon">📊</div>
-          <h3 class="feature-title">Suivi Personnalisé</h3>
-          <p class="feature-desc">Analyse des progrès et recommandations adaptées</p>
+          <div class="pill">Suivi personnalisé</div>
+          <strong>Recommandations adaptées</strong>
+          <p class="muted">Analyse des progrès et feedback.</p>
         </div>
-
         <div class="feature">
-          <div class="feature-icon">🎥</div>
-          <h3 class="feature-title">Contenu Multimédia</h3>
-          <p class="feature-desc">Vidéos, animations et supports interactifs</p>
+          <div class="pill">Contenu multimédia</div>
+          <strong>Vidéo, audio, interactifs</strong>
+          <p class="muted">Compréhension facilitée.</p>
         </div>
-
         <div class="feature">
-          <div class="feature-icon">📱</div>
-          <h3 class="feature-title">Accessible Partout</h3>
-          <p class="feature-desc">Sur ordinateur, tablette et smartphone</p>
-        </div>
-
-        <div class="feature">
-          <div class="feature-icon">👨‍🏫</div>
-          <h3 class="feature-title">Créé par des Experts</h3>
-          <p class="feature-desc">Enseignants camerounais expérimentés</p>
-        </div>
-
-        <div class="feature">
-          <div class="feature-icon">🏆</div>
-          <h3 class="feature-title">Système de Récompenses</h3>
-          <p class="feature-desc">Badges, certificats et Prix Claudine</p>
+          <div class="pill">Accès partout</div>
+          <strong>Web + mobile</strong>
+          <p class="muted">En classe, à la maison ou en déplacement.</p>
         </div>
       </div>
     </section>
 
     <section>
-      <h2>🎯 Méthodologie Pédagogique</h2>
-
-      <h3>📚 Approche Constructiviste</h3>
-      <ul>
-        <li><strong>Apprentissage Actif</strong> : L'élève construit ses connaissances</li>
-        <li><strong>Contextualisation</strong> : Exemples et situations camerounaises</li>
-        <li><strong>Progression Spiralaire</strong> : Révision et approfondissement continus</li>
-        <li><strong>Évaluation Formative</strong> : Feedback constant et bienveillant</li>
-      </ul>
-
-      <h3>🌍 Pédagogie Culturellement Adaptée</h3>
-      <ul>
-        <li><strong>Valeurs Camerounaises</strong> : Respect, solidarité, excellence</li>
-        <li><strong>Exemples Locaux</strong> : Situations familières aux élèves</li>
-        <li><strong>Multilinguisme</strong> : Français, anglais et langues nationales</li>
-        <li><strong>Patrimoine</strong> : Histoire et culture camerounaises intégrées</li>
-      </ul>
-
-      <h3>🔬 Innovation Technologique</h3>
-      <ul>
-        <li><strong>Intelligence Artificielle</strong> : Personnalisation automatique</li>
-        <li><strong>Réalité Augmentée</strong> : Visualisation 3D des concepts</li>
-        <li><strong>Gamification</strong> : Motivation par le jeu</li>
-        <li><strong>Collaboration</strong> : Travail en équipe virtuel</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>📈 Progression et Évaluation</h2>
-
-      <h3>🎯 Objectifs Pédagogiques Clairs</h3>
-      <ul>
-        <li>Compétences définies par leçon</li>
-        <li>Critères d'évaluation transparents</li>
-        <li>Progression mesurable et visible</li>
-        <li>Adaptation au rythme de chaque élève</li>
-      </ul>
-
-      <h3>📊 Types d'Évaluation</h3>
-      <ul>
-        <li><strong>Quiz Interactifs</strong> : Questions à choix multiples</li>
-        <li><strong>Exercices Pratiques</strong> : Applications concrètes</li>
-        <li><strong>Projets Créatifs</strong> : Expression personnelle</li>
-        <li><strong>Évaluations Par les Pairs</strong> : Collaboration et feedback</li>
-      </ul>
-
-      <h3>🏆 Système de Reconnaissance</h3>
-      <ul>
-        <li><strong>Badges de Compétence</strong> : Validation des acquis</li>
-        <li><strong>Certificats de Niveau</strong> : Reconnaissance officielle</li>
-        <li><strong>Classements Éducatifs</strong> : Motivation saine</li>
-        <li><strong>Prix Claudine</strong> : Excellence exceptionnelle</li>
-      </ul>
+      <h2 class="section-title">Méthodologie pédagogique</h2>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 1.25rem;">
+        <div class="card">
+          <h3>Approche active</h3>
+          <ul>
+            <li>Construction progressive des savoirs.</li>
+            <li>Exemples ancrés dans la vie camerounaise.</li>
+            <li>Révisions spirales et feedback continu.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Culture locale</h3>
+          <ul>
+            <li>Valeurs : respect, solidarité, excellence.</li>
+            <li>Multilinguisme : français, anglais, langues nationales.</li>
+            <li>Patrimoine et histoire du Cameroun.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Innovation</h3>
+          <ul>
+            <li>IA pour la personnalisation.</li>
+            <li>Gamification et badges.</li>
+            <li>Travail collaboratif en ligne.</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <div class="cta">
-      <h3>🚀 Commencez Votre Parcours d'Excellence</h3>
-      <p>Rejoignez des milliers d'élèves camerounais qui transforment leur avenir avec Claudyne</p>
-      <a href="https://claudyne.com" class="cta-button">Accéder aux Leçons</a>
+      <h3>Commencez votre parcours d'excellence</h3>
+      <p>Rejoignez des milliers d'élèves camerounais qui progressent avec Claudyne.</p>
+      <a href="https://claudyne.com">Accéder aux leçons</a>
     </div>
 
     <section>
-      <h2>🎓 Témoignages d'Enseignants</h2>
+      <h2 class="section-title">Témoignages</h2>
       <blockquote>
-        <p><em>"Claudyne révolutionne ma façon d'enseigner. Mes élèves sont plus engagés et leurs résultats s'améliorent considérablement."</em></p>
-        <footer>— <strong>Mme Ngozi Amara</strong>, Professeure de Mathématiques, Lycée de Yaoundé</footer>
+        « Claudyne révolutionne ma façon d'enseigner. Mes élèves sont plus engagés et leurs résultats s'améliorent. »
+        <br><strong>— Mme Ngozi Amara, professeure de mathématiques, Yaoundé</strong>
       </blockquote>
-
       <blockquote>
-        <p><em>"Une plateforme qui respecte notre culture tout en embrassant l'innovation. C'est exactement ce dont le Cameroun avait besoin."</em></p>
-        <footer>— <strong>M. Paul Fotso</strong>, Directeur d'École, Douala</footer>
+        « Une plateforme qui respecte notre culture tout en misant sur l'innovation. C'est exactement ce dont le Cameroun avait besoin. »
+        <br><strong>— M. Paul Fotso, directeur d'école, Douala</strong>
       </blockquote>
-
       <blockquote>
-        <p><em>"L'intégration des langues nationales est remarquable. Enfin une plateforme qui valorise notre diversité linguistique !"</em></p>
-        <footer>— <strong>Dr. Aminatou Bello</strong>, Inspectrice Pédagogique Régionale</footer>
+        « L'intégration des langues nationales est remarquable. Enfin une plateforme qui valorise notre diversité linguistique ! »
+        <br><strong>— Dr. Aminatou Bello, inspectrice pédagogique</strong>
       </blockquote>
     </section>
 
     <footer>
-      <div class="brand">© 2024 Claudyne — 🇨🇲 Excellence Éducative Camerounaise</div>
-      <div class="links">
-        <a href="https://claudyne.com">Accueil</a>
-        <a href="mailto:support@claudyne.com">Contact</a>
-        <a href="https://claudyne.com/privacy">Confidentialité</a>
+      <div>© 2024 Claudyne — Excellence éducative camerounaise.</div>
+      <div>
+        <a href="https://claudyne.com">Accueil</a> ·
+        <a href="mailto:support@claudyne.com">Contact</a> ·
+        <a href="https://claudyne.com/privacy">Confidentialité</a> ·
         <a href="https://claudyne.com/terms">Conditions</a>
-        <a href="https://claudyne.com/lessons">Leçons</a>
       </div>
     </footer>
   </div>
+  <script src="lessons-loader.js"></script>
 </body>
 </html>

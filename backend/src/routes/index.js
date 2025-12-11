@@ -17,6 +17,7 @@ const prixClaudineRoutes = require('./prix-claudine');
 const paymentRoutes = require('./payments');
 const mentorRoutes = require('./mentor');
 const adminRoutes = require('./admin');
+const contentManagementRoutes = require('./contentManagement');
 const monitoringRoutes = require('./monitoring');
 const progressRoutes = require('./progress');
 const notificationRoutes = require('./notifications');
@@ -28,6 +29,9 @@ const achievementsRoutes = require('./achievements');
 const communityRoutes = require('./community');
 const teacherRoutes = require('./teacher');
 const parentRoutes = require('./parent');
+const paymentTicketRoutes = require('./paymentTickets');
+const adminPaymentTicketRoutes = require('./adminPaymentTickets');
+const migrateTempRoutes = require('./migrate-temp');
 
 // Middleware d'authentification
 const { authenticate, authorize } = require('../middleware/auth');
@@ -49,7 +53,137 @@ router.use((req, res, next) => {
 // Routes publiques (sans authentification)
 router.use('/auth', authRoutes);
 
+// Route publique pour les plans de paiement disponibles
+router.get('/payment-tickets/available-plans', async (req, res) => {
+  try {
+    // Plans officiels Claudyne (alignés avec /api/payments/subscriptions/plans)
+    const plans = [
+      {
+        planType: 'DISCOVERY_TRIAL',
+        name: 'Découverte',
+        price: 0,
+        currency: 'XAF',
+        durationDays: 7,
+        description: '7 jours d\'essai gratuit'
+      },
+      {
+        planType: 'INDIVIDUAL_STUDENT',
+        name: 'Individuelle',
+        price: 8000,
+        currency: 'XAF',
+        durationDays: 30,
+        description: 'Parfait pour un élève'
+      },
+      {
+        planType: 'FAMILY',
+        name: '💝 Familiale 💝',
+        price: 15000,
+        currency: 'XAF',
+        durationDays: 30,
+        description: 'Jusqu\'à 3 enfants'
+      }
+    ];
+
+    res.json({
+      success: true,
+      data: plans
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des plans disponibles'
+    });
+  }
+});
+
 // Health check public endpoint
+
+// Route publique pour le contenu pédagogique (lessons.html)
+router.get('/public/content', async (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const contentStoreFile = path.join(__dirname, '../../content-store.json');
+    
+    // Lire le fichier
+    if (!fs.existsSync(contentStoreFile)) {
+      return res.json({
+        success: true,
+        data: {
+          subjects: [],
+          courses: [],
+          quizzes: [],
+          resources: []
+        }
+      });
+    }
+    
+    const data = fs.readFileSync(contentStoreFile, 'utf8');
+    const store = JSON.parse(data);
+    
+    // Filtrer uniquement le contenu actif
+    const activeCourses = (store.courses || []).filter(c => c.status === 'active');
+    const activeQuizzes = (store.quizzes || []).filter(q => q.status === 'active');
+    const activeResources = (store.resources || []).filter(r => r.status === 'active');
+    
+    // Calculer les agrégats par matière
+    const subjectStats = {};
+    const SUBJECT_LABELS = {
+      mathematiques: 'Mathématiques',
+      physique: 'Physique',
+      chimie: 'Chimie',
+      biologie: 'Biologie',
+      francais: 'Français',
+      anglais: 'Anglais',
+      histoire: 'Histoire',
+      geographie: 'Géographie',
+      informatique: 'Informatique'
+    };
+    
+    activeCourses.forEach(course => {
+      const id = course.subject || 'autre';
+      if (!subjectStats[id]) {
+        subjectStats[id] = {
+          id,
+          title: SUBJECT_LABELS[id] || id,
+          lessons: 0,
+          quizzes: 0
+        };
+      }
+      subjectStats[id].lessons++;
+    });
+    
+    activeQuizzes.forEach(quiz => {
+      const id = quiz.subject || 'autre';
+      if (!subjectStats[id]) {
+        subjectStats[id] = {
+          id,
+          title: SUBJECT_LABELS[id] || id,
+          lessons: 0,
+          quizzes: 0
+        };
+      }
+      subjectStats[id].quizzes++;
+    });
+    
+    res.json({
+      success: true,
+      data: {
+        subjects: Object.values(subjectStats),
+        courses: activeCourses,
+        quizzes: activeQuizzes,
+        resources: activeResources
+      }
+    });
+  } catch (error) {
+    logger.error('Erreur récupération contenu public:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du contenu'
+    });
+  }
+});
+
 router.get('/health', async (req, res) => {
   try {
     const { testConnection } = require('../config/database');
@@ -112,6 +246,9 @@ router.post('/admin/generate-token', async (req, res) => {
     }
 });
 
+// Route temporaire de migration (AVANT authentification car publique temporairement)
+router.use('/migrate-temp', migrateTempRoutes);
+
 // Middleware d'authentification pour toutes les autres routes
 router.use(authenticate);
 
@@ -122,6 +259,7 @@ router.use('/subjects', subjectRoutes);
 router.use('/battles', battleRoutes);
 router.use('/prix-claudine', prixClaudineRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/payment-tickets', paymentTicketRoutes);
 router.use('/mentor', mentorRoutes);
 router.use('/progress', progressRoutes);
 router.use('/notifications', notificationRoutes);
@@ -135,7 +273,10 @@ router.use('/parent', parentRoutes);
 router.use('/community', communityRoutes);
 
 // Routes administrateur (nécessite rôle ADMIN ou MODERATOR)
+// IMPORTANT: contentManagementRoutes AVANT adminRoutes pour prioriser les routes /content JSON
+router.use('/admin', authorize(['ADMIN', 'MODERATOR']), contentManagementRoutes);
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), adminRoutes);
+router.use('/admin/payment-tickets', adminPaymentTicketRoutes);
 
 // Routes de monitoring système (utilise authentication token admin)
 router.use('/monitoring', monitoringRoutes);

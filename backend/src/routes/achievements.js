@@ -165,6 +165,12 @@ router.get('/user', async (req, res) => {
         where: { familyId: req.user.familyId }
       });
       if (student) studentId = student.id;
+    } else {
+      // Pour les étudiants individuels, chercher par userId
+      const student = await Student.findOne({
+        where: { userId: req.user.id }
+      });
+      if (student) studentId = student.id;
     }
 
     if (!studentId) {
@@ -266,6 +272,11 @@ router.post('/unlock', async (req, res) => {
     } else if (req.user.userType === 'MANAGER' && req.user.familyId) {
       student = await Student.findOne({
         where: { familyId: req.user.familyId }
+      });
+    } else {
+      // Pour les étudiants individuels, chercher par userId
+      student = await Student.findOne({
+        where: { userId: req.user.id }
       });
     }
 

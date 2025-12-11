@@ -125,9 +125,21 @@ const authenticate = async (req, res, next) => {
         lockedUntil: user.lockedUntil
       });
     }
-    
-    // Vérification de l'abonnement familial
-    if (user.family && !isSubscriptionValid(user.family)) {
+
+    // Whitelist: Routes accessibles même avec abonnement expiré
+    // Ces routes sont nécessaires pour permettre le renouvellement/paiement
+    const paymentWhitelist = [
+      '/api/payments/',           // Tous les endpoints de paiement
+      '/api/subscriptions/',      // Gestion des abonnements
+      '/api/auth/me',            // Informations utilisateur (pour afficher le statut)
+      '/api/auth/refresh',       // Rafraîchissement du token
+      '/api/auth/logout'         // Déconnexion
+    ];
+
+    const isPaymentRoute = paymentWhitelist.some(route => req.path.startsWith(route));
+
+    // Vérification de l'abonnement familial (sauf pour les routes de paiement)
+    if (!isPaymentRoute && user.family && !isSubscriptionValid(user.family)) {
       return res.status(402).json({
         success: false,
         message: 'Abonnement familial expiré',
@@ -342,19 +354,26 @@ const requireTwoFactor = (req, res, next) => {
  */
 function isSubscriptionValid(family) {
   if (!family) return false;
-  
+
   const now = new Date();
-  
-  // En période d'essai
+
+  // Vérifier d'abord si la période d'essai est valide (peu importe le status)
+  // Car une famille peut avoir status='ACTIVE' mais être encore en trial
+  if (family.trialEndsAt && family.trialEndsAt > now) {
+    return true;
+  }
+
+  // En période d'essai (legacy check pour compatibilité)
   if (family.status === 'TRIAL') {
     return family.trialEndsAt && family.trialEndsAt > now;
   }
-  
-  // Abonnement actif
-  if (family.subscriptionStatus === 'ACTIVE') {
+
+  // Abonnement payant actif
+  if (family.subscriptionStatus === 'ACTIVE' || family.status === 'ACTIVE') {
+    // Si subscriptionEndsAt n'existe pas ou est dans le futur, c'est valide
     return !family.subscriptionEndsAt || family.subscriptionEndsAt > now;
   }
-  
+
   return false;
 }
 

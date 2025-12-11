@@ -78,6 +78,16 @@ const config = {
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env];
 
+// 🚨 SÉCURITÉ : Interdire SQLite en production
+if (env === 'production' && (process.env.DB_TYPE === 'sqlite' || process.env.DB_DIALECT === 'sqlite')) {
+  const errorMsg = '🚨 ERREUR FATALE : SQLite n\'est PAS autorisé en production !\n' +
+                   `   DB_TYPE: ${process.env.DB_TYPE}\n` +
+                   `   DB_DIALECT: ${process.env.DB_DIALECT}\n` +
+                   '   Production DOIT utiliser PostgreSQL uniquement.';
+  console.error(errorMsg);
+  throw new Error(errorMsg);
+}
+
 // Création de l'instance Sequelize
 const sequelize = new Sequelize(
   dbConfig.database,
@@ -129,6 +139,7 @@ function initializeModels() {
   const ApplicationDeadline = require('../models/ApplicationDeadline')(sequelize);
   const BattleParticipation = require('../models/BattleParticipation')(sequelize);
   const RevisionSession = require('../models/RevisionSession')(sequelize);
+  const PaymentTicket = require('../models/PaymentTicket')(sequelize);
 
   // Définition des associations
   defineAssociations({
@@ -158,6 +169,7 @@ function initializeModels() {
     ApplicationDeadline,
     BattleParticipation,
     RevisionSession,
+    PaymentTicket,
   });
 
   return {
@@ -187,6 +199,7 @@ function initializeModels() {
     ApplicationDeadline,
     BattleParticipation,
     RevisionSession,
+    PaymentTicket,
     sequelize
   };
 }
@@ -198,7 +211,7 @@ function defineAssociations(models) {
     Battle, PrixClaudine, Payment, Subscription,
     StudyGroup, StudyGroupMember, ForumCategory, ForumDiscussion, ForumPost,
     WellnessExercise, CareerProfile, Career, Institution, ApplicationDeadline,
-    BattleParticipation, RevisionSession,
+    BattleParticipation, RevisionSession, PaymentTicket,
     ChatMessage, Notification, AdminSetting, EmailTemplate
   } = models;
 
@@ -460,6 +473,34 @@ function defineAssociations(models) {
   Student.hasMany(RevisionSession, {
     foreignKey: "studentId",
     as: "revisionSessions"
+  });
+
+  // Relations Payment Tickets
+  PaymentTicket.belongsTo(User, {
+    foreignKey: "userId",
+    as: "user"
+  });
+  User.hasMany(PaymentTicket, {
+    foreignKey: "userId",
+    as: "paymentTickets"
+  });
+
+  PaymentTicket.belongsTo(Family, {
+    foreignKey: "familyId",
+    as: "family"
+  });
+  Family.hasMany(PaymentTicket, {
+    foreignKey: "familyId",
+    as: "paymentTickets"
+  });
+
+  PaymentTicket.belongsTo(User, {
+    foreignKey: "reviewedBy",
+    as: "reviewer"
+  });
+  User.hasMany(PaymentTicket, {
+    foreignKey: "reviewedBy",
+    as: "reviewedTickets"
   });
 }
 

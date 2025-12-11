@@ -2591,6 +2591,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('payment-tickets')">
+                            <span class="nav-icon">🎫</span>
+                            Tickets de Paiement
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link glass-nav-item" href="javascript:void(0)" onclick="showSection('analytics')">
                             <span class="nav-icon">📈</span>
                             Analyses
@@ -2858,6 +2864,23 @@
                             <div class="loading"></div> Chargement des transactions...
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Payment Tickets Section -->
+            <div id="payment-tickets-section" class="section hidden">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Tickets de Paiement Manuel</h1>
+                        <p class="page-description">Validation des paiements manuels en attente</p>
+                    </div>
+                </div>
+
+                <div class="content-section glass-card animate-fadeInUp" style="padding: 0; overflow: hidden;">
+                    <iframe id="paymentTicketsIframe"
+                            src="/admin-payment-tickets.html"
+                            style="width: 100%; height: 85vh; border: none; display: block;">
+                    </iframe>
                 </div>
             </div>
 
@@ -6203,41 +6226,46 @@
         async function loadCoursesData() {
             try {
                 const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
+                const subjects = (data?.success && data?.data?.subjects) ? data.data.subjects : [];
 
-                if (data.success) {
-                    const coursesHtml = `
-                        <table class="data-table">
-                            <thead>
+                const coursesHtml = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Matière</th>
+                                <th>Leçons</th>
+                                <th>Étudiants</th>
+                                <th>Score moyen</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${subjects.length > 0 ? subjects.map(subject => `
                                 <tr>
-                                    <th>Matière</th>
-                                    <th>Leçons</th>
-                                    <th>Étudiants</th>
-                                    <th>Score moyen</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
+                                    <td style="font-weight: 500;">${subject.title}</td>
+                                    <td>${subject.lessons}</td>
+                                    <td>${subject.students}</td>
+                                    <td style="font-weight: 600; color: #10B981;">${subject.averageScore}%</td>
+                                    <td>
+                                        <span class="status-badge ${subject.status}">${getStatusLabel(subject.status)}</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm">Modifier</button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                ${data.data.subjects.map(subject => `
-                                    <tr>
-                                        <td style="font-weight: 500;">${subject.title}</td>
-                                        <td>${subject.lessons}</td>
-                                        <td>${subject.students}</td>
-                                        <td style="font-weight: 600; color: #10B981;">${subject.averageScore}%</td>
-                                        <td>
-                                            <span class="status-badge ${subject.status}">${getStatusLabel(subject.status)}</span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-secondary btn-sm">Modifier</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                            `).join('') : `
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">
+                                        Aucune matière avec contenu. Créez vos premiers cours/quiz dans l'onglet "Gestion du contenu".
+                                    </td>
+                                </tr>
+                            `}
+                        </tbody>
+                    </table>
+                `;
 
-                    document.getElementById('courses-table').innerHTML = coursesHtml;
-                }
+                document.getElementById('courses-table').innerHTML = coursesHtml;
             } catch (error) {
                 console.error('Erreur chargement courses:', error);
                 document.getElementById('courses-table').innerHTML = '<p style="color: #EF4444;">❌ Erreur de chargement</p>';
@@ -6248,14 +6276,27 @@
         async function loadQuizzesData() {
             try {
                 const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
-                const quizzes = data.success ? data.data.quizzes : [];
-                
+                const quizzes = (data?.success && data?.data?.quizzes) ? data.data.quizzes : [];
+
+                const SUBJECT_LABELS = {
+                    mathematiques: 'Mathématiques',
+                    physique: 'Physique',
+                    chimie: 'Chimie',
+                    biologie: 'Biologie',
+                    francais: 'Français',
+                    anglais: 'Anglais',
+                    histoire: 'Histoire',
+                    geographie: 'Géographie',
+                    informatique: 'Informatique'
+                };
+
                 const quizzesHtml = `
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Titre Quiz</th>
                                 <th>Matière</th>
+                                <th>Niveau</th>
                                 <th>Questions</th>
                                 <th>Tentatives</th>
                                 <th>Score moyen</th>
@@ -6264,42 +6305,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style="font-weight: 500;">Quiz: Introduction aux nombres</td>
-                                <td>Mathématiques 6ème</td>
-                                <td>3</td>
-                                <td>156</td>
-                                <td style="font-weight: 600; color: #10B981;">78%</td>
-                                <td><span class="status-badge active">Actif</span></td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm">Modifier</button>
-                                    <button class="btn btn-danger btn-sm">Désactiver</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 500;">Quiz: Conjugaison présent</td>
-                                <td>Français 6ème</td>
-                                <td>5</td>
-                                <td>123</td>
-                                <td style="font-weight: 600; color: #10B981;">82%</td>
-                                <td><span class="status-badge active">Actif</span></td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm">Modifier</button>
-                                    <button class="btn btn-danger btn-sm">Désactiver</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 500;">Quiz: Les 10 régions</td>
-                                <td>Géographie 6ème</td>
-                                <td>10</td>
-                                <td>89</td>
-                                <td style="font-weight: 600; color: #F59E0B;">65%</td>
-                                <td><span class="status-badge pending">En révision</span></td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm">Modifier</button>
-                                    <button class="btn btn-success btn-sm">Activer</button>
-                                </td>
-                            </tr>
+                            ${quizzes.length > 0 ? quizzes.map(quiz => `
+                                <tr>
+                                    <td style="font-weight: 500;">${quiz.title}</td>
+                                    <td>${SUBJECT_LABELS[quiz.subject] || quiz.subject}</td>
+                                    <td>${quiz.level}</td>
+                                    <td>${quiz.questions ? quiz.questions.length : 0}</td>
+                                    <td>${quiz.attempts || 0}</td>
+                                    <td style="font-weight: 600; color: ${quiz.averageScore >= 70 ? '#10B981' : '#F59E0B'};">${quiz.averageScore || 0}%</td>
+                                    <td>
+                                        <span class="status-badge ${quiz.status}">${getStatusLabel(quiz.status)}</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm">Modifier</button>
+                                        <button class="btn ${quiz.status === 'active' ? 'btn-danger' : 'btn-success'} btn-sm">
+                                            ${quiz.status === 'active' ? 'Désactiver' : 'Activer'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('') : `
+                                <tr>
+                                    <td colspan="8" style="text-align: center; color: #64748b; padding: 2rem;">
+                                        Aucun quiz créé. Créez votre premier quiz dans l'onglet "Gestion du contenu".
+                                    </td>
+                                </tr>
+                            `}
                         </tbody>
                     </table>
                 `;
@@ -6314,7 +6344,30 @@
         // Load Resources Data
         async function loadResourcesData() {
             try {
-                // Simulate resources data
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
+                const resources = (data?.success && data?.data?.resources) ? data.data.resources : [];
+
+                const SUBJECT_LABELS = {
+                    mathematiques: 'Mathématiques',
+                    physique: 'Physique',
+                    chimie: 'Chimie',
+                    biologie: 'Biologie',
+                    francais: 'Français',
+                    anglais: 'Anglais',
+                    histoire: 'Histoire',
+                    geographie: 'Géographie',
+                    informatique: 'Informatique'
+                };
+
+                const TYPE_ICONS = {
+                    pdf: '📚',
+                    video: '🎥',
+                    audio: '🎵',
+                    image: '🖼️',
+                    document: '📄',
+                    link: '🔗'
+                };
+
                 const resourcesHtml = `
                     <table class="data-table">
                         <thead>
@@ -6322,37 +6375,33 @@
                                 <th>Titre Ressource</th>
                                 <th>Type</th>
                                 <th>Matière</th>
-                                <th>Taille</th>
-                                <th>Téléchargements</th>
-                                <th>Statut</th>
+                                <th>Niveau</th>
+                                <th>Premium</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td style="font-weight: 500;">Manuel Mathématiques 6ème</td>
-                                <td>📚 PDF</td>
-                                <td>Mathématiques</td>
-                                <td>2.5 MB</td>
-                                <td>234</td>
-                                <td><span class="status-badge active">Actif</span></td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm">Modifier</button>
-                                    <button class="btn btn-info btn-sm">Télécharger</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: 500;">Vidéo: Les fractions</td>
-                                <td>🎥 MP4</td>
-                                <td>Mathématiques</td>
-                                <td>15.2 MB</td>
-                                <td>189</td>
-                                <td><span class="status-badge active">Actif</span></td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm">Modifier</button>
-                                    <button class="btn btn-info btn-sm">Visionner</button>
-                                </td>
-                            </tr>
+                            ${resources.length > 0 ? resources.map(resource => `
+                                <tr>
+                                    <td style="font-weight: 500;">${resource.title}</td>
+                                    <td>${TYPE_ICONS[resource.type] || '📄'} ${resource.type}</td>
+                                    <td>${SUBJECT_LABELS[resource.subject] || resource.subject}</td>
+                                    <td>${resource.level}</td>
+                                    <td>
+                                        ${resource.is_premium ? '<span class="status-badge active">Premium</span>' : '<span class="status-badge pending">Gratuit</span>'}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm">Modifier</button>
+                                        ${resource.url ? `<button class="btn btn-info btn-sm" onclick="window.open('${resource.url}', '_blank')">Ouvrir</button>` : ''}
+                                    </td>
+                                </tr>
+                            `).join('') : `
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: #64748b; padding: 2rem;">
+                                        Aucune ressource créée. Créez votre première ressource dans l'onglet "Gestion du contenu".
+                                    </td>
+                                </tr>
+                            `}
                         </tbody>
                     </table>
                 `;
@@ -9139,16 +9188,20 @@
 
         // Fonctions pour l'ajout de contenu
         function showAddCourseModal() {
-            console.log('🔵 showAddCourseModal() appelée');
+            console.log('DY"? showAddCourseModal() appelée');
             const modal = document.createElement('div');
             modal.className = 'glass-modal show';
             modal.innerHTML = `
-                <div class="glass-modal-content" style="max-width: 600px;">
-                    <h2 class="glass-text-primary" style="margin-bottom: 1.5rem;">Ajouter un nouveau cours</h2>
+                <div class="glass-modal-content" style="max-width: 640px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;">
+                        <h2 class="glass-text-primary" style="margin-bottom: 0.5rem;">Ajouter un nouveau cours</h2>
+                        <button type="button" id="fill-example-course" class="glass-btn glass-btn-secondary" style="padding:0.4rem 0.8rem;">Remplir un exemple</button>
+                    </div>
+                    <p class="glass-text-secondary" style="margin-top:0; margin-bottom:1rem;">Remplissez les champs essentiels ; la prévisualisation se met à jour en direct.</p>
                     <form id="add-course-form" onsubmit="handleAddCourse(event)">
                         <div style="margin-bottom: 1rem;">
                             <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Titre du cours:</label>
-                            <input type="text" class="glass-input" name="title" required placeholder="Ex: Introduction à la Physique">
+                            <input type="text" class="glass-input" name="title" required placeholder="Ex: Introduction ? la Physique">
                         </div>
                         <div style="margin-bottom: 1rem;">
                             <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Matière:</label>
@@ -9185,11 +9238,18 @@
                             <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Contenu du cours:</label>
                             <textarea class="glass-input" name="content" rows="6" placeholder="Contenu détaillé du cours..." required></textarea>
                         </div>
-                        <div style="margin-bottom: 1.5rem;">
+                        <div style="margin-bottom: 1rem;">
                             <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Durée estimée (minutes):</label>
                             <input type="number" class="glass-input" name="duration" min="1" placeholder="Ex: 45">
                         </div>
-                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <div class="glass-card" style="margin-top: 0.5rem; padding: 1rem; background: rgba(255,255,255,0.4);">
+                            <div class="glass-text-secondary" style="font-weight: 600; margin-bottom: 0.35rem;">Pr?visualisation rapide</div>
+                            <div id="course-preview-title" class="glass-text-primary" style="font-weight:700; margin-bottom: 0.25rem;">Titre du cours</div>
+                            <div id="course-preview-meta" class="glass-text-secondary" style="font-size: 0.9rem; margin-bottom: 0.35rem;">Matière ? Niveau</div>
+                            <p id="course-preview-description" class="glass-text-secondary" style="margin: 0 0 0.25rem;">Description du cours...</p>
+                            <p id="course-preview-content" class="glass-text-secondary" style="margin: 0; font-size: 0.9rem;">Contenu détaillé (aper?u)...</p>
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
                             <button type="button" class="glass-btn" onclick="closeModalDynamic(this)">Annuler</button>
                             <button type="submit" class="glass-btn glass-btn-primary">Créer le cours</button>
                         </div>
@@ -9200,9 +9260,46 @@
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) closeModalDynamic(modal);
             });
+
+            const form = modal.querySelector('#add-course-form');
+            const previewTitle = modal.querySelector('#course-preview-title');
+            const previewMeta = modal.querySelector('#course-preview-meta');
+            const previewDesc = modal.querySelector('#course-preview-description');
+            const previewContent = modal.querySelector('#course-preview-content');
+
+            const clip = (text, max = 180) => text.length > max ? text.slice(0, max) + '?' : text;
+            const orPlaceholder = (value, placeholder) => value && value.trim().length ? value.trim() : placeholder;
+            const updatePreview = () => {
+                previewTitle.textContent = orPlaceholder(form.title.value, 'Titre du cours');
+                const subjectLabel = orPlaceholder(form.subject.value, 'Matière');
+                const levelLabel = orPlaceholder(form.level.value, 'Niveau');
+                previewMeta.textContent = `${subjectLabel} ? ${levelLabel}`;
+                previewDesc.textContent = orPlaceholder(form.description.value, "Phrase d'accroche du cours.");
+                previewContent.textContent = clip(orPlaceholder(form.content.value, 'Contenu détaillé ? r?diger.'), 180);
+            };
+
+            ['title','subject','level','description','content','duration'].forEach(name => {
+                const field = form.elements[name];
+                if (field) field.addEventListener('input', updatePreview);
+            });
+
+            const fillBtn = modal.querySelector('#fill-example-course');
+            if (fillBtn) {
+                fillBtn.addEventListener('click', () => {
+                    form.title.value = 'Fractions simples : demi et quart';
+                    form.subject.value = 'mathematiques';
+                    form.level.value = '6eme';
+                    form.description.value = 'Comprendre la notion de fraction ? travers des exemples concrets du quotidien.';
+                    form.content.value = "Objectifs :\n- Identifier une moiti? et un quart dans des situations r?elles (part de g?teau, partage).\n- Manipulation : d?couper une feuille en 2 puis en 4 parties ?gales.\n- Exercice guid? : colorier 1/2 puis 1/4 d'un rectangle.\n- Mini-?valuation : 4 questions rapides.";
+                    form.duration.value = 45;
+                    updatePreview();
+                });
+            }
+
+            updatePreview();
         }
 
-        function showAddQuizModal() {
+function showAddQuizModal() {
             console.log('🔵 showAddQuizModal() appelée');
             const modal = document.createElement('div');
             modal.className = 'glass-modal show';
@@ -9526,8 +9623,112 @@
             }
         }
 
-        function editCourse(courseId) {
-            alert(`Édition du cours ${courseId} - À implémenter`);
+        async function editCourse(courseId) {
+            try {
+                // Charger les données du cours
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
+                const course = data.data.courses.find(c => c.id === courseId);
+
+                if (!course) {
+                    alert('Cours non trouvé');
+                    return;
+                }
+
+                const modal = document.createElement('div');
+                modal.className = 'glass-modal show';
+                modal.innerHTML = `
+                    <div class="glass-modal-content" style="max-width: 640px;">
+                        <h2 class="glass-text-primary" style="margin-bottom: 1rem;">Modifier le cours</h2>
+                        <form id="edit-course-form" onsubmit="handleEditCourse(event, '${courseId}')">
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Titre du cours:</label>
+                                <input type="text" class="glass-input" name="title" required value="${course.title}">
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Matière:</label>
+                                <select class="glass-input" name="subject" required>
+                                    <option value="mathematiques" ${course.subject === 'mathematiques' ? 'selected' : ''}>Mathématiques</option>
+                                    <option value="physique" ${course.subject === 'physique' ? 'selected' : ''}>Physique</option>
+                                    <option value="chimie" ${course.subject === 'chimie' ? 'selected' : ''}>Chimie</option>
+                                    <option value="biologie" ${course.subject === 'biologie' ? 'selected' : ''}>Biologie</option>
+                                    <option value="francais" ${course.subject === 'francais' ? 'selected' : ''}>Français</option>
+                                    <option value="anglais" ${course.subject === 'anglais' ? 'selected' : ''}>Anglais</option>
+                                    <option value="histoire" ${course.subject === 'histoire' ? 'selected' : ''}>Histoire</option>
+                                    <option value="geographie" ${course.subject === 'geographie' ? 'selected' : ''}>Géographie</option>
+                                    <option value="informatique" ${course.subject === 'informatique' ? 'selected' : ''}>Informatique</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Niveau:</label>
+                                <select class="glass-input" name="level" required>
+                                    <option value="6eme" ${course.level === '6eme' ? 'selected' : ''}>6ème</option>
+                                    <option value="5eme" ${course.level === '5eme' ? 'selected' : ''}>5ème</option>
+                                    <option value="4eme" ${course.level === '4eme' ? 'selected' : ''}>4ème</option>
+                                    <option value="3eme" ${course.level === '3eme' ? 'selected' : ''}>3ème</option>
+                                    <option value="2nde" ${course.level === '2nde' ? 'selected' : ''}>2nde</option>
+                                    <option value="1ere" ${course.level === '1ere' ? 'selected' : ''}>1ère</option>
+                                    <option value="terminale" ${course.level === 'terminale' ? 'selected' : ''}>Terminale</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Description:</label>
+                                <textarea class="glass-input" name="description" rows="3">${course.description || ''}</textarea>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Contenu du cours:</label>
+                                <textarea class="glass-input" name="content" rows="6" required>${course.content || ''}</textarea>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Durée estimée (minutes):</label>
+                                <input type="number" class="glass-input" name="duration" min="1" value="${course.duration || 45}">
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+                                <button type="button" class="glass-btn" onclick="closeModalDynamic(this)">Annuler</button>
+                                <button type="submit" class="glass-btn glass-btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+            } catch (error) {
+                console.error('Erreur chargement cours:', error);
+                alert('Erreur lors du chargement du cours');
+            }
+        }
+
+        async function handleEditCourse(event, courseId) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const courseData = {
+                title: formData.get('title'),
+                subject: formData.get('subject'),
+                level: formData.get('level'),
+                description: formData.get('description'),
+                content: formData.get('content'),
+                duration: parseInt(formData.get('duration')) || 45
+            };
+
+            try {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/courses/${courseId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(courseData)
+                });
+
+                if (result.success) {
+                    alert('✅ Cours mis à jour avec succès');
+                    closeModalDynamic(form);
+                    loadContentData();
+                } else {
+                    alert('❌ Erreur: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erreur mise à jour cours:', error);
+                alert('❌ Erreur technique');
+            }
         }
 
         function editQuiz(quizId) {

@@ -63,7 +63,9 @@ const io = socketIo(server, {
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
   'http://localhost:3000',
   'https://claudyne.com',
-  'http://claudyne.com'
+  'http://claudyne.com',
+  'https://www.claudyne.com',
+  'http://www.claudyne.com'
 ];
 
 const corsOptions = {

@@ -60,6 +60,7 @@ const io = socketIo(server, {
 });
 
 // Configuration CORS
+logger.info(`🔍 CORS_ORIGIN from env: "${process.env.CORS_ORIGIN}"`);
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
   'http://localhost:3000',
   'https://claudyne.com',
@@ -67,6 +68,7 @@ const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
   'https://www.claudyne.com',
   'http://www.claudyne.com'
 ];
+logger.info(`🔍 Allowed origins: ${JSON.stringify(allowedOrigins)}`);
 
 const corsOptions = {
   origin: (origin, callback) => {

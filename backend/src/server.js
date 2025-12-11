@@ -70,15 +70,24 @@ const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
 
 const corsOptions = {
   origin: (origin, callback) => {
+    // Debug: Log des origines
+    logger.debug(`CORS Debug - Origin reçue: "${origin}"`);
+    logger.debug(`CORS Debug - Allowed origins: ${JSON.stringify(allowedOrigins)}`);
+
     // Permettre les requêtes sans origine (comme les fichiers locaux)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      logger.debug('CORS Debug - No origin, allowing');
+      return callback(null, true);
+    }
 
     // Vérifier si l'origine est dans la liste autorisée
     if (allowedOrigins.includes(origin)) {
+      logger.debug(`CORS Debug - Origin "${origin}" allowed`);
       return callback(null, true);
     }
 
     // Rejeter les autres origines
+    logger.warn(`CORS Debug - Origin "${origin}" NOT in allowed list`);
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,

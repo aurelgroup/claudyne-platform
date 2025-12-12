@@ -2039,6 +2039,12 @@
                 </div>
             </section>
 
+            <!-- Section Matières Disponibles -->
+            <section id="subjects" class="section">
+                <h2 class="section-title">📖 Matières Disponibles</h2>
+                <div class="subjects-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;"></div>
+            </section>
+
             <!-- Section Quiz Adaptatifs IA -->
             <section id="quiz" class="section">
                 <h2 class="section-title">🧠 Quiz Adaptatifs IA</h2>
@@ -5166,17 +5172,87 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
 
         function updateSubjectsDisplay() {
             const container = document.querySelector('.subjects-grid');
-            if (!container || !subjectsData.length) return;
+            if (!container) {
+                console.warn('⚠️ Conteneur .subjects-grid non trouvé');
+                return;
+            }
 
-            subjectsData.forEach((subject, idx) => {
-                const card = container.children[idx];
-                if (card) {
-                    const progress = card.querySelector('.subject-progress');
-                    const score = card.querySelector('.subject-score');
-                    if (progress) progress.style.width = `${subject.progress}%`;
-                    if (score) score.textContent = `${subject.score}%`;
-                }
-            });
+            if (!subjectsData || subjectsData.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                        <i class="fas fa-book-open" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--text-primary);">Aucune matière disponible</h3>
+                        <p style="color: var(--text-secondary);">Aucune matière n'est disponible pour votre niveau actuellement.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Générer les cartes dynamiquement
+            container.innerHTML = subjectsData.map(subject => {
+                // Icône et couleur par défaut si manquantes
+                const icon = subject.icon || 'fa-book';
+                const color = subject.color || 'var(--primary)';
+                const categoryEmoji = getCategoryEmoji(subject.category);
+
+                return `
+                    <div class="card glow-effect">
+                        <div class="card-header">
+                            <div class="card-icon" style="background: ${color};">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <h3 class="card-title">${categoryEmoji} ${subject.title}</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="subject-info">
+                                <div class="stat-item">
+                                    <span>Leçons</span>
+                                    <strong>${subject.completedLessons || 0}/${subject.totalLessons || 0}</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Progression</span>
+                                    <strong>${subject.progress || 0}%</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Note moyenne</span>
+                                    <strong>${subject.score || 0}%</strong>
+                                </div>
+                            </div>
+                            <div class="progress-bar" style="margin: 1rem 0;">
+                                <div class="progress-fill" style="width: ${subject.progress || 0}%; background: ${color};"></div>
+                            </div>
+                            <button class="btn" onclick="startSubject('${subject.id}')" style="width: 100%; background: ${color};">
+                                <i class="fas fa-play"></i>
+                                ${subject.progress > 0 ? 'Continuer' : 'Commencer'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            console.log('✅ Cartes de matières générées:', subjectsData.length);
+        }
+
+        // Helper pour obtenir l'emoji de catégorie
+        function getCategoryEmoji(category) {
+            const emojiMap = {
+                'Mathématiques': '📐',
+                'Sciences': '⚛️',
+                'Langues': '📖',
+                'Histoire': '📜',
+                'Géographie': '🌍',
+                'Arts': '🎨',
+                'Sport': '⚽',
+                'Informatique': '💻'
+            };
+            return emojiMap[category] || '📚';
+        }
+
+        // Fonction pour démarrer une matière
+        function startSubject(subjectId) {
+            showToast('Chargement de la matière...', 'info');
+            // TODO: Implémenter la navigation vers les leçons de la matière
+            console.log('📖 Démarrage matière:', subjectId);
         }
 
         function updateAchievementsDisplay() {

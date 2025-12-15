@@ -762,11 +762,11 @@ router.get('/content', async (req, res) => {
         }
       ],
       attributes: [
-        'id', 'name',
+        'id', 'title', 'level', 'category', 'isActive',
         [sequelize.fn('COUNT', sequelize.col('lessons.id')), 'totalLessons']
       ],
-      group: ['Subject.id'],
-      order: [['name', 'ASC']],
+      group: ['Subject.id', 'Subject.title', 'Subject.level', 'Subject.category', 'Subject.isActive'],
+      order: [['title', 'ASC']],
       raw: true
     });
 
@@ -775,12 +775,14 @@ router.get('/content', async (req, res) => {
 
     const formattedSubjects = subjects.map(subject => ({
       id: subject.id,
-      title: subject.name,
+      title: subject.title,
+      level: subject.level,
+      category: subject.category,
       lessons: parseInt(subject.totalLessons) || 0,
       quizzes: 0,
       students: 0,
       averageScore: 0,
-      status: 'active'
+      status: subject.isActive ? 'active' : 'inactive'
     }));
 
     res.json({
@@ -3859,6 +3861,115 @@ router.get('/subjects', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des matières'
+    });
+  }
+});
+
+// ===============================
+// CRÉATION DE COURS
+// ===============================
+
+/**
+ * POST /api/admin/courses
+ * Créer un nouveau cours (Subject + Lesson)
+ */
+router.post('/courses', async (req, res) => {
+  try {
+    const { Subject, Lesson } = req.models;
+    const { title, subject, level, description, content, duration } = req.body;
+
+    // Mapping des catégories
+    const CATEGORY_MAPPING = {
+      'mathematiques': 'Mathématiques',
+      'physique': 'Sciences',
+      'chimie': 'Sciences',
+      'biologie': 'Sciences',
+      'francais': 'Langues',
+      'anglais': 'Langues',
+      'histoire': 'Histoire-Géographie',
+      'geographie': 'Histoire-Géographie',
+      'informatique': 'Informatique'
+    };
+
+    // Mapping des niveaux
+    const LEVEL_MAPPING = {
+      '6eme': '6ème',
+      '5eme': '5ème',
+      '4eme': '4ème',
+      '3eme': '3ème',
+      '2nde': '2nde',
+      '1ere': '1ère',
+      'terminale': 'Tle'
+    };
+
+    // Mapping des icônes
+    const ICON_MAPPING = {
+      'mathematiques': 'fa-calculator',
+      'physique': 'fa-atom',
+      'chimie': 'fa-flask',
+      'biologie': 'fa-dna',
+      'francais': 'fa-book',
+      'anglais': 'fa-language',
+      'histoire': 'fa-landmark',
+      'geographie': 'fa-globe',
+      'informatique': 'fa-laptop-code'
+    };
+
+    const category = CATEGORY_MAPPING[subject] || 'Mathématiques';
+    const mappedLevel = LEVEL_MAPPING[level] || level;
+    const icon = ICON_MAPPING[subject] || 'fa-book';
+
+    // Créer ou trouver le Subject
+    const subjectTitle = subject.charAt(0).toUpperCase() + subject.slice(1);
+    const [subjectRecord, created] = await Subject.findOrCreate({
+      where: {
+        level: mappedLevel,
+        category: category
+      },
+      defaults: {
+        title: `${subjectTitle} ${mappedLevel}`,
+        description: `Cours de ${subjectTitle} niveau ${mappedLevel}`,
+        level: mappedLevel,
+        category: category,
+        icon: icon,
+        color: '#667eea',
+        isActive: true,
+        order: 0
+      }
+    });
+
+    logger.info(`Subject ${created ? 'créé' : 'trouvé'}: ${subjectRecord.title} (ID: ${subjectRecord.id})`);
+
+    // Créer la Lesson
+    const lesson = await Lesson.create({
+      subjectId: subjectRecord.id,
+      title: title,
+      description: description || '',
+      content: content || '',
+      duration: parseInt(duration) || 45,
+      order: 0,
+      isActive: true,
+      difficulty: 'Débutant',
+      hasQuiz: false
+    });
+
+    logger.info(`Lesson créée: ${lesson.title} (ID: ${lesson.id})`);
+
+    res.json({
+      success: true,
+      message: 'Cours créé avec succès',
+      data: {
+        subject: subjectRecord,
+        lesson: lesson
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur création cours:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création du cours',
+      error: error.message
     });
   }
 });

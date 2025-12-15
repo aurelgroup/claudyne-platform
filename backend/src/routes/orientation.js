@@ -360,19 +360,14 @@ router.get('/institutions', async (req, res) => {
       });
     }
 
-    const { location } = req.query; // 'all', 'idf', 'paca', 'ra'
-
-    let filteredInstitutions = INSTITUTIONS;
-    if (location && location !== 'all') {
-      filteredInstitutions = INSTITUTIONS.filter(inst => inst.region === location);
-    }
-
+    // TODO: Implement institutions from database
+    // For now, return empty array to avoid 500 error
     res.json({
       success: true,
       data: {
-        institutions: filteredInstitutions,
-        timeline: APPLICATION_TIMELINE,
-        total: filteredInstitutions.length
+        institutions: [],
+        timeline: [],
+        total: 0
       }
     });
 

@@ -6,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const logger = require('../utils/logger');
+const { Op } = require('sequelize');
 
 router.use(async (req, res, next) => {
   if (!req.models) {
@@ -94,7 +95,7 @@ router.get('/metrics', async (req, res) => {
         where: {
           studentId,
           createdAt: {
-            [Progress.sequelize.Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+            [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
           }
         },
         order: [['createdAt', 'DESC']],

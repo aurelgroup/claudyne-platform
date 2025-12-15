@@ -6265,10 +6265,16 @@
                     </table>
                 `;
 
-                document.getElementById('courses-table').innerHTML = coursesHtml;
+                const coursesTableEl = document.getElementById('courses-table');
+                if (coursesTableEl) {
+                    coursesTableEl.innerHTML = coursesHtml;
+                }
             } catch (error) {
                 console.error('Erreur chargement courses:', error);
-                document.getElementById('courses-table').innerHTML = '<p style="color: #EF4444;">❌ Erreur de chargement</p>';
+                const coursesTableEl = document.getElementById('courses-table');
+                if (coursesTableEl) {
+                    coursesTableEl.innerHTML = '<p style="color: #EF4444;">❌ Erreur de chargement</p>';
+                }
             }
         }
 

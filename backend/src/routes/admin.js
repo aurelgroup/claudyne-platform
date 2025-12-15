@@ -3982,7 +3982,7 @@ router.post('/courses', async (req, res) => {
       order: 0,
       isActive: true,
       hasQuiz: false,
-      reviewStatus: 'draft', // Par défaut en brouillon
+      reviewStatus: 'approved', // Approuvé automatiquement par l'admin (comme ancien endpoint)
       createdBy: req.user?.id || 'admin'
     });
 

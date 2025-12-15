@@ -3876,7 +3876,11 @@ router.get('/subjects', async (req, res) => {
 router.post('/courses', async (req, res) => {
   try {
     const { Subject, Lesson } = req.models;
-    const { title, subject, level, description, content, duration } = req.body;
+    const {
+      title, subject, level, description,
+      content, // Content structuré JSON
+      type, difficulty, duration
+    } = req.body;
 
     // Mapping des catégories
     const CATEGORY_MAPPING = {
@@ -3940,32 +3944,70 @@ router.post('/courses', async (req, res) => {
 
     logger.info(`Subject ${created ? 'créé' : 'trouvé'}: ${subjectRecord.title} (ID: ${subjectRecord.id})`);
 
-    // Créer la Lesson
+    // Préparer le contenu structuré
+    // Si content est déjà un objet JSON structuré (nouveau format), l'utiliser
+    // Sinon (ancien format string), le convertir
+    let lessonContent = content;
+    if (typeof content === 'string') {
+      // Ancien format (texte simple) → convertir en JSON structuré
+      lessonContent = {
+        transcript: content,
+        keyPoints: [],
+        exercises: [],
+        resources: [],
+        downloadableFiles: [],
+        videoUrl: null
+      };
+    } else {
+      // Nouveau format (déjà structuré) → valider la structure
+      lessonContent = {
+        transcript: content.transcript || '',
+        keyPoints: Array.isArray(content.keyPoints) ? content.keyPoints : [],
+        exercises: Array.isArray(content.exercises) ? content.exercises : [],
+        resources: Array.isArray(content.resources) ? content.resources : [],
+        downloadableFiles: Array.isArray(content.downloadableFiles) ? content.downloadableFiles : [],
+        videoUrl: content.videoUrl || null
+      };
+    }
+
+    // Créer la Lesson avec tous les nouveaux champs
     const lesson = await Lesson.create({
       subjectId: subjectRecord.id,
       title: title,
       description: description || '',
-      content: content || '',
-      duration: parseInt(duration) || 45,
+      content: lessonContent, // Contenu structuré JSONB
+      type: type || 'reading', // reading/video/interactive/exercise
+      difficulty: difficulty || 'Débutant', // Débutant/Intermédiaire/Avancé
+      estimatedDuration: parseInt(duration) || 45,
       order: 0,
       isActive: true,
-      difficulty: 'Débutant',
-      hasQuiz: false
+      hasQuiz: false,
+      reviewStatus: 'draft', // Par défaut en brouillon
+      createdBy: req.user?.id || 'admin'
     });
 
-    logger.info(`Lesson créée: ${lesson.title} (ID: ${lesson.id})`);
+    logger.info(`✅ Lesson créée: ${lesson.title} (ID: ${lesson.id}, Type: ${lesson.type}, Difficulté: ${lesson.difficulty})`);
 
     res.json({
       success: true,
-      message: 'Cours créé avec succès',
+      message: 'Leçon créée avec succès',
       data: {
         subject: subjectRecord,
-        lesson: lesson
+        lesson: {
+          id: lesson.id,
+          title: lesson.title,
+          description: lesson.description,
+          type: lesson.type,
+          difficulty: lesson.difficulty,
+          estimatedDuration: lesson.estimatedDuration,
+          content: lesson.content,
+          reviewStatus: lesson.reviewStatus
+        }
       }
     });
 
   } catch (error) {
-    logger.error('Erreur création cours:', error);
+    logger.error('❌ Erreur création cours:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la création du cours',

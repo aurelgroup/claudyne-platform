@@ -9188,70 +9188,115 @@
 
         // Fonctions pour l'ajout de contenu
         function showAddCourseModal() {
-            console.log('DY"? showAddCourseModal() appelée');
+            console.log('📚 showAddCourseModal() appelée');
             const modal = document.createElement('div');
             modal.className = 'glass-modal show';
             modal.innerHTML = `
-                <div class="glass-modal-content" style="max-width: 640px;">
+                <div class="glass-modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;">
-                        <h2 class="glass-text-primary" style="margin-bottom: 0.5rem;">Ajouter un nouveau cours</h2>
-                        <button type="button" id="fill-example-course" class="glass-btn glass-btn-secondary" style="padding:0.4rem 0.8rem;">Remplir un exemple</button>
+                        <h2 class="glass-text-primary" style="margin-bottom: 0.5rem;">📚 Créer une nouvelle leçon</h2>
+                        <button type="button" id="fill-example-course" class="glass-btn glass-btn-secondary" style="padding:0.4rem 0.8rem;">Exemple</button>
                     </div>
-                    <p class="glass-text-secondary" style="margin-top:0; margin-bottom:1rem;">Remplissez les champs essentiels ; la prévisualisation se met à jour en direct.</p>
+                    <p class="glass-text-secondary" style="margin-top:0; margin-bottom:1.5rem;">Créez une leçon structurée avec contenu enrichi</p>
                     <form id="add-course-form" onsubmit="handleAddCourse(event)">
-                        <div style="margin-bottom: 1rem;">
-                            <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Titre du cours:</label>
-                            <input type="text" class="glass-input" name="title" required placeholder="Ex: Introduction ? la Physique">
+
+                        <!-- Informations de base -->
+                        <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h3 class="glass-text-primary" style="margin-bottom: 1rem; font-size: 1.1rem;">📋 Informations de base</h3>
+
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Titre de la leçon *</label>
+                                <input type="text" class="glass-input" name="title" required placeholder="Ex: Les fractions - Introduction">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                <div>
+                                    <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Matière *</label>
+                                    <select class="glass-input" name="subject" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="mathematiques">Mathématiques</option>
+                                        <option value="physique">Physique</option>
+                                        <option value="chimie">Chimie</option>
+                                        <option value="biologie">Biologie</option>
+                                        <option value="francais">Français</option>
+                                        <option value="anglais">Anglais</option>
+                                        <option value="histoire">Histoire</option>
+                                        <option value="geographie">Géographie</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Niveau *</label>
+                                    <select class="glass-input" name="level" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="6eme">6ème</option>
+                                        <option value="5eme">5ème</option>
+                                        <option value="4eme">4ème</option>
+                                        <option value="3eme">3ème</option>
+                                        <option value="2nde">2nde</option>
+                                        <option value="1ere">1ère</option>
+                                        <option value="terminale">Terminale</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                                <div>
+                                    <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Type</label>
+                                    <select class="glass-input" name="type">
+                                        <option value="reading">📖 Lecture</option>
+                                        <option value="video">🎥 Vidéo</option>
+                                        <option value="interactive">🎮 Interactif</option>
+                                        <option value="exercise">✏️ Exercice</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Difficulté</label>
+                                    <select class="glass-input" name="difficulty">
+                                        <option value="Débutant">Débutant</option>
+                                        <option value="Intermédiaire">Intermédiaire</option>
+                                        <option value="Avancé">Avancé</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Durée (min)</label>
+                                    <input type="number" class="glass-input" name="duration" min="1" placeholder="45" value="45">
+                                </div>
+                            </div>
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Matière:</label>
-                            <select class="glass-input" name="subject" required>
-                                <option value="">Sélectionner une matière</option>
-                                <option value="mathematiques">Mathématiques</option>
-                                <option value="physique">Physique</option>
-                                <option value="chimie">Chimie</option>
-                                <option value="biologie">Biologie</option>
-                                <option value="francais">Français</option>
-                                <option value="anglais">Anglais</option>
-                                <option value="histoire">Histoire</option>
-                                <option value="geographie">Géographie</option>
-                            </select>
+
+                        <!-- Contenu structuré -->
+                        <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h3 class="glass-text-primary" style="margin-bottom: 1rem; font-size: 1.1rem;">📝 Contenu structuré</h3>
+
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Description courte</label>
+                                <textarea class="glass-input" name="description" rows="2" placeholder="Résumé de la leçon en 1-2 phrases"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Contenu principal (Transcript) *</label>
+                                <textarea class="glass-input" name="transcript" rows="6" placeholder="Contenu détaillé de la leçon..." required></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Points clés (un par ligne)</label>
+                                <textarea class="glass-input" name="keyPoints" rows="4" placeholder="- Point important 1&#10;- Point important 2&#10;- Point important 3"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Exercices (un par ligne)</label>
+                                <textarea class="glass-input" name="exercises" rows="3" placeholder="- Exercice 1: ...&#10;- Exercice 2: ..."></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Ressources (liens ou références)</label>
+                                <textarea class="glass-input" name="resources" rows="2" placeholder="- https://example.com&#10;- Manuel page 42"></textarea>
+                            </div>
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Niveau:</label>
-                            <select class="glass-input" name="level" required>
-                                <option value="">Sélectionner un niveau</option>
-                                <option value="6eme">6ème</option>
-                                <option value="5eme">5ème</option>
-                                <option value="4eme">4ème</option>
-                                <option value="3eme">3ème</option>
-                                <option value="2nde">2nde</option>
-                                <option value="1ere">1ère</option>
-                                <option value="terminale">Terminale</option>
-                            </select>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Description:</label>
-                            <textarea class="glass-input" name="description" rows="3" placeholder="Description du cours..."></textarea>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Contenu du cours:</label>
-                            <textarea class="glass-input" name="content" rows="6" placeholder="Contenu détaillé du cours..." required></textarea>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Durée estimée (minutes):</label>
-                            <input type="number" class="glass-input" name="duration" min="1" placeholder="Ex: 45">
-                        </div>
-                        <div class="glass-card" style="margin-top: 0.5rem; padding: 1rem; background: rgba(255,255,255,0.4);">
-                            <div class="glass-text-secondary" style="font-weight: 600; margin-bottom: 0.35rem;">Pr?visualisation rapide</div>
-                            <div id="course-preview-title" class="glass-text-primary" style="font-weight:700; margin-bottom: 0.25rem;">Titre du cours</div>
-                            <div id="course-preview-meta" class="glass-text-secondary" style="font-size: 0.9rem; margin-bottom: 0.35rem;">Matière ? Niveau</div>
-                            <p id="course-preview-description" class="glass-text-secondary" style="margin: 0 0 0.25rem;">Description du cours...</p>
-                            <p id="course-preview-content" class="glass-text-secondary" style="margin: 0; font-size: 0.9rem;">Contenu détaillé (aper?u)...</p>
-                        </div>
-                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem;">
+
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
                             <button type="button" class="glass-btn" onclick="closeModalDynamic(this)">Annuler</button>
-                            <button type="submit" class="glass-btn glass-btn-primary">Créer le cours</button>
+                            <button type="submit" class="glass-btn glass-btn-primary">✅ Créer la leçon</button>
                         </div>
                     </form>
                 </div>
@@ -9262,41 +9307,23 @@
             });
 
             const form = modal.querySelector('#add-course-form');
-            const previewTitle = modal.querySelector('#course-preview-title');
-            const previewMeta = modal.querySelector('#course-preview-meta');
-            const previewDesc = modal.querySelector('#course-preview-description');
-            const previewContent = modal.querySelector('#course-preview-content');
-
-            const clip = (text, max = 180) => text.length > max ? text.slice(0, max) + '?' : text;
-            const orPlaceholder = (value, placeholder) => value && value.trim().length ? value.trim() : placeholder;
-            const updatePreview = () => {
-                previewTitle.textContent = orPlaceholder(form.title.value, 'Titre du cours');
-                const subjectLabel = orPlaceholder(form.subject.value, 'Matière');
-                const levelLabel = orPlaceholder(form.level.value, 'Niveau');
-                previewMeta.textContent = `${subjectLabel} ? ${levelLabel}`;
-                previewDesc.textContent = orPlaceholder(form.description.value, "Phrase d'accroche du cours.");
-                previewContent.textContent = clip(orPlaceholder(form.content.value, 'Contenu détaillé ? r?diger.'), 180);
-            };
-
-            ['title','subject','level','description','content','duration'].forEach(name => {
-                const field = form.elements[name];
-                if (field) field.addEventListener('input', updatePreview);
-            });
-
             const fillBtn = modal.querySelector('#fill-example-course');
+
             if (fillBtn) {
                 fillBtn.addEventListener('click', () => {
-                    form.title.value = 'Fractions simples : demi et quart';
+                    form.title.value = 'Les fractions : demi et quart';
                     form.subject.value = 'mathematiques';
                     form.level.value = '6eme';
-                    form.description.value = 'Comprendre la notion de fraction ? travers des exemples concrets du quotidien.';
-                    form.content.value = "Objectifs :\n- Identifier une moiti? et un quart dans des situations r?elles (part de g?teau, partage).\n- Manipulation : d?couper une feuille en 2 puis en 4 parties ?gales.\n- Exercice guid? : colorier 1/2 puis 1/4 d'un rectangle.\n- Mini-?valuation : 4 questions rapides.";
+                    form.type.value = 'reading';
+                    form.difficulty.value = 'Débutant';
                     form.duration.value = 45;
-                    updatePreview();
+                    form.description.value = 'Introduction aux fractions à travers des exemples concrets du quotidien.';
+                    form.transcript.value = "Introduction aux fractions\n\nUne fraction représente une partie d'un tout. Aujourd'hui, nous allons découvrir les fractions les plus simples : la moitié (1/2) et le quart (1/4).\n\nLa moitié (1/2) :\nQuand on partage quelque chose en 2 parties égales, chaque partie est une moitié.\nExemple : Si on coupe une pizza en 2 parts égales, chaque part est 1/2 de la pizza.\n\nLe quart (1/4) :\nQuand on partage quelque chose en 4 parties égales, chaque partie est un quart.\nExemple : Si on coupe le même gâteau en 4 parts égales, chaque part est 1/4 du gâteau.";
+                    form.keyPoints.value = "- Une fraction = partie d'un tout\n- 1/2 = une moitié = partager en 2 parties égales\n- 1/4 = un quart = partager en 4 parties égales\n- Plus on découpe, plus les parts sont petites";
+                    form.exercises.value = "- Exercice 1 : Colorier 1/2 d'un rectangle\n- Exercice 2 : Colorier 1/4 d'un cercle\n- Exercice 3 : Partager 8 bonbons en 2 groupes égaux";
+                    form.resources.value = "- Manuel de mathématiques 6ème, chapitre 3\n- Vidéo : Les fractions pour débutants";
                 });
             }
-
-            updatePreview();
         }
 
 function showAddQuizModal() {
@@ -9508,16 +9535,40 @@ function showAddQuizModal() {
         async function handleAddCourse(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
+
+            // Parser les champs multi-lignes en arrays
+            const parseLines = (text) => {
+                if (!text || !text.trim()) return [];
+                return text.split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .map(line => line.replace(/^[-•]\s*/, '')); // Retirer les puces
+            };
+
+            // Construire l'objet content structuré selon le modèle Lesson
+            const content = {
+                transcript: formData.get('transcript') || '',
+                keyPoints: parseLines(formData.get('keyPoints')),
+                exercises: parseLines(formData.get('exercises')),
+                resources: parseLines(formData.get('resources')),
+                downloadableFiles: [],
+                videoUrl: null
+            };
+
             const courseData = {
                 title: formData.get('title'),
                 subject: formData.get('subject'),
                 level: formData.get('level'),
-                description: formData.get('description'),
-                content: formData.get('content'),
-                duration: formData.get('duration') || 45,
+                description: formData.get('description') || '',
+                type: formData.get('type') || 'reading',
+                difficulty: formData.get('difficulty') || 'Débutant',
+                duration: parseInt(formData.get('duration')) || 45,
+                content: content, // Contenu structuré JSON
                 created_by: 'admin',
                 created_at: new Date().toISOString()
             };
+
+            console.log('📤 Envoi courseData:', courseData);
 
             try {
                 const result = await authenticatedFetch(`${API_BASE}/api/admin/courses`, {
@@ -9525,15 +9576,15 @@ function showAddQuizModal() {
                     body: JSON.stringify(courseData)
                 });
                 if (result.success) {
-                    alert('Cours créé avec succès !');
+                    alert('✅ Leçon créée avec succès !');
                     closeModalDynamic(event.target);
                     loadContentData(); // Recharger les données
                 } else {
-                    alert('Erreur lors de la création du cours: ' + result.message);
+                    alert('❌ Erreur lors de la création : ' + result.message);
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur lors de la création du cours');
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la création de la leçon');
             }
         }
 

@@ -766,6 +766,8 @@ router.get('/subjects', async (req, res) => {
 
     const subjectLevel = LEVEL_MAPPING[student.educationLevel];
 
+    console.log(`📚 Student ${student.id} - Level: ${student.educationLevel} → ${subjectLevel}`);
+
     // Récupérer tous les sujets actifs du niveau de l'étudiant
     const allSubjects = await Subject.findAll({
       where: {
@@ -775,12 +777,18 @@ router.get('/subjects', async (req, res) => {
       order: [['order', 'ASC']]
     });
 
+    console.log(`📚 Found ${allSubjects.length} subjects for level ${subjectLevel}`);
+
     // Pour chaque sujet, calculer la progression
     const subjectsWithProgress = await Promise.all(
       allSubjects.map(async (subject) => {
-        // Trouver toutes les leçons de ce sujet
+        // Trouver toutes les leçons de ce sujet (approved seulement)
         const lessons = await Lesson.findAll({
-          where: { subjectId: subject.id, isActive: true }
+          where: {
+            subjectId: subject.id,
+            isActive: true,
+            reviewStatus: 'approved'
+          }
         });
 
         const lessonIds = lessons.map(l => l.id);

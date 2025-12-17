@@ -176,18 +176,66 @@ router.get('/content/:tab', async (req, res) => {
     }
 
     if (tab === 'quizzes') {
-      // TODO: Implémenter Quiz
+      // Récupérer toutes les Lessons qui ont hasQuiz=true
+      const quizLessons = await Lesson.findAll({
+        where: { hasQuiz: true, isActive: true },
+        include: [{
+          model: Subject,
+          as: 'subject',
+          attributes: ['id', 'title', 'category', 'level']
+        }],
+        order: [['createdAt', 'DESC']]
+      });
+
+      // Formater pour compatibilité admin
+      const quizzes = quizLessons.map(lesson => ({
+        id: `QUIZ-${lesson.id}`,
+        title: lesson.title,
+        subject: CATEGORY_TO_SUBJECT[lesson.subject?.category] || 'mathematiques',
+        level: LEVEL_MAPPING[lesson.subject?.level] || 'cp',
+        description: lesson.description || '',
+        duration: lesson.estimatedDuration || 20,
+        passing_score: lesson.quiz?.passingScore || 60,
+        questions: lesson.quiz?.questions || [],
+        status: lesson.isActive ? 'active' : 'inactive',
+        attempts: 0,
+        averageScore: 0,
+        created_at: lesson.createdAt,
+        _lessonId: lesson.id
+      }));
+
       return res.json({
         success: true,
-        data: { quizzes: [] }
+        data: { quizzes }
       });
     }
 
     if (tab === 'resources') {
-      // TODO: Implémenter Resources
+      // Récupérer toutes les Resources
+      const { Resource } = req.models;
+      const resources = await Resource.findAll({
+        where: { isActive: true },
+        order: [['createdAt', 'DESC']]
+      });
+
+      // Formater pour compatibilité admin
+      const formattedResources = resources.map(resource => ({
+        id: resource.id,
+        title: resource.title,
+        type: resource.type,
+        subject: resource.subject,
+        level: resource.level,
+        description: resource.description,
+        url: resource.url,
+        is_premium: resource.is_premium,
+        created_by: resource.created_by,
+        created_at: resource.createdAt,
+        status: resource.isActive ? 'active' : 'inactive'
+      }));
+
       return res.json({
         success: true,
-        data: { resources: [] }
+        data: { resources: formattedResources }
       });
     }
 
@@ -393,33 +441,224 @@ router.put('/content/courses/:courseId/toggle', async (req, res) => {
 });
 
 // ===============================
-// POST /quizzes - Créer un quiz (TODO)
+// POST /quizzes - Créer un quiz
 // ===============================
 router.post('/quizzes', async (req, res) => {
-  res.status(501).json({
-    success: false,
-    message: 'Fonction Quiz non encore implémentée en PostgreSQL'
-  });
+  try {
+    const { title, subject, level, description, duration, passing_score, questions } = req.body;
+    const { Subject, Lesson } = req.models;
+
+    // Validation
+    if (!title || !subject || !level || !questions || questions.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Champs requis: title, subject, level, questions (minimum 1)'
+      });
+    }
+
+    // Valider les questions
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      if (!q.question || !q.options || !q.correct_answer) {
+        return res.status(400).json({
+          success: false,
+          message: `Question ${i + 1} incomplète (question, options, correct_answer requis)`
+        });
+      }
+    }
+
+    // Mapper niveau et catégorie
+    const dbLevel = LEVEL_MAPPING[level.toLowerCase()] || level;
+    const dbCategory = SUBJECT_MAPPING[subject.toLowerCase()] || 'Mathématiques';
+
+    // Trouver ou créer le Subject
+    let subjectRecord = await Subject.findOne({
+      where: { level: dbLevel, category: dbCategory }
+    });
+
+    if (!subjectRecord) {
+      subjectRecord = await Subject.create({
+        id: uuidv4(),
+        title: `${dbCategory} ${dbLevel}`,
+        description: '',
+        level: dbLevel,
+        category: dbCategory,
+        icon: ICONS[dbCategory] || '📚',
+        color: COLORS[dbCategory] || '#3B82F6',
+        difficulty: 'Intermédiaire',
+        estimatedDuration: parseInt(duration) || 20,
+        isActive: true,
+        isPremium: false,
+        order: 0,
+        prerequisites: [],
+        cameroonCurriculum: { officialCode: null, ministerialRef: null, competencies: [] }
+      });
+    }
+
+    // Calculer totalPoints
+    const totalPoints = questions.reduce((sum, q) => sum + (q.points || 10), 0);
+
+    // Créer la Lesson avec Quiz
+    const lesson = await Lesson.create({
+      subjectId: subjectRecord.id,
+      title,
+      description: description || '',
+      type: 'quiz',
+      duration: parseInt(duration) || 20,
+      difficulty: 'Intermédiaire',
+      order: 1,
+      hasQuiz: true,
+      quiz: {
+        title,
+        questions: questions.map((q, idx) => ({
+          id: idx + 1,
+          question: q.question,
+          type: q.type || 'multiple_choice',
+          options: q.options,
+          correctAnswer: q.correct_answer,
+          points: q.points || 10,
+          explanation: q.explanation || ''
+        })),
+        totalPoints,
+        passingScore: parseInt(passing_score) || 60,
+        timeLimit: parseInt(duration) || 20,
+        maxAttempts: null
+      },
+      isActive: true,
+      isPremium: false,
+      content: { keyPoints: [], exercises: [], resources: [] },
+      objectives: [],
+      prerequisites: []
+    });
+
+    res.json({
+      success: true,
+      message: 'Quiz créé avec succès',
+      data: {
+        quiz: {
+          id: `QUIZ-${lesson.id}`,
+          title: lesson.title,
+          subject: subject.toLowerCase(),
+          level: level.toLowerCase(),
+          description: lesson.description,
+          duration: lesson.duration,
+          passing_score: lesson.quiz.passingScore,
+          questions: lesson.quiz.questions,
+          status: 'active',
+          created_at: lesson.createdAt
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur POST /quizzes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création du quiz',
+      error: error.message
+    });
+  }
 });
 
 // ===============================
-// PUT /content/quizzes/:quizId/toggle (TODO)
+// PUT /content/quizzes/:quizId/toggle - Toggle status quiz
 // ===============================
 router.put('/content/quizzes/:quizId/toggle', async (req, res) => {
-  res.status(501).json({
-    success: false,
-    message: 'Fonction Quiz non encore implémentée en PostgreSQL'
-  });
+  try {
+    const { quizId } = req.params;
+    const { Lesson } = req.models;
+
+    const lessonId = quizId.replace('QUIZ-', '');
+    const lesson = await Lesson.findByPk(lessonId);
+
+    if (!lesson || !lesson.hasQuiz) {
+      return res.status(404).json({
+        success: false,
+        message: 'Quiz introuvable'
+      });
+    }
+
+    await lesson.update({
+      isActive: !lesson.isActive
+    });
+
+    res.json({
+      success: true,
+      message: 'Statut du quiz modifié',
+      data: {
+        quiz: {
+          id: quizId,
+          status: lesson.isActive ? 'active' : 'inactive'
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur PUT /content/quizzes/:quizId/toggle:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors du changement de statut',
+      error: error.message
+    });
+  }
 });
 
 // ===============================
-// POST /resources - Créer une ressource (TODO)
+// POST /resources - Créer une ressource
 // ===============================
 router.post('/resources', async (req, res) => {
-  res.status(501).json({
-    success: false,
-    message: 'Fonction Resources non encore implémentée en PostgreSQL'
-  });
+  try {
+    const { title, type, subject, level, description, url, is_premium, created_by } = req.body;
+    const { Resource } = req.models;
+
+    // Validation
+    if (!title || !type || !subject || !level || !url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Champs requis: title, type, subject, level, url'
+      });
+    }
+
+    // Créer la resource
+    const resource = await Resource.create({
+      title,
+      type,
+      subject: subject.toLowerCase(),
+      level: level.toLowerCase(),
+      description: description || '',
+      url,
+      is_premium: !!is_premium,
+      created_by: created_by || req.user?.email,
+      isActive: true,
+      metadata: {}
+    });
+
+    res.json({
+      success: true,
+      message: 'Ressource ajoutée avec succès',
+      data: {
+        resource: {
+          id: resource.id,
+          title: resource.title,
+          type: resource.type,
+          subject: resource.subject,
+          level: resource.level,
+          description: resource.description,
+          url: resource.url,
+          is_premium: resource.is_premium,
+          created_at: resource.createdAt
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur POST /resources:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création de la ressource',
+      error: error.message
+    });
+  }
 });
 
 module.exports = router;

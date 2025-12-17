@@ -140,6 +140,7 @@ function initializeModels() {
   const BattleParticipation = require('../models/BattleParticipation')(sequelize);
   const RevisionSession = require('../models/RevisionSession')(sequelize);
   const PaymentTicket = require('../models/PaymentTicket')(sequelize);
+  const Resource = require('../models/Resource')(sequelize);
 
   // Définition des associations
   defineAssociations({
@@ -200,6 +201,7 @@ function initializeModels() {
     BattleParticipation,
     RevisionSession,
     PaymentTicket,
+    Resource,
     sequelize
   };
 }
@@ -211,7 +213,7 @@ function defineAssociations(models) {
     Battle, PrixClaudine, Payment, Subscription,
     StudyGroup, StudyGroupMember, ForumCategory, ForumDiscussion, ForumPost,
     WellnessExercise, CareerProfile, Career, Institution, ApplicationDeadline,
-    BattleParticipation, RevisionSession, PaymentTicket,
+    BattleParticipation, RevisionSession, PaymentTicket, Resource,
     ChatMessage, Notification, AdminSetting, EmailTemplate
   } = models;
 

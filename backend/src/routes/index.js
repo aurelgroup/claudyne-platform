@@ -17,7 +17,7 @@ const prixClaudineRoutes = require('./prix-claudine');
 const paymentRoutes = require('./payments');
 const mentorRoutes = require('./mentor');
 const adminRoutes = require('./admin');
-const contentManagementRoutes = require('./contentManagement');
+const contentManagementRoutes = require('./contentManagement-postgres');
 const monitoringRoutes = require('./monitoring');
 const progressRoutes = require('./progress');
 const notificationRoutes = require('./notifications');
@@ -98,81 +98,117 @@ router.get('/payment-tickets/available-plans', async (req, res) => {
 
 // Health check public endpoint
 
-// Route publique pour le contenu pédagogique (lessons.html)
+// Route publique pour le contenu pédagogique (lessons.html) - PostgreSQL
 router.get('/public/content', async (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
-    const contentStoreFile = path.join(__dirname, '../../content-store.json');
-    
-    // Lire le fichier
-    if (!fs.existsSync(contentStoreFile)) {
-      return res.json({
-        success: true,
-        data: {
-          subjects: [],
-          courses: [],
-          quizzes: [],
-          resources: []
-        }
-      });
-    }
-    
-    const data = fs.readFileSync(contentStoreFile, 'utf8');
-    const store = JSON.parse(data);
-    
-    // Filtrer uniquement le contenu actif
-    const activeCourses = (store.courses || []).filter(c => c.status === 'active');
-    const activeQuizzes = (store.quizzes || []).filter(q => q.status === 'active');
-    const activeResources = (store.resources || []).filter(r => r.status === 'active');
-    
+    const database = require('../config/database');
+    const models = database.initializeModels();
+    const { Subject, Lesson } = models;
+
+    // Mapping niveaux pour compatibilité
+    const LEVEL_MAPPING = {
+      'CP': 'cp', 'CE1': 'ce1', 'CE2': 'ce2', 'CM1': 'cm1', 'CM2': 'cm2',
+      '6ème': '6eme', '5ème': '5eme', '4ème': '4eme', '3ème': '3eme',
+      '2nde': '2nde', '1ère': '1ere', 'Tle': 'terminale'
+    };
+
+    const CATEGORY_TO_SUBJECT = {
+      'Mathématiques': 'mathematiques',
+      'Sciences': 'physique',
+      'Français': 'francais',
+      'Langues': 'anglais',
+      'Histoire-Géographie': 'histoire',
+      'Informatique': 'informatique',
+      'Sport': 'eps',
+      'Arts': 'arts'
+    };
+
+    // Récupérer tous les Subjects avec leurs Lessons actives
+    const subjects = await Subject.findAll({
+      where: { isActive: true },
+      include: [{
+        model: Lesson,
+        as: 'lessons',
+        where: { isActive: true, reviewStatus: 'approved' },
+        required: false
+      }],
+      order: [['level', 'ASC'], ['title', 'ASC']]
+    });
+
+    // Formater les courses (compatibilité JSON)
+    const courses = subjects.flatMap(subject =>
+      subject.lessons.map(lesson => ({
+        id: `COURS-${lesson.id}`,
+        title: lesson.title,
+        subject: CATEGORY_TO_SUBJECT[subject.category] || subject.category.toLowerCase(),
+        level: LEVEL_MAPPING[subject.level] || subject.level.toLowerCase(),
+        description: lesson.content || subject.description || '',
+        content: lesson.content || '',
+        duration: lesson.duration || 45,
+        status: 'active',
+        students: 0,
+        averageScore: 0,
+        created_at: lesson.createdAt
+      }))
+    );
+
     // Calculer les agrégats par matière
     const subjectStats = {};
-    const SUBJECT_LABELS = {
-      mathematiques: 'Mathématiques',
-      physique: 'Physique',
-      chimie: 'Chimie',
-      biologie: 'Biologie',
-      francais: 'Français',
-      anglais: 'Anglais',
-      histoire: 'Histoire',
-      geographie: 'Géographie',
-      informatique: 'Informatique'
-    };
-    
-    activeCourses.forEach(course => {
-      const id = course.subject || 'autre';
+    courses.forEach(course => {
+      const id = course.subject;
       if (!subjectStats[id]) {
         subjectStats[id] = {
           id,
-          title: SUBJECT_LABELS[id] || id,
+          title: course.subject.charAt(0).toUpperCase() + course.subject.slice(1),
           lessons: 0,
           quizzes: 0
         };
       }
       subjectStats[id].lessons++;
     });
-    
-    activeQuizzes.forEach(quiz => {
-      const id = quiz.subject || 'autre';
-      if (!subjectStats[id]) {
-        subjectStats[id] = {
-          id,
-          title: SUBJECT_LABELS[id] || id,
-          lessons: 0,
-          quizzes: 0
-        };
-      }
-      subjectStats[id].quizzes++;
+
+    // Récupérer les quizzes (Lessons avec hasQuiz=true)
+    const quizLessons = await Lesson.findAll({
+      where: { hasQuiz: true, isActive: true, reviewStatus: 'approved' },
+      include: [{ model: Subject, as: 'subject' }]
     });
-    
+
+    const quizzes = quizLessons.map(lesson => ({
+      id: `QUIZ-${lesson.id}`,
+      title: lesson.title,
+      subject: CATEGORY_TO_SUBJECT[lesson.subject?.category] || 'mathematiques',
+      level: LEVEL_MAPPING[lesson.subject?.level] || 'cp',
+      description: lesson.description || '',
+      duration: lesson.estimatedDuration || 20,
+      passing_score: lesson.quiz?.passingScore || 60,
+      questions: lesson.quiz?.questions || [],
+      status: 'active'
+    }));
+
+    // Récupérer les resources
+    const { Resource } = models;
+    const resourceRecords = await Resource.findAll({
+      where: { isActive: true }
+    });
+
+    const resources = resourceRecords.map(r => ({
+      id: r.id,
+      title: r.title,
+      type: r.type,
+      subject: r.subject,
+      level: r.level,
+      description: r.description,
+      url: r.url,
+      is_premium: r.is_premium
+    }));
+
     res.json({
       success: true,
       data: {
         subjects: Object.values(subjectStats),
-        courses: activeCourses,
-        quizzes: activeQuizzes,
-        resources: activeResources
+        courses: courses,
+        quizzes: quizzes,
+        resources: resources
       }
     });
   } catch (error) {
@@ -246,9 +282,6 @@ router.post('/admin/generate-token', async (req, res) => {
     }
 });
 
-// Route temporaire de migration (AVANT authentification car publique temporairement)
-router.use('/migrate-temp', migrateTempRoutes);
-
 // Middleware d'authentification pour toutes les autres routes
 router.use(authenticate);
 
@@ -277,6 +310,9 @@ router.use('/community', communityRoutes);
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), contentManagementRoutes);
 router.use('/admin', authorize(['ADMIN', 'MODERATOR']), adminRoutes);
 router.use('/admin/payment-tickets', adminPaymentTicketRoutes);
+
+// Routes de migration (SÉCURISÉES - Admin uniquement)
+router.use('/migrate-temp', authorize(['ADMIN']), migrateTempRoutes);
 
 // Routes de monitoring système (utilise authentication token admin)
 router.use('/monitoring', monitoringRoutes);

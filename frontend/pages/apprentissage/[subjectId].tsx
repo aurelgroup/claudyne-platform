@@ -21,15 +21,33 @@ import { useAuth } from '../../hooks/useAuth';
 import { apiService } from '../../services/api';
 
 // Types
+interface LessonContent {
+  transcript?: string | null;
+  keyPoints?: string[];
+  exercises?: string[];
+  resources?: string[];
+  downloadableFiles?: string[];
+  videoUrl?: string | null;
+}
+
 interface Lesson {
   id: number;
   title: string;
   description: string;
-  duration: number;
+  estimatedDuration: number;
   type: 'video' | 'interactive' | 'reading';
-  content: any;
+  content: LessonContent;
+  objectives?: string[];
+  prerequisites?: string[];
+  hasQuiz: boolean;
   completed: boolean;
   score: number | null;
+  progress?: {
+    status: string;
+    completionPercentage: number;
+    timeSpent: number;
+    lastScore: number | null;
+  };
 }
 
 interface Subject {
@@ -110,6 +128,30 @@ export default function ApprentissagePage() {
 
   const startQuiz = async (lessonId: number) => {
     router.push(`/quiz/${lessonId}`);
+  };
+
+  const markLessonComplete = async () => {
+    if (!selectedLesson) return;
+
+    try {
+      const response = await apiService.markLessonComplete(
+        subjectId as string,
+        selectedLesson.id,
+        { timeSpent: 0, notes: null }
+      );
+
+      if (response.success) {
+        toast.success('Leçon terminée ! +10 points Claudine 🎉');
+
+        setLessons(prev => prev.map(l =>
+          l.id === selectedLesson.id ? { ...l, completed: true } : l
+        ));
+        setSelectedLesson(prev => prev ? { ...prev, completed: true } : null);
+        fetchSubjectData();
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de la validation');
+    }
   };
 
   // Loading initial
@@ -226,7 +268,7 @@ export default function ApprentissagePage() {
                           <div className={`text-xs ${
                             selectedLesson?.id === lesson.id ? 'text-white/80' : 'text-neutral-500'
                           }`}>
-                            {lesson.duration} min • {lesson.type === 'video' ? '🎥' : lesson.type === 'interactive' ? '🎮' : '📖'}
+                            {lesson.estimatedDuration} min • {lesson.type === 'video' ? '🎥' : lesson.type === 'interactive' ? '🎮' : '📖'}
                           </div>
                         </div>
                       </div>
@@ -300,7 +342,7 @@ export default function ApprentissagePage() {
                             </p>
                           </div>
                           <div className="text-sm text-neutral-500">
-                            {selectedLesson.duration} minutes
+                            {selectedLesson.estimatedDuration} minutes
                           </div>
                         </div>
                         
@@ -328,27 +370,59 @@ export default function ApprentissagePage() {
                       {/* Contenu de la leçon */}
                       <div className="space-y-6">
                         {selectedLesson.type === 'video' && (
-                          <div>
+                          <div className="space-y-6">
                             <div className="bg-neutral-800 rounded-xl aspect-video flex items-center justify-center text-white mb-4">
-                              <div className="text-center">
-                                <div className="text-6xl mb-4">🎥</div>
-                                <p className="text-lg">Vidéo: {selectedLesson.title}</p>
-                                <p className="text-sm opacity-75 mt-2">
-                                  Contenu vidéo à intégrer
-                                </p>
-                              </div>
+                              {selectedLesson.content?.videoUrl ? (
+                                <iframe
+                                  src={selectedLesson.content.videoUrl}
+                                  className="w-full h-full rounded-xl"
+                                  allowFullScreen
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                />
+                              ) : (
+                                <div className="text-center">
+                                  <div className="text-6xl mb-4">🎥</div>
+                                  <p className="text-lg">{selectedLesson.title}</p>
+                                  <p className="text-sm opacity-75 mt-2">Vidéo en cours d'ajout</p>
+                                </div>
+                              )}
                             </div>
-                            
-                            {selectedLesson.content?.keyPoints && (
+
+                            {/* Transcription */}
+                            {selectedLesson.content?.transcript && (
+                              <div className="bg-neutral-50 rounded-xl p-6">
+                                <h3 className="font-semibold text-neutral-800 mb-3">📄 Transcription</h3>
+                                <div className="text-neutral-700 text-sm leading-relaxed whitespace-pre-wrap">
+                                  {selectedLesson.content.transcript}
+                                </div>
+                              </div>
+                            )}
+
+                            {selectedLesson.content?.keyPoints && selectedLesson.content.keyPoints.length > 0 && (
                               <div className="bg-neutral-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-neutral-800 mb-3">
-                                  📝 Points clés à retenir:
+                                  📝 Points clés à retenir
                                 </h3>
                                 <ul className="space-y-2">
                                   {selectedLesson.content.keyPoints.map((point: string, index: number) => (
                                     <li key={index} className="flex items-start">
                                       <span className="w-2 h-2 bg-primary-green rounded-full mt-2 mr-3 flex-shrink-0" />
                                       <span className="text-neutral-700">{point}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Exercices */}
+                            {selectedLesson.content?.exercises && selectedLesson.content.exercises.length > 0 && (
+                              <div className="bg-blue-50 rounded-xl p-6">
+                                <h3 className="font-semibold text-blue-800 mb-3">✏️ Exercices</h3>
+                                <ul className="space-y-2">
+                                  {selectedLesson.content.exercises.map((exercise, index) => (
+                                    <li key={index} className="flex items-start">
+                                      <span className="font-semibold text-blue-700 mr-3">{index + 1}.</span>
+                                      <span className="text-blue-700">{exercise}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -376,13 +450,91 @@ export default function ApprentissagePage() {
                           </div>
                         )}
 
+                        {selectedLesson.type === 'reading' && (
+                          <div className="space-y-6">
+                            {/* Transcript principal */}
+                            {selectedLesson.content?.transcript && (
+                              <div className="prose max-w-none">
+                                <div className="bg-white rounded-xl p-6 border border-neutral-200">
+                                  <div
+                                    className="text-neutral-700 leading-relaxed"
+                                    dangerouslySetInnerHTML={{
+                                      __html: selectedLesson.content.transcript.replace(/\n/g, '<br />')
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Objectifs */}
+                            {selectedLesson.objectives && selectedLesson.objectives.length > 0 && (
+                              <div className="bg-blue-50 rounded-xl p-6">
+                                <h3 className="font-semibold text-blue-800 mb-3">🎯 Objectifs</h3>
+                                <ul className="space-y-2">
+                                  {selectedLesson.objectives.map((obj, i) => (
+                                    <li key={i} className="flex items-start">
+                                      <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0" />
+                                      <span className="text-blue-700">{obj}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Points clés */}
+                            {selectedLesson.content?.keyPoints && selectedLesson.content.keyPoints.length > 0 && (
+                              <div className="bg-green-50 rounded-xl p-6">
+                                <h3 className="font-semibold text-green-800 mb-3">📝 Points clés</h3>
+                                <ul className="space-y-2">
+                                  {selectedLesson.content.keyPoints.map((point, i) => (
+                                    <li key={i} className="flex items-start">
+                                      <span className="w-2 h-2 bg-primary-green rounded-full mt-2 mr-3 flex-shrink-0" />
+                                      <span className="text-green-700">{point}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Exercices */}
+                            {selectedLesson.content?.exercises && selectedLesson.content.exercises.length > 0 && (
+                              <div className="bg-yellow-50 rounded-xl p-6">
+                                <h3 className="font-semibold text-yellow-800 mb-3">✏️ Exercices</h3>
+                                <ul className="space-y-2">
+                                  {selectedLesson.content.exercises.map((ex, i) => (
+                                    <li key={i} className="flex items-start">
+                                      <span className="font-semibold text-yellow-700 mr-3">{i + 1}.</span>
+                                      <span className="text-yellow-700">{ex}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {/* Ressources */}
+                            {selectedLesson.content?.resources && selectedLesson.content.resources.length > 0 && (
+                              <div className="bg-purple-50 rounded-xl p-6">
+                                <h3 className="font-semibold text-purple-800 mb-3">📚 Ressources</h3>
+                                <ul className="space-y-2">
+                                  {selectedLesson.content.resources.map((res, i) => (
+                                    <li key={i} className="flex items-start">
+                                      <span className="text-purple-500 mr-3">•</span>
+                                      <span className="text-purple-700">{res}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         {/* Actions */}
                         <div className="flex items-center justify-between pt-6 border-t border-neutral-200">
                           <div className="flex gap-3">
                             {!selectedLesson.completed && (
                               <button
                                 className="bg-primary-green text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
-                                onClick={() => toast('Fonctionnalité en cours de développement')}
+                                onClick={markLessonComplete}
                               >
                                 Marquer comme terminé
                               </button>

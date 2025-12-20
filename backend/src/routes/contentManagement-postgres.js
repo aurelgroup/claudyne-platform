@@ -71,13 +71,21 @@ const COLORS = {
 // ===============================
 router.get('/content', async (req, res) => {
   try {
-    const { Subject, Lesson } = req.models;
+    // Empêcher la mise en cache (évite de servir des données périmées dans l'admin)
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    const { Subject, Lesson, Resource } = req.models;
 
     // Compter les Subjects actifs
     const totalSubjects = await Subject.count({ where: { isActive: true } });
 
     // Compter les Lessons actives
     const totalLessons = await Lesson.count({ where: { isActive: true } });
+
+    // Compter les Resources actives
+    const totalResources = await Resource.count({ where: { isActive: true } }).catch(() => 0);
 
     // Agréger les "subjects" pour compatibilité admin
     const subjectGroups = await Subject.findAll({
@@ -100,19 +108,38 @@ router.get('/content', async (req, res) => {
       status: 'active'
     }));
 
+    // Récupérer les resources actives
+    const resources = await Resource.findAll({
+      where: { isActive: true },
+      order: [['createdAt', 'DESC']],
+      limit: 100
+    }).catch(() => []);
+
+    const formattedResources = resources.map(r => ({
+      id: r.id,
+      title: r.title,
+      type: r.type,
+      subject: r.subject,
+      level: r.level,
+      url: r.url,
+      is_premium: r.is_premium,
+      status: r.isActive ? 'active' : 'inactive',
+      created_at: r.createdAt
+    }));
+
     res.json({
       success: true,
       data: {
         subjects,
         courses: [], // Deprecated, utiliser /content/courses
         quizzes: [], // TODO
-        resources: [], // TODO
+        resources: formattedResources,
         pendingContent: [],
         stats: {
           totalSubjects,
           totalCourses: totalLessons,
           totalQuizzes: 0,
-          totalResources: 0
+          totalResources
         }
       }
     });
@@ -132,6 +159,11 @@ router.get('/content', async (req, res) => {
 // ===============================
 router.get('/content/:tab', async (req, res) => {
   try {
+    // Empêcher la mise en cache (évite de servir des données périmées dans l'admin)
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     const { tab } = req.params;
     const { Subject, Lesson } = req.models;
 
@@ -171,7 +203,7 @@ router.get('/content/:tab', async (req, res) => {
 
       return res.json({
         success: true,
-        data: { courses }
+        data: courses // ← Retourne directement le tableau
       });
     }
 
@@ -206,13 +238,22 @@ router.get('/content/:tab', async (req, res) => {
 
       return res.json({
         success: true,
-        data: { quizzes }
+        data: quizzes // ← Retourne directement le tableau
       });
     }
 
     if (tab === 'resources') {
       // Récupérer toutes les Resources
       const { Resource } = req.models;
+
+      // S'assurer que la table existe
+      try {
+        await Resource.sync({ alter: false });
+      } catch (syncError) {
+        logger.warn('Table resources might not exist, creating it...', syncError.message);
+        await Resource.sync({ force: false });
+      }
+
       const resources = await Resource.findAll({
         where: { isActive: true },
         order: [['createdAt', 'DESC']]
@@ -235,7 +276,7 @@ router.get('/content/:tab', async (req, res) => {
 
       return res.json({
         success: true,
-        data: { resources: formattedResources }
+        data: formattedResources // ← Retourne directement le tableau
       });
     }
 
@@ -246,6 +287,16 @@ router.get('/content/:tab', async (req, res) => {
 
   } catch (error) {
     logger.error(`Erreur GET /content/${req.params.tab}:`, error);
+
+    // Si c'est resources qui pose problème, renvoyer un tableau vide plutôt qu'une erreur
+    if (req.params.tab === 'resources') {
+      return res.json({
+        success: true,
+        data: [], // ← Retourne directement un tableau vide
+        warning: 'Table resources en cours de création'
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Erreur lors du chargement',
@@ -253,6 +304,16 @@ router.get('/content/:tab', async (req, res) => {
     });
   }
 });
+
+// ===============================
+// HELPER FUNCTIONS
+// ===============================
+
+// Helper to get next order number
+async function getNextOrder(subjectId, Lesson) {
+  const maxOrder = await Lesson.max('order', { where: { subjectId } });
+  return (maxOrder || 0) + 1;
+}
 
 // ===============================
 // POST /courses - Créer un cours
@@ -305,20 +366,50 @@ router.post('/courses', async (req, res) => {
       });
     }
 
-    // Créer la Lesson
+    // Parse content structure
+    let lessonContent = {
+      transcript: null,
+      keyPoints: [],
+      exercises: [],
+      resources: [],
+      downloadableFiles: [],
+      videoUrl: null
+    };
+
+    // Backward compatibility: string → transcript
+    if (typeof content === 'string') {
+      lessonContent.transcript = content;
+    } else if (content && typeof content === 'object') {
+      lessonContent = {
+        transcript: content.transcript || null,
+        keyPoints: content.keyPoints || [],
+        exercises: content.exercises || [],
+        resources: content.resources || [],
+        downloadableFiles: content.downloadableFiles || [],
+        videoUrl: content.videoUrl || null
+      };
+    }
+
+    const objectives = req.body.objectives || [];
+    const prerequisites = req.body.prerequisites || [];
+
+    // Créer la Lesson avec contenu structuré
     const lesson = await Lesson.create({
       id: uuidv4(),
       subjectId: subjectRecord.id,
       title,
-      content: content || description || '',
-      type: 'theory',
-      duration: parseInt(duration) || 45,
-      difficulty: 'Intermédiaire',
-      order: 1,
+      description: description || '',
+      content: lessonContent, // ✅ JSONB structuré
+      type: req.body.type || 'reading',
+      estimatedDuration: parseInt(duration) || 45,
+      difficulty: req.body.difficulty || 'Débutant',
+      objectives: objectives,
+      prerequisites: prerequisites,
+      hasQuiz: false,
+      order: await getNextOrder(subjectRecord.id, Lesson),
+      reviewStatus: 'approved', // ✅ Approuvé automatiquement pour apparaître côté student
       isActive: true,
-      isPremium: false,
-      prerequisites: [],
-      resources: []
+      isPremium: false
     });
 
     res.json({
@@ -656,6 +747,72 @@ router.post('/resources', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la création de la ressource',
+      error: error.message
+    });
+  }
+});
+
+// ===============================
+// PUT /resources/:id - Modifier une ressource
+// ===============================
+router.put('/resources/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, type, subject, level, description, url, is_premium } = req.body;
+    const { Resource } = req.models;
+
+    // Validation
+    if (!title || !type || !subject || !level || !url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Champs requis: title, type, subject, level, url'
+      });
+    }
+
+    // Trouver la ressource
+    const resource = await Resource.findByPk(id);
+
+    if (!resource) {
+      return res.status(404).json({
+        success: false,
+        message: 'Ressource non trouvée'
+      });
+    }
+
+    // Mettre à jour
+    await resource.update({
+      title,
+      type,
+      subject: subject.toLowerCase(),
+      level: level.toLowerCase(),
+      description: description || '',
+      url,
+      is_premium: !!is_premium
+    });
+
+    res.json({
+      success: true,
+      message: 'Ressource modifiée avec succès',
+      data: {
+        resource: {
+          id: resource.id,
+          title: resource.title,
+          type: resource.type,
+          subject: resource.subject,
+          level: resource.level,
+          description: resource.description,
+          url: resource.url,
+          is_premium: resource.is_premium,
+          updated_at: resource.updatedAt
+        }
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur PUT /resources/:id:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la modification de la ressource',
       error: error.message
     });
   }

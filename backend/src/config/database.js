@@ -141,6 +141,7 @@ function initializeModels() {
   const RevisionSession = require('../models/RevisionSession')(sequelize);
   const PaymentTicket = require('../models/PaymentTicket')(sequelize);
   const Resource = require('../models/Resource')(sequelize);
+  const Chapter = require('../models/Chapter')(sequelize);
 
   // Définition des associations
   defineAssociations({
@@ -149,6 +150,7 @@ function initializeModels() {
     Student,
     Subject,
     Lesson,
+    Chapter,
     Progress,
     Battle,
     PrixClaudine,
@@ -179,6 +181,7 @@ function initializeModels() {
     Student,
     Subject,
     Lesson,
+    Chapter,
     Progress,
     Battle,
     PrixClaudine,
@@ -209,7 +212,7 @@ function initializeModels() {
 // Définition des relations entre modèles
 function defineAssociations(models) {
   const {
-    User, Family, Student, Subject, Lesson, Progress,
+    User, Family, Student, Subject, Lesson, Chapter, Progress,
     Battle, PrixClaudine, Payment, Subscription,
     StudyGroup, StudyGroupMember, ForumCategory, ForumDiscussion, ForumPost,
     WellnessExercise, CareerProfile, Career, Institution, ApplicationDeadline,
@@ -251,14 +254,36 @@ function defineAssociations(models) {
   });
 
   // Relations Matière -> Leçons
-  Subject.hasMany(Lesson, { 
-    foreignKey: 'subjectId', 
+  Subject.hasMany(Lesson, {
+    foreignKey: 'subjectId',
     as: 'lessons',
     onDelete: 'CASCADE'
   });
-  Lesson.belongsTo(Subject, { 
-    foreignKey: 'subjectId', 
-    as: 'subject' 
+  Lesson.belongsTo(Subject, {
+    foreignKey: 'subjectId',
+    as: 'subject'
+  });
+
+  // Relations Matière -> Chapitres (Nouvelle architecture)
+  Subject.hasMany(Chapter, {
+    foreignKey: 'subjectId',
+    as: 'chapters',
+    onDelete: 'CASCADE'
+  });
+  Chapter.belongsTo(Subject, {
+    foreignKey: 'subjectId',
+    as: 'subject'
+  });
+
+  // Relations Chapitre -> Leçons (Nouvelle architecture)
+  Chapter.hasMany(Lesson, {
+    foreignKey: 'chapterId',
+    as: 'lessons',
+    onDelete: 'SET NULL' // Si chapitre supprimé, les leçons restent (chapterId = null)
+  });
+  Lesson.belongsTo(Chapter, {
+    foreignKey: 'chapterId',
+    as: 'chapter'
   });
 
   // Relations Progrès Étudiant

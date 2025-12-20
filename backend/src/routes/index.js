@@ -32,6 +32,7 @@ const parentRoutes = require('./parent');
 const paymentTicketRoutes = require('./paymentTickets');
 const adminPaymentTicketRoutes = require('./adminPaymentTickets');
 const migrateTempRoutes = require('./migrate-temp');
+const chaptersRoutes = require('./chapters');
 
 // Middleware d'authentification
 const { authenticate, authorize } = require('../middleware/auth');
@@ -289,6 +290,7 @@ router.use(authenticate);
 router.use('/families', familyRoutes);
 router.use('/students', studentRoutes);
 router.use('/subjects', subjectRoutes);
+router.use('/chapters', chaptersRoutes); // Nouvelle architecture pédagogique
 router.use('/battles', battleRoutes);
 router.use('/prix-claudine', prixClaudineRoutes);
 router.use('/payments', paymentRoutes);

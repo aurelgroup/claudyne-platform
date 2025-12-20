@@ -63,18 +63,91 @@ router.get('/', async (req, res) => {
       });
     }
 
-    const overview = await Progress.getStudentOverview(studentId);
+    // Get student info for education level
+    const { Subject, Lesson } = req.models;
+    const student = await Student.findByPk(studentId);
+
+    // Get all subjects with lessons for student's education level
+    const subjects = await Subject.findAll({
+      where: {
+        isActive: true,
+        level: student?.educationLevel || 'Tle'
+      },
+      include: [{
+        model: Lesson,
+        as: 'lessons',
+        where: {
+          isActive: true,
+          reviewStatus: 'approved'
+        },
+        required: false,
+        attributes: ['id', 'title', 'description', 'type', 'estimatedDuration', 'hasQuiz', 'isPremium', 'order', 'content', 'objectives']
+      }],
+      order: [['order', 'ASC'], ['title', 'ASC']]
+    });
+
+    // Get student's progress
+    const progressData = await Progress.findAll({
+      where: { studentId }
+    });
+
+    // Map progress to lessons
+    const progressMap = {};
+    progressData.forEach(p => {
+      progressMap[p.lessonId] = {
+        status: p.status,
+        completionPercentage: p.completionPercentage,
+        lastScore: p.lastScore,
+        timeSpent: p.timeSpent
+      };
+    });
+
+    // Format response with subjects and their lessons
+    const formattedSubjects = subjects.map(subject => {
+      const lessons = subject.lessons || [];
+      const completedLessons = lessons.filter(l => progressMap[l.id]?.status === 'completed').length;
+
+      return {
+        id: subject.id,
+        title: subject.title,
+        description: subject.description,
+        icon: subject.icon,
+        color: subject.color,
+        level: subject.level,
+        category: subject.category,
+        lessons: lessons.map(lesson => ({
+          id: lesson.id,
+          title: lesson.title,
+          description: lesson.description,
+          type: lesson.type,
+          estimatedDuration: lesson.estimatedDuration,
+          hasQuiz: lesson.hasQuiz,
+          isPremium: lesson.isPremium,
+          content: lesson.content,
+          objectives: lesson.objectives,
+          progress: progressMap[lesson.id] || {
+            status: 'not_started',
+            completionPercentage: 0,
+            lastScore: null,
+            timeSpent: 0
+          }
+        })),
+        progress: {
+          total: lessons.length,
+          completed: completedLessons,
+          percentage: lessons.length > 0 ? Math.round((completedLessons / lessons.length) * 100) : 0
+        }
+      };
+    });
 
     res.json({
       success: true,
-      data: overview || {
-        totalLessons: 0,
-        completedLessons: 0,
-        progressPercentage: 0,
-        subjects: [],
-        recentActivity: [],
+      data: {
+        subjects: formattedSubjects,
+        totalLessons: formattedSubjects.reduce((sum, s) => sum + s.lessons.length, 0),
+        completedLessons: formattedSubjects.reduce((sum, s) => sum + s.progress.completed, 0),
         stats: {
-          totalXP: 0,
+          totalXP: progressData.reduce((sum, p) => sum + (p.claudinePointsEarned || 0), 0),
           streak: 0,
           level: 1
         }

@@ -5251,8 +5251,10 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         // Fonction pour démarrer une matière
         function startSubject(subjectId) {
             showToast('Chargement de la matière...', 'info');
-            // TODO: Implémenter la navigation vers les leçons de la matière
             console.log('📖 Démarrage matière:', subjectId);
+
+            // Navigation vers la page des leçons
+            window.location.href = `/apprentissage/${subjectId}`;
         }
 
         function updateAchievementsDisplay() {

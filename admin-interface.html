@@ -6281,8 +6281,8 @@
         // Load Quizzes Data
         async function loadQuizzesData() {
             try {
-                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
-                const quizzes = (data?.success && data?.data?.quizzes) ? data.data.quizzes : [];
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content/quizzes`);
+                const quizzes = (data?.success && data?.data) ? data.data : [];
 
                 const SUBJECT_LABELS = {
                     mathematiques: 'Mathématiques',
@@ -9683,8 +9683,8 @@ function showAddQuizModal() {
         async function editCourse(courseId) {
             try {
                 // Charger les données du cours
-                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
-                const course = data.data.courses.find(c => c.id === courseId);
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content/courses`);
+                const course = data.data.find(c => c.id === courseId);
 
                 if (!course) {
                     alert('Cours non trouvé');
@@ -9792,8 +9792,148 @@ function showAddQuizModal() {
             alert(`Édition du quiz ${quizId} - À implémenter`);
         }
 
-        function editResource(resourceId) {
-            alert(`Édition de la ressource ${resourceId} - À implémenter`);
+        async function editResource(resourceId) {
+            try {
+                const data = await authenticatedFetch(`${API_BASE}/api/admin/content`);
+                const resource = data.data.resources.find(r => r.id === resourceId);
+
+                if (!resource) {
+                    alert('Ressource non trouvée');
+                    return;
+                }
+
+                const modal = document.createElement('div');
+                modal.className = 'glass-modal show';
+                modal.innerHTML = `
+                    <div class="glass-modal-content" style="max-width: 600px;">
+                        <h2 class="glass-text-primary" style="margin-bottom: 1.5rem;">Modifier la ressource</h2>
+                        <form id="edit-resource-form" onsubmit="handleEditResource(event, '${resourceId}')">
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Titre de la ressource:</label>
+                                <input type="text" class="glass-input" name="title" required placeholder="Ex: Formules mathématiques importantes" value="${resource.title}">
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Type de ressource:</label>
+                                <select class="glass-input" name="type" required>
+                                    <option value="" disabled>Sélectionner un type</option>
+                                    <option value="document" ${resource.type === 'document' ? 'selected' : ''}>Document PDF</option>
+                                    <option value="video" ${resource.type === 'video' ? 'selected' : ''}>Vidéo</option>
+                                    <option value="audio" ${resource.type === 'audio' ? 'selected' : ''}>Audio</option>
+                                    <option value="image" ${resource.type === 'image' ? 'selected' : ''}>Image/Schéma</option>
+                                    <option value="link" ${resource.type === 'link' ? 'selected' : ''}>Lien externe</option>
+                                    <option value="exercise" ${resource.type === 'exercise' ? 'selected' : ''}>Exercice</option>
+                                    <option value="pdf" ${resource.type === 'pdf' ? 'selected' : ''}>PDF</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Matière:</label>
+                                <select class="glass-input" name="subject" required>
+                                    <option value="" disabled>Sélectionner une matière</option>
+                                    <option value="mathematiques" ${resource.subject === 'mathematiques' ? 'selected' : ''}>Mathématiques</option>
+                                    <option value="physique" ${resource.subject === 'physique' ? 'selected' : ''}>Physique</option>
+                                    <option value="chimie" ${resource.subject === 'chimie' ? 'selected' : ''}>Chimie</option>
+                                    <option value="biologie" ${resource.subject === 'biologie' ? 'selected' : ''}>Biologie</option>
+                                    <option value="francais" ${resource.subject === 'francais' ? 'selected' : ''}>Français</option>
+                                    <option value="anglais" ${resource.subject === 'anglais' ? 'selected' : ''}>Anglais</option>
+                                    <option value="histoire" ${resource.subject === 'histoire' ? 'selected' : ''}>Histoire</option>
+                                    <option value="geographie" ${resource.subject === 'geographie' ? 'selected' : ''}>Géographie</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Niveau:</label>
+                                <select class="glass-input" name="level" required>
+                                    <option value="" disabled>Sélectionner un niveau</option>
+                                    <option value="6eme" ${resource.level === '6eme' ? 'selected' : ''}>6ème</option>
+                                    <option value="5eme" ${resource.level === '5eme' ? 'selected' : ''}>5ème</option>
+                                    <option value="4eme" ${resource.level === '4eme' ? 'selected' : ''}>4ème</option>
+                                    <option value="3eme" ${resource.level === '3eme' ? 'selected' : ''}>3ème</option>
+                                    <option value="2nde" ${resource.level === '2nde' ? 'selected' : ''}>2nde</option>
+                                    <option value="1ere" ${resource.level === '1ere' ? 'selected' : ''}>1ère</option>
+                                    <option value="terminale" ${resource.level === 'terminale' ? 'selected' : ''}>Terminale</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">Description:</label>
+                                <textarea class="glass-input" name="description" rows="3" placeholder="Description de la ressource...">${resource.description || ''}</textarea>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">URL:</label>
+                                <input type="text" class="glass-input" name="url" placeholder="URL du fichier ou lien externe" required value="${resource.url}">
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label class="glass-text-secondary" style="display: block; margin-bottom: 0.5rem;">
+                                    <input type="checkbox" name="is_premium" style="margin-right: 0.5rem;" ${resource.is_premium ? 'checked' : ''}>
+                                    Ressource premium (réservée aux abonnés)
+                                </label>
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                                <button type="button" class="glass-btn" onclick="closeModalDynamic(this)">Annuler</button>
+                                <button type="submit" class="glass-btn glass-btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModalDynamic(modal);
+                });
+            } catch (error) {
+                console.error('Erreur chargement ressource:', error);
+                alert('Erreur lors du chargement de la ressource');
+            }
+        }
+
+        async function handleEditResource(event, resourceId) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const resourceData = {
+                title: formData.get('title'),
+                type: formData.get('type'),
+                subject: formData.get('subject'),
+                level: formData.get('level'),
+                description: formData.get('description'),
+                url: formData.get('url'),
+                is_premium: formData.has('is_premium')
+            };
+
+            try {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/resources/${resourceId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(resourceData)
+                });
+                if (result.success) {
+                    alert('✅ Ressource modifiée avec succès !');
+                    closeModalDynamic(event.target);
+                    loadResourcesData();
+                } else {
+                    alert('❌ Erreur lors de la modification : ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la modification de la ressource');
+            }
+        }
+
+        async function deleteResource(resourceId) {
+            if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette ressource ? Cette action est irréversible.')) {
+                return;
+            }
+
+            try {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/resources/${resourceId}`, {
+                    method: 'DELETE'
+                });
+
+                if (result.success) {
+                    alert('✅ Ressource supprimée avec succès !');
+                    loadResourcesData();
+                } else {
+                    alert('❌ Erreur lors de la suppression : ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la suppression de la ressource');
+            }
         }
 
         async function toggleCourseStatus(courseId) {

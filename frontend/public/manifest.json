@@ -1,0 +1,119 @@
+{
+  "name": "Claudyne - Plateforme Éducative",
+  "short_name": "Claudyne",
+  "description": "Plateforme éducative camerounaise - La force du savoir en héritage. En hommage à Meffo Mehtah Tchandjio Claudine.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait-primary",
+  "scope": "/",
+
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHJ4PSIxNiIgZmlsbD0idXJsKCNncmFkMCkiLz4KICA8Y2lyY2xlIGN4PSIzNiIgY3k9IjM2IiByPSIxNiIgZmlsbD0iI0ZGRDcwMCIvPgogIDxwYXRoIGQ9Ik0zMSAzMUg0MSIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMzEgMzZINDEiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPHBhdGggZD0iTTMxIDQxSDQxIiBzdHJva2U9IiMxYTFhMmUiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkMCIgeDE9IjAiIHkxPSIwIiB4Mj0iNzIiIHkyPSI3MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMWExYTJlIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE2MjEzZSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+Cjwvc3ZnPgo=",
+      "sizes": "72x72",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHJ4PSIyNCIgZmlsbD0idXJsKCNncmFkMCkiLz4KICA8Y2lyY2xlIGN4PSI0OCIgY3k9IjQ4IiByPSIyMCIgZmlsbD0iI0ZGRDcwMCIvPgogIDxwYXRoIGQ9Ik00MCA0MEg1NiIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8cGF0aCBkPSJNNDAgNDhINTYiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHBhdGggZD0iTTQwIDU2SDU2IiBzdHJva2U9IiMxYTFhMmUiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkMCIgeDE9IjAiIHkxPSIwIiB4Mj0iOTYiIHkyPSI5NiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMWExYTJlIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE2MjEzZSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+Cjwvc3ZnPgo=",
+      "sizes": "96x96",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIzMiIgZmlsbD0idXJsKCNncmFkMCkiLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSIyOCIgZmlsbD0iI0ZGRDcwMCIvPgogIDxwYXRoIGQ9Ik01MCA1Mkg3OCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8cGF0aCBkPSJNNTAgNjRINzgiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHBhdGggZD0iTTUwIDc2SDc4IiBzdHJva2U9IiMxYTFhMmUiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkMCIgeDE9IjAiIHkxPSIwIiB4Mj0iMTI4IiB5Mj0iMTI4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIHN0b3AtY29sb3I9IiMxYTFhMmUiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMTYyMTNlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KPC9zdmc+Cg==",
+      "sizes": "128x128",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSI0OCIgZmlsbD0idXJsKCNncmFkMCkiLz4KICA8Y2lyY2xlIGN4PSI5NiIgY3k9Ijk2IiByPSI0MCIgZmlsbD0iI0ZGRDcwMCIvPgogIDxwYXRoIGQ9Ik03NiA3NkgxMTYiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHBhdGggZD0iTTc2IDk2SDExNiIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cGF0aCBkPSJNNzYgMTE2SDExNiIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjYiLz4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZDAiIHgxPSIwIiB5MT0iMCIgeDI9IjE5MiIgeTI9IjE5MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMWExYTJlIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE2MjEzZSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+Cjwvc3ZnPgo=",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMjgiIGZpbGw9InVybCgjZ3JhZDApIi8+CiAgPGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxMTIiIGZpbGw9IiNGRkQ3MDAiLz4KICA8cGF0aCBkPSJNMjA4IDIwOEgzMDQiIHN0cm9rZT0iIzFhMWEyZSIgc3Ryb2tlLXdpZHRoPSIxNiIvPgogIDxwYXRoIGQ9Ik0yMDggMjU2SDMwNCIgc3Ryb2tlPSIjMWExYTJlIiBzdHJva2Utd2lkdGg9IjE2Ii8+CiAgPHBhdGggZD0iTTIwOCAzMDRIMzA0IiBzdHJva2U9IiMxYTFhMmUiIHN0cm9rZS13aWR0aD0iMTYiLz4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZDAiIHgxPSIwIiB5MT0iMCIgeDI9IjUxMiIgeTI9IjUxMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjMWExYTJlIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE2MjEzZSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+Cjwvc3ZnPgo=",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+
+  "categories": ["education", "learning", "social"],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Interface principale de Claudyne sur desktop"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Interface mobile optimisée pour 2G/3G"
+    }
+  ],
+
+  "features": [
+    "Cross Origin Embedder Policy",
+    "Cross Origin Opener Policy"
+  ],
+
+  "prefer_related_applications": false,
+
+  "shortcuts": [
+    {
+      "name": "Interface Étudiant",
+      "short_name": "Étudiant",
+      "description": "Accès direct à l'interface étudiante",
+      "url": "/student",
+      "icons": [{ "src": "/icons/student.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Interface Admin",
+      "short_name": "Admin",
+      "description": "Accès à l'administration",
+      "url": "/admin-secure-k7m9x4n2p8w5z1c6",
+      "icons": [{ "src": "/icons/admin.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Essai Gratuit",
+      "short_name": "Essai",
+      "description": "Commencer un essai gratuit",
+      "url": "/?action=trial",
+      "icons": [{ "src": "/icons/trial.png", "sizes": "96x96" }]
+    }
+  ],
+
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+
+  "protocol_handlers": [],
+
+  "file_handlers": [],
+
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", ".pdf", ".doc", ".docx"]
+        }
+      ]
+    }
+  }
+}

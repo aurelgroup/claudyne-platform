@@ -9135,12 +9135,13 @@
                                 <button class="btn btn-sm glass-btn glass-btn-warning" onclick="toggleCourseStatus('${course.id}')">
                                     ${course.status === 'active' ? '⏸️ Désactiver' : '▶️ Activer'}
                                 </button>
+                                <button class="btn btn-sm glass-btn glass-btn-danger" onclick="deleteCourse('${course.id}')">🗑️ Supprimer</button>
                             </div>
                         </div>
                     `).join('')}
                 </div>
             `;
-            
+
             container.innerHTML = coursesHtml;
         }
 
@@ -9160,12 +9161,13 @@
                                 <button class="btn btn-sm glass-btn glass-btn-warning" onclick="toggleQuizStatus('${quiz.id}')">
                                     ${quiz.status === 'active' ? '⏸️ Désactiver' : '▶️ Activer'}
                                 </button>
+                                <button class="btn btn-sm glass-btn glass-btn-danger" onclick="deleteQuiz('${quiz.id}')">🗑️ Supprimer</button>
                             </div>
                         </div>
                     `).join('')}
                 </div>
             `;
-            
+
             container.innerHTML = quizzesHtml;
         }
 
@@ -9933,6 +9935,50 @@ function showAddQuizModal() {
             } catch (error) {
                 console.error('❌ Erreur:', error);
                 alert('❌ Erreur lors de la suppression de la ressource');
+            }
+        }
+
+        async function deleteCourse(courseId) {
+            if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer ce cours/cette leçon ? Cette action est irréversible.')) {
+                return;
+            }
+
+            try {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/content/courses/${courseId}`, {
+                    method: 'DELETE'
+                });
+
+                if (result.success) {
+                    alert('✅ Cours supprimé avec succès !');
+                    showContentTab('courses');
+                } else {
+                    alert('❌ Erreur lors de la suppression : ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la suppression du cours');
+            }
+        }
+
+        async function deleteQuiz(quizId) {
+            if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer ce quiz ? Cette action est irréversible.')) {
+                return;
+            }
+
+            try {
+                const result = await authenticatedFetch(`${API_BASE}/api/admin/content/quizzes/${quizId}`, {
+                    method: 'DELETE'
+                });
+
+                if (result.success) {
+                    alert('✅ Quiz supprimé avec succès !');
+                    showContentTab('quizzes');
+                } else {
+                    alert('❌ Erreur lors de la suppression : ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur lors de la suppression du quiz');
             }
         }
 

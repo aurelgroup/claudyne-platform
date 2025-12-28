@@ -125,12 +125,18 @@ export default function ApprentissagePage() {
       const response = await apiService.getSubjectLessons(subjectId as string);
 
       if (response.success && response.data) {
-        setLessons(response.data.lessons || []);
-        if (response.data.lessons && response.data.lessons.length > 0) {
-          setSelectedLesson(response.data.lessons[0]);
+        const lessonsList = response.data.lessons || [];
+        setLessons(lessonsList);
+
+        // Charger le contenu complet de la première leçon
+        if (lessonsList.length > 0) {
+          await handleLessonSelect(lessonsList[0]);
+        } else {
+          setIsLoadingData(false);
         }
+      } else {
+        setIsLoadingData(false);
       }
-      setIsLoadingData(false);
     } catch (error: any) {
       console.error('Erreur chargement leçons:', error);
       toast.error(error.message || 'Erreur lors du chargement des leçons');
@@ -138,9 +144,29 @@ export default function ApprentissagePage() {
     }
   };
 
-  const handleLessonSelect = (lesson: Lesson) => {
-    setSelectedLesson(lesson);
-    setActiveTab('lessons');
+  const handleLessonSelect = async (lesson: Lesson) => {
+    try {
+      setIsLoadingData(true);
+      setActiveTab('lessons');
+
+      // Charger le contenu complet de la leçon
+      const response = await apiService.getLesson(subjectId as string, lesson.id);
+
+      if (response.success && response.data) {
+        const fullLesson = response.data.lesson || response.data;
+        setSelectedLesson(fullLesson);
+      } else {
+        // Si le chargement échoue, utiliser les données de base
+        setSelectedLesson(lesson);
+      }
+    } catch (error: any) {
+      console.error('Erreur chargement leçon:', error);
+      toast.error('Erreur lors du chargement de la leçon');
+      // Utiliser les données de base en cas d'erreur
+      setSelectedLesson(lesson);
+    } finally {
+      setIsLoadingData(false);
+    }
   };
 
   const startQuiz = async (lessonId: number) => {
@@ -253,39 +279,43 @@ export default function ApprentissagePage() {
                 <h3 className="font-semibold text-neutral-800 mb-3">
                   📚 Leçons ({lessons.length})
                 </h3>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
                   {lessons.map((lesson, index) => (
                     <motion.div
                       key={lesson.id}
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ scale: 1.02, x: 4 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleLessonSelect(lesson)}
-                      className={`p-3 rounded-lg cursor-pointer transition-all ${
+                      className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border-l-4 ${
                         selectedLesson?.id === lesson.id
-                          ? 'bg-primary-green text-white'
-                          : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-700'
+                          ? 'bg-gradient-to-r from-primary-green to-green-600 text-white shadow-lg border-green-400'
+                          : 'bg-white hover:bg-neutral-50 text-neutral-700 shadow-sm hover:shadow-md border-neutral-200'
                       }`}
                     >
-                      <div className="flex items-start">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5 ${
+                      <div className="flex items-start gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                           lesson.completed
-                            ? 'bg-green-500 text-white'
+                            ? 'bg-green-500 text-white ring-2 ring-green-300'
                             : selectedLesson?.id === lesson.id
                             ? 'bg-white text-primary-green'
-                            : 'bg-neutral-300 text-neutral-600'
+                            : 'bg-neutral-100 text-neutral-600'
                         }`}>
                           {lesson.completed ? '✓' : index + 1}
                         </div>
-                        <div className="flex-1">
-                          <div className={`font-medium text-sm ${
-                            selectedLesson?.id === lesson.id ? 'text-white' : 'text-neutral-800'
+                        <div className="flex-1 min-w-0">
+                          <div className={`font-semibold text-sm leading-tight mb-1 ${
+                            selectedLesson?.id === lesson.id ? 'text-white' : 'text-neutral-900'
                           }`}>
                             {lesson.title}
                           </div>
-                          <div className={`text-xs ${
-                            selectedLesson?.id === lesson.id ? 'text-white/80' : 'text-neutral-500'
+                          <div className={`flex items-center gap-2 text-xs ${
+                            selectedLesson?.id === lesson.id ? 'text-white/90' : 'text-neutral-500'
                           }`}>
-                            {lesson.estimatedDuration} min • {lesson.type === 'video' ? '🎥' : lesson.type === 'interactive' ? '🎮' : '📖'}
+                            <span className="flex items-center gap-1">
+                              ⏱️ {lesson.estimatedDuration} min
+                            </span>
+                            <span>•</span>
+                            <span>{lesson.type === 'video' ? '🎥 Vidéo' : lesson.type === 'interactive' ? '🎮 Interactif' : '📖 Lecture'}</span>
                           </div>
                         </div>
                       </div>
@@ -339,7 +369,21 @@ export default function ApprentissagePage() {
               {/* Contenu des onglets */}
               <div className="p-8">
                 <AnimatePresence mode="wait">
-                  {activeTab === 'lessons' && selectedLesson && (
+                  {/* Indicateur de chargement */}
+                  {isLoadingData && (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex flex-col items-center justify-center py-12"
+                    >
+                      <LoadingSpinner size="lg" />
+                      <p className="text-neutral-600 mt-4">Chargement de la leçon...</p>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 'lessons' && selectedLesson && !isLoadingData && (
                     <motion.div
                       key="lesson-content"
                       initial={{ opacity: 0, y: 20 }}

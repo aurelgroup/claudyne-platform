@@ -9952,42 +9952,42 @@ function showAddQuizModal() {
 
                 Object.keys(lessonsByChapter).sort((a, b) => a - b).forEach(chapterId => {
                     const chapterLessons = lessonsByChapter[chapterId];
-                    const chapterTitle = chapterId == 0 ? 'Leçons sans chapitre' : \`Chapitre \${chapterId}\`;
+                    const chapterTitle = chapterId == 0 ? 'Leçons sans chapitre' : `Chapitre ${chapterId}`;
 
-                    html += \`
+                    html += `
                         <div style="margin-bottom: 2rem;">
                             <h3 style="color: #1F2937; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #E5E7EB;">
-                                📖 \${chapterTitle}
+                                📖 ${chapterTitle}
                             </h3>
                             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
-                                \${chapterLessons.map((lesson, idx) => \`
+                                ${chapterLessons.map((lesson, idx) => `
                                     <div class="lesson-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; transition: all 0.2s; cursor: pointer;"
                                          onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)';"
                                          onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; this.style.transform='translateY(0)';"
-                                         onclick="viewLessonDetails('\${subjectId}', '\${lesson.id}', '\${lesson.title}')">
+                                         onclick="viewLessonDetails('${subjectId}', '${lesson.id}', '${lesson.title}')">
                                         <div style="display: flex; align-items: start; gap: 1rem;">
                                             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
-                                                \${idx + 1}
+                                                ${idx + 1}
                                             </div>
                                             <div style="flex: 1;">
                                                 <h4 style="color: #1F2937; font-size: 1rem; font-weight: 600; margin: 0 0 0.5rem 0;">
-                                                    \${lesson.title}
+                                                    ${lesson.title}
                                                 </h4>
                                                 <p style="color: #6B7280; font-size: 0.875rem; margin: 0; line-height: 1.4;">
-                                                    \${lesson.description || 'Aucune description'}
+                                                    ${lesson.description || 'Aucune description'}
                                                 </p>
                                                 <div style="display: flex; gap: 1rem; margin-top: 0.75rem; font-size: 0.75rem; color: #9CA3AF;">
-                                                    <span>⏱️ \${lesson.estimatedDuration || 30} min</span>
-                                                    <span>📝 \${lesson.type || 'Leçon'}</span>
-                                                    \${lesson.hasQuiz ? '<span style="color: #10B981;">✅ Quiz inclus</span>' : ''}
+                                                    <span>⏱️ ${lesson.estimatedDuration || 30} min</span>
+                                                    <span>📝 ${lesson.type || 'Leçon'}</span>
+                                                    ${lesson.hasQuiz ? '<span style="color: #10B981;">✅ Quiz inclus</span>' : ''}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                \`).join('')}
+                                `).join('')}
                             </div>
                         </div>
-                    \`;
+                    `;
                 });
 
                 html += '</div>';
@@ -9995,7 +9995,7 @@ function showAddQuizModal() {
 
             } catch (error) {
                 console.error('❌ Erreur prévisualisation cours:', error);
-                alert(\`Erreur lors de la prévisualisation: \${error.message}\`);
+                alert(`Erreur lors de la prévisualisation: ${error.message}`);
             }
         }
 
@@ -10004,7 +10004,7 @@ function showAddQuizModal() {
          */
         async function viewLessonDetails(subjectId, lessonId, lessonTitle) {
             try {
-                const response = await authenticatedFetch(\`\${API_BASE}/api/subjects/\${subjectId}/lessons/\${lessonId}\`);
+                const response = await authenticatedFetch(`${API_BASE}/api/subjects/${subjectId}/lessons/${lessonId}`);
 
                 if (!response.success) {
                     throw new Error(response.message || 'Erreur lors du chargement de la leçon');
@@ -10017,17 +10017,17 @@ function showAddQuizModal() {
                 modal.className = 'glass-modal show';
                 modal.style.zIndex = '10001';
 
-                modal.innerHTML = \`
+                modal.innerHTML = `
                     <div class="glass-modal-content" style="max-width: 900px; max-height: 95vh; overflow-y: auto;">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
                             <div>
                                 <h2 style="color: #1F2937; font-size: 1.75rem; font-weight: 600; margin: 0 0 0.5rem 0;">
-                                    \${lessonTitle}
+                                    ${lessonTitle}
                                 </h2>
                                 <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: #6B7280;">
-                                    <span>⏱️ \${lesson.estimatedDuration || 30} minutes</span>
-                                    <span>📝 \${lesson.type || 'Leçon'}</span>
-                                    <span>🎯 Difficulté: \${lesson.difficulty || 'Moyen'}</span>
+                                    <span>⏱️ ${lesson.estimatedDuration || 30} minutes</span>
+                                    <span>📝 ${lesson.type || 'Leçon'}</span>
+                                    <span>🎯 Difficulté: ${lesson.difficulty || 'Moyen'}</span>
                                 </div>
                             </div>
                             <button onclick="this.closest('.glass-modal').remove()"
@@ -10038,48 +10038,48 @@ function showAddQuizModal() {
 
                         <div style="background: #F9FAFB; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                             <p style="color: #4B5563; line-height: 1.6; margin: 0;">
-                                \${lesson.description || 'Aucune description disponible'}
+                                ${lesson.description || 'Aucune description disponible'}
                             </p>
                         </div>
 
-                        \${lesson.objectives ? \`
+                        ${lesson.objectives ? `
                             <div style="margin-bottom: 1.5rem;">
                                 <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
                                     🎯 Objectifs pédagogiques
                                 </h3>
                                 <div style="color: #4B5563; line-height: 1.6;">
-                                    \${lesson.objectives}
+                                    ${lesson.objectives}
                                 </div>
                             </div>
-                        \` : ''}
+                        ` : ''}
 
-                        \${lesson.videoUrl ? \`
+                        ${lesson.videoUrl ? `
                             <div style="margin-bottom: 1.5rem;">
                                 <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
                                     🎥 Vidéo de la leçon
                                 </h3>
                                 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000;">
-                                    <iframe src="\${lesson.videoUrl}"
+                                    <iframe src="${lesson.videoUrl}"
                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
                                             frameborder="0"
                                             allowfullscreen>
                                     </iframe>
                                 </div>
                             </div>
-                        \` : ''}
+                        ` : ''}
 
-                        \${lesson.content ? \`
+                        ${lesson.content ? `
                             <div style="margin-bottom: 1.5rem;">
                                 <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
                                     📄 Contenu de la leçon
                                 </h3>
                                 <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #E5E7EB; color: #374151; line-height: 1.8;">
-                                    \${typeof lesson.content === 'object' ? JSON.stringify(lesson.content, null, 2) : lesson.content}
+                                    ${typeof lesson.content === 'object' ? JSON.stringify(lesson.content, null, 2) : lesson.content}
                                 </div>
                             </div>
-                        \` : ''}
+                        ` : ''}
 
-                        \${lesson.hasQuiz ? \`
+                        ${lesson.hasQuiz ? `
                             <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 1.5rem; border-radius: 8px;">
                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                     <div style="font-size: 2rem;">✅</div>
@@ -10091,15 +10091,15 @@ function showAddQuizModal() {
                                     </div>
                                 </div>
                             </div>
-                        \` : ''}
+                        ` : ''}
                     </div>
-                \`;
+                `;
 
                 document.body.appendChild(modal);
 
             } catch (error) {
                 console.error('❌ Erreur détails leçon:', error);
-                alert(\`Erreur lors du chargement de la leçon: \${error.message}\`);
+                alert(`Erreur lors du chargement de la leçon: ${error.message}`);
             }
         }
 

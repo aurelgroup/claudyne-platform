@@ -10000,6 +10000,129 @@ function showAddQuizModal() {
         }
 
         /**
+         * Formater intelligemment le contenu d'une leçon
+         */
+        function formatLessonContent(content) {
+            if (!content) return '<p style="color: #9CA3AF;">Contenu non disponible</p>';
+
+            // Si c'est du HTML, l'afficher tel quel
+            if (typeof content === 'string') {
+                // Vérifier si ça ressemble à du HTML
+                if (content.trim().startsWith('<')) {
+                    return content;
+                }
+                // Sinon, formatter comme du texte avec paragraphes
+                return content.split('\n').map(p => p.trim() ? `<p style="margin-bottom: 0.75rem;">${p}</p>` : '').join('');
+            }
+
+            // Si c'est un objet structuré
+            if (typeof content === 'object') {
+                let html = '';
+
+                // Si c'est un tableau de sections
+                if (Array.isArray(content)) {
+                    content.forEach((section, idx) => {
+                        if (section.title) {
+                            html += `<h4 style="color: #1F2937; font-weight: 600; margin: 1rem 0 0.5rem 0;">${idx + 1}. ${section.title}</h4>`;
+                        }
+                        if (section.content) {
+                            html += `<div style="margin-bottom: 1rem;">${section.content}</div>`;
+                        }
+                        if (section.examples) {
+                            html += `<div style="background: #F3F4F6; padding: 0.75rem; border-radius: 6px; margin: 0.5rem 0; border-left: 3px solid #667eea;">
+                                <strong>Exemple:</strong> ${section.examples}
+                            </div>`;
+                        }
+                    });
+                    return html;
+                }
+
+                // Si c'est un objet avec des propriétés connues
+                if (content.introduction) {
+                    html += `<div style="background: #EEF2FF; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #667eea;">
+                        <strong>📌 Introduction:</strong><br>${content.introduction}
+                    </div>`;
+                }
+                if (content.explanation) {
+                    html += `<div style="margin-bottom: 1rem;"><strong>💡 Explication:</strong><br>${content.explanation}</div>`;
+                }
+                if (content.examples) {
+                    html += `<div style="background: #F0FDF4; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #10B981;">
+                        <strong>📝 Exemples:</strong><br>${content.examples}
+                    </div>`;
+                }
+                if (content.exercises) {
+                    html += `<div style="background: #FEF3C7; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #F59E0B;">
+                        <strong>✏️ Exercices:</strong><br>${content.exercises}
+                    </div>`;
+                }
+                if (content.summary) {
+                    html += `<div style="background: #F3F4F6; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                        <strong>📋 Résumé:</strong><br>${content.summary}
+                    </div>`;
+                }
+
+                // Si on a formaté quelque chose, le retourner
+                if (html) return html;
+
+                // Sinon, afficher le JSON formaté proprement
+                return `<pre style="background: #F9FAFB; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.875rem; line-height: 1.5; color: #374151;">${JSON.stringify(content, null, 2)}</pre>`;
+            }
+
+            return content.toString();
+        }
+
+        /**
+         * Formater le quiz d'une leçon
+         */
+        function formatQuiz(quiz) {
+            if (!quiz) return '';
+
+            if (typeof quiz === 'object' && quiz.questions && Array.isArray(quiz.questions)) {
+                let html = '<div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">';
+                html += '<h4 style="margin: 0 0 1rem 0; font-size: 1.125rem; font-weight: 600;">✅ Quiz - ' + (quiz.questions.length) + ' questions</h4>';
+
+                quiz.questions.forEach((q, idx) => {
+                    html += `<div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 6px; margin-bottom: 0.75rem;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">${idx + 1}. ${q.question || q.text}</div>`;
+
+                    if (q.options && Array.isArray(q.options)) {
+                        html += '<ul style="list-style: none; padding-left: 1rem; margin: 0.5rem 0;">';
+                        q.options.forEach((opt, i) => {
+                            const isCorrect = q.correctAnswer === i || q.answer === opt;
+                            html += `<li style="margin: 0.25rem 0; ${isCorrect ? 'font-weight: 600; opacity: 1;' : 'opacity: 0.85;'}">
+                                ${String.fromCharCode(65 + i)}. ${opt} ${isCorrect ? '✓' : ''}
+                            </li>`;
+                        });
+                        html += '</ul>';
+                    }
+
+                    if (q.explanation) {
+                        html += `<div style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9; font-style: italic;">
+                            💡 ${q.explanation}
+                        </div>`;
+                    }
+
+                    html += '</div>';
+                });
+
+                html += '</div>';
+                return html;
+            }
+
+            // Fallback: afficher qu'il y a un quiz sans détails
+            return `<div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="font-size: 2rem;">✅</div>
+                    <div>
+                        <h4 style="margin: 0 0 0.25rem 0; font-weight: 600;">Quiz disponible</h4>
+                        <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">Cette leçon comprend un quiz pour tester vos connaissances</p>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        /**
          * Afficher les détails d'une leçon
          */
         async function viewLessonDetails(subjectId, lessonId, lessonTitle) {
@@ -10018,37 +10141,52 @@ function showAddQuizModal() {
                 modal.style.zIndex = '10001';
 
                 modal.innerHTML = `
-                    <div class="glass-modal-content" style="max-width: 900px; max-height: 95vh; overflow-y: auto;">
+                    <div class="glass-modal-content" style="max-width: 900px; max-height: 95vh; overflow-y: auto; padding: 2rem;">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
-                            <div>
+                            <div style="flex: 1;">
                                 <h2 style="color: #1F2937; font-size: 1.75rem; font-weight: 600; margin: 0 0 0.5rem 0;">
                                     ${lessonTitle}
                                 </h2>
-                                <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: #6B7280;">
+                                <div style="display: flex; gap: 1.5rem; font-size: 0.875rem; color: #6B7280; flex-wrap: wrap;">
                                     <span>⏱️ ${lesson.estimatedDuration || 30} minutes</span>
                                     <span>📝 ${lesson.type || 'Leçon'}</span>
                                     <span>🎯 Difficulté: ${lesson.difficulty || 'Moyen'}</span>
+                                    ${lesson.chapterId ? `<span>📖 Chapitre ${lesson.chapterId}</span>` : ''}
                                 </div>
                             </div>
                             <button onclick="this.closest('.glass-modal').remove()"
-                                    style="background: #F3F4F6; border: none; color: #6B7280; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.5rem;">
+                                    style="background: #F3F4F6; border: none; color: #6B7280; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; flex-shrink: 0; margin-left: 1rem;">
                                 ×
                             </button>
                         </div>
 
-                        <div style="background: #F9FAFB; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <p style="color: #4B5563; line-height: 1.6; margin: 0;">
-                                ${lesson.description || 'Aucune description disponible'}
-                            </p>
-                        </div>
+                        ${lesson.description ? `
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                <h3 style="margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 600; opacity: 0.9;">📝 Description</h3>
+                                <p style="margin: 0; line-height: 1.6;">
+                                    ${lesson.description}
+                                </p>
+                            </div>
+                        ` : ''}
 
                         ${lesson.objectives ? `
                             <div style="margin-bottom: 1.5rem;">
                                 <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
                                     🎯 Objectifs pédagogiques
                                 </h3>
-                                <div style="color: #4B5563; line-height: 1.6;">
+                                <div style="background: #EEF2FF; padding: 1rem; border-radius: 8px; color: #4B5563; line-height: 1.6; border-left: 4px solid #667eea;">
                                     ${lesson.objectives}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${lesson.prerequisites ? `
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
+                                    📚 Prérequis
+                                </h3>
+                                <div style="background: #FEF3C7; padding: 1rem; border-radius: 8px; color: #78350F; line-height: 1.6; border-left: 4px solid #F59E0B;">
+                                    ${lesson.prerequisites}
                                 </div>
                             </div>
                         ` : ''}
@@ -10058,7 +10196,7 @@ function showAddQuizModal() {
                                 <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
                                     🎥 Vidéo de la leçon
                                 </h3>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000;">
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                                     <iframe src="${lesson.videoUrl}"
                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
                                             frameborder="0"
@@ -10074,24 +10212,23 @@ function showAddQuizModal() {
                                     📄 Contenu de la leçon
                                 </h3>
                                 <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #E5E7EB; color: #374151; line-height: 1.8;">
-                                    ${typeof lesson.content === 'object' ? JSON.stringify(lesson.content, null, 2) : lesson.content}
+                                    ${formatLessonContent(lesson.content)}
                                 </div>
                             </div>
                         ` : ''}
 
-                        ${lesson.hasQuiz ? `
-                            <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 1.5rem; border-radius: 8px;">
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <div style="font-size: 2rem;">✅</div>
-                                    <div>
-                                        <h4 style="margin: 0 0 0.25rem 0; font-weight: 600;">Quiz disponible</h4>
-                                        <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">
-                                            Cette leçon comprend un quiz pour tester vos connaissances
-                                        </p>
-                                    </div>
+                        ${lesson.cameroonContext ? `
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
+                                    🇨🇲 Contexte Camerounais
+                                </h3>
+                                <div style="background: #ECFDF3; padding: 1rem; border-radius: 8px; color: #065F46; line-height: 1.6; border-left: 4px solid #10B981;">
+                                    ${lesson.cameroonContext}
                                 </div>
                             </div>
                         ` : ''}
+
+                        ${lesson.quiz ? formatQuiz(lesson.quiz) : (lesson.hasQuiz ? formatQuiz(null) : '')}
                     </div>
                 `;
 

@@ -155,6 +155,78 @@ router.get('/content', async (req, res) => {
 });
 
 // ===============================
+// GET /content/subjects - Liste complète des matières
+// ===============================
+router.get('/content/subjects', async (req, res) => {
+  try {
+    // Empêcher la mise en cache
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    const { Subject, Lesson } = req.models;
+
+    // Récupérer TOUS les sujets avec leurs leçons et chapitres
+    const allSubjects = await Subject.findAll({
+      where: { isActive: true },
+      include: [{
+        model: Lesson,
+        as: 'lessons',
+        where: { isActive: true },
+        required: false,
+        attributes: ['id', 'title', 'chapterNumber']
+      }],
+      order: [
+        ['category', 'ASC'],
+        ['level', 'ASC'],
+        ['title', 'ASC']
+      ]
+    });
+
+    // Formater pour l'interface admin avec filtres
+    const subjects = allSubjects.map(subject => {
+      // Compter les chapitres uniques
+      const uniqueChapters = new Set(
+        subject.lessons
+          .map(l => l.chapterNumber)
+          .filter(ch => ch != null)
+      );
+
+      return {
+        id: subject.id,
+        title: subject.title,
+        level: subject.level,
+        category: subject.category,
+        chapters: uniqueChapters.size || 0,
+        lessons: subject.lessons.length || 0,
+        description: subject.description || '',
+        icon: subject.icon || ICONS[subject.category] || '📚',
+        color: subject.color || COLORS[subject.category] || '#3B82F6',
+        status: subject.isActive ? 'active' : 'inactive',
+        createdAt: subject.createdAt,
+        updatedAt: subject.updatedAt
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        subjects,
+        total: subjects.length
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur GET /content/subjects:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des matières',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// ===============================
 // GET /content/:tab - Par onglet
 // ===============================
 router.get('/content/:tab', async (req, res) => {

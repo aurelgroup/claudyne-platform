@@ -10175,7 +10175,7 @@ function showAddQuizModal() {
                                     🎯 Objectifs pédagogiques
                                 </h3>
                                 <div style="background: #EEF2FF; padding: 1rem; border-radius: 8px; color: #4B5563; line-height: 1.6; border-left: 4px solid #667eea;">
-                                    ${lesson.objectives}
+                                    ${formatLessonContent(lesson.objectives)}
                                 </div>
                             </div>
                         ` : ''}
@@ -10186,7 +10186,7 @@ function showAddQuizModal() {
                                     📚 Prérequis
                                 </h3>
                                 <div style="background: #FEF3C7; padding: 1rem; border-radius: 8px; color: #78350F; line-height: 1.6; border-left: 4px solid #F59E0B;">
-                                    ${lesson.prerequisites}
+                                    ${formatLessonContent(lesson.prerequisites)}
                                 </div>
                             </div>
                         ` : ''}
@@ -10223,7 +10223,7 @@ function showAddQuizModal() {
                                     🇨🇲 Contexte Camerounais
                                 </h3>
                                 <div style="background: #ECFDF3; padding: 1rem; border-radius: 8px; color: #065F46; line-height: 1.6; border-left: 4px solid #10B981;">
-                                    ${lesson.cameroonContext}
+                                    ${formatLessonContent(lesson.cameroonContext)}
                                 </div>
                             </div>
                         ` : ''}

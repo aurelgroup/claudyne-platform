@@ -92,6 +92,28 @@ export default function ApprentissagePage() {
     return [];
   };
 
+  /**
+   * Helper pour rendre une valeur de manière sécurisée (évite React error #31)
+   * Convertit les objets en strings lisibles
+   */
+  const renderValue = (value: any): string => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return value.toString();
+    if (typeof value === 'object') {
+      // Extraire les propriétés connues
+      if (value.text) return value.text;
+      if (value.title) return value.title;
+      if (value.content) return value.content;
+      if (value.label) return value.label;
+      if (value.question) return value.question;
+      if (value.description) return value.description;
+      // Fallback: JSON formaté
+      return JSON.stringify(value);
+    }
+    return String(value);
+  };
+
   // Redirection si non connecté
   useEffect(() => {
     if (!isLoading && !user) {
@@ -468,7 +490,7 @@ export default function ApprentissagePage() {
                                   {parseArrayField(selectedLesson.content?.keyPoints).map((point: string, index: number) => (
                                     <li key={index} className="flex items-start">
                                       <span className="w-2 h-2 bg-primary-green rounded-full mt-2 mr-3 flex-shrink-0" />
-                                      <span className="text-neutral-700">{point}</span>
+                                      <span className="text-neutral-700">{renderValue(point)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -483,7 +505,7 @@ export default function ApprentissagePage() {
                                   {parseArrayField(selectedLesson.content?.exercises).map((exercise, index) => (
                                     <li key={index} className="flex items-start">
                                       <span className="font-semibold text-blue-700 mr-3">{index + 1}.</span>
-                                      <span className="text-blue-700">{exercise}</span>
+                                      <span className="text-blue-700">{renderValue(exercise)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -535,7 +557,7 @@ export default function ApprentissagePage() {
                                   {parseArrayField(selectedLesson.objectives).map((obj, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0" />
-                                      <span className="text-blue-700">{obj}</span>
+                                      <span className="text-blue-700">{renderValue(obj)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -550,7 +572,7 @@ export default function ApprentissagePage() {
                                   {parseArrayField(selectedLesson.content?.keyPoints).map((point, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="w-2 h-2 bg-primary-green rounded-full mt-2 mr-3 flex-shrink-0" />
-                                      <span className="text-green-700">{point}</span>
+                                      <span className="text-green-700">{renderValue(point)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -565,7 +587,7 @@ export default function ApprentissagePage() {
                                   {parseArrayField(selectedLesson.content?.exercises).map((ex, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="font-semibold text-yellow-700 mr-3">{i + 1}.</span>
-                                      <span className="text-yellow-700">{ex}</span>
+                                      <span className="text-yellow-700">{renderValue(ex)}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -580,7 +602,7 @@ export default function ApprentissagePage() {
                                   {parseArrayField(selectedLesson.content?.resources).map((res, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="text-purple-500 mr-3">•</span>
-                                      <span className="text-purple-700">{res}</span>
+                                      <span className="text-purple-700">{renderValue(res)}</span>
                                     </li>
                                   ))}
                                 </ul>

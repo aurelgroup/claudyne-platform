@@ -174,7 +174,7 @@ router.get('/content/subjects', async (req, res) => {
         as: 'lessons',
         where: { isActive: true },
         required: false,
-        attributes: ['id', 'title', 'chapterNumber']
+        attributes: ['id', 'title', 'chapterId']
       }],
       order: [
         ['category', 'ASC'],
@@ -188,7 +188,7 @@ router.get('/content/subjects', async (req, res) => {
       // Compter les chapitres uniques
       const uniqueChapters = new Set(
         subject.lessons
-          .map(l => l.chapterNumber)
+          .map(l => l.chapterId)
           .filter(ch => ch != null)
       );
 

@@ -10165,9 +10165,11 @@ function showAddQuizModal() {
                     if (q.options && Array.isArray(q.options)) {
                         html += '<ul style="list-style: none; padding-left: 1rem; margin: 0.5rem 0;">';
                         q.options.forEach((opt, i) => {
-                            const isCorrect = q.correctAnswer === i || q.answer === opt;
+                            // Extraire le texte de l'option (peut être string ou objet)
+                            const optionText = typeof opt === 'string' ? opt : (opt.text || opt.label || opt.option || opt.value || JSON.stringify(opt));
+                            const isCorrect = q.correctAnswer === i || q.answer === opt || q.answer === optionText;
                             html += `<li style="margin: 0.25rem 0; ${isCorrect ? 'font-weight: 600; opacity: 1;' : 'opacity: 0.85;'}">
-                                ${String.fromCharCode(65 + i)}. ${opt} ${isCorrect ? '✓' : ''}
+                                ${String.fromCharCode(65 + i)}. ${optionText} ${isCorrect ? '✓' : ''}
                             </li>`;
                         });
                         html += '</ul>';

@@ -284,8 +284,9 @@ router.get('/:subjectId/lessons/:lessonId', async (req, res) => {
       });
     }
 
-    // Vérifier l'accès
-    if (!lesson.canAccess(req.user, req.userSubscription)) {
+    // Vérifier l'accès (bypass pour les admins)
+    const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'super_admin');
+    if (!isAdmin && !lesson.canAccess(req.user, req.userSubscription)) {
       return res.status(403).json({
         success: false,
         message: 'Accès non autorisé à cette leçon',

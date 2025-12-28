@@ -10000,6 +10000,82 @@ function showAddQuizModal() {
         }
 
         /**
+         * Formater une valeur simple (string, tableau, objet)
+         */
+        function formatValue(value) {
+            if (!value) return '<span style="color: #9CA3AF;">Non spécifié</span>';
+
+            // String simple
+            if (typeof value === 'string') {
+                if (value.trim().startsWith('<')) return value;
+                return value.split('\n').map(p => p.trim() ? `<p style="margin: 0.25rem 0;">${p}</p>` : '').join('');
+            }
+
+            // Tableau de strings
+            if (Array.isArray(value) && value.every(v => typeof v === 'string')) {
+                return '<ul style="margin: 0.5rem 0; padding-left: 1.5rem;">' +
+                    value.map(v => `<li style="margin: 0.25rem 0;">${v}</li>`).join('') +
+                    '</ul>';
+            }
+
+            // Tableau d'objets
+            if (Array.isArray(value)) {
+                let html = '';
+                value.forEach((item, idx) => {
+                    if (typeof item === 'object') {
+                        html += `<div style="background: rgba(0,0,0,0.02); padding: 0.75rem; border-radius: 4px; margin: 0.5rem 0;">`;
+                        html += `<strong>${idx + 1}.</strong> `;
+
+                        // Afficher les propriétés connues
+                        if (item.question || item.text) {
+                            html += `<div style="margin-bottom: 0.25rem;">${item.question || item.text}</div>`;
+                        }
+                        if (item.answer || item.solution) {
+                            html += `<div style="color: #059669; font-size: 0.875rem;">✓ ${item.answer || item.solution}</div>`;
+                        }
+                        if (item.instruction) {
+                            html += `<div style="font-style: italic; font-size: 0.875rem;">${item.instruction}</div>`;
+                        }
+
+                        html += '</div>';
+                    } else {
+                        html += `<div style="margin: 0.25rem 0;">• ${item}</div>`;
+                    }
+                });
+                return html || `<pre style="font-size: 0.875rem;">${JSON.stringify(value, null, 2)}</pre>`;
+            }
+
+            // Objet avec propriétés connues (comme cameroonContext)
+            if (typeof value === 'object') {
+                let html = '';
+
+                if (value.localExamples && Array.isArray(value.localExamples)) {
+                    html += '<div style="margin-bottom: 0.75rem;"><strong>📍 Exemples locaux:</strong></div>';
+                    html += formatValue(value.localExamples);
+                }
+                if (value.culturalReferences && Array.isArray(value.culturalReferences)) {
+                    html += '<div style="margin: 0.75rem 0;"><strong>🎭 Références culturelles:</strong></div>';
+                    html += formatValue(value.culturalReferences);
+                }
+                if (value.localLanguageTerms) {
+                    html += '<div style="margin: 0.75rem 0;"><strong>🗣️ Termes locaux:</strong></div>';
+                    html += '<ul style="margin: 0.5rem 0; padding-left: 1.5rem;">';
+                    Object.entries(value.localLanguageTerms).forEach(([key, val]) => {
+                        html += `<li style="margin: 0.25rem 0;"><strong>${key}:</strong> ${val}</li>`;
+                    });
+                    html += '</ul>';
+                }
+
+                if (html) return html;
+
+                // Fallback: JSON formaté
+                return `<pre style="background: #F9FAFB; padding: 0.75rem; border-radius: 4px; font-size: 0.875rem; overflow-x: auto;">${JSON.stringify(value, null, 2)}</pre>`;
+            }
+
+            return value.toString();
+        }
+
+        /**
          * Formater intelligemment le contenu d'une leçon
          */
         function formatLessonContent(content) {
@@ -10026,11 +10102,11 @@ function showAddQuizModal() {
                             html += `<h4 style="color: #1F2937; font-weight: 600; margin: 1rem 0 0.5rem 0;">${idx + 1}. ${section.title}</h4>`;
                         }
                         if (section.content) {
-                            html += `<div style="margin-bottom: 1rem;">${section.content}</div>`;
+                            html += `<div style="margin-bottom: 1rem;">${formatValue(section.content)}</div>`;
                         }
                         if (section.examples) {
                             html += `<div style="background: #F3F4F6; padding: 0.75rem; border-radius: 6px; margin: 0.5rem 0; border-left: 3px solid #667eea;">
-                                <strong>Exemple:</strong> ${section.examples}
+                                <strong>Exemple:</strong> ${formatValue(section.examples)}
                             </div>`;
                         }
                     });
@@ -10040,25 +10116,25 @@ function showAddQuizModal() {
                 // Si c'est un objet avec des propriétés connues
                 if (content.introduction) {
                     html += `<div style="background: #EEF2FF; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #667eea;">
-                        <strong>📌 Introduction:</strong><br>${content.introduction}
+                        <strong>📌 Introduction:</strong><br>${formatValue(content.introduction)}
                     </div>`;
                 }
                 if (content.explanation) {
-                    html += `<div style="margin-bottom: 1rem;"><strong>💡 Explication:</strong><br>${content.explanation}</div>`;
+                    html += `<div style="margin-bottom: 1rem;"><strong>💡 Explication:</strong><br>${formatValue(content.explanation)}</div>`;
                 }
                 if (content.examples) {
                     html += `<div style="background: #F0FDF4; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #10B981;">
-                        <strong>📝 Exemples:</strong><br>${content.examples}
+                        <strong>📝 Exemples:</strong><br>${formatValue(content.examples)}
                     </div>`;
                 }
                 if (content.exercises) {
                     html += `<div style="background: #FEF3C7; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border-left: 3px solid #F59E0B;">
-                        <strong>✏️ Exercices:</strong><br>${content.exercises}
+                        <strong>✏️ Exercices:</strong><br>${formatValue(content.exercises)}
                     </div>`;
                 }
                 if (content.summary) {
                     html += `<div style="background: #F3F4F6; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                        <strong>📋 Résumé:</strong><br>${content.summary}
+                        <strong>📋 Résumé:</strong><br>${formatValue(content.summary)}
                     </div>`;
                 }
 

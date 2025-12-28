@@ -68,12 +68,29 @@ export default function ApprentissagePage() {
   const router = useRouter();
   const { subjectId } = router.query;
   const { user, isLoading } = useAuth();
-  
+
   const [subject, setSubject] = useState<Subject | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<'lessons' | 'quiz'>('lessons');
+
+  /**
+   * Helper pour parser les champs qui peuvent être string JSON ou tableau
+   */
+  const parseArrayField = (field: any): string[] => {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    if (typeof field === 'string') {
+      try {
+        const parsed = JSON.parse(field);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
 
   // Redirection si non connecté
   useEffect(() => {
@@ -398,13 +415,13 @@ export default function ApprentissagePage() {
                               </div>
                             )}
 
-                            {selectedLesson.content?.keyPoints && selectedLesson.content.keyPoints.length > 0 && (
+                            {parseArrayField(selectedLesson.content?.keyPoints).length > 0 && (
                               <div className="bg-neutral-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-neutral-800 mb-3">
                                   📝 Points clés à retenir
                                 </h3>
                                 <ul className="space-y-2">
-                                  {selectedLesson.content.keyPoints.map((point: string, index: number) => (
+                                  {parseArrayField(selectedLesson.content?.keyPoints).map((point: string, index: number) => (
                                     <li key={index} className="flex items-start">
                                       <span className="w-2 h-2 bg-primary-green rounded-full mt-2 mr-3 flex-shrink-0" />
                                       <span className="text-neutral-700">{point}</span>
@@ -415,11 +432,11 @@ export default function ApprentissagePage() {
                             )}
 
                             {/* Exercices */}
-                            {selectedLesson.content?.exercises && selectedLesson.content.exercises.length > 0 && (
+                            {parseArrayField(selectedLesson.content?.exercises).length > 0 && (
                               <div className="bg-blue-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-blue-800 mb-3">✏️ Exercices</h3>
                                 <ul className="space-y-2">
-                                  {selectedLesson.content.exercises.map((exercise, index) => (
+                                  {parseArrayField(selectedLesson.content?.exercises).map((exercise, index) => (
                                     <li key={index} className="flex items-start">
                                       <span className="font-semibold text-blue-700 mr-3">{index + 1}.</span>
                                       <span className="text-blue-700">{exercise}</span>
@@ -467,11 +484,11 @@ export default function ApprentissagePage() {
                             )}
 
                             {/* Objectifs */}
-                            {selectedLesson.objectives && selectedLesson.objectives.length > 0 && (
+                            {parseArrayField(selectedLesson.objectives).length > 0 && (
                               <div className="bg-blue-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-blue-800 mb-3">🎯 Objectifs</h3>
                                 <ul className="space-y-2">
-                                  {selectedLesson.objectives.map((obj, i) => (
+                                  {parseArrayField(selectedLesson.objectives).map((obj, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0" />
                                       <span className="text-blue-700">{obj}</span>
@@ -482,11 +499,11 @@ export default function ApprentissagePage() {
                             )}
 
                             {/* Points clés */}
-                            {selectedLesson.content?.keyPoints && selectedLesson.content.keyPoints.length > 0 && (
+                            {parseArrayField(selectedLesson.content?.keyPoints).length > 0 && (
                               <div className="bg-green-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-green-800 mb-3">📝 Points clés</h3>
                                 <ul className="space-y-2">
-                                  {selectedLesson.content.keyPoints.map((point, i) => (
+                                  {parseArrayField(selectedLesson.content?.keyPoints).map((point, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="w-2 h-2 bg-primary-green rounded-full mt-2 mr-3 flex-shrink-0" />
                                       <span className="text-green-700">{point}</span>
@@ -497,11 +514,11 @@ export default function ApprentissagePage() {
                             )}
 
                             {/* Exercices */}
-                            {selectedLesson.content?.exercises && selectedLesson.content.exercises.length > 0 && (
+                            {parseArrayField(selectedLesson.content?.exercises).length > 0 && (
                               <div className="bg-yellow-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-yellow-800 mb-3">✏️ Exercices</h3>
                                 <ul className="space-y-2">
-                                  {selectedLesson.content.exercises.map((ex, i) => (
+                                  {parseArrayField(selectedLesson.content?.exercises).map((ex, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="font-semibold text-yellow-700 mr-3">{i + 1}.</span>
                                       <span className="text-yellow-700">{ex}</span>
@@ -512,11 +529,11 @@ export default function ApprentissagePage() {
                             )}
 
                             {/* Ressources */}
-                            {selectedLesson.content?.resources && selectedLesson.content.resources.length > 0 && (
+                            {parseArrayField(selectedLesson.content?.resources).length > 0 && (
                               <div className="bg-purple-50 rounded-xl p-6">
                                 <h3 className="font-semibold text-purple-800 mb-3">📚 Ressources</h3>
                                 <ul className="space-y-2">
-                                  {selectedLesson.content.resources.map((res, i) => (
+                                  {parseArrayField(selectedLesson.content?.resources).map((res, i) => (
                                     <li key={i} className="flex items-start">
                                       <span className="text-purple-500 mr-3">•</span>
                                       <span className="text-purple-700">{res}</span>

@@ -6369,8 +6369,8 @@
                                 <td>${subject.lessons || 0}</td>
                                 <td><span class="status-badge active">Actif</span></td>
                                 <td>
-                                    <button class="btn btn-secondary btn-sm">📊 Détails</button>
-                                    <button class="btn btn-secondary btn-sm">✏️ Modifier</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="viewCourseAsStudent('${subject.id}', '${subject.title}')" title="Voir comme l'étudiant">👁️ Prévisualiser</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="editCourse('${subject.id}')" title="Modifier le cours">✏️ Modifier</button>
                                 </td>
                             </tr>
                         `).join('') : `
@@ -9874,6 +9874,232 @@ function showAddQuizModal() {
             } catch (error) {
                 console.error('Erreur:', error);
                 alert('Erreur lors de l\'ajout de la ressource');
+            }
+        }
+
+        /**
+         * Prévisualiser un cours comme l'étudiant le voit
+         * @param {string} subjectId - ID du sujet à prévisualiser
+         * @param {string} subjectTitle - Titre du sujet pour l'affichage
+         */
+        async function viewCourseAsStudent(subjectId, subjectTitle) {
+            try {
+                // Créer le modal de prévisualisation
+                const modal = document.createElement('div');
+                modal.className = 'glass-modal show';
+                modal.style.zIndex = '10000';
+
+                modal.innerHTML = `
+                    <div class="glass-modal-content" style="max-width: 95vw; max-height: 95vh; width: 1400px; height: 900px; padding: 0; overflow: hidden;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <div>
+                                <h2 style="margin: 0; font-size: 1.5rem; font-weight: 600;">👁️ Prévisualisation Étudiant</h2>
+                                <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 0.95rem;">${subjectTitle}</p>
+                            </div>
+                            <button onclick="this.closest('.glass-modal').remove()"
+                                    style="background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"
+                                    onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+                                    onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                ×
+                            </button>
+                        </div>
+                        <div style="height: calc(100% - 100px); padding: 1.5rem; overflow-y: auto; background: #f9fafb;" id="student-preview-content">
+                            <div style="text-align: center; padding: 3rem;">
+                                <div class="loading" style="margin: 0 auto 1rem;"></div>
+                                <p style="color: #6B7280;">Chargement des leçons...</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                // Charger les leçons du sujet
+                const response = await authenticatedFetch(`${API_BASE}/api/subjects/${subjectId}/lessons`);
+
+                if (!response.success) {
+                    throw new Error(response.message || 'Erreur lors du chargement des leçons');
+                }
+
+                const lessons = response.data || [];
+
+                // Afficher les leçons
+                const contentDiv = document.getElementById('student-preview-content');
+
+                if (lessons.length === 0) {
+                    contentDiv.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+                            <h3 style="color: #374151; margin-bottom: 0.5rem;">Aucune leçon disponible</h3>
+                            <p style="color: #6B7280;">Ce cours ne contient pas encore de leçons.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Grouper les leçons par chapitre
+                const lessonsByChapter = {};
+                lessons.forEach(lesson => {
+                    const chapterId = lesson.chapterId || 0;
+                    if (!lessonsByChapter[chapterId]) {
+                        lessonsByChapter[chapterId] = [];
+                    }
+                    lessonsByChapter[chapterId].push(lesson);
+                });
+
+                // Afficher les chapitres et leçons
+                let html = '<div style="max-width: 1200px; margin: 0 auto;">';
+
+                Object.keys(lessonsByChapter).sort((a, b) => a - b).forEach(chapterId => {
+                    const chapterLessons = lessonsByChapter[chapterId];
+                    const chapterTitle = chapterId == 0 ? 'Leçons sans chapitre' : \`Chapitre \${chapterId}\`;
+
+                    html += \`
+                        <div style="margin-bottom: 2rem;">
+                            <h3 style="color: #1F2937; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #E5E7EB;">
+                                📖 \${chapterTitle}
+                            </h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+                                \${chapterLessons.map((lesson, idx) => \`
+                                    <div class="lesson-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #E5E7EB; transition: all 0.2s; cursor: pointer;"
+                                         onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)';"
+                                         onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; this.style.transform='translateY(0)';"
+                                         onclick="viewLessonDetails('\${subjectId}', '\${lesson.id}', '\${lesson.title}')">
+                                        <div style="display: flex; align-items: start; gap: 1rem;">
+                                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">
+                                                \${idx + 1}
+                                            </div>
+                                            <div style="flex: 1;">
+                                                <h4 style="color: #1F2937; font-size: 1rem; font-weight: 600; margin: 0 0 0.5rem 0;">
+                                                    \${lesson.title}
+                                                </h4>
+                                                <p style="color: #6B7280; font-size: 0.875rem; margin: 0; line-height: 1.4;">
+                                                    \${lesson.description || 'Aucune description'}
+                                                </p>
+                                                <div style="display: flex; gap: 1rem; margin-top: 0.75rem; font-size: 0.75rem; color: #9CA3AF;">
+                                                    <span>⏱️ \${lesson.estimatedDuration || 30} min</span>
+                                                    <span>📝 \${lesson.type || 'Leçon'}</span>
+                                                    \${lesson.hasQuiz ? '<span style="color: #10B981;">✅ Quiz inclus</span>' : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                \`).join('')}
+                            </div>
+                        </div>
+                    \`;
+                });
+
+                html += '</div>';
+                contentDiv.innerHTML = html;
+
+            } catch (error) {
+                console.error('❌ Erreur prévisualisation cours:', error);
+                alert(\`Erreur lors de la prévisualisation: \${error.message}\`);
+            }
+        }
+
+        /**
+         * Afficher les détails d'une leçon
+         */
+        async function viewLessonDetails(subjectId, lessonId, lessonTitle) {
+            try {
+                const response = await authenticatedFetch(\`\${API_BASE}/api/subjects/\${subjectId}/lessons/\${lessonId}\`);
+
+                if (!response.success) {
+                    throw new Error(response.message || 'Erreur lors du chargement de la leçon');
+                }
+
+                const lesson = response.data;
+
+                // Créer un modal pour afficher la leçon
+                const modal = document.createElement('div');
+                modal.className = 'glass-modal show';
+                modal.style.zIndex = '10001';
+
+                modal.innerHTML = \`
+                    <div class="glass-modal-content" style="max-width: 900px; max-height: 95vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                            <div>
+                                <h2 style="color: #1F2937; font-size: 1.75rem; font-weight: 600; margin: 0 0 0.5rem 0;">
+                                    \${lessonTitle}
+                                </h2>
+                                <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: #6B7280;">
+                                    <span>⏱️ \${lesson.estimatedDuration || 30} minutes</span>
+                                    <span>📝 \${lesson.type || 'Leçon'}</span>
+                                    <span>🎯 Difficulté: \${lesson.difficulty || 'Moyen'}</span>
+                                </div>
+                            </div>
+                            <button onclick="this.closest('.glass-modal').remove()"
+                                    style="background: #F3F4F6; border: none; color: #6B7280; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.5rem;">
+                                ×
+                            </button>
+                        </div>
+
+                        <div style="background: #F9FAFB; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p style="color: #4B5563; line-height: 1.6; margin: 0;">
+                                \${lesson.description || 'Aucune description disponible'}
+                            </p>
+                        </div>
+
+                        \${lesson.objectives ? \`
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
+                                    🎯 Objectifs pédagogiques
+                                </h3>
+                                <div style="color: #4B5563; line-height: 1.6;">
+                                    \${lesson.objectives}
+                                </div>
+                            </div>
+                        \` : ''}
+
+                        \${lesson.videoUrl ? \`
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
+                                    🎥 Vidéo de la leçon
+                                </h3>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000;">
+                                    <iframe src="\${lesson.videoUrl}"
+                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                                            frameborder="0"
+                                            allowfullscreen>
+                                    </iframe>
+                                </div>
+                            </div>
+                        \` : ''}
+
+                        \${lesson.content ? \`
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3 style="color: #1F2937; font-size: 1.125rem; font-weight: 600; margin-bottom: 0.75rem;">
+                                    📄 Contenu de la leçon
+                                </h3>
+                                <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #E5E7EB; color: #374151; line-height: 1.8;">
+                                    \${typeof lesson.content === 'object' ? JSON.stringify(lesson.content, null, 2) : lesson.content}
+                                </div>
+                            </div>
+                        \` : ''}
+
+                        \${lesson.hasQuiz ? \`
+                            <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 1.5rem; border-radius: 8px;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="font-size: 2rem;">✅</div>
+                                    <div>
+                                        <h4 style="margin: 0 0 0.25rem 0; font-weight: 600;">Quiz disponible</h4>
+                                        <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">
+                                            Cette leçon comprend un quiz pour tester vos connaissances
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        \` : ''}
+                    </div>
+                \`;
+
+                document.body.appendChild(modal);
+
+            } catch (error) {
+                console.error('❌ Erreur détails leçon:', error);
+                alert(\`Erreur lors du chargement de la leçon: \${error.message}\`);
             }
         }
 

@@ -285,7 +285,7 @@ router.get('/:subjectId/lessons/:lessonId', async (req, res) => {
     }
 
     // Vérifier l'accès (bypass pour les admins)
-    const isAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'super_admin');
+    const isAdmin = req.user && (req.user.role === 'ADMIN' || req.user.userType === 'ADMIN');
     if (!isAdmin && !lesson.canAccess(req.user, req.userSubscription)) {
       return res.status(403).json({
         success: false,

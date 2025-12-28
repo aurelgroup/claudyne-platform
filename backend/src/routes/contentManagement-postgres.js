@@ -223,7 +223,7 @@ router.get('/content/:tab', async (req, res) => {
       const quizzes = quizLessons.map(lesson => ({
         id: `QUIZ-${lesson.id}`,
         title: lesson.title,
-        subject: CATEGORY_TO_SUBJECT[lesson.subject?.category] || 'mathematiques',
+        subject: lesson.subject?.category || 'mathematiques',
         level: LEVEL_MAPPING[lesson.subject?.level] || 'cp',
         description: lesson.description || '',
         duration: lesson.estimatedDuration || 20,
@@ -545,6 +545,60 @@ router.post('/quizzes', async (req, res) => {
         success: false,
         message: 'Champs requis: title, subject, level, questions (minimum 1)'
       });
+
+
+// ===============================
+// GET /content/quizzes - Liste des quizzes
+// ===============================
+router.get('/content/quizzes', async (req, res) => {
+  try {
+    const { Subject, Lesson } = req.models;
+
+    // Récupérer toutes les leçons avec quiz
+    const quizzesData = await Lesson.findAll({
+      where: {
+        hasQuiz: true,
+        isActive: true
+      },
+      include: [{
+        model: Subject,
+        as: 'subject',
+        attributes: ['id', 'title', 'level', 'category']
+      }],
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Formater les quizzes pour l'interface admin
+    const quizzes = quizzesData.map(lesson => ({
+      id: lesson.id,
+      title: lesson.title,
+      subject: lesson.subject?.category || 'Inconnu',
+      level: lesson.subject?.level || '-',
+      questions: lesson.quiz?.questions?.length || 0,
+      attempts: 0, // À implémenter avec les stats
+      averageScore: 0, // À implémenter avec les stats
+      status: lesson.isActive ? 'active' : 'inactive',
+      passingScore: lesson.quiz?.passingScore || 60,
+      duration: lesson.estimatedDuration || 20,
+      createdAt: lesson.createdAt
+    }));
+
+    res.json({
+      success: true,
+      data: quizzes,
+      total: quizzes.length
+    });
+
+  } catch (error) {
+    console.error('❌ Erreur GET /content/quizzes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des quizzes',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
     }
 
     // Valider les questions

@@ -6410,7 +6410,7 @@
         async function loadCoursesData() {
             try {
                 const data = await authenticatedFetch(`${API_BASE}/api/admin/content/subjects`);
-                const subjects = (data?.success && data?.data?.subjects) ? data.data.subjects : [];
+                const subjects = (data?.success && data?.data) ? data.data : [];
 
                 // Stocker les sujets pour les filtres
                 allSubjectsGlobal = subjects;

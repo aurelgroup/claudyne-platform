@@ -210,10 +210,8 @@ router.get('/content/subjects', async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        subjects,
-        total: subjects.length
-      }
+      data: subjects,
+      total: subjects.length
     });
 
   } catch (error) {

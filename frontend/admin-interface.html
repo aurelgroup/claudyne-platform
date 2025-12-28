@@ -9921,7 +9921,7 @@ function showAddQuizModal() {
                     throw new Error(response.message || 'Erreur lors du chargement des leçons');
                 }
 
-                const lessons = response.data || [];
+                const lessons = (response.data && response.data.lessons) ? response.data.lessons : [];
 
                 // Afficher les leçons
                 const contentDiv = document.getElementById('student-preview-content');
@@ -10010,7 +10010,7 @@ function showAddQuizModal() {
                     throw new Error(response.message || 'Erreur lors du chargement de la leçon');
                 }
 
-                const lesson = response.data;
+                const lesson = (response.data && response.data.lesson) ? response.data.lesson : response.data;
 
                 // Créer un modal pour afficher la leçon
                 const modal = document.createElement('div');

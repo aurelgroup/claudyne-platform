@@ -1,0 +1,790 @@
+/**
+ * Claudyne Learning Interface Styles
+ * Design System inspired by landing page
+ * Dark theme with glassmorphism and vibrant gradients
+ */
+
+ /* === Variables Claudyne === */
+:root {
+  --claudyne-dark-bg: #020205;
+  --claudyne-light-text: #f0f0f0;
+  --claudyne-glass-bg: rgba(255, 255, 255, 0.02);
+  --claudyne-glass-border: rgba(255, 255, 255, 0.05);
+  --claudyne-accent-cyan: #00FFC2;
+  --claudyne-accent-magenta: #FF57E3;
+  --claudyne-accent-yellow: #FFC947;
+  --claudyne-card-hover: rgba(255, 255, 255, 0.05);
+}
+
+/* === Page Background === */
+.claudyne-learning-page {
+  background: var(--claudyne-dark-bg);
+  min-height: 100vh;
+  color: var(--claudyne-light-text);
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* === Hero Header === */
+.claudyne-hero-header {
+  background: linear-gradient(135deg, rgba(0, 255, 194, 0.1), rgba(255, 87, 227, 0.1));
+  border: 1px solid var(--claudyne-glass-border);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.claudyne-hero-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--claudyne-accent-cyan) 0%, transparent 70%);
+  opacity: 0.05;
+  animation: claudyne-pulse 8s ease-in-out infinite;
+}
+
+@keyframes claudyne-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.05;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.08;
+  }
+}
+
+.claudyne-subject-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  box-shadow: 0 8px 32px rgba(0, 255, 194, 0.2);
+  animation: claudyne-icon-float 3s ease-in-out infinite;
+}
+
+@keyframes claudyne-icon-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.claudyne-gradient-text {
+  background: linear-gradient(90deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 900;
+}
+
+/* === Progress Bar === */
+.claudyne-progress-container {
+  background: var(--claudyne-glass-bg);
+  border: 1px solid var(--claudyne-glass-border);
+  border-radius: 12px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  margin-bottom: 2rem;
+}
+
+.claudyne-progress-bar-bg {
+  background: rgba(255, 255, 255, 0.1);
+  height: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.claudyne-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta), var(--claudyne-accent-yellow));
+  background-size: 200% 100%;
+  border-radius: 10px;
+  animation: claudyne-progress-shimmer 2s linear infinite;
+  box-shadow: 0 0 20px rgba(0, 255, 194, 0.5);
+}
+
+@keyframes claudyne-progress-shimmer {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
+
+/* === Glass Cards === */
+.claudyne-glass-card {
+  background: var(--claudyne-glass-bg);
+  border: 1px solid var(--claudyne-glass-border);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.claudyne-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.claudyne-glass-card:hover::before {
+  left: 100%;
+}
+
+.claudyne-glass-card:hover {
+  background: var(--claudyne-card-hover);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 255, 194, 0.15);
+}
+
+/* === Lesson Cards === */
+.claudyne-lesson-card {
+  background: var(--claudyne-glass-bg);
+  border: 1px solid var(--claudyne-glass-border);
+  border-left: 4px solid var(--claudyne-glass-border);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.claudyne-lesson-card.active {
+  background: linear-gradient(135deg, rgba(0, 255, 194, 0.15), rgba(255, 87, 227, 0.15));
+  border-left-color: var(--claudyne-accent-cyan);
+  box-shadow: 0 4px 24px rgba(0, 255, 194, 0.2);
+}
+
+.claudyne-lesson-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: var(--claudyne-accent-magenta);
+  transform: translateX(8px);
+}
+
+.claudyne-lesson-number {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--claudyne-dark-bg);
+  font-size: 0.875rem;
+}
+
+.claudyne-lesson-type-badge {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(5px);
+}
+
+.claudyne-lesson-type-badge.video {
+  background: linear-gradient(135deg, rgba(255, 87, 227, 0.2), rgba(255, 87, 227, 0.1));
+  border-color: rgba(255, 87, 227, 0.3);
+  color: var(--claudyne-accent-magenta);
+}
+
+.claudyne-lesson-type-badge.reading {
+  background: linear-gradient(135deg, rgba(0, 255, 194, 0.2), rgba(0, 255, 194, 0.1));
+  border-color: rgba(0, 255, 194, 0.3);
+  color: var(--claudyne-accent-cyan);
+}
+
+.claudyne-lesson-type-badge.interactive {
+  background: linear-gradient(135deg, rgba(255, 201, 71, 0.2), rgba(255, 201, 71, 0.1));
+  border-color: rgba(255, 201, 71, 0.3);
+  color: var(--claudyne-accent-yellow);
+}
+
+/* === Content Sections === */
+.claudyne-content-section {
+  background: var(--claudyne-glass-bg);
+  border: 1px solid var(--claudyne-glass-border);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.claudyne-section-title {
+  color: var(--claudyne-light-text);
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta)) 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.claudyne-section-icon {
+  font-size: 1.5rem;
+}
+
+/* === Markdown Content Styling === */
+.claudyne-markdown-content h1 {
+  color: var(--claudyne-light-text);
+  font-size: 2rem;
+  font-weight: 900;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.claudyne-markdown-content h2 {
+  color: var(--claudyne-light-text);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--claudyne-accent-cyan);
+}
+
+.claudyne-markdown-content h3 {
+  color: var(--claudyne-light-text);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.claudyne-markdown-content p {
+  color: rgba(240, 240, 240, 0.9);
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+
+.claudyne-markdown-content strong {
+  color: var(--claudyne-accent-cyan);
+  font-weight: 700;
+}
+
+.claudyne-markdown-content em {
+  color: var(--claudyne-accent-magenta);
+  font-style: italic;
+}
+
+.claudyne-markdown-content code {
+  background: rgba(0, 255, 194, 0.1);
+  border: 1px solid rgba(0, 255, 194, 0.3);
+  color: var(--claudyne-accent-cyan);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.claudyne-markdown-content ul,
+.claudyne-markdown-content ol {
+  margin-left: 2rem;
+  margin-bottom: 1.5rem;
+  color: rgba(240, 240, 240, 0.9);
+}
+
+.claudyne-markdown-content li {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.claudyne-markdown-content ul li::marker {
+  color: var(--claudyne-accent-cyan);
+}
+
+.claudyne-markdown-content a {
+  color: var(--claudyne-accent-cyan);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.claudyne-markdown-content a:hover {
+  border-bottom-color: var(--claudyne-accent-cyan);
+}
+
+/* === Buttons === */
+.claudyne-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.claudyne-btn-primary {
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  color: var(--claudyne-dark-bg);
+  box-shadow: 0 4px 15px rgba(0, 255, 194, 0.3);
+}
+
+.claudyne-btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.claudyne-btn-primary:hover::before {
+  left: 100%;
+}
+
+.claudyne-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 255, 194, 0.4);
+}
+
+.claudyne-btn-secondary {
+  background: var(--claudyne-glass-bg);
+  border: 1px solid var(--claudyne-glass-border);
+  color: var(--claudyne-light-text);
+  backdrop-filter: blur(10px);
+}
+
+.claudyne-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* === Tab Navigation === */
+.claudyne-tabs {
+  display: flex;
+  gap: 1rem;
+  background: var(--claudyne-glass-bg);
+  border: 1px solid var(--claudyne-glass-border);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.claudyne-tab {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(240, 240, 240, 0.6);
+  border: 1px solid transparent;
+}
+
+.claudyne-tab.active {
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  color: var(--claudyne-dark-bg);
+  box-shadow: 0 4px 15px rgba(0, 255, 194, 0.3);
+}
+
+.claudyne-tab:not(.active):hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--claudyne-light-text);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* === Objectives List === */
+.claudyne-objective-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 194, 0.05);
+  border: 1px solid rgba(0, 255, 194, 0.15);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.claudyne-objective-item:hover {
+  background: rgba(0, 255, 194, 0.08);
+  border-color: rgba(0, 255, 194, 0.25);
+  transform: translateX(8px);
+}
+
+.claudyne-objective-icon {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+/* === Quiz Badge === */
+.claudyne-quiz-badge {
+  background: linear-gradient(135deg, rgba(255, 201, 71, 0.2), rgba(255, 201, 71, 0.1));
+  border: 1px solid rgba(255, 201, 71, 0.3);
+  color: var(--claudyne-accent-yellow);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* === Scrollbar === */
+.claudyne-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.claudyne-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.claudyne-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  border-radius: 10px;
+}
+
+.claudyne-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--claudyne-accent-magenta), var(--claudyne-accent-cyan));
+}
+
+/* === Animations === */
+@keyframes claudyne-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.claudyne-animate-in {
+  animation: claudyne-fade-in-up 0.6s ease-out forwards;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .claudyne-hero-header {
+    padding: 2rem 1.5rem;
+  }
+
+  .claudyne-subject-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  .claudyne-content-section {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .claudyne-hero-header {
+    padding: 1.5rem 1rem;
+  }
+
+  .claudyne-tabs {
+    flex-direction: column;
+  }
+
+  .claudyne-markdown-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .claudyne-markdown-content h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* === Loading States === */
+.claudyne-shimmer {
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: claudyne-shimmer-animation 1.5s infinite;
+}
+
+@keyframes claudyne-shimmer-animation {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* === Success/Completion States === */
+.claudyne-completed {
+  position: relative;
+}
+
+.claudyne-completed::after {
+  content: '✓';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 255, 136, 0.4);
+}
+
+
+/* === TEXT VISIBILITY - Targeted approach === */
+.claudyne-learning-page h1,
+.claudyne-learning-page h2,
+.claudyne-learning-page h3,
+.claudyne-learning-page h4 {
+  color: white !important;
+}
+
+/* Markdown content text - paragraphs and lists */
+.claudyne-markdown-content p,
+.claudyne-markdown-content li {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Content sections - only direct children */
+.claudyne-content-section > p,
+.claudyne-content-section > div > p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+/* === IMPROVED TABS - ULTRA VISIBLE === */
+.claudyne-tabs {
+  display: flex;
+  gap: 1rem;
+  background: rgba(0, 255, 194, 0.08);
+  border: 2px solid var(--claudyne-accent-cyan);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 0.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 255, 194, 0.15);
+}
+
+.claudyne-tab {
+  flex: 1;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: center;
+  cursor: pointer !important;
+  transition: all 0.3s ease;
+  color: white !important;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.claudyne-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.claudyne-tab:hover::before {
+  left: 100%;
+}
+
+.claudyne-tab.active {
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta)) !important;
+  color: #020205 !important;
+  border-color: var(--claudyne-accent-yellow);
+  box-shadow: 0 8px 24px rgba(0, 255, 194, 0.4),
+              0 0 40px rgba(255, 87, 227, 0.3);
+  transform: translateY(-2px);
+}
+
+.claudyne-tab:not(.active):hover {
+  background: rgba(0, 255, 194, 0.15) !important;
+  border-color: var(--claudyne-accent-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 255, 194, 0.2);
+}
+
+.claudyne-tab:disabled {
+  opacity: 0.3;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+/* === IMPROVED CONTENT VISIBILITY === */
+.claudyne-content-section {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(0, 255, 194, 0.2) !important;
+  border-radius: 16px !important;
+  padding: 2rem !important;
+  margin-bottom: 2rem !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.claudyne-section-title {
+  color: var(--claudyne-accent-cyan) !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1.5rem !important;
+  border-bottom: 2px solid var(--claudyne-accent-cyan) !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.claudyne-markdown-content h1 {
+  color: var(--claudyne-accent-cyan) !important;
+  font-size: 2.5rem !important;
+  font-weight: 900 !important;
+  margin: 2rem 0 1rem !important;
+  background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.claudyne-markdown-content h2 {
+  color: white !important;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin: 1.5rem 0 1rem !important;
+  border-left: 4px solid var(--claudyne-accent-cyan) !important;
+  padding-left: 1rem !important;
+}
+
+.claudyne-markdown-content h3 {
+  color: white !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  margin: 1rem 0 0.75rem !important;
+}
+
+.claudyne-markdown-content p {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 1.1rem !important;
+  line-height: 1.8 !important;
+  margin-bottom: 1rem !important;
+}
+
+.claudyne-markdown-content strong {
+  color: var(--claudyne-accent-cyan) !important;
+  font-weight: 700 !important;
+}
+
+.claudyne-markdown-content em {
+  color: var(--claudyne-accent-magenta) !important;
+  font-style: italic !important;
+}
+
+.claudyne-markdown-content code {
+  background: rgba(0, 255, 194, 0.1) !important;
+  border: 1px solid var(--claudyne-accent-cyan) !important;
+  color: var(--claudyne-accent-cyan) !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-family: 'Courier New', monospace !important;
+}
+
+.claudyne-markdown-content ul,
+.claudyne-markdown-content ol {
+  color: white !important;
+  margin: 1rem 0 1rem 2rem !important;
+}
+
+.claudyne-markdown-content li {
+  color: rgba(255, 255, 255, 0.9) !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.claudyne-markdown-content li::marker {
+  color: var(--claudyne-accent-cyan) !important;
+}
+
+/* === IMPROVED LESSON CARD VISIBILITY === */
+.claudyne-lesson-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.claudyne-lesson-card.active {
+  background: linear-gradient(135deg, rgba(0, 255, 194, 0.15), rgba(255, 87, 227, 0.15)) !important;
+  border: 2px solid var(--claudyne-accent-cyan) !important;
+  box-shadow: 0 4px 20px rgba(0, 255, 194, 0.3) !important;
+}
+
+.claudyne-lesson-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(0, 255, 194, 0.5) !important;
+}
+
+/* === IMPROVED BUTTONS === */
+button {
+  cursor: pointer !important;
+}
+
+button:hover {
+  transform: translateY(-2px) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* === ENSURE ALL TEXT IS VISIBLE === */
+* {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}

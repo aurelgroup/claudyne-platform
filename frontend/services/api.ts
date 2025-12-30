@@ -123,7 +123,7 @@ class ApiService {
 
   async markLessonComplete(subjectId: string | number, lessonId: string | number, data?: any): Promise<ApiResponse> {
     try {
-      const response = await this.api.post(`/subjects/${subjectId}/lessons/${lessonId}/complete`, data || {});
+      const response = await this.api.post(`/lessons/${lessonId}/complete`, data || {});
       return response.data;
     } catch (error: any) {
       throw this.handleError(error);
@@ -151,7 +151,7 @@ class ApiService {
 
   async getQuizById(quizId: string | number): Promise<ApiResponse> {
     try {
-      const response = await this.api.get(`/quiz/${quizId}`);
+      const response = await this.api.get(`/lessons/${quizId}/quiz`);
       return response.data;
     } catch (error: any) {
       throw this.handleError(error);

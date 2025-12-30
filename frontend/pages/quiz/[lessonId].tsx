@@ -1,9 +1,10 @@
 /**
- * Page de quiz interactif pour une leçon
- * Interface d'évaluation avec questions à choix multiples et vrais/faux
+ * Page Quiz - ULTRA MODERNE v2.0 🚀
+ * Design glassmorphism, animations fluides, timer circulaire, célébrations
+ * Interface d'évaluation optimisée pour l'engagement
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -53,6 +54,22 @@ interface QuizResult {
   }>;
 }
 
+// Animation variants
+const questionVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 50 : -50,
+    opacity: 0
+  }),
+  center: {
+    x: 0,
+    opacity: 1
+  },
+  exit: (direction: number) => ({
+    x: direction < 0 ? 50 : -50,
+    opacity: 0
+  })
+};
+
 export default function QuizPage() {
   const router = useRouter();
   const { lessonId } = router.query;
@@ -61,6 +78,7 @@ export default function QuizPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [subjectId, setSubjectId] = useState<number | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const [answers, setAnswers] = useState<{[key: number]: any}>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -105,15 +123,12 @@ export default function QuizPage() {
       const response = await apiService.getQuizById(lessonId as string);
 
       if (response.success && response.data) {
-        // Extraire les données du quiz
         const quizData = response.data;
 
-        // Stocker le subjectId depuis la réponse
         if (quizData.subject?.id) {
           setSubjectId(quizData.subject.id);
         }
 
-        // Formater les données du quiz
         setQuiz({
           id: quizData.id,
           lessonId: quizData.id,
@@ -143,12 +158,14 @@ export default function QuizPage() {
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < (quiz?.questions.length || 0) - 1) {
+      setDirection(1);
       setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
+      setDirection(-1);
       setCurrentQuestionIndex(prev => prev - 1);
     }
   };
@@ -159,7 +176,6 @@ export default function QuizPage() {
       return;
     }
 
-    // Vérifier que toutes les questions ont une réponse
     const unansweredQuestions = quiz.questions.filter(q => !(q.id in answers));
     if (unansweredQuestions.length > 0) {
       toast.error(`Veuillez répondre à toutes les questions (${unansweredQuestions.length} restantes)`);
@@ -169,7 +185,6 @@ export default function QuizPage() {
     setIsSubmitting(true);
 
     try {
-      // Calculer le temps passé en secondes
       const timeSpent = Math.floor((Date.now() - startTime) / 1000);
 
       const response = await apiService.submitQuiz(
@@ -205,6 +220,21 @@ export default function QuizPage() {
     if (percentage >= 60) return 'text-yellow-600';
     return 'text-red-600';
   };
+
+  const getTimerColor = () => {
+    if (timeRemaining > 300) return 'from-green-400 to-green-600';
+    if (timeRemaining > 120) return 'from-yellow-400 to-yellow-600';
+    return 'from-red-400 to-red-600';
+  };
+
+  const progressPercentage = useMemo(() => {
+    if (!quiz) return 0;
+    return ((currentQuestionIndex + 1) / quiz.questions.length) * 100;
+  }, [currentQuestionIndex, quiz]);
+
+  const answeredCount = useMemo(() => {
+    return Object.keys(answers).length;
+  }, [answers]);
 
   // Loading initial
   if (isLoading || isLoadingData) {
@@ -249,277 +279,531 @@ export default function QuizPage() {
       </Head>
 
       <Layout>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {!showResults ? (
-            /* Interface du quiz */
+            /* 🎯 INTERFACE DU QUIZ */
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-sm overflow-hidden"
+              className="space-y-6"
             >
-              {/* En-tête du quiz */}
-              <div className="bg-gradient-to-r from-primary-green to-accent-purple text-white p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h1 className="text-2xl font-bold mb-2">{quiz.title}</h1>
-                    <p className="opacity-90">
-                      Question {currentQuestionIndex + 1} sur {quiz.questions.length}
-                    </p>
+              {/* 🎨 HEADER GLASSMORPHISM avec Timer Circulaire */}
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-1">
+                <div className="relative bg-gradient-to-br from-indigo-500/95 via-purple-500/95 to-pink-500/95 backdrop-blur-xl rounded-3xl p-8">
+                  {/* Animated background */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-1/4 w-72 h-72 bg-white rounded-full blur-3xl animate-pulse"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-300 rounded-full blur-3xl animate-pulse delay-1000"></div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
-                      {formatTime(timeRemaining)}
-                    </div>
-                    <div className="text-sm opacity-90">
-                      Temps restant
-                    </div>
-                  </div>
-                </div>
 
-                {/* Barre de progression */}
-                <div className="mt-4">
-                  <div className="w-full bg-white/20 rounded-full h-2">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%` }}
-                      className="bg-white h-2 rounded-full transition-all duration-300"
-                    />
+                  <div className="relative z-10">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                      {/* Title & Progress */}
+                      <div className="flex-1 text-center md:text-left">
+                        <motion.h1
+                          className="text-3xl md:text-4xl font-bold text-white mb-3"
+                          initial={{ opacity: 0, y: -20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                        >
+                          🧠 {quiz.title}
+                        </motion.h1>
+                        <motion.p
+                          className="text-lg text-white/90 mb-4"
+                          initial={{ opacity: 0, y: -20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                        >
+                          Question {currentQuestionIndex + 1} sur {quiz.questions.length} • {answeredCount}/{quiz.questions.length} répondues
+                        </motion.p>
+
+                        {/* Progress bar */}
+                        <div className="relative w-full h-3 bg-white/20 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-white to-yellow-300 relative"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progressPercentage}%` }}
+                            transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                          >
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                              animate={{ x: ['-100%', '100%'] }}
+                              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                            />
+                          </motion.div>
+                        </div>
+                      </div>
+
+                      {/* Circular Timer */}
+                      <motion.div
+                        className="relative"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                      >
+                        <div className="relative w-32 h-32">
+                          {/* Background circle */}
+                          <svg className="w-full h-full transform -rotate-90">
+                            <circle
+                              cx="64"
+                              cy="64"
+                              r="56"
+                              stroke="white"
+                              strokeWidth="8"
+                              fill="none"
+                              opacity="0.2"
+                            />
+                            <motion.circle
+                              cx="64"
+                              cy="64"
+                              r="56"
+                              stroke="url(#timer-gradient)"
+                              strokeWidth="8"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeDasharray={`${2 * Math.PI * 56}`}
+                              strokeDashoffset={`${2 * Math.PI * 56 * (1 - timeRemaining / 600)}`}
+                              style={{ transition: 'stroke-dashoffset 1s linear' }}
+                            />
+                            <defs>
+                              <linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="white" />
+                                <stop offset="100%" stopColor="#fef08a" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
+
+                          {/* Time text */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <div className="text-3xl font-bold text-white">
+                              {formatTime(timeRemaining)}
+                            </div>
+                            <div className="text-xs text-white/80">
+                              {timeRemaining < 60 ? 'Dépêchez-vous!' : 'Temps restant'}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Question actuelle */}
-              <div className="p-8">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentQuestionIndex}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {/* Question */}
-                    <div className="mb-8">
-                      <div className="flex items-start mb-4">
-                        <span className="bg-primary-green text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mr-4 mt-1">
+              {/* 📝 QUESTION CARD */}
+              <div className="glassmorphism rounded-2xl overflow-hidden border border-white/30">
+                <div className="p-8">
+                  <AnimatePresence mode="wait" custom={direction}>
+                    <motion.div
+                      key={currentQuestionIndex}
+                      custom={direction}
+                      variants={questionVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                    >
+                      {/* Question Header */}
+                      <div className="flex items-start gap-4 mb-8">
+                        <motion.div
+                          className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-green to-accent-purple flex items-center justify-center text-white text-lg font-bold shadow-lg"
+                          whileHover={{ rotate: 360, scale: 1.1 }}
+                          transition={{ duration: 0.6 }}
+                        >
                           {currentQuestionIndex + 1}
-                        </span>
+                        </motion.div>
                         <div className="flex-1">
-                          <h2 className="text-xl font-semibold text-neutral-800 mb-2">
+                          <h2 className="text-2xl font-bold text-neutral-800 mb-3">
                             {currentQuestion.question}
                           </h2>
-                          <div className="text-sm text-neutral-500">
-                            {currentQuestion.points} points • {currentQuestion.type === 'multiple_choice' ? 'Choix multiple' : 'Vrai/Faux'}
+                          <div className="flex gap-3 text-sm">
+                            <span className="px-3 py-1 bg-primary-green/10 text-primary-green rounded-full font-medium">
+                              {currentQuestion.points} points
+                            </span>
+                            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                              {currentQuestion.type === 'multiple_choice' ? '📋 Choix multiple' : '✓✗ Vrai/Faux'}
+                            </span>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Options de réponse */}
-                    <div className="space-y-3 mb-8">
-                      {currentQuestion.type === 'multiple_choice' && currentQuestion.options?.map((option, index) => (
-                        <motion.div
-                          key={index}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handleAnswerSelect(currentQuestion.id, index)}
-                          className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                            answers[currentQuestion.id] === index
-                              ? 'border-primary-green bg-green-50'
-                              : 'border-neutral-200 hover:border-neutral-300'
-                          }`}
-                        >
-                          <div className="flex items-center">
-                            <div className={`w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center ${
-                              answers[currentQuestion.id] === index
-                                ? 'border-primary-green bg-primary-green text-white'
-                                : 'border-neutral-300'
-                            }`}>
-                              {answers[currentQuestion.id] === index && (
-                                <span className="text-sm">✓</span>
-                              )}
-                            </div>
-                            <span className={`font-medium ${
-                              answers[currentQuestion.id] === index
-                                ? 'text-primary-green'
-                                : 'text-neutral-700'
-                            }`}>
-                              {option}
-                            </span>
-                          </div>
-                        </motion.div>
-                      ))}
-
-                      {currentQuestion.type === 'true_false' && (
-                        <div className="grid grid-cols-2 gap-4">
-                          {[
-                            { label: 'Vrai', value: true, color: 'green' },
-                            { label: 'Faux', value: false, color: 'red' }
-                          ].map((option) => (
+                      {/* Options de réponse */}
+                      <div className="space-y-4">
+                        {currentQuestion.type === 'multiple_choice' && currentQuestion.options?.map((option, index) => {
+                          const isSelected = answers[currentQuestion.id] === index;
+                          return (
                             <motion.div
-                              key={option.label}
-                              whileHover={{ scale: 1.02 }}
+                              key={index}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.1 }}
+                              whileHover={{ scale: 1.02, x: 5 }}
                               whileTap={{ scale: 0.98 }}
-                              onClick={() => handleAnswerSelect(currentQuestion.id, option.value)}
-                              className={`p-6 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                                answers[currentQuestion.id] === option.value
-                                  ? `border-${option.color}-500 bg-${option.color}-50`
-                                  : 'border-neutral-200 hover:border-neutral-300'
+                              onClick={() => handleAnswerSelect(currentQuestion.id, index)}
+                              className={`relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all border-2 ${
+                                isSelected
+                                  ? 'border-primary-green bg-gradient-to-r from-green-50 to-green-100 shadow-lg'
+                                  : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-md'
                               }`}
                             >
-                              <div className={`text-2xl mb-2 ${
-                                answers[currentQuestion.id] === option.value
-                                  ? `text-${option.color}-600`
-                                  : 'text-neutral-400'
-                              }`}>
-                                {option.value ? '✓' : '✗'}
+                              {isSelected && (
+                                <motion.div
+                                  layoutId="selected-bg"
+                                  className="absolute inset-0 bg-gradient-to-r from-primary-green/5 to-accent-purple/5"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                />
+                              )}
+
+                              <div className="relative flex items-center gap-4">
+                                <motion.div
+                                  className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center font-bold transition-all ${
+                                    isSelected
+                                      ? 'border-primary-green bg-primary-green text-white shadow-lg'
+                                      : 'border-neutral-300 text-neutral-400'
+                                  }`}
+                                  whileHover={{ rotate: 180 }}
+                                  transition={{ duration: 0.3 }}
+                                >
+                                  {isSelected ? '✓' : String.fromCharCode(65 + index)}
+                                </motion.div>
+                                <span className={`font-medium text-lg ${
+                                  isSelected ? 'text-primary-green' : 'text-neutral-700'
+                                }`}>
+                                  {option}
+                                </span>
                               </div>
-                              <span className={`font-medium ${
-                                answers[currentQuestion.id] === option.value
-                                  ? `text-${option.color}-600`
-                                  : 'text-neutral-700'
-                              }`}>
-                                {option.label}
-                              </span>
                             </motion.div>
-                          ))}
-                        </div>
-                      )}
+                          );
+                        })}
+
+                        {currentQuestion.type === 'true_false' && (
+                          <div className="grid md:grid-cols-2 gap-6">
+                            {[
+                              { label: 'Vrai', value: true, icon: '✓', gradient: 'from-green-400 to-green-600' },
+                              { label: 'Faux', value: false, icon: '✗', gradient: 'from-red-400 to-red-600' }
+                            ].map((option) => {
+                              const isSelected = answers[currentQuestion.id] === option.value;
+                              return (
+                                <motion.div
+                                  key={option.label}
+                                  initial={{ opacity: 0, scale: 0.9 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  whileHover={{ scale: 1.05, y: -5 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  onClick={() => handleAnswerSelect(currentQuestion.id, option.value)}
+                                  className={`relative overflow-hidden rounded-2xl p-8 cursor-pointer text-center border-2 transition-all ${
+                                    isSelected
+                                      ? 'border-transparent shadow-2xl'
+                                      : 'border-neutral-200 bg-white hover:shadow-lg'
+                                  }`}
+                                >
+                                  {isSelected && (
+                                    <motion.div
+                                      layoutId="true-false-bg"
+                                      className={`absolute inset-0 bg-gradient-to-br ${option.gradient} opacity-90`}
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 0.9 }}
+                                    />
+                                  )}
+
+                                  <div className="relative">
+                                    <motion.div
+                                      className={`text-6xl mb-3 ${
+                                        isSelected ? 'text-white' : 'text-neutral-300'
+                                      }`}
+                                      animate={isSelected ? { rotate: [0, 10, -10, 0], scale: [1, 1.2, 1] } : {}}
+                                      transition={{ duration: 0.5 }}
+                                    >
+                                      {option.icon}
+                                    </motion.div>
+                                    <span className={`text-2xl font-bold ${
+                                      isSelected ? 'text-white' : 'text-neutral-700'
+                                    }`}>
+                                      {option.label}
+                                    </span>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* 🎮 NAVIGATION */}
+                <div className="px-8 py-6 bg-white/50 backdrop-blur-sm border-t border-neutral-200/50">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    {/* Previous button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05, x: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handlePreviousQuestion}
+                      disabled={currentQuestionIndex === 0}
+                      className="px-6 py-3 rounded-xl font-medium text-neutral-700 hover:bg-white/80 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    >
+                      ← Précédent
+                    </motion.button>
+
+                    {/* Question dots */}
+                    <div className="flex gap-2 flex-wrap justify-center">
+                      {quiz.questions.map((_, index) => (
+                        <motion.button
+                          key={index}
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => {
+                            setDirection(index > currentQuestionIndex ? 1 : -1);
+                            setCurrentQuestionIndex(index);
+                          }}
+                          className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${
+                            index === currentQuestionIndex
+                              ? 'bg-gradient-to-br from-primary-green to-accent-purple text-white shadow-lg scale-110'
+                              : answers[quiz.questions[index].id] !== undefined
+                              ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                              : 'bg-neutral-100 text-neutral-500'
+                          }`}
+                        >
+                          {index + 1}
+                        </motion.button>
+                      ))}
                     </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
 
-              {/* Navigation */}
-              <div className="px-8 py-6 bg-neutral-50 border-t border-neutral-200">
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={handlePreviousQuestion}
-                    disabled={currentQuestionIndex === 0}
-                    className="px-6 py-2 text-neutral-600 hover:text-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    ← Précédent
-                  </button>
-
-                  <div className="flex gap-2">
-                    {quiz.questions.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentQuestionIndex(index)}
-                        className={`w-8 h-8 rounded-full text-sm font-medium transition-colors ${
-                          index === currentQuestionIndex
-                            ? 'bg-primary-green text-white'
-                            : answers[quiz.questions[index].id] !== undefined
-                            ? 'bg-green-100 text-green-600'
-                            : 'bg-neutral-200 text-neutral-600'
-                        }`}
+                    {/* Next/Submit button */}
+                    {currentQuestionIndex === quiz.questions.length - 1 ? (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleSubmitQuiz}
+                        disabled={isSubmitting}
+                        className="px-8 py-3 rounded-xl bg-gradient-to-r from-claudine-gold to-yellow-500 text-white font-bold shadow-lg hover:shadow-xl disabled:opacity-50 transition-all flex items-center gap-2"
                       >
-                        {index + 1}
-                      </button>
-                    ))}
+                        {isSubmitting ? (
+                          <>
+                            <LoadingSpinner size="sm" />
+                            Soumission...
+                          </>
+                        ) : (
+                          <>
+                            <span>Terminer le quiz</span>
+                            <span className="text-xl">🎯</span>
+                          </>
+                        )}
+                      </motion.button>
+                    ) : (
+                      <motion.button
+                        whileHover={{ scale: 1.05, x: 5 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleNextQuestion}
+                        className="px-6 py-3 rounded-xl font-medium text-primary-green hover:bg-green-50 transition-all"
+                      >
+                        Suivant →
+                      </motion.button>
+                    )}
                   </div>
-
-                  {currentQuestionIndex === quiz.questions.length - 1 ? (
-                    <button
-                      onClick={handleSubmitQuiz}
-                      disabled={isSubmitting}
-                      className="bg-claudine-gold text-white px-6 py-2 rounded-lg hover:bg-yellow-500 disabled:opacity-50 transition-colors flex items-center"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <LoadingSpinner size="sm" className="mr-2" />
-                          Soumission...
-                        </>
-                      ) : (
-                        'Terminer le quiz'
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleNextQuestion}
-                      className="px-6 py-2 text-primary-green hover:text-green-600 transition-colors"
-                    >
-                      Suivant →
-                    </button>
-                  )}
                 </div>
               </div>
             </motion.div>
           ) : (
-            /* Résultats du quiz */
+            /* 🎉 RÉSULTATS DU QUIZ */
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-xl shadow-sm overflow-hidden"
+              transition={{ type: "spring", stiffness: 100 }}
+              className="space-y-6"
             >
-              {/* En-tête des résultats */}
-              <div className={`p-8 text-center ${
-                result?.passed ? 'bg-green-50' : 'bg-yellow-50'
+              {/* 🏆 HEADER RÉSULTATS avec Célébration */}
+              <div className={`relative overflow-hidden rounded-3xl p-1 ${
+                result?.passed
+                  ? 'bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600'
+                  : 'bg-gradient-to-br from-yellow-400 via-orange-500 to-amber-600'
               }`}>
-                <div className="text-6xl mb-4">
-                  {result?.passed ? '🎉' : '💪'}
-                </div>
-                <h1 className="text-3xl font-bold mb-2">
-                  {result?.passed ? 'Félicitations !' : 'Bon effort !'}
-                </h1>
-                <p className="text-neutral-600 mb-4">
-                  {result?.feedback}
-                </p>
-                <div className={`text-4xl font-bold mb-2 ${getScoreColor(result?.percentage || 0)}`}>
-                  {result?.score}/{result?.totalScore}
-                </div>
-                <div className="text-neutral-500">
-                  {result?.percentage}% • {result?.claudinePointsEarned} points Claudine gagnés
+                <div className={`relative rounded-3xl p-12 text-center ${
+                  result?.passed
+                    ? 'bg-gradient-to-br from-green-50 to-emerald-50'
+                    : 'bg-gradient-to-br from-yellow-50 to-orange-50'
+                }`}>
+                  {/* Confetti animation */}
+                  {result?.passed && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(20)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-2 h-2 rounded-full"
+                          style={{
+                            left: `${Math.random() * 100}%`,
+                            top: '-10%',
+                            backgroundColor: ['#fbbf24', '#34d399', '#60a5fa', '#f472b6'][i % 4]
+                          }}
+                          animate={{
+                            y: ['0vh', '110vh'],
+                            x: [0, (Math.random() - 0.5) * 200],
+                            rotate: [0, 360 * (Math.random() > 0.5 ? 1 : -1)]
+                          }}
+                          transition={{
+                            duration: 2 + Math.random() * 2,
+                            delay: i * 0.1,
+                            repeat: Infinity
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+                    className="text-8xl mb-6"
+                  >
+                    {result?.passed ? '🎉' : '💪'}
+                  </motion.div>
+
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-5xl font-bold mb-4 text-neutral-800"
+                  >
+                    {result?.passed ? 'Félicitations !' : 'Bon effort !'}
+                  </motion.h1>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-xl text-neutral-600 mb-6 max-w-2xl mx-auto"
+                  >
+                    {result?.feedback}
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 150, delay: 0.5 }}
+                    className="flex flex-col md:flex-row items-center justify-center gap-8"
+                  >
+                    {/* Score */}
+                    <div className="text-center">
+                      <div className={`text-6xl font-bold mb-2 ${getScoreColor(result?.percentage || 0)}`}>
+                        {result?.score}/{result?.totalScore}
+                      </div>
+                      <div className="text-neutral-600 font-medium">
+                        Score obtenu
+                      </div>
+                    </div>
+
+                    {/* Percentage */}
+                    <div className="text-center">
+                      <div className={`text-6xl font-bold mb-2 ${getScoreColor(result?.percentage || 0)}`}>
+                        {result?.percentage}%
+                      </div>
+                      <div className="text-neutral-600 font-medium">
+                        Pourcentage
+                      </div>
+                    </div>
+
+                    {/* Points Claudine */}
+                    <div className="text-center">
+                      <div className="text-6xl font-bold mb-2 text-claudine-gold">
+                        +{result?.claudinePointsEarned}
+                      </div>
+                      <div className="text-neutral-600 font-medium">
+                        Points Claudine 🏆
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
 
-              {/* Corrections détaillées */}
-              <div className="p-8">
-                <h2 className="text-xl font-semibold text-neutral-800 mb-6">
-                  📝 Corrections détaillées
+              {/* 📝 CORRECTIONS DÉTAILLÉES */}
+              <div className="glassmorphism rounded-2xl p-8 border border-white/30">
+                <h2 className="text-3xl font-bold text-neutral-800 mb-8 flex items-center gap-3">
+                  <span className="text-4xl">📝</span>
+                  Corrections détaillées
                 </h2>
-                <div className="space-y-6">
-                  {result?.corrections.map((correction, index) => {
-                    const question = quiz.questions.find(q => q.id === correction.questionId);
-                    if (!question) return null;
 
-                    return (
-                      <div key={correction.questionId} className="border border-neutral-200 rounded-lg p-6">
-                        <div className="flex items-start mb-4">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold mr-4 ${
-                            correction.correct ? 'bg-green-500' : 'bg-red-500'
-                          }`}>
+                <div className="relative">
+                  {/* Timeline line */}
+                  <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary-green via-accent-purple to-transparent hidden md:block" />
+
+                  <div className="space-y-6">
+                    {result?.corrections.map((correction, index) => {
+                      const question = quiz.questions.find(q => q.id === correction.questionId);
+                      if (!question) return null;
+
+                      return (
+                        <motion.div
+                          key={correction.questionId}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="relative md:pl-16"
+                        >
+                          {/* Timeline dot */}
+                          <motion.div
+                            className={`absolute left-3 top-4 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg hidden md:flex ${
+                              correction.correct ? 'bg-gradient-to-br from-green-400 to-green-600' : 'bg-gradient-to-br from-red-400 to-red-600'
+                            }`}
+                            whileHover={{ scale: 1.3, rotate: 360 }}
+                            transition={{ duration: 0.3 }}
+                          >
                             {correction.correct ? '✓' : '✗'}
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-neutral-800 mb-2">
-                              Question {index + 1}: {question.question}
-                            </h3>
-                            <div className={`text-sm font-medium mb-2 ${
-                              correction.correct ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              {correction.correct ? 'Correct' : 'Incorrect'}
+                          </motion.div>
+
+                          <motion.div
+                            className={`glassmorphism rounded-2xl p-6 border-2 transition-all ${
+                              correction.correct
+                                ? 'border-green-200 bg-gradient-to-br from-green-50/50 to-emerald-50/50'
+                                : 'border-red-200 bg-gradient-to-br from-red-50/50 to-rose-50/50'
+                            }`}
+                            whileHover={{ scale: 1.02, y: -2 }}
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-lg md:hidden ${
+                                correction.correct ? 'bg-gradient-to-br from-green-400 to-green-600' : 'bg-gradient-to-br from-red-400 to-red-600'
+                              }`}>
+                                {correction.correct ? '✓' : '✗'}
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-bold text-neutral-800 text-lg mb-2">
+                                  Question {index + 1}: {question.question}
+                                </h3>
+                                <div className={`inline-block px-4 py-2 rounded-xl text-sm font-bold mb-3 ${
+                                  correction.correct
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-red-100 text-red-700'
+                                }`}>
+                                  {correction.correct ? '✓ Correct' : '✗ Incorrect'}
+                                </div>
+                                <div className="bg-white/60 rounded-xl p-4 border border-neutral-200">
+                                  <p className="text-neutral-700 leading-relaxed">
+                                    💡 <strong>Explication:</strong> {correction.explanation}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
-                            <p className="text-neutral-600 text-sm">
-                              {correction.explanation}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                          </motion.div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* Actions finales */}
-                <div className="mt-8 pt-6 border-t border-neutral-200 text-center space-y-4">
-                  <div className="flex gap-4 justify-center">
-                    <button
+                {/* 🎮 ACTIONS FINALES */}
+                <div className="mt-10 pt-8 border-t border-neutral-200/50">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <motion.button
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => router.back()}
-                      className="bg-neutral-500 text-white px-6 py-3 rounded-lg hover:bg-neutral-600 transition-colors"
+                      className="px-8 py-4 rounded-xl bg-neutral-500 text-white font-bold shadow-lg hover:shadow-xl hover:bg-neutral-600 transition-all"
                     >
-                      Retour à la leçon
-                    </button>
-                    <button
+                      ← Retour à la leçon
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         setShowResults(false);
                         setCurrentQuestionIndex(0);
@@ -527,10 +811,10 @@ export default function QuizPage() {
                         setResult(null);
                         setTimeRemaining(600);
                       }}
-                      className="bg-primary-green text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
+                      className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary-green to-accent-purple text-white font-bold shadow-lg hover:shadow-xl transition-all"
                     >
-                      Refaire le quiz
-                    </button>
+                      🔄 Refaire le quiz
+                    </motion.button>
                   </div>
                 </div>
               </div>

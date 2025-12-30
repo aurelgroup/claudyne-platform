@@ -30,7 +30,7 @@ router.get('/:lessonId/quiz', async (req, res) => {
       include: [{
         model: Subject,
         as: 'subject',
-        attributes: ['id', 'code', 'title', 'icon']
+        attributes: ['id', 'title', 'icon']
       }]
     });
 
@@ -139,7 +139,7 @@ router.post('/:lessonId/complete', async (req, res) => {
       },
       defaults: {
         status: 'completed',
-        score: 100,
+        completionPercentage: 100,
         timeSpent: timeSpent,
         notes: notes,
         completedAt: new Date()

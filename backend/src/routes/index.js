@@ -12,6 +12,7 @@ const authRoutes = require('./auth');
 const familyRoutes = require('./families');
 const studentRoutes = require('./students');
 const subjectRoutes = require('./subjects');
+const lessonsRoutes = require('./lessons');
 const battleRoutes = require('./battles');
 const prixClaudineRoutes = require('./prix-claudine');
 const paymentRoutes = require('./payments');
@@ -290,6 +291,7 @@ router.use(authenticate);
 router.use('/families', familyRoutes);
 router.use('/students', studentRoutes);
 router.use('/subjects', subjectRoutes);
+router.use('/lessons', lessonsRoutes);
 router.use('/chapters', chaptersRoutes); // Nouvelle architecture pédagogique
 router.use('/battles', battleRoutes);
 router.use('/prix-claudine', prixClaudineRoutes);

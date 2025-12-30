@@ -746,62 +746,12 @@ router.get('/users/disabled', async (req, res) => {
 // ===============================
 // GESTION DES CONTENUS
 // ===============================
-
-router.get('/content', async (req, res) => {
-  try {
-    const { Subject, Lesson, Progress, sequelize } = req.models;
-
-    // Statistiques des matières
-    const subjects = await Subject.findAll({
-      include: [
-        {
-          model: Lesson,
-          as: 'lessons',
-          attributes: [],
-          required: false
-        }
-      ],
-      attributes: [
-        'id', 'title', 'level', 'category', 'isActive',
-        [sequelize.fn('COUNT', sequelize.col('lessons.id')), 'totalLessons']
-      ],
-      group: ['Subject.id', 'Subject.title', 'Subject.level', 'Subject.category', 'Subject.isActive'],
-      order: [['title', 'ASC']],
-      raw: true
-    });
-
-    // Contenu en attente de validation (simplifié)
-    const pendingContent = [];
-
-    const formattedSubjects = subjects.map(subject => ({
-      id: subject.id,
-      title: subject.title,
-      level: subject.level,
-      category: subject.category,
-      lessons: parseInt(subject.totalLessons) || 0,
-      quizzes: 0,
-      students: 0,
-      averageScore: 0,
-      status: subject.isActive ? 'active' : 'inactive'
-    }));
-
-    res.json({
-      success: true,
-      data: {
-        subjects: formattedSubjects,
-        pendingContent
-      }
-    });
-
-  } catch (error) {
-    logger.error('Erreur récupération contenu:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération du contenu',
-      error: error.message
-    });
-  }
-});
+//
+// ⚠️  IMPORTANT: Les routes de gestion de contenu sont définies dans contentManagement-postgres.js
+// Routes concernées: /content, /content/:tab, /courses, /quizzes, /resources
+// Ne PAS redéfinir ces routes ici pour éviter les doublons.
+// contentManagement-postgres.js est monté en priorité dans routes/index.js (ligne 310)
+//
 
 // ===============================
 // GESTION DES PAIEMENTS
@@ -3868,152 +3818,11 @@ router.get('/subjects', async (req, res) => {
 // ===============================
 // CRÉATION DE COURS
 // ===============================
-
-/**
- * POST /api/admin/courses
- * Créer un nouveau cours (Subject + Lesson)
- */
-router.post('/courses', async (req, res) => {
-  try {
-    const { Subject, Lesson } = req.models;
-    const {
-      title, subject, level, description,
-      content, // Content structuré JSON
-      type, difficulty, duration
-    } = req.body;
-
-    // Mapping des catégories
-    const CATEGORY_MAPPING = {
-      'mathematiques': 'Mathématiques',
-      'physique': 'Sciences',
-      'chimie': 'Sciences',
-      'biologie': 'Sciences',
-      'francais': 'Langues',
-      'anglais': 'Langues',
-      'histoire': 'Histoire-Géographie',
-      'geographie': 'Histoire-Géographie',
-      'informatique': 'Informatique'
-    };
-
-    // Mapping des niveaux
-    const LEVEL_MAPPING = {
-      '6eme': '6ème',
-      '5eme': '5ème',
-      '4eme': '4ème',
-      '3eme': '3ème',
-      '2nde': '2nde',
-      '1ere': '1ère',
-      'terminale': 'Tle'
-    };
-
-    // Mapping des icônes
-    const ICON_MAPPING = {
-      'mathematiques': 'fa-calculator',
-      'physique': 'fa-atom',
-      'chimie': 'fa-flask',
-      'biologie': 'fa-dna',
-      'francais': 'fa-book',
-      'anglais': 'fa-language',
-      'histoire': 'fa-landmark',
-      'geographie': 'fa-globe',
-      'informatique': 'fa-laptop-code'
-    };
-
-    const category = CATEGORY_MAPPING[subject] || 'Mathématiques';
-    const mappedLevel = LEVEL_MAPPING[level] || level;
-    const icon = ICON_MAPPING[subject] || 'fa-book';
-
-    // Créer ou trouver le Subject
-    const subjectTitle = subject.charAt(0).toUpperCase() + subject.slice(1);
-    const [subjectRecord, created] = await Subject.findOrCreate({
-      where: {
-        level: mappedLevel,
-        category: category
-      },
-      defaults: {
-        title: `${subjectTitle} ${mappedLevel}`,
-        description: `Cours de ${subjectTitle} niveau ${mappedLevel}`,
-        level: mappedLevel,
-        category: category,
-        icon: icon,
-        color: '#667eea',
-        isActive: true,
-        order: 0
-      }
-    });
-
-    logger.info(`Subject ${created ? 'créé' : 'trouvé'}: ${subjectRecord.title} (ID: ${subjectRecord.id})`);
-
-    // Préparer le contenu structuré
-    // Si content est déjà un objet JSON structuré (nouveau format), l'utiliser
-    // Sinon (ancien format string), le convertir
-    let lessonContent = content;
-    if (typeof content === 'string') {
-      // Ancien format (texte simple) → convertir en JSON structuré
-      lessonContent = {
-        transcript: content,
-        keyPoints: [],
-        exercises: [],
-        resources: [],
-        downloadableFiles: [],
-        videoUrl: null
-      };
-    } else {
-      // Nouveau format (déjà structuré) → valider la structure
-      lessonContent = {
-        transcript: content.transcript || '',
-        keyPoints: Array.isArray(content.keyPoints) ? content.keyPoints : [],
-        exercises: Array.isArray(content.exercises) ? content.exercises : [],
-        resources: Array.isArray(content.resources) ? content.resources : [],
-        downloadableFiles: Array.isArray(content.downloadableFiles) ? content.downloadableFiles : [],
-        videoUrl: content.videoUrl || null
-      };
-    }
-
-    // Créer la Lesson avec tous les nouveaux champs
-    const lesson = await Lesson.create({
-      subjectId: subjectRecord.id,
-      title: title,
-      description: description || '',
-      content: lessonContent, // Contenu structuré JSONB
-      type: type || 'reading', // reading/video/interactive/exercise
-      difficulty: difficulty || 'Débutant', // Débutant/Intermédiaire/Avancé
-      estimatedDuration: parseInt(duration) || 45,
-      order: 0,
-      isActive: true,
-      hasQuiz: false,
-      reviewStatus: 'approved', // Approuvé automatiquement par l'admin (comme ancien endpoint)
-      createdBy: req.user?.id || 'admin'
-    });
-
-    logger.info(`✅ Lesson créée: ${lesson.title} (ID: ${lesson.id}, Type: ${lesson.type}, Difficulté: ${lesson.difficulty})`);
-
-    res.json({
-      success: true,
-      message: 'Leçon créée avec succès',
-      data: {
-        subject: subjectRecord,
-        lesson: {
-          id: lesson.id,
-          title: lesson.title,
-          description: lesson.description,
-          type: lesson.type,
-          difficulty: lesson.difficulty,
-          estimatedDuration: lesson.estimatedDuration,
-          content: lesson.content,
-          reviewStatus: lesson.reviewStatus
-        }
-      }
-    });
-
-  } catch (error) {
-    logger.error('❌ Erreur création cours:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la création du cours',
-      error: error.message
-    });
-  }
-});
+//
+// ⚠️  ROUTE SUPPRIMÉE - Code mort
+// Cette route POST /courses était en doublon avec contentManagement-postgres.js
+// La création de cours se fait maintenant via contentManagement-postgres.js uniquement
+// Voir: backend/src/routes/contentManagement-postgres.js ligne 279
+//
 
 module.exports = router;

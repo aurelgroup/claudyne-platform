@@ -2,10 +2,19 @@
 
 ###############################################################################
 # Claudyne Deployment Script
-# Usage: ./deploy.sh [frontend|backend|all] [--bump-sw]
+# Usage: ./deploy.sh [frontend|backend|nextjs|all] [--bump-sw]
 #
 # Options:
+#   frontend  : Deploy static HTML files (index.html, admin-interface, etc.)
+#   backend   : Deploy backend routes, models, middleware, utils
+#   nextjs    : Deploy Next.js application (frontend/ directory)
+#   all       : Deploy everything (frontend + backend + nextjs)
 #   --bump-sw : Automatically bump service worker version before deploy
+#
+# Examples:
+#   ./deploy.sh nextjs                 # Deploy only Next.js
+#   ./deploy.sh backend                # Deploy only backend
+#   ./deploy.sh all --bump-sw          # Full deployment with SW bump
 ###############################################################################
 
 set -e  # Exit on error
@@ -161,6 +170,68 @@ deploy_frontend() {
     done
 }
 
+# Deploy Next.js frontend
+deploy_nextjs() {
+    log_info "Deploying Next.js frontend..."
+
+    # Check if frontend directory exists
+    if [ ! -d "frontend" ]; then
+        log_error "frontend/ directory not found!"
+        exit 1
+    fi
+
+    log_info "Syncing frontend files to server..."
+    # Use rsync to sync frontend, excluding build artifacts and dependencies
+    if command -v rsync &> /dev/null; then
+        rsync -az --delete \
+            --exclude 'node_modules' \
+            --exclude '.next' \
+            --exclude '.env.local' \
+            frontend/ $SERVER:/opt/claudyne/frontend/
+        log_success "Frontend files synced"
+    else
+        log_error "rsync not found! Please install rsync for safer deployment"
+        exit 1
+    fi
+
+    # Build on server
+    log_info "Building Next.js on server..."
+    ssh $SERVER "cd /opt/claudyne/frontend && npm run build" || {
+        log_error "Next.js build failed!"
+        exit 1
+    }
+    log_success "Next.js build completed"
+
+    # Restart or start PM2 process
+    log_info "Managing PM2 process for frontend..."
+    FRONTEND_RUNNING=$(ssh $SERVER "pm2 list | grep claudyne-frontend | wc -l")
+
+    if [ "$FRONTEND_RUNNING" -gt "0" ]; then
+        log_info "Restarting existing frontend process..."
+        ssh $SERVER "pm2 restart claudyne-frontend"
+    else
+        log_info "Starting new frontend process..."
+        ssh $SERVER "cd /opt/claudyne/frontend && pm2 start npm --name claudyne-frontend -- start"
+    fi
+
+    ssh $SERVER "pm2 save"
+    log_success "PM2 frontend process managed"
+
+    # Verify Next.js is running
+    sleep 5
+    log_info "Verifying Next.js health..."
+    NEXTJS_RESPONSE=$(ssh $SERVER 'curl -s http://localhost:3000 | grep -o "id=\"__next\"" || echo "error"')
+
+    if [ "$NEXTJS_RESPONSE" == "id=\"__next\"" ]; then
+        log_success "Next.js is running on port 3000"
+    else
+        log_error "Next.js health check failed!"
+        log_error "Showing PM2 logs:"
+        ssh $SERVER "pm2 logs claudyne-frontend --lines 30 --nostream"
+        exit 1
+    fi
+}
+
 # Deploy backend files
 deploy_backend() {
     log_info "Deploying backend files..."
@@ -172,6 +243,7 @@ deploy_backend() {
     BACKEND_DIRS=(
         "backend/src/routes"
         "backend/src/models"
+        "backend/src/middleware"
         "backend/src/utils"
     )
 
@@ -236,9 +308,37 @@ verify_deployment() {
         log_error "Public API returned status: $PUBLIC_STATUS"
     fi
 
+    # Test Next.js routes if frontend was deployed
+    log_info "Testing Next.js routes..."
+    NEXTJS_PUBLIC=$(curl -sk https://www.claudyne.com/famille 2>&1 | grep -o 'id="__next"' || echo "")
+
+    if [ -n "$NEXTJS_PUBLIC" ]; then
+        log_success "Next.js routes are publicly accessible"
+    else
+        log_warning "Next.js routes not detected (may be using static HTML)"
+    fi
+
     # Check PM2 status
     log_info "PM2 status:"
-    ssh $SERVER "pm2 status claudyne-backend"
+    ssh $SERVER "pm2 list"
+}
+
+# Run API contract tests
+run_contract_tests() {
+    log_info "Running API contract tests..."
+
+    if [ -f "test-api-contracts.sh" ]; then
+        if bash test-api-contracts.sh; then
+            log_success "All API contracts validated ✅"
+        else
+            log_error "API contract tests FAILED ❌"
+            log_error "Some endpoints do not respect conventions"
+            log_warning "Review the test output above for details"
+            return 1
+        fi
+    else
+        log_warning "test-api-contracts.sh not found, skipping contract tests"
+    fi
 }
 
 # Generate deployment report
@@ -289,18 +389,46 @@ main() {
         backend)
             deploy_backend
             ;;
+        nextjs)
+            deploy_nextjs
+            ;;
         all)
             deploy_frontend
             deploy_backend
+            deploy_nextjs
             ;;
         *)
             log_error "Invalid deployment type: $DEPLOY_TYPE"
-            echo "Usage: $0 [frontend|backend|all]"
+            echo "Usage: $0 [frontend|backend|nextjs|all] [--bump-sw]"
+            echo ""
+            echo "Options:"
+            echo "  frontend  - Deploy static HTML files (index.html, admin, etc.)"
+            echo "  backend   - Deploy backend routes, models, middleware"
+            echo "  nextjs    - Deploy Next.js application (frontend/)"
+            echo "  all       - Deploy everything (frontend + backend + nextjs)"
+            echo "  --bump-sw - Automatically bump service worker version"
             exit 1
             ;;
     esac
 
     verify_deployment
+
+    # Run production health check if backend was deployed
+    if [[ "$DEPLOY_TYPE" == "backend" || "$DEPLOY_TYPE" == "all" ]]; then
+        log_info "Running production health check..."
+        if [ -f "check-production.sh" ]; then
+            if bash check-production.sh; then
+                log_success "Production health check passed ✅"
+            else
+                log_error "Production health check detected issues ⚠️"
+                log_warning "Review the check output above for details"
+            fi
+        else
+            log_warning "check-production.sh not found, falling back to contract tests"
+            run_contract_tests
+        fi
+    fi
+
     generate_report
 
     echo ""

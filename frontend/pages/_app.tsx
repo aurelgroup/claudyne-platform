@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 
 // Styles
 import '../styles/globals.css';
+import '../styles/claudyne-learning.css';
 
 // Stores et contexts
 import { AuthProvider } from '../contexts/AuthContext';

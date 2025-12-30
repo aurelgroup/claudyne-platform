@@ -5,7 +5,19 @@
       "Bash(rm:*)",
       "Bash(ssh root@89.117.58.53 \"cd /opt/claudyne && ls -la && ps aux | grep node | grep -v grep\")",
       "Bash(ssh:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(scp backend/src/models/PaymentTicket.js root@89.117.58.53:/opt/claudyne/backend/src/models/)",
+      "Bash(scp:*)",
+      "Bash(python3:*)",
+      "Bash(python fix-encoding.py:*)",
+      "Bash(bash deploy.sh:*)",
+      "Bash(git fetch:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(node generate-complete-v2.js:*)"
     ],
     "deny": [],
     "ask": []

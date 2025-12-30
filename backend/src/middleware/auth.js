@@ -52,17 +52,51 @@ const authenticate = async (req, res, next) => {
       });
     }
     
-    // Vérification du token
+    // GESTION DES TOKENS ADMIN (format: admin-timestamp-xxx)
+    if (token.startsWith('admin-')) {
+      const tokenService = require('../services/tokenService');
+      const validation = await tokenService.validateToken(token);
+
+      if (!validation.valid) {
+        logger.logSecurity('Invalid admin token attempt', {
+          reason: validation.reason,
+          ip: req.ip,
+          userAgent: req.headers['user-agent']
+        });
+
+        return res.status(401).json({
+          success: false,
+          message: 'Token admin invalide ou expiré',
+          code: 'INVALID_ADMIN_TOKEN'
+        });
+      }
+
+      // Créer un utilisateur virtuel ADMIN
+      req.user = {
+        id: 'admin-virtual',
+        email: 'admin@claudyne.com',
+        role: 'ADMIN',
+        userType: 'ADMIN',
+        isActive: true,
+        firstName: 'Admin',
+        lastName: 'System',
+        isVirtual: true
+      };
+
+      return next();
+    }
+
+    // Vérification du token JWT classique
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (jwtError) {
-      logger.logSecurity('Invalid JWT token attempt', { 
+      logger.logSecurity('Invalid JWT token attempt', {
         error: jwtError.message,
         ip: req.ip,
         userAgent: req.headers['user-agent']
       });
-      
+
       return res.status(401).json({
         success: false,
         message: 'Token invalide ou expiré',
@@ -156,6 +190,21 @@ const authenticate = async (req, res, next) => {
     // Ajout de l'utilisateur à la requête
     req.user = user;
     req.family = user.family;
+
+    // Create subscription object for lesson access control
+    if (user.family && isSubscriptionValid(user.family)) {
+      // Transform family subscription data into format expected by Lesson.canAccess()
+      const now = new Date();
+      const isTrialActive = user.family.trialEndsAt && user.family.trialEndsAt > now;
+
+      req.userSubscription = {
+        type: user.family.subscriptionType?.toLowerCase().includes('family') ? 'family' :
+              user.family.subscriptionType?.toLowerCase().includes('premium') ? 'premium' : 'basic',
+        status: 'active',  // Already validated by isSubscriptionValid
+        expiresAt: user.family.subscriptionEndsAt || user.family.trialEndsAt,
+        isTrial: isTrialActive
+      };
+    }
     
     // Mise à jour de la dernière activité (async, sans attendre)
     if (user.family) {

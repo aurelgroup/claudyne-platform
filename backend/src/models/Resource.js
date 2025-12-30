@@ -22,7 +22,7 @@ module.exports = (sequelize) => {
     },
     type: {
       type: DataTypes.ENUM,
-      values: ['pdf', 'video', 'link', 'document', 'image', 'audio'],
+      values: ['pdf', 'video', 'link', 'document', 'image', 'audio', 'exercise'],
       defaultValue: 'link'
     },
     subject: {

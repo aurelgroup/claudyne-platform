@@ -3,6 +3,25 @@
  * Exécute les vérifications quotidiennes automatiques
  */
 
+// ⚠️ IMPORTANT: Charger les variables d'environnement AVANT toute autre chose
+const dotenv = require('dotenv');
+const path = require('path');
+const fs = require('fs');
+
+// Charger .env.production en priorité (production)
+const envProductionPath = path.join(__dirname, '../../../.env.production');
+if (fs.existsSync(envProductionPath)) {
+  dotenv.config({ path: envProductionPath });
+  console.log('✅ Cron: .env.production chargé');
+}
+
+// Charger .env comme fallback (développement)
+const envPath = path.join(__dirname, '../../../.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath, override: false });
+  console.log('✅ Cron: .env chargé');
+}
+
 const cron = require('node-cron');
 const database = require('../config/database');
 const SubscriptionService = require('../services/subscriptionService');

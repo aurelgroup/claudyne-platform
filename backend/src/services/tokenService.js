@@ -11,19 +11,28 @@ class TokenService {
         const isProduction = process.env.NODE_ENV === 'production';
 
         if (isProduction) {
-        console.log("🔍 TokenService DB Config:", {
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.DB_NAME,
-            password: process.env.DB_PASSWORD ? "***" : undefined,
-            port: process.env.DB_PORT
-        });
+            // ⚠️ SÉCURITÉ: Fail fast si les variables d'environnement manquent
+            if (!process.env.DB_PASSWORD) {
+                const errorMsg = '🚨 ERREUR FATALE TokenService: DB_PASSWORD non défini!\n' +
+                                 'Vérifiez que .env.production est chargé correctement.';
+                console.error(errorMsg);
+                throw new Error(errorMsg);
+            }
+
+            console.log("🔍 TokenService DB Config:", {
+                user: process.env.DB_USER,
+                host: process.env.DB_HOST,
+                database: process.env.DB_NAME,
+                password: "***",
+                port: process.env.DB_PORT
+            });
+
             this.pool = new Pool({
-                user: process.env.DB_USER || 'claudyne_user',
-                host: process.env.DB_HOST || 'localhost',
-                database: process.env.DB_NAME || 'claudyne_production',
-                password: process.env.DB_PASSWORD || 'claudyne_secure_2024',
-                port: process.env.DB_PORT || 5432,
+                user: process.env.DB_USER,
+                host: process.env.DB_HOST,
+                database: process.env.DB_NAME,
+                password: process.env.DB_PASSWORD,
+                port: parseInt(process.env.DB_PORT) || 5432,
             });
             // Non-blocking initialization - don't crash the app if DB table creation fails
             this.initializeDatabase().catch(err => {

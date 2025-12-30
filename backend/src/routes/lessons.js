@@ -50,13 +50,20 @@ router.get('/:lessonId/quiz', async (req, res) => {
 
     // Récupérer le progrès de l'étudiant si authentifié
     let progress = null;
-    if (req.user && req.user.studentProfile) {
-      progress = await Progress.findOne({
-        where: {
-          studentId: req.user.studentProfile.id,
-          lessonId: lessonId
-        }
+    if (req.user) {
+      const { Student } = req.models;
+      const student = await Student.findOne({
+        where: { userId: req.user.id }
       });
+
+      if (student) {
+        progress = await Progress.findOne({
+          where: {
+            studentId: student.id,
+            lessonId: lessonId
+          }
+        });
+      }
     }
 
     res.json({
@@ -90,14 +97,26 @@ router.get('/:lessonId/quiz', async (req, res) => {
  */
 router.post('/:lessonId/complete', async (req, res) => {
   try {
-    const { Progress, Lesson } = req.models;
+    const { Progress, Lesson, Student } = req.models;
     const { lessonId } = req.params;
     const { timeSpent = 0, notes = null } = req.body;
 
-    if (!req.user || !req.user.studentProfile) {
+    if (!req.user) {
       return res.status(401).json({
         success: false,
         message: 'Authentification requise'
+      });
+    }
+
+    // Récupérer le profil étudiant
+    const student = await Student.findOne({
+      where: { userId: req.user.id }
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Profil étudiant non trouvé'
       });
     }
 
@@ -110,7 +129,7 @@ router.post('/:lessonId/complete', async (req, res) => {
       });
     }
 
-    const studentId = req.user.studentProfile.id;
+    const studentId = student.id;
 
     // Chercher ou créer le progrès
     let [progress, created] = await Progress.findOrCreate({

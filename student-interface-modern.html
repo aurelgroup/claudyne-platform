@@ -3894,13 +3894,18 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                             <div class="profile-field">
                                 <label>Classe</label>
                                 <select id="setting-educationLevel" class="form-select">
+                                    <option value="CP">CP</option>
+                                    <option value="CE1">CE1</option>
+                                    <option value="CE2">CE2</option>
+                                    <option value="CM1">CM1</option>
+                                    <option value="CM2">CM2</option>
                                     <option value="6EME">6ème</option>
                                     <option value="5EME">5ème</option>
                                     <option value="4EME">4ème</option>
                                     <option value="3EME">3ème</option>
-                                    <option value="SECONDE">Seconde</option>
-                                    <option value="PREMIERE">Première</option>
-                                    <option value="TERMINALE" selected>Terminale</option>
+                                    <option value="2NDE">Seconde</option>
+                                    <option value="1ERE">Première</option>
+                                    <option value="TLE" selected>Terminale</option>
                                 </select>
                             </div>
                             <div class="profile-field">
@@ -5723,14 +5728,9 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
             const coursesGrid = document.querySelector('#courses .cards-grid');
             if (!coursesGrid) return;
 
-            // Check if progressData has subjects array or is the old object format
-            const hasSubjects = progressData && progressData.subjects && Array.isArray(progressData.subjects);
-            const isOldFormat = progressData && !hasSubjects && Object.keys(progressData).length > 0;
+            const hasSubjects = progressData && Array.isArray(progressData.subjects) && progressData.subjects.length > 0;
 
-            // Si aucune progression, afficher un message
-            if (!progressData ||
-                (hasSubjects && progressData.subjects.length === 0) ||
-                (!hasSubjects && !isOldFormat)) {
+            if (!hasSubjects) {
                 coursesGrid.innerHTML = `
                     <div class="card" style="grid-column: 1 / -1;">
                         <div class="card-content" style="text-align: center; padding: 3rem;">
@@ -5747,7 +5747,6 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 return;
             }
 
-            // Icônes et couleurs par catégorie de matière
             const subjectIcons = {
                 'Mathématiques': { icon: 'fa-calculator', color: '#3B82F6' },
                 'Physique': { icon: 'fa-atom', color: '#10B981' },
@@ -5759,25 +5758,24 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                 'Informatique': { icon: 'fa-laptop-code', color: '#6366F1' }
             };
 
-            // Générer les cartes pour chaque matière
-            // Support both old format (object) and new format (with subjects array)
-            const dataToRender = hasSubjects ? progressData.subjects : Object.values(progressData);
-
-            const cards = dataToRender.map(({ subject, lessons, stats }) => {
-                if (!subject) return '';
+            const cards = progressData.subjects.map(subject => {
+                if (!subject || !subject.id) return '';
 
                 const iconData = subjectIcons[subject.category] || { icon: 'fa-book', color: subject.color || '#3B82F6' };
-                const completionPercentage = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
-                const avgScore = stats.averageScore > 0 ? (stats.averageScore / 20 * 100).toFixed(1) : 0;
-                const timeFormatted = formatTime(stats.totalTime);
 
-                // Trouver la leçon en cours (première leçon in_progress ou not_started)
-                const currentLesson = lessons.find(l => l.status === 'in_progress') ||
-                                     lessons.find(l => l.status === 'not_started') ||
-                                     lessons[lessons.length - 1];
+                // Stats depuis progress
+                const total = subject.progress?.total || 0;
+                const completed = subject.progress?.completed || 0;
+                const completionPercentage = subject.progress?.percentage || 0;
+
+                const lessons = subject.lessons || [];
+                const currentLesson =
+                    lessons.find(l => l.progress?.status === 'in_progress') ||
+                    lessons.find(l => l.progress?.status === 'not_started') ||
+                    lessons[0];
 
                 const btnClass = completionPercentage > 80 ? 'btn-success' :
-                                completionPercentage > 50 ? 'btn-warning' : 'btn';
+                                 completionPercentage > 50 ? 'btn-warning' : 'btn';
 
                 return `
                     <div class="card ${completionPercentage > 70 ? 'glow-effect' : ''}">
@@ -5789,29 +5787,29 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
                         </div>
                         <div class="card-content">
                             <div class="course-progress">
-                                <h4>${currentLesson ? currentLesson.lesson?.title || 'En cours' : 'Terminé'}</h4>
+                                <h4>${currentLesson ? currentLesson.title : 'Terminé'}</h4>
                                 <div class="progress-bar">
                                     <div class="progress-fill" style="width: ${completionPercentage}%"></div>
                                 </div>
-                                <p>Leçon ${stats.completed}/${stats.total} complétée${stats.completed > 1 ? 's' : ''}</p>
+                                <p>Leçon ${completed}/${total} complétée${completed > 1 ? 's' : ''}</p>
                             </div>
                             <div class="course-stats">
                                 <div class="stat-item">
-                                    <span>Note moyenne</span>
-                                    <strong>${avgScore > 0 ? avgScore + '%' : 'N/A'}</strong>
+                                    <span>Progression</span>
+                                    <strong>${completionPercentage}%</strong>
                                 </div>
                                 <div class="stat-item">
-                                    <span>Temps passé</span>
-                                    <strong>${timeFormatted}</strong>
+                                    <span>Total leçons</span>
+                                    <strong>${total}</strong>
                                 </div>
                                 <div class="stat-item">
-                                    <span>${stats.inProgress > 0 ? 'En cours' : 'Progression'}</span>
-                                    <strong>${stats.inProgress > 0 ? stats.inProgress + ' leçon' + (stats.inProgress > 1 ? 's' : '') : completionPercentage + '%'}</strong>
+                                    <span>Complétées</span>
+                                    <strong>${completed}</strong>
                                 </div>
                             </div>
-                            <button class="btn ${btnClass}" onclick="resumeCourse('${subject.id}', ${currentLesson?.lessonId || 'null'})">
+                            <button class="btn ${btnClass}" onclick="resumeCourse('${subject.id}', '${currentLesson?.id || ''}')">
                                 <i class="fas fa-play"></i>
-                                ${stats.completed === 0 ? 'Commencer' : 'Reprendre le cours'}
+                                ${completed === 0 ? 'Commencer' : 'Reprendre le cours'}
                             </button>
                         </div>
                     </div>
@@ -5829,20 +5827,13 @@ récompense les étudiants les plus prometteurs en sciences et littérature.
         }
 
         function resumeCourse(subjectId, lessonId) {
-            if (lessonId) {
-                // Naviguer vers la leçon spécifique
-                showToast(`📚 Chargement de la leçon...`, 'info');
-                // TODO: Implémenter la navigation vers la vue de leçon
-                gainXP(10, 'Reprise de cours');
+            showToast(`📚 Chargement du cours...`, 'info');
 
-                // Pour le moment, afficher les détails de la matière
-                setTimeout(() => {
-                    showToast(`📖 Leçon #${lessonId} - Matière: ${subjectId}`, 'success');
-                }, 500);
+            // Naviguer vers la page d'apprentissage
+            if (lessonId && lessonId !== 'null' && lessonId !== '') {
+                window.location.href = `/apprentissage/${subjectId}?lessonId=${lessonId}`;
             } else {
-                // Afficher la liste des leçons de la matière
-                showToast(`📚 Chargement des leçons de ${subjectId}...`, 'info');
-                gainXP(5, 'Exploration de matière');
+                window.location.href = `/apprentissage/${subjectId}`;
             }
         }
 

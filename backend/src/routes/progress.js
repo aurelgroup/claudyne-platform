@@ -67,11 +67,36 @@ router.get('/', async (req, res) => {
     const { Subject, Lesson } = req.models;
     const student = await Student.findByPk(studentId);
 
+    // Mapping niveau Student -> niveau Subject
+    const LEVEL_MAPPING = {
+      'MATERNELLE_PETITE': 'Maternelle',
+      'MATERNELLE_MOYENNE': 'Maternelle',
+      'MATERNELLE_GRANDE': 'Maternelle',
+      'SIL': 'SIL',
+      'CP': 'CP',
+      'CE1': 'CE1',
+      'CE2': 'CE2',
+      'CM1': 'CM1',
+      'CM2': 'CM2',
+      '6EME': '6ème',
+      '5EME': '5ème',
+      '4EME': '4ème',
+      '3EME': '3ème',
+      'SECONDE': '2nde',
+      '2NDE': '2nde',
+      '1ERE': '1ère',
+      'TLE': 'Tle',
+      'PREMIERE': '1ère',
+      'TERMINALE': 'Tle'
+    };
+
+    const subjectLevel = LEVEL_MAPPING[student?.educationLevel] || student?.educationLevel || 'Tle';
+
     // Get all subjects with lessons for student's education level
     const subjects = await Subject.findAll({
       where: {
         isActive: true,
-        level: student?.educationLevel || 'Tle'
+        level: subjectLevel
       },
       include: [{
         model: Lesson,

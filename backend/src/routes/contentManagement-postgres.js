@@ -225,6 +225,189 @@ router.get('/content/subjects', async (req, res) => {
 });
 
 // ===============================
+// PUT /content/subjects/:subjectId - Modifier une matière
+// ===============================
+router.put('/content/subjects/:subjectId', async (req, res) => {
+  try {
+    const { subjectId } = req.params;
+    const { title, level, category, description, icon, color } = req.body;
+    const { Subject } = req.models;
+
+    // Trouver la matière
+    const subject = await Subject.findByPk(subjectId);
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Matière introuvable'
+      });
+    }
+
+    // Préparer les données de mise à jour
+    const updateData = {};
+    if (title !== undefined) updateData.title = title;
+    if (level !== undefined) updateData.level = level;
+    if (category !== undefined) updateData.category = category;
+    if (description !== undefined) updateData.description = description;
+    if (icon !== undefined) updateData.icon = icon;
+    if (color !== undefined) updateData.color = color;
+
+    // Mettre à jour
+    await subject.update(updateData);
+
+    logger.info(`✅ Matière modifiée: ${subject.title} (${subjectId})`);
+
+    res.json({
+      success: true,
+      message: 'Matière modifiée avec succès',
+      data: {
+        id: subject.id,
+        title: subject.title,
+        level: subject.level,
+        category: subject.category,
+        description: subject.description,
+        icon: subject.icon,
+        color: subject.color
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur PUT /content/subjects/:subjectId:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la modification de la matière',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// ===============================
+// DELETE /content/subjects/:subjectId - Supprimer une matière
+// ===============================
+router.delete('/content/subjects/:subjectId', async (req, res) => {
+  try {
+    const { subjectId } = req.params;
+    const { Subject, Lesson, Progress } = req.models;
+
+    // Trouver la matière
+    const subject = await Subject.findByPk(subjectId, {
+      include: [{
+        model: Lesson,
+        as: 'lessons'
+      }]
+    });
+
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Matière introuvable'
+      });
+    }
+
+    // Vérifier s'il y a des leçons associées
+    const lessonsCount = subject.lessons?.length || 0;
+
+    if (lessonsCount > 0) {
+      // Vérifier s'il y a des progrès d'étudiants
+      const lessonIds = subject.lessons.map(l => l.id);
+      const progressCount = await Progress.count({
+        where: {
+          lessonId: lessonIds
+        }
+      });
+
+      if (progressCount > 0) {
+        // Soft delete - désactiver au lieu de supprimer
+        await subject.update({ isActive: false });
+        logger.info(`⚠️ Matière désactivée (${progressCount} progrès étudiants): ${subject.title}`);
+
+        return res.json({
+          success: true,
+          message: `Matière désactivée car ${progressCount} étudiant(s) l'ont commencée`,
+          data: {
+            action: 'deactivated',
+            progressCount,
+            lessonsCount
+          }
+        });
+      }
+
+      // Il y a des leçons mais pas de progrès - demander confirmation
+      return res.status(400).json({
+        success: false,
+        message: `Cette matière contient ${lessonsCount} leçon(s). Êtes-vous sûr de vouloir la supprimer?`,
+        data: {
+          lessonsCount,
+          requiresConfirmation: true
+        }
+      });
+    }
+
+    // Aucune leçon - suppression complète possible
+    await subject.destroy();
+    logger.info(`✅ Matière supprimée: ${subject.title} (${subjectId})`);
+
+    res.json({
+      success: true,
+      message: 'Matière supprimée avec succès',
+      data: {
+        action: 'deleted',
+        subjectId
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur DELETE /content/subjects/:subjectId:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression de la matière',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// ===============================
+// PUT /content/subjects/:subjectId/toggle - Activer/Désactiver une matière
+// ===============================
+router.put('/content/subjects/:subjectId/toggle', async (req, res) => {
+  try {
+    const { subjectId } = req.params;
+    const { Subject } = req.models;
+
+    const subject = await Subject.findByPk(subjectId);
+    if (!subject) {
+      return res.status(404).json({
+        success: false,
+        message: 'Matière introuvable'
+      });
+    }
+
+    // Inverser le statut
+    const newStatus = !subject.isActive;
+    await subject.update({ isActive: newStatus });
+
+    logger.info(`✅ Matière ${newStatus ? 'activée' : 'désactivée'}: ${subject.title}`);
+
+    res.json({
+      success: true,
+      message: `Matière ${newStatus ? 'activée' : 'désactivée'} avec succès`,
+      data: {
+        id: subject.id,
+        title: subject.title,
+        isActive: newStatus
+      }
+    });
+
+  } catch (error) {
+    logger.error('❌ Erreur PUT /content/subjects/:subjectId/toggle:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la modification du statut',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// ===============================
 // GET /content/:tab - Par onglet
 // ===============================
 router.get('/content/:tab', async (req, res) => {
@@ -516,8 +699,8 @@ router.post('/courses', async (req, res) => {
 router.put('/courses/:courseId', async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { title, description, content, duration, level, subject } = req.body;
-    const { Lesson, Subject } = req.models;
+    const { title, transcript, estimatedDuration } = req.body;
+    const { Lesson } = req.models;
 
     // Extraire lessonId du courseId (format: COURS-uuid)
     const lessonId = courseId.replace('COURS-', '');
@@ -526,27 +709,41 @@ router.put('/courses/:courseId', async (req, res) => {
     if (!lesson) {
       return res.status(404).json({
         success: false,
-        message: 'Cours introuvable'
+        message: 'Leçon introuvable'
       });
     }
 
-    // Mettre à jour la Lesson
-    await lesson.update({
-      title: title || lesson.title,
-      content: content || description || lesson.content,
-      duration: duration ? parseInt(duration) : lesson.duration
-    });
+    // Préparer les données à mettre à jour
+    const updateData = {};
+
+    if (title) {
+      updateData.title = title;
+    }
+
+    if (estimatedDuration !== undefined) {
+      updateData.estimatedDuration = parseInt(estimatedDuration);
+    }
+
+    // Mettre à jour le contenu JSONB si transcript est fourni
+    if (transcript !== undefined) {
+      updateData.content = {
+        ...lesson.content,
+        transcript: transcript
+      };
+    }
+
+    // Mettre à jour la leçon
+    await lesson.update(updateData);
 
     res.json({
       success: true,
-      message: 'Cours modifié avec succès',
+      message: 'Leçon modifiée avec succès',
       data: {
-        course: {
-          id: courseId,
+        lesson: {
+          id: lesson.id,
           title: lesson.title,
-          description: lesson.content,
           content: lesson.content,
-          duration: lesson.duration
+          estimatedDuration: lesson.estimatedDuration
         }
       }
     });
@@ -937,6 +1134,126 @@ router.put('/resources/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la modification de la ressource',
+      error: error.message
+    });
+  }
+});
+
+// ===============================
+// GET /content/all-lessons - Récupérer toutes les leçons pour l'admin
+// ===============================
+router.get('/content/all-lessons', async (req, res) => {
+  try {
+    const { Subject, Lesson } = req.models;
+
+    // Récupérer toutes les leçons avec leur subject
+    const lessons = await Lesson.findAll({
+      include: [{
+        model: Subject,
+        as: 'subject',
+        attributes: ['id', 'title', 'level', 'category', 'icon', 'color']
+      }],
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Formater les données pour l'admin
+    const formattedLessons = lessons.map(lesson => ({
+      id: lesson.id,
+      title: lesson.title,
+      description: lesson.description,
+      content: lesson.content,
+      estimatedDuration: lesson.estimatedDuration,
+      isActive: lesson.isActive,
+      isPremium: lesson.isPremium,
+      hasQuiz: lesson.hasQuiz,
+      type: lesson.type,
+      order: lesson.order,
+      difficulty: lesson.difficulty,
+      subjectId: lesson.subjectId,
+      subjectTitle: lesson.subject?.title || 'N/A',
+      level: lesson.subject?.level || 'N/A',
+      category: lesson.subject?.category || 'N/A',
+      icon: lesson.subject?.icon || '📚',
+      createdAt: lesson.createdAt,
+      updatedAt: lesson.updatedAt
+    }));
+
+    res.json({
+      success: true,
+      count: formattedLessons.length,
+      lessons: formattedLessons
+    });
+
+  } catch (error) {
+    logger.error('Erreur GET /content/all-lessons:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des leçons',
+      error: error.message
+    });
+  }
+});
+
+// ===============================
+// DELETE /content/courses/:courseId - Supprimer une leçon
+// ===============================
+router.delete('/content/courses/:courseId', async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { Lesson, Progress } = req.models;
+
+    // Extraire lessonId du courseId (format: COURS-uuid)
+    const lessonId = courseId.replace('COURS-', '');
+
+    const lesson = await Lesson.findByPk(lessonId);
+    if (!lesson) {
+      return res.status(404).json({
+        success: false,
+        message: 'Leçon introuvable'
+      });
+    }
+
+    // Vérifier s'il y a des progrès étudiants liés à cette leçon
+    const progressCount = await Progress.count({
+      where: { lessonId: lessonId }
+    });
+
+    if (progressCount > 0) {
+      // Si des étudiants ont commencé cette leçon, on la désactive au lieu de la supprimer
+      await lesson.update({ isActive: false });
+
+      return res.json({
+        success: true,
+        message: `Leçon désactivée (${progressCount} étudiants l'ont commencée). Pour supprimer définitivement, supprimez d'abord les progrès étudiants.`,
+        data: {
+          action: 'deactivated',
+          progressCount
+        }
+      });
+    }
+
+    // Si aucun progrès, on peut supprimer en toute sécurité
+    await lesson.destroy();
+
+    logger.info(`Leçon ${lessonId} supprimée`, {
+      title: lesson.title,
+      admin: req.user?.email || 'unknown'
+    });
+
+    res.json({
+      success: true,
+      message: 'Leçon supprimée avec succès',
+      data: {
+        action: 'deleted',
+        lessonId
+      }
+    });
+
+  } catch (error) {
+    logger.error('Erreur DELETE /content/courses/:courseId:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression',
       error: error.message
     });
   }

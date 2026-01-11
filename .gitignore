@@ -76,11 +76,13 @@ temp/
 claudyne-mobile/builds/
 claudyne-mobile/backups/
 claudyne-mobile/*.apk
+claudyne-mobile/*.aab
 claudyne-mobile/*.ipa
 claudyne-mobile/.expo
 
 # Binary files
 *.apk
+*.aab
 *.ipa
 *.exe
 *.dmg
@@ -98,6 +100,7 @@ pnpm-debug.log*
 
 # Deployment reports and temporary files
 deployment-report-*.txt
+deployment-report-*.md
 test-deployment.sh
 test-payment-tickets-deployment.sh
 backend-*.js
@@ -106,6 +109,62 @@ fix-encoding*.py
 lessons-loader.js
 *-backup.html
 *.bak
+*.backup
+*.broken
+
+# Temporary JSON files
+token*.json
+*-response.json
+subjects-check.json
+create-response.json
+
+# Temporary log files
+enrichissement-log.txt
+*-log.txt
+
+# Backend temporary scripts (content generation)
+backend/src/scripts/*-library-*.js
+backend/src/scripts/enrich-*.js
+backend/src/scripts/generate-*.js
+backend/src/scripts/fix-*.js
+backend/src/scripts/check-*.js
+backend/src/scripts/analyze-*.js
+backend/src/scripts/verify-*.js
+backend/src/scripts/update-*.js
+backend/src/scripts/list-*.js
+backend/src/scripts/count-*.js
+backend/content-store.json
+
+# Frontend temporary files
+frontend/pages/**/*.backup
+frontend/pages/**/*-v2.tsx
+frontend/pages/**/*-COMPLETE-*.tsx
+frontend/pages/**/*-ULTRA-*.tsx
+frontend/admin-secure-*.html
+frontend/package-lock.json
+
+# Test files at root
+test-*.html
+test-*.js
+calculate-*.js
+check-*.js
+
+# Mobile temporary docs
+claudyne-mobile/DEPLOYMENT_*.md
+claudyne-mobile/GUIDE_*.md
+claudyne-mobile/PLAN_*.md
+claudyne-mobile/MESSAGE_*.md
+claudyne-mobile/RESOLUTION_*.md
+claudyne-mobile/SOUMISSION_*.md
+claudyne-mobile/PROCHAINES_*.md
+claudyne-mobile/PLAY_STORE_*.md
+claudyne-mobile/build-playstore.bat
+claudyne-mobile/build-playstore.sh
+
+# Utility scripts at root (should be in scripts/)
+add-*.js
+inject-*.js
+content-filters.js
 
 # Claude settings (local only)
 .claude/settings.local.json

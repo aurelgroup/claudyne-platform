@@ -17,7 +17,8 @@
       "Bash(git fetch:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(node generate-complete-v2.js:*)"
+      "Bash(node generate-complete-v2.js:*)",
+      "Bash(timeout 5s node:*)"
     ],
     "deny": [],
     "ask": []

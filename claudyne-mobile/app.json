@@ -2,25 +2,34 @@
   "expo": {
     "name": "Claudyne",
     "slug": "claudyne-platform",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "description": "Plateforme éducative IA pour l'excellence scolaire au Cameroun - Cours, Quiz, Mentor IA",
+    "primaryColor": "#2E7D32",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#2E7D32"
     },
+    "privacy": "public",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.claudyne.app"
+      "bundleIdentifier": "com.claudyne.app",
+      "buildNumber": "1"
     },
     "android": {
       "package": "com.claudyne.app",
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2E7D32"
       },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
       "intentFilters": [
         {
           "action": "VIEW",
@@ -34,7 +43,8 @@
             "DEFAULT"
           ]
         }
-      ]
+      ],
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.claudyne.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

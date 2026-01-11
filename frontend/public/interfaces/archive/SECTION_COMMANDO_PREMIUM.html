@@ -1,0 +1,786 @@
+<!-- ========================================
+     SECTION OPÉRATION EXAMENS - MODE COMMANDO
+     Ultra-Premium | Quantum/Sci-Fi Integration
+     Designed for Maximum Conversion
+     ======================================== -->
+
+<style>
+    /* ============================================
+       VARIABLES CSS ADDITIONNELLES - URGENCE MODE
+       ============================================ */
+    :root {
+        --color-urgent-red: #FF3B30;
+        --color-urgent-glow: rgba(255, 59, 48, 0.6);
+        --color-success-green: #00FFC2;
+        --color-gold: #FFD700;
+        --commando-gradient: linear-gradient(135deg, #1a0a0f 0%, #0a0515 50%, #050a15 100%);
+        --hologram-border: linear-gradient(45deg, var(--color-accent-1), var(--color-urgent-red), var(--color-accent-2));
+    }
+
+    /* ============================================
+       TRANSITION LUMINEUSE DEPUIS LE HERO
+       ============================================ */
+    .quantum-divider {
+        width: 100%;
+        height: 120px;
+        background: linear-gradient(180deg,
+            transparent 0%,
+            var(--color-urgent-glow) 50%,
+            transparent 100%
+        );
+        position: relative;
+        overflow: hidden;
+        margin: -60px 0 40px 0;
+    }
+
+    .quantum-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -100%;
+        width: 200%;
+        height: 2px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            var(--color-urgent-red) 20%,
+            var(--color-accent-1) 50%,
+            var(--color-urgent-red) 80%,
+            transparent 100%
+        );
+        animation: scanLine 4s linear infinite;
+    }
+
+    @keyframes scanLine {
+        0% { transform: translateX(-50%); }
+        100% { transform: translateX(50%); }
+    }
+
+    /* ============================================
+       SECTION PRINCIPALE - MODE COMMANDO
+       ============================================ */
+    #commando {
+        background: var(--commando-gradient);
+        padding: 80px 20px 100px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #commando::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at 20% 30%, var(--color-urgent-glow) 0%, transparent 40%),
+            radial-gradient(circle at 80% 70%, rgba(0, 255, 194, 0.3) 0%, transparent 40%);
+        pointer-events: none;
+        opacity: 0.4;
+        animation: pulseGlow 6s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.7; }
+    }
+
+    /* ============================================
+       HEADER DE LA SECTION - IMPACT VISUEL
+       ============================================ */
+    .commando-header {
+        text-align: center;
+        margin-bottom: 60px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .commando-badge {
+        display: inline-block;
+        background: rgba(255, 59, 48, 0.15);
+        border: 2px solid var(--color-urgent-red);
+        border-radius: 50px;
+        padding: 8px 24px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        animation: pulseBadge 2s ease-in-out infinite;
+        box-shadow: 0 0 30px var(--color-urgent-glow);
+    }
+
+    @keyframes pulseBadge {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 30px var(--color-urgent-glow);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px var(--color-urgent-glow), 0 0 80px var(--color-urgent-glow);
+        }
+    }
+
+    .commando-title {
+        font-size: clamp(2.5rem, 8vw, 5rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--color-urgent-red), var(--color-accent-2), var(--color-accent-1));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0 0 20px 0;
+        letter-spacing: -2px;
+        text-transform: uppercase;
+        animation: glitchTitle 8s ease-in-out infinite;
+    }
+
+    @keyframes glitchTitle {
+        0%, 98%, 100% { text-shadow: none; }
+        99% {
+            text-shadow:
+                -2px 0 var(--color-urgent-red),
+                2px 0 var(--color-accent-1);
+        }
+    }
+
+    .commando-subtitle {
+        font-size: clamp(1.1rem, 3vw, 1.5rem);
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 800px;
+        margin: 0 auto 40px auto;
+        line-height: 1.6;
+    }
+
+    /* ============================================
+       COMPTE À REBOURS DRAMATIQUE - STYLE FUSÉE
+       ============================================ */
+    .countdown-container {
+        max-width: 600px;
+        margin: 0 auto 60px auto;
+        padding: 30px;
+        background: rgba(255, 59, 48, 0.08);
+        border: 2px solid var(--color-urgent-red);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .countdown-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+            from 0deg,
+            transparent 0%,
+            var(--color-urgent-glow) 50%,
+            transparent 100%
+        );
+        animation: rotateBorder 4s linear infinite;
+    }
+
+    @keyframes rotateBorder {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .countdown-inner {
+        position: relative;
+        z-index: 1;
+        background: var(--color-dark-bg);
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .countdown-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: var(--color-urgent-red);
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .countdown-display {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+        text-align: center;
+        min-width: 80px;
+    }
+
+    .countdown-number {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 900;
+        color: var(--color-urgent-red);
+        text-shadow:
+            0 0 20px var(--color-urgent-glow),
+            0 0 40px var(--color-urgent-glow);
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-text {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 5px;
+    }
+
+    /* ============================================
+       GRILLE DES PACKS - HOLOGRAPHIQUE
+       ============================================ */
+    .packs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* ============================================
+       CARTE PACK - GLASSMORPHISM PREMIUM
+       ============================================ */
+    .pack-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 40px 30px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+    }
+
+    /* Bordure lumineuse holographique */
+    .pack-card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: var(--hologram-border);
+        border-radius: 25px;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+    }
+
+    .pack-card:hover::before {
+        opacity: 1;
+        animation: rotateBorderHolo 3s linear infinite;
+    }
+
+    @keyframes rotateBorderHolo {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+
+    .pack-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow:
+            0 30px 60px rgba(0, 0, 0, 0.4),
+            0 0 80px var(--color-urgent-glow),
+            inset 0 0 40px rgba(255, 59, 48, 0.1);
+    }
+
+    /* Badge "POPULAIRE" */
+    .pack-popular-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--color-gold);
+        color: #000;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        animation: float 3s ease-in-out infinite;
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
+
+    /* Header de la carte */
+    .pack-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .pack-exam {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--color-accent-1);
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .pack-name {
+        font-size: 2rem;
+        font-weight: 900;
+        margin: 0 0 15px 0;
+        background: linear-gradient(135deg, #ffffff, var(--color-accent-1));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .pack-desc {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.5;
+    }
+
+    /* Prix */
+    .pack-pricing {
+        text-align: center;
+        margin: 30px 0;
+        padding: 25px;
+        background: rgba(255, 59, 48, 0.08);
+        border-radius: 15px;
+        border: 1px solid var(--color-urgent-red);
+    }
+
+    .pack-price-old {
+        font-size: 1.2rem;
+        text-decoration: line-through;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 5px;
+    }
+
+    .pack-price-new {
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--color-urgent-red);
+        text-shadow: 0 0 30px var(--color-urgent-glow);
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .pack-price-currency {
+        font-size: 1.5rem;
+        font-weight: 400;
+    }
+
+    .pack-economy {
+        font-size: 0.85rem;
+        color: var(--color-success-green);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Preuve sociale */
+    .pack-social-proof {
+        text-align: center;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 10px;
+        font-style: italic;
+    }
+
+    .pack-social-proof::before {
+        content: '🔥 ';
+    }
+
+    /* Liste des avantages */
+    .pack-features {
+        list-style: none;
+        padding: 0;
+        margin: 25px 0;
+    }
+
+    .pack-features li {
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .pack-features li::before {
+        content: '✓';
+        color: var(--color-success-green);
+        font-weight: 900;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .pack-features li:last-child {
+        border-bottom: none;
+    }
+
+    /* ============================================
+       BOUTON CTA - ÉNORME ET BRILLANT
+       ============================================ */
+    .pack-cta {
+        display: block;
+        width: 100%;
+        padding: 20px 40px;
+        background: linear-gradient(135deg, var(--color-urgent-red), #ff6b5f);
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+            0 10px 30px rgba(255, 59, 48, 0.4),
+            0 20px 60px rgba(255, 59, 48, 0.2),
+            inset 0 -4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .pack-cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .pack-cta:hover::before {
+        left: 100%;
+    }
+
+    .pack-cta:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow:
+            0 15px 40px rgba(255, 59, 48, 0.6),
+            0 30px 80px rgba(255, 59, 48, 0.3),
+            inset 0 -4px 8px rgba(0, 0, 0, 0.2),
+            0 0 60px var(--color-urgent-glow);
+    }
+
+    .pack-cta:active {
+        transform: translateY(-1px) scale(0.98);
+    }
+
+    /* Icône WhatsApp dans le CTA */
+    .pack-cta-icon {
+        display: inline-block;
+        margin-right: 10px;
+        font-size: 1.5rem;
+        vertical-align: middle;
+    }
+
+    /* ============================================
+       RESPONSIVE MOBILE-FIRST
+       ============================================ */
+    @media (max-width: 768px) {
+        .quantum-divider {
+            height: 80px;
+            margin: -40px 0 20px 0;
+        }
+
+        #commando {
+            padding: 60px 15px 80px 15px;
+        }
+
+        .commando-badge {
+            font-size: 0.75rem;
+            padding: 6px 18px;
+        }
+
+        .commando-title {
+            letter-spacing: -1px;
+        }
+
+        .countdown-container {
+            padding: 20px 15px;
+        }
+
+        .countdown-display {
+            gap: 15px;
+        }
+
+        .countdown-unit {
+            min-width: 60px;
+        }
+
+        .packs-grid {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        .pack-card {
+            padding: 30px 20px;
+        }
+
+        .pack-name {
+            font-size: 1.7rem;
+        }
+
+        .pack-price-new {
+            font-size: 2.5rem;
+        }
+
+        .pack-cta {
+            padding: 18px 30px;
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Ultra-small screens */
+    @media (max-width: 480px) {
+        .countdown-number {
+            font-size: 2rem;
+        }
+
+        .pack-price-new {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<!-- ============================================
+     HTML DE LA SECTION COMMANDO
+     ============================================ -->
+
+<!-- Transition lumineuse depuis le Hero -->
+<div class="quantum-divider" aria-hidden="true"></div>
+
+<!-- Section principale -->
+<section id="commando" class="section">
+    <!-- Header avec impact visuel -->
+    <div class="commando-header">
+        <div class="commando-badge">
+            🚨 OFFRE LIMITÉE - EXAMENS 2025 🚨
+        </div>
+        <h2 class="commando-title">Mode Commando</h2>
+        <p class="commando-subtitle">
+            Packs ultra-performants conçus pour maximiser vos chances de réussite aux examens officiels.
+            Téléchargez instantanément et préparez-vous comme un pro.
+        </p>
+    </div>
+
+    <!-- Compte à rebours dramatique -->
+    <div class="countdown-container">
+        <div class="countdown-inner">
+            <div class="countdown-label">⏰ L'offre expire dans :</div>
+            <div class="countdown-display" id="countdownDisplay">
+                <div class="countdown-unit">
+                    <div class="countdown-number" id="days">00</div>
+                    <div class="countdown-text">Jours</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-text">Heures</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-text">Minutes</div>
+                </div>
+                <div class="countdown-unit">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-text">Secondes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grille des packs holographiques -->
+    <div class="packs-grid">
+        <!-- Pack BEPC -->
+        <div class="pack-card">
+            <div class="pack-header">
+                <div class="pack-exam">BEPC 2025</div>
+                <h3 class="pack-name">Pack Fondation</h3>
+                <p class="pack-desc">
+                    Tout pour réussir le BEPC : sujets corrigés, fiches de révision, quiz interactifs.
+                </p>
+            </div>
+
+            <div class="pack-pricing">
+                <div class="pack-price-old">8000 XAF</div>
+                <div class="pack-price-new">
+                    5000<span class="pack-price-currency"> XAF</span>
+                </div>
+                <div class="pack-economy">✨ Économisez 3000 XAF (37%)</div>
+                <div class="pack-social-proof">
+                    89 élèves ont téléchargé ce pack aujourd'hui
+                </div>
+            </div>
+
+            <ul class="pack-features">
+                <li>200+ sujets corrigés des 5 dernières années</li>
+                <li>Fiches de révision synthétiques</li>
+                <li>Quiz interactifs avec correction automatique</li>
+                <li>Accès WhatsApp au support pédagogique</li>
+                <li>Téléchargement instantané (PDF)</li>
+            </ul>
+
+            <a href="https://wa.me/237XXXXXXXXX?text=Je%20veux%20le%20Pack%20BEPC%20%C3%A0%205000%20XAF"
+               class="pack-cta"
+               target="_blank"
+               rel="noopener">
+                <span class="pack-cta-icon">📱</span>
+                Commander via WhatsApp
+            </a>
+        </div>
+
+        <!-- Pack Probatoire (POPULAIRE) -->
+        <div class="pack-card">
+            <div class="pack-popular-badge">⭐ POPULAIRE</div>
+
+            <div class="pack-header">
+                <div class="pack-exam">PROBATOIRE 2025</div>
+                <h3 class="pack-name">Pack Excellence</h3>
+                <p class="pack-desc">
+                    La référence pour le Probatoire : contenu premium, méthodes éprouvées, réussite garantie.
+                </p>
+            </div>
+
+            <div class="pack-pricing">
+                <div class="pack-price-old">12000 XAF</div>
+                <div class="pack-price-new">
+                    7500<span class="pack-price-currency"> XAF</span>
+                </div>
+                <div class="pack-economy">✨ Économisez 4500 XAF (38%)</div>
+                <div class="pack-social-proof">
+                    154 élèves ont téléchargé ce pack aujourd'hui
+                </div>
+            </div>
+
+            <ul class="pack-features">
+                <li>300+ sujets corrigés (Probatoire A/C/D)</li>
+                <li>Annales complètes avec barèmes officiels</li>
+                <li>Vidéos explicatives pour les notions clés</li>
+                <li>Simulations d'examen chronométrées</li>
+                <li>Groupe WhatsApp privé de révision</li>
+                <li>Support 7j/7 par des enseignants certifiés</li>
+            </ul>
+
+            <a href="https://wa.me/237XXXXXXXXX?text=Je%20veux%20le%20Pack%20Probatoire%20%C3%A0%207500%20XAF"
+               class="pack-cta"
+               target="_blank"
+               rel="noopener">
+                <span class="pack-cta-icon">📱</span>
+                Commander via WhatsApp
+            </a>
+        </div>
+
+        <!-- Pack Bac -->
+        <div class="pack-card">
+            <div class="pack-header">
+                <div class="pack-exam">BACCALAURÉAT 2025</div>
+                <h3 class="pack-name">Pack Élite</h3>
+                <p class="pack-desc">
+                    Le pack ultime pour décrocher votre Bac avec mention. Contenu VIP, coaching inclus.
+                </p>
+            </div>
+
+            <div class="pack-pricing">
+                <div class="pack-price-old">15000 XAF</div>
+                <div class="pack-price-new">
+                    10000<span class="pack-price-currency"> XAF</span>
+                </div>
+                <div class="pack-economy">✨ Économisez 5000 XAF (33%)</div>
+                <div class="pack-social-proof">
+                    203 élèves ont téléchargé ce pack aujourd'hui
+                </div>
+            </div>
+
+            <ul class="pack-features">
+                <li>500+ sujets corrigés (Bac A/C/D/TI)</li>
+                <li>Annales complètes depuis 2015</li>
+                <li>Masterclass vidéo en direct (2h/semaine)</li>
+                <li>Corrections personnalisées de vos copies</li>
+                <li>Planning de révision sur-mesure</li>
+                <li>Coaching 1-on-1 avant l'examen</li>
+                <li>Garantie "Admis ou Remboursé"</li>
+            </ul>
+
+            <a href="https://wa.me/237XXXXXXXXX?text=Je%20veux%20le%20Pack%20Bac%20%C3%A0%2010000%20XAF"
+               class="pack-cta"
+               target="_blank"
+               rel="noopener">
+                <span class="pack-cta-icon">📱</span>
+                Commander via WhatsApp
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SCRIPT JAVASCRIPT - COMPTE À REBOURS
+     ============================================ -->
+<script>
+(function() {
+    'use strict';
+
+    // Configuration : Date de fin de l'offre (7 jours à partir d'aujourd'hui)
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 7);
+    endDate.setHours(23, 59, 59, 999);
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endDate.getTime() - now;
+
+        if (distance < 0) {
+            // Offre expirée - Recharger automatiquement pour prolonger de 7 jours
+            location.reload();
+            return;
+        }
+
+        // Calculs
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Affichage avec padding zeros
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+    }
+
+    // Mise à jour initiale
+    updateCountdown();
+
+    // Mise à jour chaque seconde
+    setInterval(updateCountdown, 1000);
+})();
+</script>
+
+<!-- ============================================
+     FIN DE LA SECTION COMMANDO
+     Insérer ce code entre les balises </main> (Hero)
+     et <section id="welcome"> (Welcome)
+     ============================================ -->

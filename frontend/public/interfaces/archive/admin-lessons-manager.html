@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Leçons - Admin Claudyne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filters select,
+        .filters input {
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filters select:focus,
+        .filters input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .lessons-table-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin: 0 0.25rem;
+        }
+
+        .btn-toggle {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-toggle:hover {
+            background: #ffb300;
+        }
+
+        .btn-edit {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #1976D2;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+        }
+
+        .close-modal {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 300px;
+            font-family: monospace;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-save {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            width: 100%;
+        }
+
+        .btn-save:hover {
+            background: #45a049;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .pagination button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎓 Gestion des Leçons</h1>
+            <p>Administration du contenu pédagogique de la plateforme Claudyne</p>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alert-container"></div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-lessons">-</div>
+                <div class="stat-label">Total Leçons</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="active-lessons">-</div>
+                <div class="stat-label">Leçons Actives</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="inactive-lessons">-</div>
+                <div class="stat-label">Leçons Désactivées</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="enriched-lessons">-</div>
+                <div class="stat-label">Contenu Enrichi</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="search-input" placeholder="🔍 Rechercher une leçon...">
+            <select id="filter-category">
+                <option value="">Toutes les matières</option>
+                <option value="Mathématiques">Mathématiques</option>
+                <option value="Sciences">Sciences (Physique/Chimie/SVT)</option>
+                <option value="Langues">Langues (Français/Anglais)</option>
+                <option value="Sciences Humaines">Sciences Humaines</option>
+            </select>
+            <select id="filter-level">
+                <option value="">Tous les niveaux</option>
+                <option value="CP">CP</option>
+                <option value="CE1">CE1</option>
+                <option value="CE2">CE2</option>
+                <option value="CM1">CM1</option>
+                <option value="CM2">CM2</option>
+                <option value="6ème">6ème</option>
+                <option value="5ème">5ème</option>
+                <option value="4ème">4ème</option>
+                <option value="3ème">3ème</option>
+                <option value="2nde">2nde</option>
+                <option value="1ère">1ère</option>
+                <option value="Tle">Tle</option>
+            </select>
+            <select id="filter-status">
+                <option value="">Tous les statuts</option>
+                <option value="active">Actives</option>
+                <option value="inactive">Désactivées</option>
+            </select>
+        </div>
+
+        <!-- Lessons Table -->
+        <div class="lessons-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Titre</th>
+                        <th>Matière</th>
+                        <th>Niveau</th>
+                        <th>Statut</th>
+                        <th>Contenu</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="lessons-tbody">
+                    <tr>
+                        <td colspan="7" class="loading">Chargement des leçons...</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Modifier la leçon</h2>
+                <button class="close-modal" onclick="closeEditModal()">Fermer</button>
+            </div>
+            <form id="edit-form">
+                <div class="form-group">
+                    <label>Titre de la leçon</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="edit-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contenu (Markdown/Texte)</label>
+                    <textarea id="edit-content" required></textarea>
+                    <small>Conseil: Le contenu est stocké dans content.transcript. Format Markdown accepté.</small>
+                </div>
+                <div class="form-group">
+                    <label>Durée (minutes)</label>
+                    <input type="number" id="edit-duration" min="1" max="180">
+                </div>
+                <button type="submit" class="btn btn-save">💾 Enregistrer les modifications</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/admin';
+        let allLessons = [];
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        let currentLesson = null;
+
+        // Charger les leçons au démarrage
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLessons();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('search-input').addEventListener('input', filterAndRenderLessons);
+            document.getElementById('filter-category').addEventListener('change', filterAndRenderLessons);
+            document.getElementById('filter-level').addEventListener('change', filterAndRenderLessons);
+            document.getElementById('filter-status').addEventListener('change', filterAndRenderLessons);
+            document.getElementById('edit-form').addEventListener('submit', saveLesson);
+        }
+
+        async function loadLessons() {
+            try {
+                const response = await fetch(`${API_BASE}/content/all-lessons`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erreur de chargement');
+
+                const data = await response.json();
+                allLessons = data.lessons || [];
+
+                updateStats();
+                filterAndRenderLessons();
+                showAlert('Leçons chargées avec succès!', 'success');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors du chargement des leçons', 'error');
+            }
+        }
+
+        function updateStats() {
+            const total = allLessons.length;
+            const active = allLessons.filter(l => l.isActive).length;
+            const inactive = total - active;
+            const enriched = allLessons.filter(l => {
+                const transcript = l.content?.transcript || '';
+                return transcript.includes('Maman Claudine') || transcript.includes('## 1.');
+            }).length;
+
+            document.getElementById('total-lessons').textContent = total;
+            document.getElementById('active-lessons').textContent = active;
+            document.getElementById('inactive-lessons').textContent = inactive;
+            document.getElementById('enriched-lessons').textContent = enriched;
+        }
+
+        function filterAndRenderLessons() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const category = document.getElementById('filter-category').value;
+            const level = document.getElementById('filter-level').value;
+            const status = document.getElementById('filter-status').value;
+
+            let filtered = allLessons.filter(lesson => {
+                const matchesSearch = !search ||
+                    lesson.title.toLowerCase().includes(search) ||
+                    lesson.subjectTitle.toLowerCase().includes(search);
+
+                const matchesCategory = !category || lesson.category === category;
+                const matchesLevel = !level || lesson.level === level;
+                const matchesStatus = !status ||
+                    (status === 'active' && lesson.isActive) ||
+                    (status === 'inactive' && !lesson.isActive);
+
+                return matchesSearch && matchesCategory && matchesLevel && matchesStatus;
+            });
+
+            renderLessons(filtered);
+            renderPagination(filtered.length);
+        }
+
+        function renderLessons(lessons) {
+            const tbody = document.getElementById('lessons-tbody');
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageLessons = lessons.slice(start, end);
+
+            if (pageLessons.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data">Aucune leçon trouvée</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = pageLessons.map(lesson => {
+                const hasContent = lesson.content?.transcript && lesson.content.transcript.length > 100;
+                return `
+                    <tr>
+                        <td><small>${lesson.id.substring(0, 8)}...</small></td>
+                        <td><strong>${lesson.title}</strong></td>
+                        <td>${lesson.subjectTitle}</td>
+                        <td><span class="badge">${lesson.level}</span></td>
+                        <td>
+                            <span class="badge badge-${lesson.isActive ? 'active' : 'inactive'}">
+                                ${lesson.isActive ? '✅ Active' : '❌ Désactivée'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge ${hasContent ? 'badge-active' : 'badge-inactive'}">
+                                ${hasContent ? '📝 Enrichi' : '⚠️ Vide'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-toggle" onclick="toggleLesson('${lesson.id}', ${lesson.isActive})">
+                                ${lesson.isActive ? 'Désactiver' : 'Activer'}
+                            </button>
+                            <button class="btn btn-edit" onclick="editLesson('${lesson.id}')">
+                                ✏️ Modifier
+                            </button>
+                            <button class="btn btn-delete" onclick="deleteLesson('${lesson.id}', '${lesson.title}')">
+                                🗑️ Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+                    ← Précédent
+                </button>
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `
+                        <button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += '<span>...</span>';
+                }
+            }
+
+            html += `
+                <button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+                    Suivant →
+                </button>
+            `;
+
+            pagination.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            filterAndRenderLessons();
+            window.scrollTo(0, 0);
+        }
+
+        async function toggleLesson(id, currentStatus) {
+            const courseId = `COURS-${id}`;
+
+            if (!confirm(`Voulez-vous vraiment ${currentStatus ? 'désactiver' : 'activer'} cette leçon?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/content/courses/${courseId}/toggle`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erreur de mise à jour');
+
+                const lesson = allLessons.find(l => l.id === id);
+                if (lesson) {
+                    lesson.isActive = !lesson.isActive;
+                }
+
+                updateStats();
+                filterAndRenderLessons();
+                showAlert(`Leçon ${currentStatus ? 'désactivée' : 'activée'} avec succès!`, 'success');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors de la mise à jour du statut', 'error');
+            }
+        }
+
+        function editLesson(id) {
+            currentLesson = allLessons.find(l => l.id === id);
+            if (!currentLesson) return;
+
+            document.getElementById('edit-title').value = currentLesson.title;
+            document.getElementById('edit-description').value = currentLesson.description || '';
+            document.getElementById('edit-content').value = currentLesson.content?.transcript || '';
+            document.getElementById('edit-duration').value = currentLesson.estimatedDuration || 45;
+
+            document.getElementById('edit-modal').classList.add('show');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('show');
+            currentLesson = null;
+        }
+
+        async function saveLesson(e) {
+            e.preventDefault();
+
+            if (!currentLesson) return;
+
+            const courseId = `COURS-${currentLesson.id}`;
+            const formData = {
+                title: document.getElementById('edit-title').value,
+                description: document.getElementById('edit-description').value,
+                content: {
+                    ...currentLesson.content,
+                    transcript: document.getElementById('edit-content').value
+                },
+                duration: parseInt(document.getElementById('edit-duration').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/courses/${courseId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) throw new Error('Erreur de sauvegarde');
+
+                // Mettre à jour la leçon locale
+                Object.assign(currentLesson, formData);
+
+                filterAndRenderLessons();
+                closeEditModal();
+                showAlert('Leçon modifiée avec succès!', 'success');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors de la sauvegarde', 'error');
+            }
+        }
+
+        async function deleteLesson(id, title) {
+            if (!confirm(`⚠️ ATTENTION ⚠️\n\nVoulez-vous vraiment supprimer la leçon:\n"${title}"?\n\nCette action est IRRÉVERSIBLE si aucun étudiant n'a commencé cette leçon.\nSinon, elle sera seulement désactivée.`)) {
+                return;
+            }
+
+            const courseId = `COURS-${id}`;
+
+            try {
+                const response = await fetch(`${API_BASE}/content/courses/${courseId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Erreur de suppression');
+
+                const result = await response.json();
+
+                if (result.data.action === 'deleted') {
+                    allLessons = allLessons.filter(l => l.id !== id);
+                    showAlert('Leçon supprimée avec succès!', 'success');
+                } else {
+                    const lesson = allLessons.find(l => l.id === id);
+                    if (lesson) lesson.isActive = false;
+                    showAlert(result.message, 'success');
+                }
+
+                updateStats();
+                filterAndRenderLessons();
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors de la suppression', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

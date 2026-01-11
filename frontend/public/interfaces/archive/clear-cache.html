@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nettoyage Cache Claudyne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .status {
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-item {
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge.success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge.warning {
+            background: #ff9800;
+            color: white;
+        }
+
+        .badge.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.secondary {
+            background: #6c757d;
+        }
+
+        .log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 10px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Nettoyage Cache Claudyne</h1>
+
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Cliquez sur "Nettoyer tout le cache"</li>
+                <li>Attendez la confirmation</li>
+                <li>Cliquez sur "Recharger l'application"</li>
+                <li>Si le problème persiste, utilisez Ctrl+Shift+Delete dans Chrome</li>
+            </ol>
+        </div>
+
+        <div class="status">
+            <div class="status-item">
+                <span>Service Worker</span>
+                <span class="badge" id="sw-status">Vérification...</span>
+            </div>
+            <div class="status-item">
+                <span>Cache API</span>
+                <span class="badge" id="cache-status">Vérification...</span>
+            </div>
+            <div class="status-item">
+                <span>LocalStorage</span>
+                <span class="badge" id="storage-status">Vérification...</span>
+            </div>
+            <div class="status-item">
+                <span>Cookies</span>
+                <span class="badge" id="cookie-status">Vérification...</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="clearAllCache()">🧹 Nettoyer tout le cache</button>
+        <button class="btn secondary" onclick="reloadApp()">🔄 Recharger l'application</button>
+
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        const logEl = document.getElementById('log');
+
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
+            entry.textContent = `[${timestamp}] ${icon} ${message}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function updateBadge(id, text, type) {
+            const badge = document.getElementById(id);
+            badge.textContent = text;
+            badge.className = `badge ${type}`;
+        }
+
+        async function checkStatus() {
+            log('Vérification du statut...');
+
+            // Check Service Worker
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                if (registrations.length > 0) {
+                    updateBadge('sw-status', `${registrations.length} actif(s)`, 'warning');
+                    log(`Service Worker trouvé: ${registrations.length} registration(s)`, 'info');
+                } else {
+                    updateBadge('sw-status', 'Aucun', 'success');
+                    log('Aucun Service Worker actif', 'success');
+                }
+            } else {
+                updateBadge('sw-status', 'Non supporté', 'error');
+            }
+
+            // Check Cache API
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                if (cacheNames.length > 0) {
+                    updateBadge('cache-status', `${cacheNames.length} cache(s)`, 'warning');
+                    log(`Caches trouvés: ${cacheNames.join(', ')}`, 'info');
+                } else {
+                    updateBadge('cache-status', 'Vide', 'success');
+                    log('Aucun cache trouvé', 'success');
+                }
+            }
+
+            // Check LocalStorage
+            const storageSize = Object.keys(localStorage).length;
+            if (storageSize > 0) {
+                updateBadge('storage-status', `${storageSize} clés`, 'warning');
+                log(`LocalStorage: ${storageSize} clés`, 'info');
+            } else {
+                updateBadge('storage-status', 'Vide', 'success');
+                log('LocalStorage vide', 'success');
+            }
+
+            // Check Cookies
+            const cookieCount = document.cookie.split(';').filter(c => c.trim()).length;
+            if (cookieCount > 0) {
+                updateBadge('cookie-status', `${cookieCount} cookie(s)`, 'warning');
+                log(`Cookies: ${cookieCount}`, 'info');
+            } else {
+                updateBadge('cookie-status', 'Aucun', 'success');
+                log('Aucun cookie', 'success');
+            }
+        }
+
+        async function clearAllCache() {
+            log('Début du nettoyage complet...', 'info');
+
+            try {
+                // 1. Unregister Service Workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (const registration of registrations) {
+                        await registration.unregister();
+                        log(`Service Worker désactivé: ${registration.scope}`, 'success');
+                    }
+                    updateBadge('sw-status', 'Nettoyé', 'success');
+                }
+
+                // 2. Clear Cache API
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (const cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        log(`Cache supprimé: ${cacheName}`, 'success');
+                    }
+                    updateBadge('cache-status', 'Nettoyé', 'success');
+                }
+
+                // 3. Clear LocalStorage
+                localStorage.clear();
+                log('LocalStorage vidé', 'success');
+                updateBadge('storage-status', 'Nettoyé', 'success');
+
+                // 4. Clear SessionStorage
+                sessionStorage.clear();
+                log('SessionStorage vidé', 'success');
+
+                // 5. Clear Cookies
+                const cookies = document.cookie.split(';');
+                for (const cookie of cookies) {
+                    const eqPos = cookie.indexOf('=');
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+                }
+                log('Cookies supprimés', 'success');
+                updateBadge('cookie-status', 'Nettoyé', 'success');
+
+                // 6. Clear IndexedDB
+                if (window.indexedDB) {
+                    const databases = await window.indexedDB.databases();
+                    for (const db of databases) {
+                        window.indexedDB.deleteDatabase(db.name);
+                        log(`IndexedDB supprimé: ${db.name}`, 'success');
+                    }
+                }
+
+                log('✅ NETTOYAGE TERMINÉ ! Cliquez sur "Recharger l\'application"', 'success');
+
+            } catch (error) {
+                log(`Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        function reloadApp() {
+            log('Rechargement de l\'application...', 'info');
+            setTimeout(() => {
+                window.location.href = 'https://www.claudyne.com/student-interface-modern.html';
+            }, 500);
+        }
+
+        // Auto-check on load
+        window.addEventListener('load', () => {
+            checkStatus();
+            log('Page de nettoyage chargée', 'success');
+        });
+    </script>
+</body>
+</html>

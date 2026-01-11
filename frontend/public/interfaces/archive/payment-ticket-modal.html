@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumettre un paiement manuel - Claudyne</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .modal-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .steps-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: white;
+            width: 30px;
+            border-radius: 5px;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .plan-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .plan-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+
+        .plan-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .plan-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .plan-price {
+            color: #667eea;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .plan-duration {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .upload-zone {
+            border: 2px dashed #e5e7eb;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-zone.drag-over {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+
+        .ticket-reference {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-box p {
+            color: #1e40af;
+            margin: 5px 0;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            color: #991b1b;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .loading-spinner.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .modal-container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-container">
+        <div class="modal-header">
+            <h1>💳 Paiement Manuel</h1>
+            <p>Soumettez votre preuve de paiement pour validation</p>
+            <div class="steps-indicator">
+                <div class="step-dot active" data-step="1"></div>
+                <div class="step-dot" data-step="2"></div>
+                <div class="step-dot" data-step="3"></div>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <!-- ÉTAPE 1: Sélection du Plan -->
+            <div class="step active" id="step1">
+                <h2 style="margin-bottom: 10px;">Choisissez votre formule</h2>
+                <p style="color: #6b7280; margin-bottom: 20px;">Sélectionnez la durée de votre abonnement</p>
+
+                <div class="plan-grid" id="plansContainer">
+                    <!-- Plans will be loaded dynamically from API -->
+                    <div style="text-align: center; padding: 40px; color: #6b7280;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                        <p>Chargement des formules disponibles...</p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="window.close()">Annuler</button>
+                    <button class="btn btn-primary" id="btn-step1" onclick="nextStep(2)" disabled>Continuer</button>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 2: Détails du Paiement -->
+            <div class="step" id="step2">
+                <h2 style="margin-bottom: 20px;">Détails du paiement</h2>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Méthode de paiement *</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Sélectionnez...</option>
+                        <option value="MTN_MOMO">MTN Mobile Money</option>
+                        <option value="ORANGE_MONEY">Orange Money</option>
+                        <option value="EXPRESS_UNION">Express Union</option>
+                        <option value="BANK_TRANSFER">Virement Bancaire</option>
+                        <option value="CASH">Espèces</option>
+                        <option value="OTHER">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="phoneGroup" style="display: none;">
+                    <label for="phoneNumber">Numéro de téléphone</label>
+                    <input type="tel" id="phoneNumber" placeholder="+237 6XX XXX XXX">
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionId">ID de transaction (optionnel)</label>
+                    <input type="text" id="transactionId" placeholder="Ex: MTN123456789">
+                </div>
+
+                <div class="form-group">
+                    <label for="userNotes">Notes (optionnel)</label>
+                    <textarea id="userNotes" placeholder="Ajoutez des informations supplémentaires si nécessaire..."></textarea>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>💡 Information:</strong></p>
+                    <p>À l'étape suivante, vous pourrez ajouter une photo/capture d'écran de votre preuve de paiement.</p>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="previousStep(1)">Retour</button>
+                    <button class="btn btn-primary" onclick="nextStep(3)">Continuer</button>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 3: Upload de la Preuve -->
+            <div class="step" id="step3">
+                <h2 style="margin-bottom: 10px;">Preuve de paiement</h2>
+                <p style="color: #6b7280; margin-bottom: 20px;">Ajoutez une capture d'écran ou photo de votre reçu de paiement</p>
+
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('proofFile').click()">
+                    <div class="upload-icon">📸</div>
+                    <p style="font-weight: 600; margin-bottom: 5px;">Cliquez pour sélectionner une image</p>
+                    <p style="color: #6b7280; font-size: 0.9rem;">ou glissez-déposez ici</p>
+                    <p style="color: #9ca3af; font-size: 0.85rem; margin-top: 10px;">JPG, PNG, WEBP ou PDF • Max 5 MB</p>
+                    <input type="file" id="proofFile" accept="image/jpeg,image/png,image/webp,application/pdf">
+                </div>
+
+                <div id="preview" style="display: none; text-align: center;">
+                    <img id="previewImage" class="preview-image">
+                    <p style="margin-top: 10px;">
+                        <button class="btn btn-secondary" style="display: inline-block; padding: 8px 16px;" onclick="clearPreview()">
+                            Changer l'image
+                        </button>
+                    </p>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>ℹ️ Note:</strong></p>
+                    <p>La preuve de paiement est optionnelle mais fortement recommandée pour accélérer la validation.</p>
+                    <p>Délai de traitement: <strong>moins de 24 heures</strong></p>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="loading-spinner" id="loadingSpinner"></div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="btn-back-step3" onclick="previousStep(2)">Retour</button>
+                    <button class="btn btn-primary" id="btn-submit" onclick="submitTicket()">Soumettre</button>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 4: Confirmation -->
+            <div class="step" id="step4">
+                <div class="success-message">
+                    <div class="success-icon">✅</div>
+                    <div class="success-title">Ticket créé avec succès!</div>
+                    <p style="color: #6b7280; margin-bottom: 20px;">Votre demande de paiement a été enregistrée</p>
+
+                    <div class="ticket-reference" id="ticketRef"></div>
+
+                    <div class="info-box">
+                        <p><strong>📋 Prochaines étapes:</strong></p>
+                        <p>• Notre équipe va vérifier votre paiement</p>
+                        <p>• Vous recevrez une notification sous 24h</p>
+                        <p>• Votre abonnement sera activé dès validation</p>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="viewMyTickets()">Voir mes tickets</button>
+                        <button class="btn btn-secondary" onclick="window.close()">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPlan = null;
+        let selectedAmount = 0;
+        let selectedDuration = 30;
+
+        // Configuration API
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : 'https://www.claudyne.com';
+
+        // Token storage (received via postMessage for security)
+        let authToken = null;
+
+        // Listen for token from parent window via postMessage (secure)
+        window.addEventListener('message', function(event) {
+            // Verify origin for security
+            if (event.origin !== window.location.origin) {
+                console.warn('Rejected message from unauthorized origin:', event.origin);
+                return;
+            }
+
+            // Handle token setting
+            if (event.data && event.data.action === 'setToken' && event.data.token) {
+                authToken = event.data.token;
+                console.log('✅ Token received securely via postMessage');
+            }
+        });
+
+        // Get token from postMessage, localStorage, or sessionStorage (NO URL parameters)
+        function getToken() {
+            // Priority 1: Token from postMessage (most secure for iframes)
+            if (authToken) {
+                return authToken;
+            }
+            // Priority 2: Fallback to storage (for direct access)
+            return localStorage.getItem('claudyne_token') ||
+                   localStorage.getItem('authToken') ||
+                   sessionStorage.getItem('claudyne_token');
+        }
+
+        // Load available plans from API with better error handling
+        async function loadAvailablePlans() {
+            const plansContainer = document.getElementById('plansContainer');
+
+            try {
+                const response = await fetch(`${API_URL}/api/payment-tickets/available-plans`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.length > 0) {
+                    plansContainer.innerHTML = '';
+
+                    result.data.forEach(plan => {
+                        const planCard = document.createElement('label');
+                        planCard.className = 'plan-card';
+                        planCard.onclick = () => selectPlan(planCard, plan.planType, plan.price, plan.durationDays);
+
+                        // Get appropriate icon for plan type
+                        let icon = '📦';
+                        if (plan.planType === 'FAMILY' || plan.name.toLowerCase().includes('famille')) {
+                            icon = '💝';
+                        } else if (plan.planType === 'INDIVIDUAL_STUDENT' || plan.name.toLowerCase().includes('individuelle')) {
+                            icon = '🎓';
+                        } else if (plan.planType === 'DISCOVERY_TRIAL' || plan.name.toLowerCase().includes('découverte')) {
+                            icon = '🎁';
+                        }
+
+                        planCard.innerHTML = `
+                            <input type="radio" name="plan" value="${escapeHtml(plan.planType)}_${escapeHtml(plan.durationDays)}">
+                            <div class="plan-name">${icon} ${escapeHtml(plan.name)}</div>
+                            <div class="plan-price">${formatPrice(plan.price)} ${escapeHtml(plan.currency)}</div>
+                            <div class="plan-duration">${escapeHtml(plan.durationDays)} jours${plan.description ? ' • ' + escapeHtml(plan.description) : ''}</div>
+                        `;
+
+                        plansContainer.appendChild(planCard);
+                    });
+                } else {
+                    throw new Error('Aucun plan disponible pour le moment');
+                }
+            } catch (error) {
+                console.error('Error loading plans:', error);
+                plansContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #ef4444; grid-column: 1/-1;">
+                        <p><strong>⚠️ Impossible de charger les formules</strong></p>
+                        <p style="margin-top: 10px; color: #6b7280; font-size: 0.9rem;">
+                            ${error.message || 'Erreur réseau. Veuillez vérifier votre connexion.'}
+                        </p>
+                        <button class="btn btn-secondary" style="margin-top: 20px;" onclick="loadAvailablePlans()">
+                            Réessayer
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Fallback default plans if API fails
+        function loadDefaultPlans() {
+            const plansContainer = document.getElementById('plansContainer');
+            plansContainer.innerHTML = `
+                <label class="plan-card" onclick="selectPlan(this, 'DISCOVERY_TRIAL', 0, 7)">
+                    <input type="radio" name="plan" value="DISCOVERY_TRIAL_7">
+                    <div class="plan-name">🎁 Découverte</div>
+                    <div class="plan-price">0 XAF</div>
+                    <div class="plan-duration">7 jours gratuits</div>
+                </label>
+
+                <label class="plan-card" onclick="selectPlan(this, 'INDIVIDUAL_STUDENT', 8000, 30)">
+                    <input type="radio" name="plan" value="INDIVIDUAL_STUDENT_30">
+                    <div class="plan-name">🎓 Individuelle</div>
+                    <div class="plan-price">8 000 XAF</div>
+                    <div class="plan-duration">30 jours • 1 élève</div>
+                </label>
+
+                <label class="plan-card" onclick="selectPlan(this, 'FAMILY', 15000, 30)">
+                    <input type="radio" name="plan" value="FAMILY_30">
+                    <div class="plan-name">💝 Familiale 💝</div>
+                    <div class="plan-price">15 000 XAF</div>
+                    <div class="plan-duration">30 jours • Jusqu'à 3 enfants</div>
+                </label>
+            `;
+        }
+
+        // Format price with thousand separators
+        function formatPrice(price) {
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+
+        // Sélection de plan
+        function selectPlan(card, planType, amount, duration) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+
+            // Ajouter la sélection
+            card.classList.add('selected');
+            card.querySelector('input[type="radio"]').checked = true;
+
+            // Enregistrer les données
+            selectedPlan = planType;
+            selectedAmount = amount;
+            selectedDuration = duration;
+
+            // Activer le bouton continuer
+            document.getElementById('btn-step1').disabled = false;
+        }
+
+        // Navigation entre étapes
+        function nextStep(stepNumber) {
+            // Cacher toutes les étapes
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+            // Afficher l'étape suivante
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+
+            // Mettre à jour les indicateurs
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                if (index < stepNumber) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function previousStep(stepNumber) {
+            nextStep(stepNumber);
+        }
+
+        // Afficher/cacher le champ téléphone selon la méthode
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            const phoneGroup = document.getElementById('phoneGroup');
+            if (this.value === 'MTN_MOMO' || this.value === 'ORANGE_MONEY') {
+                phoneGroup.style.display = 'block';
+                document.getElementById('phoneNumber').required = true;
+            } else {
+                phoneGroup.style.display = 'none';
+                document.getElementById('phoneNumber').required = false;
+            }
+        });
+
+        // Gestion de l'upload
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('proofFile');
+        let selectedFile = null;
+
+        // Drag & drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('drag-over');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('drag-over');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            // Vérifier le type
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+            if (!validTypes.includes(file.type)) {
+                showError('Type de fichier non autorisé. Utilisez JPG, PNG, WEBP ou PDF.');
+                return;
+            }
+
+            // Vérifier la taille (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                showError('Le fichier est trop volumineux. Maximum 5 MB.');
+                return;
+            }
+
+            selectedFile = file;
+
+            // Prévisualiser l'image
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('uploadZone').style.display = 'none';
+                    document.getElementById('preview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Pour les PDF, juste afficher un message
+                document.getElementById('uploadZone').style.display = 'none';
+                document.getElementById('preview').innerHTML = `
+                    <p style="padding: 40px; background: #f3f4f6; border-radius: 8px;">
+                        📄 PDF sélectionné: ${file.name}
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <button class="btn btn-secondary" style="display: inline-block; padding: 8px 16px;" onclick="clearPreview()">
+                            Changer le fichier
+                        </button>
+                    </p>
+                `;
+                document.getElementById('preview').style.display = 'block';
+            }
+        }
+
+        function clearPreview() {
+            selectedFile = null;
+            document.getElementById('uploadZone').style.display = 'block';
+            document.getElementById('preview').style.display = 'none';
+            fileInput.value = '';
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+
+        // Soumettre le ticket avec gestion des erreurs améliorée
+        async function submitTicket() {
+            const token = getToken();
+            if (!token) {
+                showError('Session expirée. Veuillez vous reconnecter.');
+                setTimeout(() => {
+                    window.parent.postMessage({ action: 'logout' }, '*');
+                }, 2000);
+                return;
+            }
+
+            // Désactiver les boutons
+            const btnSubmit = document.getElementById('btn-submit');
+            const btnBack = document.getElementById('btn-back-step3');
+            btnSubmit.disabled = true;
+            btnBack.disabled = true;
+            document.getElementById('loadingSpinner').classList.add('show');
+
+            try {
+                // Valider les données avant soumission
+                if (!selectedPlan || !selectedAmount || !selectedDuration) {
+                    throw new Error('Veuillez sélectionner un plan');
+                }
+
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                if (!paymentMethod) {
+                    throw new Error('Veuillez sélectionner un moyen de paiement');
+                }
+
+                // Préparer les données
+                const ticketData = {
+                    amount: selectedAmount,
+                    planType: selectedPlan,
+                    durationDays: selectedDuration,
+                    paymentMethod: paymentMethod,
+                    phoneNumber: document.getElementById('phoneNumber').value || null,
+                    transactionId: document.getElementById('transactionId').value || null,
+                    userNotes: document.getElementById('userNotes').value || null
+                };
+
+                // 1. Créer le ticket
+                const response = await fetch(`${API_URL}/api/payment-tickets/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(ticketData)
+                });
+
+                const result = await response.json();
+
+                // Handle authentication errors (token expired)
+                if (response.status === 401) {
+                    showError('Session expirée. Veuillez vous reconnecter.');
+                    setTimeout(() => {
+                        localStorage.removeItem('claudyne_token');
+                        localStorage.removeItem('authToken');
+                        window.parent.postMessage({ action: 'logout' }, '*');
+                    }, 2000);
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.message || `Erreur ${response.status}: ${response.statusText}`);
+                }
+
+                const ticketId = result.data.id;
+                const ticketReference = result.data.ticketReference;
+
+                // 2. Si une preuve a été sélectionnée, l'uploader
+                if (selectedFile) {
+                    const formData = new FormData();
+                    formData.append('proof', selectedFile);
+
+                    const uploadResponse = await fetch(`${API_URL}/api/payment-tickets/${ticketId}/upload-proof`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const uploadResult = await uploadResponse.json();
+
+                    if (!uploadResponse.ok) {
+                        // Log but don't fail - ticket is already created
+                        console.warn('Avertissement: Upload de preuve échoué:', uploadResult.message);
+                        showError('Ticket créé mais la preuve n\'a pas pu être uploadée. Vous pouvez la rajouter plus tard.');
+                    }
+                }
+
+                // 3. Afficher la confirmation
+                document.getElementById('ticketRef').textContent = ticketReference;
+                nextStep(4);
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError(error.message || 'Une erreur est survenue. Veuillez réessayer.');
+                btnSubmit.disabled = false;
+                btnBack.disabled = false;
+            } finally {
+                document.getElementById('loadingSpinner').classList.remove('show');
+            }
+        }
+
+        function viewMyTickets() {
+            // Rediriger vers la page de gestion des tickets
+            window.location.href = '/parent-interface.html#tickets';
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Vérifier si l'utilisateur est connecté
+            const token = getToken();
+            if (!token) {
+                alert('Vous devez être connecté pour accéder à cette page.');
+                window.location.href = '/';
+            }
+
+            // Load available plans from API
+            loadAvailablePlans();
+        });
+    </script>
+</body>
+</html>

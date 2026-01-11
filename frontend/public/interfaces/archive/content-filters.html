@@ -1,0 +1,43 @@
+
+                    <!-- Filtres de contenu -->
+                    <div style="padding: 1.5rem; background: #F9FAFB; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #E5E7EB;">
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Catégorie</label>
+                                <select id="contentCategoryFilter" onchange="filterContentByCategoryAndLevel()" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; background: white; color: #1F2937;">
+                                    <option value="">Toutes les catégories</option>
+                                    <option value="Sciences">Sciences</option>
+                                    <option value="Langues">Langues</option>
+                                    <option value="Sciences Humaines">Sciences Humaines</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Niveau</label>
+                                <select id="contentLevelFilter" onchange="filterContentByCategoryAndLevel()" style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; background: white; color: #1F2937;">
+                                    <option value="">Tous les niveaux</option>
+                                    <option value="CP">CP</option>
+                                    <option value="CE1">CE1</option>
+                                    <option value="CE2">CE2</option>
+                                    <option value="CM1">CM1</option>
+                                    <option value="CM2">CM2</option>
+                                    <option value="6ème">6ème</option>
+                                    <option value="5ème">5ème</option>
+                                    <option value="4ème">4ème</option>
+                                    <option value="3ème">3ème</option>
+                                    <option value="2nde">2nde</option>
+                                    <option value="1ère">1ère</option>
+                                    <option value="Tle">Tle</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151;">Recherche</label>
+                                <input type="text" id="contentSearchFilter" oninput="filterContentByCategoryAndLevel()" placeholder="Rechercher une matière..." style="width: 100%; padding: 0.75rem; border: 1px solid #D1D5DB; border-radius: 6px; color: #1F2937;">
+                            </div>
+                            <div style="display: flex; align-items: flex-end;">
+                                <button onclick="resetContentFilters()" style="padding: 0.75rem 1.5rem; background: #6B7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                                    Réinitialiser
+                                </button>
+                            </div>
+                        </div>
+                        <div id="filterSummary" style="margin-top: 1rem; color: #6B7280; font-size: 0.875rem;"></div>
+                    </div>

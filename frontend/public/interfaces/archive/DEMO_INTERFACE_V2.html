@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudyne - Interface d'Apprentissage ULTRA FLUIDE v2.0 (DÉMO)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #020205;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        /* === DESIGN SYSTEM CLAUDYNE === */
+        :root {
+            --claudyne-dark-bg: #020205;
+            --claudyne-accent-cyan: #00FFC2;
+            --claudyne-accent-magenta: #FF57E3;
+            --claudyne-accent-yellow: #FFC947;
+            --claudyne-light-text: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* === HEADER === */
+        .demo-header {
+            background: linear-gradient(135deg, rgba(0, 255, 194, 0.1), rgba(255, 87, 227, 0.1));
+            border: 2px solid var(--claudyne-accent-cyan);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .demo-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .demo-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        /* === BREADCRUMBS === */
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .breadcrumbs a {
+            color: var(--claudyne-accent-cyan);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumbs .current {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* === HERO === */
+        .hero {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hero-icon {
+            font-size: 5rem;
+            background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            padding: 1.5rem;
+            border-radius: 20px;
+        }
+
+        .hero-text h2 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--claudyne-accent-cyan);
+        }
+
+        /* === STATS === */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stats-header h3 {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .stats-numbers {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            width: 65%;
+            transition: width 1s ease-out;
+            box-shadow: 0 0 20px rgba(0, 255, 194, 0.5);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* === CONTROLS === */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--claudyne-accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        .btn.active {
+            background: linear-gradient(135deg, rgba(0, 255, 194, 0.2), rgba(255, 87, 227, 0.2));
+            border-color: var(--claudyne-accent-cyan);
+        }
+
+        .kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        /* === LAYOUT === */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        .main-layout.focus-mode {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            transition: all 0.5s ease;
+        }
+
+        .main-layout.focus-mode .sidebar {
+            display: none;
+        }
+
+        .content-wrapper {
+            transition: all 0.5s ease;
+        }
+
+        .main-layout.focus-mode .content-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* === SIDEBAR === */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 1rem;
+        }
+
+        /* === SEARCH === */
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--claudyne-accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 255, 194, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #666;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .search-results {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* === LESSONS LIST === */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .lessons-list {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .lessons-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .lessons-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .lessons-list::-webkit-scrollbar-thumb {
+            background: var(--claudyne-accent-cyan);
+            border-radius: 10px;
+        }
+
+        .lesson-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .lesson-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 255, 194, 0.5);
+            transform: translateX(4px);
+        }
+
+        .lesson-card.active {
+            background: linear-gradient(135deg, rgba(0, 255, 194, 0.15), rgba(255, 87, 227, 0.15));
+            border: 2px solid var(--claudyne-accent-cyan);
+            box-shadow: 0 4px 20px rgba(0, 255, 194, 0.3);
+        }
+
+        .lesson-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            border-radius: 8px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .lesson-info {
+            flex: 1;
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .lesson-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lesson-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 6px;
+            color: var(--claudyne-accent-cyan);
+        }
+
+        /* === SHORTCUTS === */
+        .shortcuts {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        /* === TABS === */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            background: rgba(0, 255, 194, 0.08);
+            border: 2px solid var(--claudyne-accent-cyan);
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 255, 194, 0.15);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--claudyne-accent-cyan), var(--claudyne-accent-magenta));
+            color: #020205;
+            box-shadow: 0 8px 24px rgba(0, 255, 194, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* === CONTENT === */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+
+        .content-grid.no-toc {
+            grid-template-columns: 1fr;
+        }
+
+        .lesson-content {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .lesson-header {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lesson-header h1 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-header p {
+            color: #aaa;
+        }
+
+        .lesson-body h2 {
+            font-size: 1.5rem;
+            color: white;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(0, 255, 194, 0.3);
+        }
+
+        .lesson-body h3 {
+            font-size: 1.2rem;
+            color: white;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .lesson-body p {
+            color: #ccc;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .lesson-body ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .lesson-body li {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .lesson-body li::marker {
+            color: var(--claudyne-accent-cyan);
+        }
+
+        .lesson-body code {
+            background: rgba(0, 255, 194, 0.1);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--claudyne-accent-cyan);
+            font-family: 'Courier New', monospace;
+        }
+
+        .lesson-body strong {
+            color: var(--claudyne-accent-cyan);
+            font-weight: bold;
+        }
+
+        /* === TOC === */
+        .toc {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 1rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .toc h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .toc-item {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.25rem;
+            border-radius: 8px;
+            color: #888;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .toc-item.active {
+            background: rgba(0, 255, 194, 0.2);
+            color: var(--claudyne-accent-cyan);
+            border-left-color: var(--claudyne-accent-cyan);
+        }
+
+        .toc-item.level-1 {
+            font-weight: bold;
+        }
+
+        .toc-item.level-2 {
+            padding-left: 1.5rem;
+            font-weight: 600;
+        }
+
+        .toc-item.level-3 {
+            padding-left: 2.5rem;
+        }
+
+        /* === ACTIONS === */
+        .lesson-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(90deg, var(--claudyne-accent-cyan), #0088FF);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 255, 194, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 194, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(90deg, var(--claudyne-accent-yellow), #FF8800);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 201, 71, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 201, 71, 0.4);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-nav {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 194, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toc {
+                position: static;
+                max-height: none;
+            }
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- DEMO HEADER -->
+        <div class="demo-header animate-in">
+            <h1>🚀 Interface d'Apprentissage ULTRA FLUIDE v2.0</h1>
+            <p>Démo interactive - Testez toutes les nouvelles fonctionnalités!</p>
+        </div>
+
+        <!-- BREADCRUMBS -->
+        <div class="breadcrumbs animate-in">
+            <a href="#">Tableau de bord</a>
+            <span>→</span>
+            <span>Physique 5ème</span>
+            <span>→</span>
+            <span class="current">La lumière et les couleurs - Partie 1</span>
+        </div>
+
+        <!-- HERO -->
+        <div class="hero animate-in">
+            <div class="hero-content">
+                <div class="hero-icon">⚛️</div>
+                <div class="hero-text">
+                    <h2>Physique 5ème</h2>
+                    <p style="color: #aaa;">Programme complet de physique pour la classe de 5ème selon le curriculum camerounais MINESEC</p>
+                    <div class="hero-badges">
+                        <span class="badge">Débutant</span>
+                        <span class="badge">📚 15 leçons</span>
+                        <span class="badge">🎯 Sciences</span>
+                        <span class="badge">⏱️ 675 min total</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-card animate-in">
+            <div class="stats-header">
+                <h3>Progression du cours</h3>
+                <div class="stats-numbers">
+                    <div class="stat-item">
+                        <div class="stat-value">10/15</div>
+                        <div class="stat-label">terminées</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">65%</div>
+                        <div class="stat-label">progression</div>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text">
+                <span>5 leçons restantes</span>
+                <span>⏱️ 225 min restantes</span>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls animate-in">
+            <button class="btn" id="toggleFocus">
+                <span id="focusIcon">🎯</span>
+                <span id="focusText">Mode Focus</span>
+                <span class="kbd">F</span>
+            </button>
+            <button class="btn active" id="toggleTOC">
+                <span>📑</span>
+                <span>Table des matières</span>
+                <span class="kbd">T</span>
+            </button>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout" id="mainLayout">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <div class="glass-card animate-in">
+                    <!-- SEARCH -->
+                    <div class="search-box">
+                        <input
+                            type="text"
+                            class="search-input"
+                            id="searchInput"
+                            placeholder="🔍 Rechercher une leçon... (Ctrl+K)"
+                        />
+                        <button class="search-clear" id="searchClear" style="display: none;">✕</button>
+                    </div>
+                    <div class="search-results" id="searchResults"></div>
+
+                    <!-- LESSONS LIST -->
+                    <div>
+                        <h3 class="section-title">
+                            <span>📚</span>
+                            <span>Leçons (<span id="lessonCount">15</span>)</span>
+                        </h3>
+                        <div class="lessons-list" id="lessonsList">
+                            <!-- Lessons will be inserted here by JS -->
+                        </div>
+                    </div>
+
+                    <!-- SHORTCUTS -->
+                    <div class="shortcuts">
+                        <div class="shortcut-row">
+                            <span>← → Navigation</span>
+                            <span>F Mode Focus</span>
+                        </div>
+                        <div class="shortcut-row">
+                            <span>T Table matières</span>
+                            <span>Ctrl+K Recherche</span>
+                        </div>
+                    </div>
+
+                    <!-- BACK LINK -->
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                        <a href="#" style="color: #888; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                            <span>←</span>
+                            <span>Retour au tableau de bord</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT WRAPPER -->
+            <div class="content-wrapper">
+                <!-- TABS -->
+                <div class="tabs animate-in">
+                    <button class="tab active">📖 Contenu de la leçon</button>
+                    <button class="tab">🧠 Quiz</button>
+                </div>
+
+                <!-- CONTENT GRID -->
+                <div class="content-grid" id="contentGrid">
+                    <!-- LESSON CONTENT -->
+                    <div class="lesson-content animate-in">
+                        <div class="lesson-header">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h1>La lumière et les couleurs - Partie 1</h1>
+                                    <p>Leçon 1 du chapitre 1: La lumière et les couleurs</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 0.9rem; color: #888;">Durée estimée</div>
+                                    <div style="font-size: 2rem; font-weight: bold; color: var(--claudyne-accent-cyan);">45 min</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                                <span class="badge">📖 Lecture</span>
+                                <span class="badge" style="background: rgba(0, 200, 100, 0.1); border-color: rgba(0, 200, 100, 0.3); color: #00C864;">✓ Terminé</span>
+                                <span class="badge" style="background: rgba(255, 201, 71, 0.1); border-color: rgba(255, 201, 71, 0.3); color: var(--claudyne-accent-yellow);">📝 Quiz disponible</span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-body">
+                            <h2 id="section-introduction">📚 Introduction</h2>
+                            <p>Bienvenue dans cette leçon sur <strong>les sources de lumière et la propagation</strong>. Nous allons découvrir les merveilles de la lumière, un phénomène physique fascinant qui nous entoure chaque jour.</p>
+
+                            <h2 id="section-sources">I. 🎯 Sources de lumière</h2>
+                            <p>Une <strong>source de lumière</strong> est un objet qui produit de la lumière. On distingue deux types :</p>
+
+                            <h3>Sources primaires (produisent leur propre lumière)</h3>
+                            <ul>
+                                <li><strong>Le Soleil</strong> : Source naturelle, énergie nucléaire</li>
+                                <li><strong>Les lampes électriques</strong> : Ampoules, LED, néons</li>
+                                <li><strong>Bougies et lampes à pétrole</strong> : Utilisées dans les villages camerounais</li>
+                                <li><strong>Feu de bois</strong> : Source traditionnelle d'éclairage</li>
+                            </ul>
+
+                            <h3>Sources secondaires (diffusent la lumière reçue)</h3>
+                            <ul>
+                                <li><strong>La Lune</strong> : Reflète la lumière du Soleil</li>
+                                <li><strong>Les murs blancs</strong> : Diffusent la lumière</li>
+                                <li><strong>Les rétroréflecteurs</strong> : Sur les véhicules pour la sécurité</li>
+                            </ul>
+
+                            <p style="background: rgba(0, 255, 194, 0.1); border-left: 3px solid var(--claudyne-accent-cyan); padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                                💡 <strong>Exemple du Cameroun</strong><br>
+                                Éclairage solaire dans les villages : Les panneaux solaires (source primaire indirecte) captent la lumière du Soleil et la convertissent en électricité pour alimenter des LED. Cette technologie apporte l'électricité dans les zones rurales non connectées au réseau ENEO.
+                            </p>
+
+                            <h2 id="section-formules">II. 📐 Formules et Lois Physiques</h2>
+                            <ul>
+                                <li><strong>Vitesse de la lumière</strong> : <code>c = 3 × 10⁸ m/s</code> (dans le vide)</li>
+                            </ul>
+
+                            <h3>📊 Propriétés importantes</h3>
+                            <ul>
+                                <li>La lumière se propage à <strong>300 000 km/s</strong> dans le vide</li>
+                                <li>Elle ralentit légèrement dans l'air, l'eau, le verre</li>
+                                <li>Rien ne peut aller plus vite que la lumière!</li>
+                            </ul>
+
+                            <h2 id="section-propagation">III. 🔬 Propagation rectiligne de la lumière</h2>
+                            <p><strong>Loi fondamentale</strong> : Dans un milieu homogène et transparent, <strong>la lumière se propage en ligne droite</strong>.</p>
+
+                            <h3>Conséquences</h3>
+                            <ul>
+                                <li><strong>Formation d'ombres nettes</strong> quand un obstacle bloque la lumière</li>
+                                <li><strong>Alignement parfait</strong> : source → obstacle → ombre</li>
+                                <li><strong>Visée précise</strong> possible avec miroirs et lasers</li>
+                            </ul>
+
+                            <h2 id="section-exercices">V. 📝 Exercices d'Application</h2>
+
+                            <h3>Exercice 1 : Vitesse de la lumière</h3>
+                            <p><strong>Énoncé</strong> : Un taxi-brousse parcourt la distance Douala-Yaoundé (250 km) en 3 heures. La lumière mettrait combien de temps pour parcourir cette même distance ?</p>
+
+                            <p><strong>Données</strong> :</p>
+                            <ul>
+                                <li>Distance : d = 250 km = 2,5 × 10⁵ m</li>
+                                <li>Vitesse de la lumière : c = 3 × 10⁸ m/s</li>
+                            </ul>
+
+                            <p><strong>Solution</strong> :</p>
+                            <p style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 194, 0.2); padding: 1rem; border-radius: 8px; font-family: 'Courier New', monospace; color: var(--claudyne-accent-cyan);">
+                                Formule : t = d / c<br>
+                                t = (2,5 × 10⁵ m) / (3 × 10⁸ m/s)<br>
+                                t = 0,833 × 10⁻³ s<br>
+                                t = 0,83 ms (millisecondes)
+                            </p>
+
+                            <p><strong>Réponse</strong> : La lumière met environ <strong>0,83 millisecondes</strong> pour parcourir Douala-Yaoundé, alors que le taxi met 3 heures!</p>
+
+                            <h2 id="section-conclusion">📚 Conclusion</h2>
+                            <p>La lumière est un phénomène physique fascinant qui nous permet de voir le monde. Comprendre ses propriétés (sources, propagation rectiligne, formation des ombres) est essentiel pour la physique et la vie quotidienne au Cameroun.</p>
+
+                            <p><strong>Prochaine leçon</strong> : Leçon 2 - Les couleurs et la décomposition de la lumière blanche.</p>
+                        </div>
+
+                        <!-- ACTIONS -->
+                        <div class="lesson-actions">
+                            <div class="action-buttons">
+                                <button class="btn-primary">✓ Marquer comme terminé</button>
+                                <button class="btn-secondary">🧠 Faire le quiz</button>
+                                <div class="nav-buttons">
+                                    <button class="btn-nav">← Précédent</button>
+                                    <button class="btn-nav">Suivant →</button>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.9rem; color: #888;">Dernier score</div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #00C864;">85/100</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLE OF CONTENTS -->
+                    <div class="toc" id="toc">
+                        <h3>
+                            <span>📑</span>
+                            <span>Table des matières</span>
+                        </h3>
+                        <nav id="tocNav">
+                            <!-- TOC items will be inserted here by JS -->
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SAMPLE LESSONS DATA
+        const lessons = [
+            { id: 1, title: 'La lumière et les couleurs - Partie 1', duration: 45, type: '📖 Lecture', completed: true },
+            { id: 2, title: 'La lumière et les couleurs - Partie 2', duration: 45, type: '🎥 Vidéo', completed: true },
+            { id: 3, title: 'La lumière et les couleurs - Partie 3', duration: 45, type: '🎮 Interactif', completed: true },
+            { id: 4, title: 'L\'électricité de base - Partie 1', duration: 45, type: '📖 Lecture', completed: true },
+            { id: 5, title: 'L\'électricité de base - Partie 2', duration: 45, type: '🎥 Vidéo', completed: true },
+            { id: 6, title: 'L\'électricité de base - Partie 3', duration: 45, type: '🎮 Interactif', completed: false },
+            { id: 7, title: 'Les états de la matière - Partie 1', duration: 45, type: '📖 Lecture', completed: false },
+            { id: 8, title: 'Les états de la matière - Partie 2', duration: 45, type: '🎥 Vidéo', completed: false },
+            { id: 9, title: 'Les états de la matière - Partie 3', duration: 45, type: '🎮 Interactif', completed: false },
+            { id: 10, title: 'Le mouvement - Partie 1', duration: 45, type: '📖 Lecture', completed: false },
+            { id: 11, title: 'Le mouvement - Partie 2', duration: 45, type: '🎥 Vidéo', completed: false },
+            { id: 12, title: 'Le mouvement - Partie 3', duration: 45, type: '🎮 Interactif', completed: false },
+            { id: 13, title: 'L\'eau et l\'environnement - Partie 1', duration: 45, type: '📖 Lecture', completed: false },
+            { id: 14, title: 'L\'eau et l\'environnement - Partie 2', duration: 45, type: '🎥 Vidéo', completed: false },
+            { id: 15, title: 'L\'eau et l\'environnement - Partie 3', duration: 45, type: '🎮 Interactif', completed: false }
+        ];
+
+        let selectedLessonId = 1;
+        let isFocusMode = false;
+        let showTOC = true;
+        let searchQuery = '';
+
+        // RENDER LESSONS
+        function renderLessons() {
+            const filteredLessons = lessons.filter(lesson =>
+                lesson.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                lesson.type.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+
+            const lessonsList = document.getElementById('lessonsList');
+            lessonsList.innerHTML = filteredLessons.map((lesson, index) => `
+                <div class="lesson-card ${lesson.id === selectedLessonId ? 'active' : ''}" onclick="selectLesson(${lesson.id})">
+                    <div class="lesson-number">${lesson.completed ? '✓' : lessons.indexOf(lesson) + 1}</div>
+                    <div class="lesson-info">
+                        <div class="lesson-title">${lesson.title}</div>
+                        <div class="lesson-meta">
+                            <span class="lesson-badge">⏱️ ${lesson.duration} min</span>
+                            <span class="lesson-badge">${lesson.type}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update lesson count
+            document.getElementById('lessonCount').textContent = filteredLessons.length;
+
+            // Show search results
+            if (searchQuery) {
+                document.getElementById('searchResults').textContent = `${filteredLessons.length} résultat${filteredLessons.length > 1 ? 's' : ''}`;
+                document.getElementById('searchClear').style.display = 'block';
+            } else {
+                document.getElementById('searchResults').textContent = '';
+                document.getElementById('searchClear').style.display = 'none';
+            }
+        }
+
+        // SELECT LESSON
+        function selectLesson(id) {
+            selectedLessonId = id;
+            renderLessons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // SEARCH
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderLessons();
+        });
+
+        document.getElementById('searchClear').addEventListener('click', () => {
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            renderLessons();
+        });
+
+        // TOGGLE FOCUS MODE
+        document.getElementById('toggleFocus').addEventListener('click', () => {
+            isFocusMode = !isFocusMode;
+            document.getElementById('mainLayout').classList.toggle('focus-mode', isFocusMode);
+            document.getElementById('focusIcon').textContent = isFocusMode ? '👁️' : '🎯';
+            document.getElementById('focusText').textContent = isFocusMode ? 'Mode Normal' : 'Mode Focus';
+            document.getElementById('toggleFocus').classList.toggle('active', isFocusMode);
+        });
+
+        // TOGGLE TOC
+        document.getElementById('toggleTOC').addEventListener('click', () => {
+            showTOC = !showTOC;
+            document.getElementById('toc').style.display = showTOC ? 'block' : 'none';
+            document.getElementById('contentGrid').classList.toggle('no-toc', !showTOC);
+            document.getElementById('toggleTOC').classList.toggle('active', showTOC);
+        });
+
+        // GENERATE TOC
+        function generateTOC() {
+            const sections = [
+                { id: 'section-introduction', text: 'Introduction', level: 1 },
+                { id: 'section-sources', text: 'I. Sources de lumière', level: 2 },
+                { id: 'section-formules', text: 'II. Formules et Lois Physiques', level: 2 },
+                { id: 'section-propagation', text: 'III. Propagation rectiligne', level: 2 },
+                { id: 'section-exercices', text: 'V. Exercices d\'Application', level: 2 },
+                { id: 'section-conclusion', text: 'Conclusion', level: 1 }
+            ];
+
+            const tocNav = document.getElementById('tocNav');
+            tocNav.innerHTML = sections.map(section => `
+                <a href="#${section.id}" class="toc-item level-${section.level}" onclick="scrollToSection('${section.id}'); return false;">
+                    ${section.text}
+                </a>
+            `).join('');
+        }
+
+        // SCROLL TO SECTION
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                const offset = 100;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+
+                // Update active TOC item
+                document.querySelectorAll('.toc-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
+            }
+        }
+
+        // KEYBOARD SHORTCUTS
+        document.addEventListener('keydown', (e) => {
+            // Ignore if typing in input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            const currentIndex = lessons.findIndex(l => l.id === selectedLessonId);
+
+            // Arrow Left: Previous lesson
+            if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                selectLesson(lessons[currentIndex - 1].id);
+            }
+
+            // Arrow Right: Next lesson
+            if (e.key === 'ArrowRight' && currentIndex < lessons.length - 1) {
+                selectLesson(lessons[currentIndex + 1].id);
+            }
+
+            // F: Toggle focus mode
+            if (e.key === 'f' || e.key === 'F') {
+                document.getElementById('toggleFocus').click();
+            }
+
+            // T: Toggle TOC
+            if (e.key === 't' || e.key === 'T') {
+                document.getElementById('toggleTOC').click();
+            }
+
+            // Ctrl+K: Focus search
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // INIT
+        renderLessons();
+        generateTOC();
+
+        // Animate progress bar on load
+        setTimeout(() => {
+            document.getElementById('progressBar').style.width = '65%';
+        }, 500);
+    </script>
+</body>
+</html>
